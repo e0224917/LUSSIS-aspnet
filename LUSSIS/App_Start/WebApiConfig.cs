@@ -11,15 +11,15 @@ namespace LUSSIS
         {
             config.MapHttpAttributeRoutes();
 
-            config.Routes.MapHttpRoute(
-                name: "AuthApi",
-                routeTemplate: "api/{controller}/{action}",
-                defaults: new
-                {
-                    controller="Account",
-                    action = RouteParameter.Optional
-                }
-            );
+            //config.Routes.MapHttpRoute(
+            //    name: "AuthApi",
+            //    routeTemplate: "api/{controller}/{action}",
+            //    defaults: new
+            //    {
+            //        controller="Account",
+            //        action = RouteParameter.Optional
+            //    }
+            //);
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
