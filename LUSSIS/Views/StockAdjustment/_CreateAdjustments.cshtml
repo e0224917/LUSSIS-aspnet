@@ -1,0 +1,12 @@
+﻿@model LUSSIS.Models.AdjVoucher
+@using (Html.BeginCollectionItem("Vouchers"))
+{
+    <tr>
+        <td>@Html.EditorFor(model => model.ItemNum)</td>
+        <td></td>
+        <td>@Html.EditorFor(model => model.Quantity)</td>
+        <td colspan="2">@Html.EditorFor(model => model.Reason)</td>
+        <td><input type="button" value="Delete" class="btn btn-default"
+       onclick="$(this).parent().remove();" /></td>
+    </tr>
+}
