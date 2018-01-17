@@ -9,6 +9,7 @@ namespace LUSSIS.Models
     [Table("AdjVoucher")]
     public partial class AdjVoucher
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int AdjVoucherId { get; set; }
 
         [StringLength(20)]

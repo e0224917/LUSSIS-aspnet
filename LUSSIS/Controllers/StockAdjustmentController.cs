@@ -26,9 +26,10 @@ namespace LUSSIS.Controllers
         }
 
         // GET: StockAdjustment/Create
-        public ActionResult Create()
+        public ActionResult CreateAdjustments()
         {
             return View();
+
         }
 
         // POST: StockAdjustment/Create

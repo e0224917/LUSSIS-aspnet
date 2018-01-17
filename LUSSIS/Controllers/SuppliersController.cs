@@ -79,7 +79,7 @@ namespace LUSSIS.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")] Supplier supplier)
+        public async Task<ActionResult> Edit([Bind(Include = "SupplierId,SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")] Supplier supplier)
         {
             if (ModelState.IsValid)
             {
@@ -110,8 +110,16 @@ namespace LUSSIS.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Supplier supplier = await repo.GetByIdAsync(id);
-            await repo.DeleteAsync(supplier);
-            return RedirectToAction("Index");
+            try
+            {
+                await repo.DeleteAsync(supplier);
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("","This supplier has existed stationeries.");
+                return View(supplier);
+            }
         }
 
         protected override void Dispose(bool disposing)
