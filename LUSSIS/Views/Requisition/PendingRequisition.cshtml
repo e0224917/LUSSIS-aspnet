@@ -1,0 +1,53 @@
+﻿@model IEnumerable<LUSSIS.Models.Requisition>
+
+@{
+    ViewBag.Title = "PendingRequisition";
+}
+
+<h2>Pending Requisition</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.RequisitionDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Employee1.FullName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestRemarks)
+        </th>
+        <th>
+            @Html.Display("View")
+        </th>
+        <th>
+            @Html.Display("Manage")
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequisitionDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Employee1.FullName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequestRemarks)
+        </td>
+        <td>
+            @Html.ActionLink("Details", "Detail", "Requisition", new { reqId = item.RequisitionId }, null) 
+        </td>
+        <td>
+            @Html.ActionLink("Reject", "Edit", new { id = item.RequisitionId }) |
+            @Html.ActionLink("Approve", "Delete", new { id = item.RequisitionId })
+        </td>
+    </tr>
+}
+
+</table>

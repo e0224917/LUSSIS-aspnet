@@ -1,0 +1,18 @@
+﻿@model LUSSIS.Models.Requisition
+
+
+
+@{
+    ViewBag.Title = "Detail";
+}
+
+<h2>Requisition Detail</h2>
+
+@Html.Partial("_Detail", Model.RequisitionDetails)
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+
+
