@@ -204,6 +204,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\StockAdjustmentController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
@@ -316,7 +317,8 @@
     <Content Include="Views\Suppliers\Details.cshtml" />
     <Content Include="Views\Suppliers\Edit.cshtml" />
     <Content Include="Views\Suppliers\Index.cshtml" />
-	<Content Include="Views\Manage\StationeryDetails.cshtml" />
+    <Content Include="Views\Manage\StationeryDetails.cshtml" />
+    <Content Include="Views\StockAdjustment\History.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

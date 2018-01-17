@@ -22,9 +22,11 @@ namespace LUSSIS.Models
         public string Reason { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? CreateDate { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ApprovalDate { get; set; }
 
         public int? RequestEmpNum { get; set; }
