@@ -235,10 +235,16 @@
     <Compile Include="Models\WebAPI\EmployeeDTO.cs" />
     <Compile Include="Models\WebAPI\StationeryDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\DisbursementRepository.cs" />
+    <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\IStationeryRepository.cs" />
+    <Compile Include="Repositories\PORepository.cs" />
     <Compile Include="Repositories\Repository.cs" />
+    <Compile Include="Repositories\RequisitionRepository.cs" />
     <Compile Include="Repositories\StationeryRepository.cs" />
+    <Compile Include="Repositories\StockAdjustmentRepository.cs" />
+    <Compile Include="Repositories\SupplierRepository.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
