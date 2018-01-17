@@ -11,11 +11,15 @@ namespace LUSSIS.Repositories
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="ID"></typeparam>
-    interface IRepository<TEntity, ID> where TEntity: class
+    interface IRepository<TEntity, ID> where TEntity : class
     {
         void Add(TEntity entity);
 
+        Task<int> AddAsync(TEntity entity);
+
         IEnumerable<TEntity> GetAll();
+
+        Task<IEnumerable<TEntity>> GetAllAsync();
 
         TEntity GetById(ID id);
 
@@ -23,6 +27,12 @@ namespace LUSSIS.Repositories
 
         void Delete(TEntity entity);
 
+        Task<int> DeleteAsync(TEntity entity);
+
         void Update(TEntity entity);
+
+        Task<int> UpdateAsync(TEntity entity);
+
+        void Dispose();
     }
 }

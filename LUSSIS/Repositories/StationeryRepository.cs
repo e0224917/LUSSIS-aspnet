@@ -8,7 +8,7 @@ namespace LUSSIS.Repositories
 {
     public class StationeryRepository : Repository<Stationery, string>, IStationeryRepository
     {
-        public StationeryRepository(LUSSISContext context) : base(context)
+        public StationeryRepository()
         {
         }
 

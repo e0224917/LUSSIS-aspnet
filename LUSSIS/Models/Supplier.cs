@@ -20,20 +20,25 @@ namespace LUSSIS.Models
         public int SupplierId { get; set; }
 
         [StringLength(50)]
+        [Display(Name = "Supplier Name")]
         public string SupplierName { get; set; }
 
         [StringLength(20)]
+        [Display(Name = "Contact Name")]
         public string ContactName { get; set; }
 
         [StringLength(20)]
+        [Display(Name = "Phone No")]
         public string TelephoneNum { get; set; }
 
         [StringLength(30)]
+        [Display(Name = "Fax No")]
         public string FaxNum { get; set; }
 
         public string Address { get; set; }
 
         [StringLength(30)]
+        [Display(Name = "Gst Registration")]
         public string GstRegistration { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
