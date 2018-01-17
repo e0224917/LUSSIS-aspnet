@@ -33,9 +33,9 @@ namespace LUSSIS.Models
 
         [StringLength(20)]
         public string Status { get; set; }
-
+        //ApproveEmp
         public virtual Employee Employee { get; set; }
-
+        //RequisitionEmp
         public virtual Employee Employee1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
