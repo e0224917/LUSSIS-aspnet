@@ -1,0 +1,64 @@
+﻿@model IEnumerable<LUSSIS.Models.Supplier>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SupplierName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ContactName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TelephoneNum)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FaxNum)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GstRegistration)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.SupplierName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ContactName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TelephoneNum)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FaxNum)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GstRegistration)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.SupplierId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.SupplierId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.SupplierId })
+        </td>
+    </tr>
+}
+
+</table>

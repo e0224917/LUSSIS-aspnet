@@ -7,7 +7,7 @@ using System.Web;
 
 namespace LUSSIS.Repositories
 {
-    public class Repository<TEntity, ID> : IRepository<TEntity, ID> where TEntity : class where ID : class
+    public class Repository<TEntity, ID> : IRepository<TEntity, ID> where TEntity : class
     {
         protected readonly DbContext Context;
 
@@ -24,6 +24,7 @@ namespace LUSSIS.Repositories
         public void Delete(TEntity entity)
         {
             Context.Set<TEntity>().Remove(entity);
+            Context.SaveChanges();
         }
 
         public IEnumerable<TEntity> GetAll()
@@ -39,6 +40,12 @@ namespace LUSSIS.Repositories
         public async Task<TEntity> GetByIdAsync(ID id)
         {
             return await Context.Set<TEntity>().FindAsync(id);
+        }
+
+        public void Update(TEntity entity)
+        {
+            Context.Entry(entity).State = EntityState.Modified;
+            Context.SaveChanges();
         }
     }
 }

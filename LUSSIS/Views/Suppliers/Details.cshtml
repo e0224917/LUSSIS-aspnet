@@ -1,0 +1,67 @@
+﻿@model LUSSIS.Models.Supplier
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Supplier</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.SupplierName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SupplierName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ContactName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ContactName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TelephoneNum)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TelephoneNum)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FaxNum)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FaxNum)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GstRegistration)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GstRegistration)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SupplierId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
