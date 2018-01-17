@@ -10,7 +10,7 @@ namespace LUSSIS.Repositories
 {
     public class SupplierRepository : Repository<Supplier, int>, ISupplierRepository
     {
-        public SupplierRepository(LUSSISContext context) : base(context)
+        public SupplierRepository()
         {
         }
 

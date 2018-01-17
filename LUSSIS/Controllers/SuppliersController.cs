@@ -8,17 +8,18 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Models;
+using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {
     public class SuppliersController : Controller
     {
-        private LUSSISContext db = new LUSSISContext();
+        private SupplierRepository repo = new SupplierRepository();
 
         // GET: Suppliers
         public async Task<ActionResult> Index()
         {
-            return View(await db.Suppliers.ToListAsync());
+            return View(await repo.GetAllAsync());
         }
 
         // GET: Suppliers/Details/5
@@ -28,7 +29,7 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier supplier = await db.Suppliers.FindAsync(id);
+            Supplier supplier = await repo.GetByIdAsync((int) id);
             if (supplier == null)
             {
                 return HttpNotFound();
@@ -47,12 +48,11 @@ namespace LUSSIS.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "SupplierId,SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")] Supplier supplier)
+        public async Task<ActionResult> Create([Bind(Include = "SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")] Supplier supplier)
         {
             if (ModelState.IsValid)
             {
-                db.Suppliers.Add(supplier);
-                await db.SaveChangesAsync();
+                await repo.AddAsync(supplier);
                 return RedirectToAction("Index");
             }
 
@@ -66,7 +66,7 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier supplier = await db.Suppliers.FindAsync(id);
+            Supplier supplier = await repo.GetByIdAsync((int) id);
             if (supplier == null)
             {
                 return HttpNotFound();
@@ -79,12 +79,11 @@ namespace LUSSIS.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "SupplierId,SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")] Supplier supplier)
+        public async Task<ActionResult> Edit([Bind(Include = "SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")] Supplier supplier)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(supplier).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                await repo.UpdateAsync(supplier);
                 return RedirectToAction("Index");
             }
             return View(supplier);
@@ -97,7 +96,7 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier supplier = await db.Suppliers.FindAsync(id);
+            Supplier supplier = await repo.GetByIdAsync((int) id);
             if (supplier == null)
             {
                 return HttpNotFound();
@@ -110,9 +109,8 @@ namespace LUSSIS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Supplier supplier = await db.Suppliers.FindAsync(id);
-            db.Suppliers.Remove(supplier);
-            await db.SaveChangesAsync();
+            Supplier supplier = await repo.GetByIdAsync(id);
+            await repo.DeleteAsync(supplier);
             return RedirectToAction("Index");
         }
 
@@ -120,7 +118,7 @@ namespace LUSSIS.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                repo.Dispose();
             }
             base.Dispose(disposing);
         }

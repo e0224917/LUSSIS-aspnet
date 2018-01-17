@@ -17,7 +17,7 @@ namespace LUSSIS.Controllers.WebAPI
 {
     public class StationeriesController : ApiController
     {
-        private StationeryRepository repo = new StationeryRepository(new LUSSISContext());
+        private StationeryRepository repo = new StationeryRepository();
 
         // GET: api/Stationeries
         public IEnumerable<StationeryDTO> GetStationeries()
