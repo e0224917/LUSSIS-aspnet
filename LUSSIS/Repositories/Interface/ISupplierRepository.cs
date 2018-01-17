@@ -1,11 +1,12 @@
-﻿using System;
+﻿using LUSSIS.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace LUSSIS.Repositories.Interface
 {
-    public class ISupplierRepository
+    interface ISupplierRepository : IRepository<Supplier, int>
     {
     }
 }

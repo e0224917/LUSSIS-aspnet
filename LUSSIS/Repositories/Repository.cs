@@ -7,7 +7,7 @@ using System.Web;
 
 namespace LUSSIS.Repositories
 {
-    public class Repository<TEntity, ID> : IRepository<TEntity, ID> where TEntity : class where ID : class
+    public class Repository<TEntity, ID> : IRepository<TEntity, ID> where TEntity : class
     {
         protected readonly DbContext Context;
 

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Repositories.Interface
 {
-    public class IPORepository
+    interface IPORepository
     {
     }
 }

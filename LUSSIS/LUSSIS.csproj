@@ -204,6 +204,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
@@ -310,6 +311,11 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Suppliers\Create.cshtml" />
+    <Content Include="Views\Suppliers\Delete.cshtml" />
+    <Content Include="Views\Suppliers\Details.cshtml" />
+    <Content Include="Views\Suppliers\Edit.cshtml" />
+    <Content Include="Views\Suppliers\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

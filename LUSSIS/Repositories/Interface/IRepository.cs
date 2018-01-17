@@ -11,7 +11,7 @@ namespace LUSSIS.Repositories
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="ID"></typeparam>
-    interface IRepository<TEntity, ID> where TEntity: class where ID : class
+    interface IRepository<TEntity, ID> where TEntity: class
     {
         void Add(TEntity entity);
 
