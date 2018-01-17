@@ -22,15 +22,18 @@ namespace LUSSIS.Models
         public int? SupplierId { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? CreateDate { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? OrderDate { get; set; }
 
         [StringLength(20)]
         public string Status { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ApprovalDate { get; set; }
 
         public int? OrderEmpNum { get; set; }

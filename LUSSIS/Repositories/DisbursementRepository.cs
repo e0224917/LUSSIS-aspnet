@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using LUSSIS.Models;
-using LUSSIS.Repositories.Interface;
 
 namespace LUSSIS.Repositories
 {
-    public class DisbursementRepository : Repository<Disbursement, int>, IDisbursementRepository
+    public class DisbursementRepository : Repository<Disbursement, string>
     {
-        public List<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
+        public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
-            return Context.DisbursementDetails.Where(d => d.Disbursement.Status == status).ToList();
+            return LUSSISContext.Disbursements.Where(x => x.CollectionDate > nowDate && x.DeptCode == deptCode).First();
         }
-        
+
+        public IEnumerable<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)
+        {
+            return LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == disbursement.DisbursementId).ToList();
+        }
+
+        public LUSSISContext LUSSISContext
+        {
+            get
+            {
+                return Context as LUSSISContext;
+            }
+        }
     }
 }

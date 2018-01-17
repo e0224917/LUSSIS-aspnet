@@ -20,6 +20,7 @@ namespace LUSSIS.Models
         public int? PoNum { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ReceiveDate { get; set; }
 
         [StringLength(30)]

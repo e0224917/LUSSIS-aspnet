@@ -20,6 +20,7 @@ namespace LUSSIS.Models
         public int? RequisitionEmpNum { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? RequisitionDate { get; set; }
 
         public int? ApprovalEmpNum { get; set; }
@@ -29,13 +30,14 @@ namespace LUSSIS.Models
         public string RequestRemarks { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ApprovalDate { get; set; }
 
         [StringLength(20)]
         public string Status { get; set; }
-
+        //ApproveEmp
         public virtual Employee Employee { get; set; }
-
+        //RequisitionEmp
         public virtual Employee Employee1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

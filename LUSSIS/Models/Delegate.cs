@@ -14,9 +14,11 @@ namespace LUSSIS.Models
         public int? EmpNum { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? StartDate { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? EndDate { get; set; }
 
         public virtual Employee Employee { get; set; }

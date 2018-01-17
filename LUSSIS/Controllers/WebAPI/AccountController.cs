@@ -18,6 +18,13 @@ namespace LUSSIS.Controllers.WebAPI
     {
         private LUSSISContext db = new LUSSISContext();
 
+        [HttpGet]
+        [ResponseType(typeof(string))]
+        public string TestAuth()
+        {
+            return "Ok";
+        }
+
         [HttpPost]
         [ResponseType(typeof(EmployeeDTO))]
         public async Task<IHttpActionResult> Login(LoginViewModel model)
@@ -26,22 +33,21 @@ namespace LUSSIS.Controllers.WebAPI
             string pass = model.Password;
             var manager = HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
             var result = await manager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            if (result == SignInStatus.Success)
+
+            if (result != SignInStatus.Success) return BadRequest();
+
+            var emp = db.Employees.First(em => em.EmailAddress == email);
+            var e = new EmployeeDTO
             {
-                var emp = db.Employees.Where(em => em.EmailAddress == email).First<Employee>();
-                var e = new EmployeeDTO
-                {
-                    EmpNum = emp.EmpNum,
-                    Title = emp.Title,
-                    FirstName = emp.FirstName,
-                    LastName = emp.LastName,
-                    EmailAddress = emp.EmailAddress,
-                    JobTitle = emp.JobTitle,
-                    DeptCode = emp.DeptCode
-                };
-                return Ok(e);
-            }
-            return BadRequest();
+                EmpNum = emp.EmpNum,
+                Title = emp.Title,
+                FirstName = emp.FirstName,
+                LastName = emp.LastName,
+                EmailAddress = emp.EmailAddress,
+                JobTitle = emp.JobTitle,
+                DeptCode = emp.DeptCode
+            };
+            return Ok(e);
         }
     }
 }

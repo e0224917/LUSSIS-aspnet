@@ -1,0 +1,56 @@
+﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
+
+@{
+    ViewBag.Title = "History";
+}
+
+<h2>History</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>
+        <th>
+            @Html.DisplayName("Applied by")
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Stationery.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Reason)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreateDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Employee1.FullName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Stationery.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Quantity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Reason)
+        </td>
+        <td>
+            @Html.ActionLink("Approve", "Edit", new { id = item.AdjVoucherId }) |
+            @Html.ActionLink("Reject", "Details", new { id = item.AdjVoucherId }) |
+        </td>
+    </tr>
+}
+
+</table>
