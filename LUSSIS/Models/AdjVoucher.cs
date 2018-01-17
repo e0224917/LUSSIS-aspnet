@@ -9,6 +9,7 @@ namespace LUSSIS.Models
     [Table("AdjVoucher")]
     public partial class AdjVoucher
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int AdjVoucherId { get; set; }
 
         [StringLength(20)]
@@ -22,9 +23,11 @@ namespace LUSSIS.Models
         public string Reason { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? CreateDate { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ApprovalDate { get; set; }
 
         public int? RequestEmpNum { get; set; }

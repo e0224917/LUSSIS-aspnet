@@ -20,6 +20,7 @@ namespace LUSSIS.Models
         public int? RequisitionEmpNum { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? RequisitionDate { get; set; }
 
         public int? ApprovalEmpNum { get; set; }
@@ -29,6 +30,7 @@ namespace LUSSIS.Models
         public string RequestRemarks { get; set; }
 
         [Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ApprovalDate { get; set; }
 
         [StringLength(20)]

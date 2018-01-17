@@ -24,6 +24,14 @@ namespace LUSSIS.Models
             Requisitions1 = new HashSet<Requisition>();
         }
 
+        public string FullName
+        {
+            get
+            {
+                return FirstName + " " + LastName;
+            }
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int EmpNum { get; set; }
