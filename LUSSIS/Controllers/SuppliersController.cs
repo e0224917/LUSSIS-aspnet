@@ -8,13 +8,12 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Models;
-using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {
     public class SuppliersController : Controller
     {
-        private SupplierRepository repo = new SupplierRepository(new LUSSISContext());
+        private LUSSISContext db = new LUSSISContext();
 
         // GET: Suppliers
         public async Task<ActionResult> Index()
