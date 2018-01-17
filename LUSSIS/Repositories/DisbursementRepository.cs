@@ -10,12 +10,16 @@ namespace LUSSIS.Repositories
     {
         public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
-            return LUSSISContext.Disbursements.Where(x => x.CollectionDate > nowDate && x.DeptCode == deptCode).First();
+            return LUSSISContext.Disbursements.First(x => x.CollectionDate > nowDate && x.DeptCode == deptCode);
         }
 
         public IEnumerable<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)
         {
             return LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == disbursement.DisbursementId).ToList();
+        }
+        public List<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
+        {
+            return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status).ToList();
         }
 
         public LUSSISContext LUSSISContext
