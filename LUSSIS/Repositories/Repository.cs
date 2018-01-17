@@ -24,6 +24,7 @@ namespace LUSSIS.Repositories
         public void Delete(TEntity entity)
         {
             Context.Set<TEntity>().Remove(entity);
+            Context.SaveChanges();
         }
 
         public IEnumerable<TEntity> GetAll()
@@ -39,6 +40,12 @@ namespace LUSSIS.Repositories
         public async Task<TEntity> GetByIdAsync(ID id)
         {
             return await Context.Set<TEntity>().FindAsync(id);
+        }
+
+        public void Update(TEntity entity)
+        {
+            Context.Entry(entity).State = EntityState.Modified;
+            Context.SaveChanges();
         }
     }
 }

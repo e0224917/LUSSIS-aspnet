@@ -22,5 +22,7 @@ namespace LUSSIS.Repositories
         Task<TEntity> GetByIdAsync(ID id);
 
         void Delete(TEntity entity);
+
+        void Update(TEntity entity);
     }
 }

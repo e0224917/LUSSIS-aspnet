@@ -26,7 +26,7 @@ namespace LUSSIS.Controllers.WebAPI
             string pass = model.Password;
             var manager = HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
             var result = await manager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            if(result == SignInStatus.Success)
+            if (result == SignInStatus.Success)
             {
                 var emp = db.Employees.Where(em => em.EmailAddress == email).First<Employee>();
                 var e = new EmployeeDTO
