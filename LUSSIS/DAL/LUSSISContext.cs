@@ -43,13 +43,13 @@ namespace LUSSIS.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Employee>()
-                .HasMany(e => e.AdjVouchers)
-                .WithOptional(e => e.Employee)
+                .HasMany(e => e.ApprovalAdjVouchers)
+                .WithOptional(e => e.ApprovalEmployee)
                 .HasForeignKey(e => e.ApprovalEmpNum);
 
             modelBuilder.Entity<Employee>()
-                .HasMany(e => e.AdjVouchers1)
-                .WithOptional(e => e.Employee1)
+                .HasMany(e => e.RequestAdjVouchers)
+                .WithOptional(e => e.RequestEmployee)
                 .HasForeignKey(e => e.RequestEmpNum);
 
             modelBuilder.Entity<Employee>()
@@ -69,22 +69,22 @@ namespace LUSSIS.Models
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.PurchaseOrders)
-                .WithOptional(e => e.Employee)
+                .WithOptional(e => e.OrderEmployee)
                 .HasForeignKey(e => e.OrderEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.PurchaseOrders1)
-                .WithOptional(e => e.Employee1)
+                .WithOptional(e => e.ApprovalEmployee)
+                .HasForeignKey(e => e.ApprovalEmpNum);
+
+            modelBuilder.Entity<Employee>()
+                .HasMany(e => e.ApprovalRequisitions)
+                .WithOptional(e => e.ApprovalEmployee)
                 .HasForeignKey(e => e.ApprovalEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Requisitions)
-                .WithOptional(e => e.Employee)
-                .HasForeignKey(e => e.ApprovalEmpNum);
-
-            modelBuilder.Entity<Employee>()
-                .HasMany(e => e.Requisitions1)
-                .WithOptional(e => e.Employee1)
+                .WithOptional(e => e.RequisitionEmployee)
                 .HasForeignKey(e => e.RequisitionEmpNum);
 
             modelBuilder.Entity<PurchaseOrder>()
