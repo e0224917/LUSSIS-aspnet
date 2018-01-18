@@ -15,6 +15,7 @@ namespace LUSSIS.Models
             RequisitionDetails = new HashSet<RequisitionDetail>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequisitionId { get; set; }
 
         public int? RequisitionEmpNum { get; set; }

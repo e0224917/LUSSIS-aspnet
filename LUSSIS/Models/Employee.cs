@@ -33,7 +33,7 @@ namespace LUSSIS.Models
         }
 
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EmpNum { get; set; }
 
         [StringLength(20)]

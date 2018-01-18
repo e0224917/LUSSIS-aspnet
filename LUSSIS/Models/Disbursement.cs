@@ -15,6 +15,7 @@ namespace LUSSIS.Models
             DisbursementDetails = new HashSet<DisbursementDetail>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DisbursementId { get; set; }
 
         [Column(TypeName = "date")]

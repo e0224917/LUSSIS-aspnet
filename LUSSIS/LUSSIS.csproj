@@ -229,6 +229,18 @@
     <Compile Include="Migrations\201801180255533_SpecifyEmp.Designer.cs">
       <DependentUpon>201801180255533_SpecifyEmp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801180619110_UpdateFix1.cs" />
+    <Compile Include="Migrations\201801180619110_UpdateFix1.Designer.cs">
+      <DependentUpon>201801180619110_UpdateFix1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801180634346_AddIdentity.cs" />
+    <Compile Include="Migrations\201801180634346_AddIdentity.Designer.cs">
+      <DependentUpon>201801180634346_AddIdentity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801180649294_Changes.cs" />
+    <Compile Include="Migrations\201801180649294_Changes.Designer.cs">
+      <DependentUpon>201801180649294_Changes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
@@ -377,6 +389,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801180255533_SpecifyEmp.resx">
       <DependentUpon>201801180255533_SpecifyEmp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801180619110_UpdateFix1.resx">
+      <DependentUpon>201801180619110_UpdateFix1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801180634346_AddIdentity.resx">
+      <DependentUpon>201801180634346_AddIdentity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801180649294_Changes.resx">
+      <DependentUpon>201801180649294_Changes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
