@@ -1,0 +1,51 @@
+﻿@model LUSSIS.Models.WebDTO.ManageCollectionDTO
+
+<h2>Manage Collection Point</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CollectionPoint.First().CollectionName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CollectionPoint.First().Time)
+        </th>
+    </tr>
+    <tr>
+
+        <td>
+            @if (Model.Disbursement != null)
+            {
+                @Html.DisplayFor(model => model.Disbursement.CollectionPoint.CollectionName)
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.CollectionPoint.First().CollectionName)
+            }
+
+        </td>
+        <td>
+            @if (Model.Disbursement != null)
+            {
+                @Html.DisplayFor(model => model.Disbursement.CollectionPoint.Time)
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.CollectionPoint.First().Time)
+            }
+        </td>
+    </tr>
+</table>
+
+<style type="text/css">
+    td {
+        width: 2%;
+    }
+
+    th {
+        width: 2%;
+    }
+</style>
+
+
+

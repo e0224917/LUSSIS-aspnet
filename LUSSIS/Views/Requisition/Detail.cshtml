@@ -8,10 +8,57 @@
 
 <h2>Requisition Detail</h2>
 
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Employee1.FullName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequisitionDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestRemarks)
+        </th>
+    </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(model => model.Employee1.FullName)
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.RequisitionDate)
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.RequestRemarks)
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td>@Html.DisplayName("Your comments:")</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>@Html.EditorFor(model => model.ApprovalRemarks)</td>
+        <td>@Html.ActionLink("Approve", "Approve")</td>
+        <td>@Html.ActionLink("Reject", "Reject")</td>
+    </tr>
+</table>
+<br />
+
+
+
 @Html.Partial("_Detail", Model.RequisitionDetails)
 
+
+
+
+
 <p>
-    @Html.ActionLink("Create New", "Create")
+    
 </p>
 
 

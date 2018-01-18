@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<LUSSIS.Models.Requisition>
 
 @{
-    ViewBag.Title = "PendingRequisition";
+    ViewBag.Title = "Pending";
 }
 
 <h2>Pending Requisition</h2>
@@ -21,10 +21,10 @@
             @Html.DisplayNameFor(model => model.RequestRemarks)
         </th>
         <th>
-            @Html.Display("View")
+            @Html.DisplayName("View")
         </th>
         <th>
-            @Html.Display("Manage")
+            @Html.DisplayName("Manage")
         </th>
         <th></th>
     </tr>
