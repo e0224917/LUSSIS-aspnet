@@ -5,37 +5,45 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CollectionPoint.First().CollectionName)
+            @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CollectionPoint.First().Time)
+            @Html.DisplayNameFor(model => model.CollectionPoint.Time)
         </th>
     </tr>
     <tr>
 
         <td>
-            @if (Model.Disbursement != null)
-            {
-                @Html.DisplayFor(model => model.Disbursement.CollectionPoint.CollectionName)
-            }
-            else
-            {
-                @Html.DisplayFor(model => model.CollectionPoint.First().CollectionName)
-            }
+
+                @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
 
         </td>
         <td>
-            @if (Model.Disbursement != null)
-            {
-                @Html.DisplayFor(model => model.Disbursement.CollectionPoint.Time)
-            }
-            else
-            {
-                @Html.DisplayFor(model => model.CollectionPoint.First().Time)
-            }
+                @Html.DisplayFor(model => model.CollectionPoint.Time)
+
         </td>
     </tr>
 </table>
+@using (Html.BeginForm("UpdateCollection", "Collection", FormMethod.Post))
+{
+
+    foreach (var item in Model.GetAll)
+    {
+
+<tr>
+
+    @Html.RadioButtonFor(m => m.CollectionPoint.CollectionPointId, item.CollectionPointId, 
+    item.CollectionName == Model.CollectionPoint.CollectionName? new { @checked = "checked" } : null)
+    @item.CollectionName
+    @item.Time
+</tr>
+        <br />
+    }
+
+    <br />
+    <input type="submit" value="Submit" />
+
+}
 
 <style type="text/css">
     td {

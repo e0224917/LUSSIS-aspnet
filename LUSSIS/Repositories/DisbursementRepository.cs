@@ -25,11 +25,11 @@ namespace LUSSIS.Repositories
             return LUSSISContext.CollectionPoints.First(y => y.CollectionPointId == disbursement.CollectionPointId);
         }
 
-        public List<CollectionPoint> GetCollectionPointByDeptCode(string deptCode)
+        public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
             Department d = new Department();
             d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
-            return LUSSISContext.CollectionPoints.Where(x => x.CollectionPointId == d.CollectionPointId).ToList();
+            return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == d.CollectionPointId);
         }
 
         public List<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)
