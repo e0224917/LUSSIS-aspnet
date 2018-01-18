@@ -14,7 +14,7 @@ namespace LUSSIS.Controllers
         private LUSSISContext db = new LUSSISContext();
         private RequisitionRepository rr = new RequisitionRepository();
         // GET: Requisition
-        public ActionResult PendingRequisition()
+        public ActionResult Pending()
         {
             List<Requisition> PendingReq = rr.GetRequisitionsByStatus("pending");
             return View(PendingReq);

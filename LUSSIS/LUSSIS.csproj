@@ -328,11 +328,12 @@
     <Content Include="Views\StockAdjustment\CreateAdjustments.cshtml" />
     <Content Include="Views\StockAdjustment\_CreateAdjustments.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
-    <Content Include="Views\Requisition\PendingRequisition.cshtml" />
+    <Content Include="Views\Requisition\Pending.cshtml" />
     <Content Include="Views\Requisition\Detail.cshtml" />
     <Content Include="Views\Requisition\_Detail.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
+    <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
