@@ -21,6 +21,9 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status).ToList();
         }
-
+        public List<DisbursementDetail> GetUnfullfilledDisDetailList()
+        {
+            return LUSSISContext.DisbursementDetails.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();
+        }
     }
 }
