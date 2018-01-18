@@ -11,10 +11,6 @@ namespace LUSSIS.Repositories
     {
         public StockAdjustmentRepository() { }
 
-        public LUSSISContext LUSSISContext
-        {
-            get { return Context as LUSSISContext; }
-        }
         public List<AdjVoucher> GetPendingAdjustmentList()
         {
             IEnumerable<AdjVoucher> list = LUSSISContext.AdjVouchers.Where(x => x.Status=="Pending").ToList<AdjVoucher>();

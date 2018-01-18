@@ -28,7 +28,7 @@ namespace LUSSIS.Controllers
             return View(await db.AdjVouchers.ToListAsync());
         }
        
-        public async Task<ActionResult> Approve(int? id)
+        public ActionResult Approve(int? id)
         {
             if (id == null)
             {
@@ -63,7 +63,7 @@ namespace LUSSIS.Controllers
         }
 
 
-        public async Task<ActionResult> AdjustmentApproveReject()
+        public ActionResult AdjustmentApproveReject()
         {
             return View(repo.GetPendingAdjustmentList());
         }

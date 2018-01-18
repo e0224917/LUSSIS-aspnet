@@ -46,9 +46,5 @@ namespace LUSSIS.Models
 
         public virtual Stationery Stationery { get; set; }
 
-        public string Status { get; set; }
-
-        public string Remark { get; set; }
-
     }
 }

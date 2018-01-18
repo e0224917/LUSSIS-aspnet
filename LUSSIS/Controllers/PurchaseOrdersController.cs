@@ -17,7 +17,7 @@ namespace LUSSIS.Controllers
         // GET: PurchaseOrders
         public ActionResult Index()
         {
-            var purchaseOrders = db.PurchaseOrders.Include(p => p.Employee).Include(p => p.Employee1).Include(p => p.Supplier);
+            var purchaseOrders = db.PurchaseOrders.Include(p => p.ApprovalEmployee).Include(p => p.OrderEmployee).Include(p => p.Supplier);
             return View(purchaseOrders.ToList());
         }
 
