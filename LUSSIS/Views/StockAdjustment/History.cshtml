@@ -4,11 +4,8 @@
     ViewBag.Title = "History";
 }
 
-<h2>History</h2>
+<h2>Adjustment History</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
@@ -26,7 +23,12 @@
         <th>
             @Html.DisplayNameFor(model => model.Reason)
         </th>
-        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Remark)
+        </th>
     </tr>
 
 @foreach (var item in Model) {
@@ -35,7 +37,7 @@
             @Html.DisplayFor(modelItem => item.CreateDate)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Employee1.FullName)
+            @Html.DisplayFor(modelItem => item.RequestEmployee.FullName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Stationery.Description)
@@ -47,8 +49,10 @@
             @Html.DisplayFor(modelItem => item.Reason)
         </td>
         <td>
-            @Html.ActionLink("Approve", "Edit", new { id = item.AdjVoucherId }) |
-            @Html.ActionLink("Reject", "Details", new { id = item.AdjVoucherId }) |
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Remark)
         </td>
     </tr>
 }

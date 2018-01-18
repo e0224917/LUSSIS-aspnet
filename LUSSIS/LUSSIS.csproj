@@ -253,6 +253,7 @@
     <Compile Include="Models\Supplier.cs" />
     <Compile Include="Models\WebAPI\EmployeeDTO.cs" />
     <Compile Include="Models\WebAPI\StationeryDTO.cs" />
+    <Compile Include="Models\WebDTO\AdjustmentVoucherDTO.cs" />
     <Compile Include="Models\WebDTO\ManageCollectionDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -349,8 +350,8 @@
     <Content Include="Views\Collection\Index.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
     <Content Include="Views\Requisition\Consolidated.cshtml" />
-    <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
     <Content Include="Views\Collection\SetCollection.cshtml" />
+    <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

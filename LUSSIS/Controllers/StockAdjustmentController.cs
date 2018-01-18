@@ -1,4 +1,5 @@
 ﻿using LUSSIS.Models;
+using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace LUSSIS.Controllers
         private LUSSISContext db = new LUSSISContext();
         private StationeryRepository sr = new StationeryRepository();
         private StockAdjustmentRepository sar = new StockAdjustmentRepository();
+        private EmployeeRepository er = new EmployeeRepository();
 
         // GET: StockAdjustment
         public async Task<ActionResult> History()
@@ -44,28 +46,34 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            else { 
-            AdjVoucher adj = new AdjVoucher();
-            adj.ItemNum = id;
-            adj.Stationery = sr.GetById(id);
-            return View(adj);
+            else
+            {
+                AdjustmentVoucherDTO adj = new AdjustmentVoucherDTO();
+                adj.ItemNum = id;
+                adj.Stationery = sr.GetById(id);
+                return View(adj);
             }
         }
 
         [HttpPost]
-        public ActionResult CreateAdjustment([Bind(Include = "Quantity,Reason,ItemNum")]AdjVoucher adjVoucher)
+        public ActionResult CreateAdjustment([Bind(Include = "Quantity,Reason,ItemNum,Sign")]AdjustmentVoucherDTO adjVoucher)
         {
-            adjVoucher.RequestEmpNum = 1;
-            //add requestEmpNum here
-            adjVoucher.CreateDate = DateTime.Today;
-
             if (ModelState.IsValid)
             {
-                sar.Add(adjVoucher);
+                var adj = new AdjVoucher();
+                adj.RequestEmpNum = er.GetCurrentUser().EmpNum;
+                adj.ItemNum = adjVoucher.ItemNum;
+                adj.CreateDate = DateTime.Today;
+                if (adjVoucher.Sign == 1)
+                { adjVoucher.Quantity = adjVoucher.Quantity * -1; }
+                adj.Quantity = adjVoucher.Quantity;
+                adj.Reason = adjVoucher.Reason;
+                sar.Add(adj);
                 return RedirectToAction("index");
             }
             else
             {
+                adjVoucher.Stationery = sr.GetById(adjVoucher.ItemNum);
                 return View(adjVoucher);
             }
 
