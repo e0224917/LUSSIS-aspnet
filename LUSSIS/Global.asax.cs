@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Http;
+using LUSSIS.Models.WebDTO;
 
 namespace LUSSIS
 {
@@ -19,6 +20,11 @@ namespace LUSSIS
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
+        }
+        void Session_Start(object sender, EventArgs e)
+        {
+            ShoppingCart shoppingCart = new ShoppingCart();
+            Session["MyCart"] = shoppingCart;
         }
     }
 }

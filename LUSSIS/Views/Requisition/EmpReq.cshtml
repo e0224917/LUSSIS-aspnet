@@ -1,0 +1,56 @@
+﻿@model IEnumerable<LUSSIS.Models.Requisition>
+
+@{
+    ViewBag.Title = "EmpReq";
+}
+
+<h2>List of Requisition</h2>
+
+<p>
+
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Requisition No.
+        </th>
+        <th>
+            Date
+        </th>
+        <th>
+            Summary
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
+            View
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequisitionId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequisitionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestRemarks)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+               
+                @Html.ActionLink("Detail", "EmpReqDetail", new { id = item.RequisitionId })
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+

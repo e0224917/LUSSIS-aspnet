@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using PagedList;
 
 namespace LUSSIS.Controllers
 {
@@ -129,6 +130,41 @@ namespace LUSSIS.Controllers
             {
                 return View();
             }
+        }
+        private RequisitionRepository reqrepo = new RequisitionRepository();
+        private StationeryRepository strepo = new StationeryRepository();
+        // GET: DeptEmpReqs
+        public ActionResult Index(string searchString, string currentFilter, int? page)
+        {
+            List<Stationery> stationerys = new List<Stationery>();
+            if (searchString != null)
+            { page = 1; }
+            else
+            {
+                searchString = currentFilter;
+            }
+            if (!String.IsNullOrEmpty(searchString))
+            { stationerys = strepo.GetByDescription(searchString).ToList(); }
+            else { stationerys = strepo.GetAll().ToList(); }
+            int pageSize = 20;
+            int pageNumber = (page ?? 1);
+            return View(stationerys.ToPagedList(pageNumber, pageSize));
+        }
+        //GET: MyRequisitions
+        //public async Task<ActionResult> EmpReq(int EmpNum)
+        //{
+        //    return View(reqrepo.GetRequisitionByEmpNum(EmpNum));
+        //}
+        public ActionResult EmpReq()
+        {
+            return View(reqrepo.GetAll());
+        }
+        // GET: Requisitions/Details/
+        [HttpGet]
+        public ActionResult EmpReqDetail(int id)
+        {
+            List<RequisitionDetail> requisitionDetail = reqrepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
+            return View(requisitionDetail);
         }
         //Stock Clerk's page
         public ActionResult Consolidated()

@@ -53,6 +53,12 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -245,6 +251,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
+    <Compile Include="Models\WebDTO\Cart.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\CollectionPoint.cs" />
     <Compile Include="Models\Delegate.cs" />
@@ -261,6 +268,7 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\ShoppingCart.cs" />
     <Compile Include="Models\Stationery.cs" />
     <Compile Include="Models\StationerySupplier.cs" />
     <Compile Include="Models\Supplier.cs" />
@@ -294,6 +302,7 @@
     <Content Include="Content\bootstrap-united.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -376,6 +385,11 @@
     <Content Include="Views\Requisition\Consolidated.cshtml" />
     <Content Include="Views\Collection\SetCollection.cshtml" />
     <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
+    <Content Include="Views\Shared\_LayoutEmpReq.cshtml" />
+    <Content Include="Views\Requisition\EmpCart.cshtml" />
+    <Content Include="Views\Requisition\EmpReq.cshtml" />
+    <Content Include="Views\Requisition\EmpReqDetail.cshtml" />
+    <Content Include="Views\Requisition\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
