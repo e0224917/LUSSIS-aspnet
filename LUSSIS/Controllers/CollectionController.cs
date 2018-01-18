@@ -10,8 +10,8 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Controllers
 {
-    
-[Authorize]
+
+[Authorize(Roles = "rep")]
     public class CollectionController : Controller
     {
         DisbursementRepository disbursementRepo = new DisbursementRepository();
