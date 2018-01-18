@@ -3,6 +3,7 @@ using LUSSIS.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -13,22 +14,50 @@ namespace LUSSIS.Controllers
     {
         private LUSSISContext db = new LUSSISContext();
         private RequisitionRepository rr = new RequisitionRepository();
+        private EmployeeRepository er = new EmployeeRepository();
+
         // GET: Requisition
-        public ActionResult PendingRequisition()
+        public ActionResult Pending()
         {
-            List<Requisition> pendingReq = rr.GetRequisitionsByStatus("pending").ToList();
-            return View(pendingReq);
+            return View(rr.GetRequisitionsByStatus("pending"));
         }
 
-        public ActionResult Detail(int reqId)
+
+        [HttpGet]
+        public async Task<ActionResult> Detail(int reqId)
         {
-            var req = rr.GetById(reqId);
+            var req = await rr.GetByIdAsync(reqId);
             if (req != null)
             {
                 return View(req);
             }
-            return HttpNotFound();
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest); ;
         }
+        [HttpPost]
+        public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks")] Requisition requisition, string SubmitButton)
+        {
+            if (ModelState.IsValid)
+            {
+                requisition.Status = "approved";
+                requisition.ApprovalEmpNum = er.GetCurrentUser().EmpNum;
+                requisition.ApprovalDate = DateTime.Today;
+                if (SubmitButton == "Approve")
+                {
+
+                    await rr.UpdateAsync(requisition);
+                    return RedirectToAction("index");
+                }
+
+                if (SubmitButton == "Reject")
+                {
+
+                    await rr.UpdateAsync(requisition);
+                    return RedirectToAction("index");
+                }
+            }
+            return RedirectToAction("index");
+        }
+
 
         // GET: Requisition/Details/5
         public ActionResult Details(int id)
@@ -100,6 +129,11 @@ namespace LUSSIS.Controllers
             {
                 return View();
             }
+        }
+        //Stock Clerk's page
+        public ActionResult Consolidated()
+        {
+            return View(rr.GetConsolidatedRequisition());
         }
     }
 }
