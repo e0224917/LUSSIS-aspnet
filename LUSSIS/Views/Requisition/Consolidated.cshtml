@@ -1,0 +1,60 @@
+﻿
+@model IEnumerable<LUSSIS.Models.WebDTO.RetrievalItemDTO>
+
+@{
+    ViewBag.Title = "ConsolidatedRequisition";
+}
+
+<h2>ConsolidatedRequisition</h2>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+
+        <th scope="col">
+            Bin Num
+        </th>
+        <th scope="col">
+            Stationery
+        </th>
+        <th scope="col">
+            UOM
+        </th>
+
+        <th scope="col">
+            Requested Qty*
+        </th>
+
+        <th scope="col">
+            Available Qty
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.BinNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnitOfMeasure)
+            </td>
+
+            <td>
+                @(item.RequestedQty + item.RemainingQty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AvailableQty)
+            </td>
+
+        </tr>
+    }</tbody>
+    
+</table>
+<p class="text-muted">*Unfullfilled Qty from previous disbursements has been added to Requested Qty</p>

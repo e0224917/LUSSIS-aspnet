@@ -262,6 +262,8 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-united.css" />
+    <Content Include="Content\bootstrap-united.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
@@ -333,6 +335,7 @@
     <Content Include="Views\Requisition\_Detail.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
+    <Content Include="Views\Requisition\Consolidated.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

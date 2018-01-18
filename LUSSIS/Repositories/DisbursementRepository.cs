@@ -17,11 +17,11 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == disbursement.DisbursementId).ToList();
         }
-        public List<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
+        public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
         {
             return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status).ToList();
         }
-        public List<DisbursementDetail> GetUnfullfilledDisDetailList()
+        public IEnumerable<DisbursementDetail> GetUnfullfilledDisDetailList()
         {
             return LUSSISContext.DisbursementDetails.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();
         }
