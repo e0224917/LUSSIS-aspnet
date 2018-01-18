@@ -54,17 +54,17 @@ namespace LUSSIS.Models
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.CollectionPoints)
-                .WithOptional(e => e.Employee)
+                .WithOptional(e => e.InChargeEmployee)
                 .HasForeignKey(e => e.InChargeEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Departments)
-                .WithOptional(e => e.Employee)
+                .WithOptional(e => e.RepEmployee)
                 .HasForeignKey(e => e.RepEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Disbursements)
-                .WithOptional(e => e.Employee)
+                .WithOptional(e => e.AcknowledgeEmployee)
                 .HasForeignKey(e => e.AcknowledgeEmpNum);
 
             modelBuilder.Entity<Employee>()
@@ -73,7 +73,7 @@ namespace LUSSIS.Models
                 .HasForeignKey(e => e.OrderEmpNum);
 
             modelBuilder.Entity<Employee>()
-                .HasMany(e => e.PurchaseOrders1)
+                .HasMany(e => e.ApprovalPurchaseOrders)
                 .WithOptional(e => e.ApprovalEmployee)
                 .HasForeignKey(e => e.ApprovalEmpNum);
 

@@ -19,7 +19,7 @@ namespace LUSSIS.Models
             Departments = new HashSet<Department>();
             Disbursements = new HashSet<Disbursement>();
             PurchaseOrders = new HashSet<PurchaseOrder>();
-            PurchaseOrders1 = new HashSet<PurchaseOrder>();
+            ApprovalPurchaseOrders = new HashSet<PurchaseOrder>();
             ApprovalRequisitions = new HashSet<Requisition>();
             Requisitions = new HashSet<Requisition>();
         }
@@ -78,7 +78,7 @@ namespace LUSSIS.Models
         public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PurchaseOrder> PurchaseOrders1 { get; set; }
+        public virtual ICollection<PurchaseOrder> ApprovalPurchaseOrders { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Requisition> ApprovalRequisitions { get; set; }
