@@ -11,15 +11,14 @@ namespace LUSSIS.Controllers
 {
     public class RequisitionController : Controller
     {
-        //private LUSSISContext db = new LUSSISContext();
+        private LUSSISContext db = new LUSSISContext();
         private RequisitionRepository rr = new RequisitionRepository();
-
         // GET: Requisition
-        public ActionResult Pending()
+        public ActionResult PendingRequisition()
         {
-            return View(rr.GetRequisitionsByStatus("pending"));
+            List<Requisition> PendingReq = rr.GetRequisitionsByStatus("pending");
+            return View(PendingReq);
         }
-
 
         public ActionResult Detail(int reqId)
         {
@@ -101,11 +100,6 @@ namespace LUSSIS.Controllers
             {
                 return View();
             }
-        }
-        //Stock Clerk's page
-        public ActionResult Consolidated()
-        {
-            return View(rr.GetConsolidatedRequisition());
         }
     }
 }
