@@ -4,34 +4,34 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Requisition.ApprovalRemarks)
+            @Html.DisplayNameFor(model => model.Stationery.Category)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Stationery.Description)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ItemNum)
+            @Html.DisplayName("UOM")
         </th>
-        <th></th>
+        <th>
+            @Html.DisplayName("Qty")
+        </th>
     </tr>
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Requisition.ApprovalRemarks)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stationery.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Stationery.Category.CategoryName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Stationery.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Quantity)
+        </td>
+    </tr>
     }
 
 </table> 
