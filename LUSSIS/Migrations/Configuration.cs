@@ -1,3 +1,5 @@
+using LUSSIS.Models;
+
 namespace LUSSIS.Migrations
 {
     using LUSSIS.DAL;
@@ -6,14 +8,14 @@ namespace LUSSIS.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<LUSSISContext>
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(ApplicationDbContext context)
+        protected override void Seed(LUSSISContext context)
         {
             //  This method will be called after migrating to the latest version.
 

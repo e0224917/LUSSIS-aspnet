@@ -217,6 +217,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801180213580_InitialCreate.cs" />
+    <Compile Include="Migrations\201801180213580_InitialCreate.Designer.cs">
+      <DependentUpon>201801180213580_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801180250558_AddRemark.cs" />
+    <Compile Include="Migrations\201801180250558_AddRemark.Designer.cs">
+      <DependentUpon>201801180250558_AddRemark.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801180255533_SpecifyEmp.cs" />
+    <Compile Include="Migrations\201801180255533_SpecifyEmp.Designer.cs">
+      <DependentUpon>201801180255533_SpecifyEmp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
@@ -352,6 +364,17 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201801180213580_InitialCreate.resx">
+      <DependentUpon>201801180213580_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801180250558_AddRemark.resx">
+      <DependentUpon>201801180250558_AddRemark.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801180255533_SpecifyEmp.resx">
+      <DependentUpon>201801180255533_SpecifyEmp.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
