@@ -11,7 +11,7 @@
 <body>
     <div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            @Html.ActionLink("LUSSIS", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -25,12 +25,13 @@
                     <li class="nav-item">@Html.ActionLink("Stock Adjustment", "History", "StockAdjustment", null, new { @class = "nav-link" })</li>
                     <li class="nav-item">@Html.ActionLink("Collection", "Index", "Collection", null, new { @class = "nav-link" })</li>
                     <li class="nav-item">@Html.ActionLink("Stock Adjustment", "CreateAdjustments", "StockAdjustment", null, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("Stationery", "Index" ,"Requisition",null, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("Requisition", "EmpReq" ,"Requisition",null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Stationery", "Index", "Requisition", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Requisition", "EmpReq", "Requisition", null, new { @class = "nav-link" })</li>
+
                 </ul>
-    @Html.Partial("_LoginPartial")
-    </div>
-    </div>
+                @Html.Partial("_LoginPartial")
+             </div>
+        </div>
     </div>
     <div class="container">
         @RenderBody()

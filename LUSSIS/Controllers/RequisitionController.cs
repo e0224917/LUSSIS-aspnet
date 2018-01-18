@@ -175,6 +175,7 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult Retrieve(DateTime? collectionDate)
         {
+            //TODO: pass the selected DateTime object to controller
             return View(rr.ArrangeRetrievalAndDisbursement(new DateTime()));
         }
 
