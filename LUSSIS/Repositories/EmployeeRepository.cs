@@ -19,10 +19,18 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Departments.First(y => y.DeptCode == employee.DeptCode);
         }
 
+        public IEnumerable<Employee> GetAllByDepartment(Department department)
+        {
+            return LUSSISContext.Employees.Where(z => z.DeptCode == department.DeptCode && z.JobTitle != "head");
+        }
+
         public void UpdateDepartment(Department department)
         {
             LUSSISContext.SaveChanges();
         }
+
+
+
         public Employee GetCurrentUser() {
             string userName = System.Web.HttpContext.Current.User.Identity.GetUserName();
             return GetEmployeeByEmail(userName);

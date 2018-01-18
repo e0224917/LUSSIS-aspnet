@@ -36,11 +36,7 @@ namespace LUSSIS.Controllers
             return View(mcdto);
         }
 
-        // GET: Collection/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+
 
         [HttpPost]
         public ActionResult UpdateCollection(ManageCollectionDTO mcdto)
