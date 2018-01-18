@@ -10,11 +10,13 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Controllers
 {
-    [Authorize]
+    
+[Authorize]
     public class CollectionController : Controller
     {
         DisbursementRepository disbursementRepo = new DisbursementRepository();
         EmployeeRepository employeeRepo = new EmployeeRepository();
+        Repository<CollectionPoint, int> repo = new Repository<CollectionPoint, int>();
 
         public ActionResult Index()
         {
@@ -31,6 +33,8 @@ namespace LUSSIS.Controllers
             string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
             mcdto.Disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
             mcdto.CollectionPoint = disbursementRepo.GetCollectionPointByDeptCode(employeeDept);
+            mcdto.GetAll = repo.GetAll();
+  
             return View(mcdto);
         }
 
