@@ -2,59 +2,66 @@
 @model IEnumerable<LUSSIS.Models.WebDTO.RetrievalItemDTO>
 
 @{
-    ViewBag.Title = "ConsolidatedRequisition";
+    ViewBag.Title = "Consolidated";
 }
+<h2>Consolidated Stationery Requisition</h2>
+@if (Model==null || !Model.Any())
+{
+    <div class="alert alert-dismissible alert-info">
+        <strong>Interesting...</strong> There is no requisition and remaining items to be viewed.
+    </div>
+}
+else
+{
+ <hr />
+ <nav class="navbar navbar-expand-lg navbar-light bg-light">
+     <div class="navbar-nav mr-auto"></div>
+@using (Html.BeginForm("Retrieve", "Requisition", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
+{
+    <span class="nav-item nav-link">Select a collection date for this disbursement </span>
+    <input type="date" class="form-control mr-sm-2" id="collectionDate" />
+    <button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button>
+    }
+</nav>
+<hr />
 
-<h2>ConsolidatedRequisition</h2>
-
-<table class="table table-hover">
+<table id="long-table" class="table table-hover">
     <thead>
-    <tr>
-
-        <th scope="col">
-            Bin Num
-        </th>
-        <th scope="col">
-            Stationery
-        </th>
-        <th scope="col">
-            UOM
-        </th>
-
-        <th scope="col">
-            Requested Qty*
-        </th>
-
-        <th scope="col">
-            Available Qty
-        </th>
-        <th></th>
-    </tr>
+        <tr>
+            <th scope="col">Bin Num</th>
+            <th scope="col">Stationery</th>
+            <th scope="col">UOM</th>
+            <th scope="col">Requested Qty*</th>
+            <th scope="col">Available Qty</th>
+            <th></th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
+        @foreach (var item in Model)
+        {
+            <tr>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.BinNum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnitOfMeasure)
-            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BinNum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitOfMeasure)
+                </td>
 
-            <td>
-                @(item.RequestedQty + item.RemainingQty)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AvailableQty)
-            </td>
+                <td>
+                    @(item.RequestedQty + item.RemainingQty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AvailableQty)
+                </td>
 
-        </tr>
-    }</tbody>
-    
+            </tr>
+            }
+    </tbody>
+
 </table>
-<p class="text-muted">*Unfullfilled Qty from previous disbursements has been added to Requested Qty</p>
+<small id="fileHelp" class="form-text text-muted">*Unfullfilled Qty from previous disbursements has been added to Requested Qty</small>
+}

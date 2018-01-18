@@ -349,6 +349,7 @@
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
     <Content Include="Views\Requisition\Consolidated.cshtml" />
     <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
+    <Content Include="Views\Requisition\Retrieve.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

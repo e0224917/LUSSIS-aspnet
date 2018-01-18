@@ -28,5 +28,14 @@ namespace LUSSIS.Models
         public virtual Disbursement Disbursement { get; set; }
 
         public virtual Stationery Stationery { get; set; }
+
+        public DisbursementDetail() { }
+        public DisbursementDetail(string itemNum, double? unitPrice, int? requestedQty, Stationery stationery)
+        {
+            ItemNum = itemNum;
+            UnitPrice = unitPrice;
+            RequestedQty = requestedQty;
+            Stationery = stationery;
+        }
     }
 }

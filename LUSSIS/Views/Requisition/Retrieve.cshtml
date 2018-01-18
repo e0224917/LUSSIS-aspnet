@@ -1,0 +1,57 @@
+﻿@model IEnumerable<LUSSIS.Models.WebDTO.RetrievalItemDTO>
+
+@{
+    ViewBag.Title = "Retrieval In Process";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Retrieval In Process</h2>
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-dismissible alert-info">
+        <strong>Interesting...</strong> There is no retrieval in process at the moment.
+    </div>
+}
+else
+{
+    <table id="long-table" class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Bin Num</th>
+                <th scope="col">Stationery</th>
+                <th scope="col">UOM</th>
+                <th scope="col">Requested Qty*</th>
+                <th scope="col">Available Qty</th>
+                <th scope="col">Adjust</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BinNum)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnitOfMeasure)
+                    </td>
+
+                    <td>
+                        @(item.RequestedQty + item.RemainingQty)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AvailableQty)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Adjust Stock", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new{ target="_blank", type="button", @class="btn btn-outline-primary" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+    <small id="fileHelp" class="form-text text-muted">*Unfullfilled Qty from previous disbursements has been added to Requested Qty</small>
+}
