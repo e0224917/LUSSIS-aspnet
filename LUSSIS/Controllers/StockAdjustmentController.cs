@@ -21,13 +21,12 @@ namespace LUSSIS.Controllers
         private StationeryRepository sr = new StationeryRepository();
         private StockAdjustmentRepository sar = new StockAdjustmentRepository();
         private EmployeeRepository er = new EmployeeRepository();
-        StockAdjustmentRepository repo = new StockAdjustmentRepository();
 
         // GET: StockAdjustment
         public async Task<ActionResult> Index()
         {
 
-            return View(await repo.GetAllAsync());
+            return View(await sar.GetAllAsync());
         }
         public async Task<ActionResult> History()
         {
@@ -43,7 +42,7 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            AdjVoucher adjVoucher = repo.GetById((int)id);
+            AdjVoucher adjVoucher = sar.GetById((int)id);
             if (adjVoucher == null)
             {
                 return HttpNotFound();
@@ -74,7 +73,7 @@ namespace LUSSIS.Controllers
 
         public ActionResult AdjustmentApproveReject()
         {
-            return View(repo.GetPendingAdjustmentList());
+            return View(sar.GetPendingAdjustmentList());
         }
 
 
@@ -224,4 +223,5 @@ namespace LUSSIS.Controllers
             }
 
         }
-
+    }
+}
