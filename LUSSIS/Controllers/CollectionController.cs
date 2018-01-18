@@ -10,31 +10,29 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Controllers
 {
-    
-[Authorize]
+
+[Authorize(Roles = "rep")]
     public class CollectionController : Controller
     {
         DisbursementRepository disbursementRepo = new DisbursementRepository();
         EmployeeRepository employeeRepo = new EmployeeRepository();
-        Repository<CollectionPoint, int> repo = new Repository<CollectionPoint, int>();
+        Repository<CollectionPoint, int> collectionRepo = new Repository<CollectionPoint, int>();
+ 
+        ManageCollectionDTO mcdto = new ManageCollectionDTO();
 
         public ActionResult Index()
         {
-            string userName = User.Identity.GetUserName();
-            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;          
+            string employeeDept = employeeRepo.GetCurrentUser().DeptCode;          
             Disbursement disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
             return View(disbursement);
         }
 
         public ActionResult SetCollection()
         {
-            ManageCollectionDTO mcdto = new ManageCollectionDTO();
-            string userName = User.Identity.GetUserName();
-            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
-            mcdto.Disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
+            string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
             mcdto.CollectionPoint = disbursementRepo.GetCollectionPointByDeptCode(employeeDept);
-            mcdto.GetAll = repo.GetAll();
-  
+            mcdto.GetAll = collectionRepo.GetAll();
+
             return View(mcdto);
         }
 
@@ -43,6 +41,21 @@ namespace LUSSIS.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public ActionResult UpdateCollection(ManageCollectionDTO mcdto)
+        {
+            if (ModelState.IsValid)
+            {
+                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
+                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+                department.CollectionPointId = mcdto.CollectionPoint.CollectionPointId;
+                employeeRepo.UpdateDepartment(department);
+            }
+            
+            return RedirectToAction("SetCollection");
+        }
+
 
         // POST: Collection/Create
         [HttpPost]

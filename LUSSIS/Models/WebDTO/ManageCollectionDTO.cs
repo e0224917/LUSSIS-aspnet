@@ -7,10 +7,17 @@ namespace LUSSIS.Models.WebDTO
 {
     public class ManageCollectionDTO
     {
-        public Disbursement Disbursement { get; set; }
+        public CollectionPoint CollectionPoint { get; set; }
 
-        public List<CollectionPoint> CollectionPoint { get; set; }
+        public string CollectionName
+        {
+            get
+            {
+                return CollectionName + "  ";
+            }
+        }
 
         public IEnumerable<CollectionPoint> GetAll { get; set; }
+
     }
 }

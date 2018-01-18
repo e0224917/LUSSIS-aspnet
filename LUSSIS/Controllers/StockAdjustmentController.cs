@@ -1,4 +1,7 @@
-﻿using System;
+﻿using LUSSIS.Models;
+using LUSSIS.Models.WebDTO;
+using LUSSIS.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,31 +18,36 @@ namespace LUSSIS.Controllers
     public class StockAdjustmentController : Controller
     {
         private LUSSISContext db = new LUSSISContext();
-        StockAdjustmentRepository repo = new StockAdjustmentRepository();
+        private StationeryRepository sr = new StationeryRepository();
+        private StockAdjustmentRepository sar = new StockAdjustmentRepository();
+        private EmployeeRepository er = new EmployeeRepository();
 
         // GET: StockAdjustment
         public async Task<ActionResult> Index()
         {
-            
-            return View(await repo.GetAllAsync());
+
+            return View(await sar.GetAllAsync());
         }
         public async Task<ActionResult> History()
         {
             return View(await db.AdjVouchers.ToListAsync());
         }
-       
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
         public ActionResult Approve(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            AdjVoucher adjVoucher = repo.GetById((int)id);
+            AdjVoucher adjVoucher = sar.GetById((int)id);
             if (adjVoucher == null)
             {
                 return HttpNotFound();
             }
-            
+
 
             ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.ApprovalEmpNum);
             ViewBag.RequestEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.RequestEmpNum);
@@ -65,26 +73,9 @@ namespace LUSSIS.Controllers
 
         public ActionResult AdjustmentApproveReject()
         {
-            return View(repo.GetPendingAdjustmentList());
+            return View(sar.GetPendingAdjustmentList());
         }
 
-      
-        
-
-        // GET: StockAdjustment/Details/5
-        public async Task<ActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AdjVoucher adjVoucher = await db.AdjVouchers.FindAsync(id);
-            if (adjVoucher == null)
-            {
-                return HttpNotFound();
-            }
-            return View(adjVoucher);
-        }
 
         // GET: StockAdjustment/Create
         public ActionResult Create()
@@ -185,6 +176,52 @@ namespace LUSSIS.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public ActionResult CreateAdjustments()
+        {
+            return View();
+
+        }
+
+        [HttpGet]
+        public ActionResult CreateAdjustment(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            else
+            {
+                AdjustmentVoucherDTO adj = new AdjustmentVoucherDTO();
+                adj.ItemNum = id;
+                adj.Stationery = sr.GetById(id);
+                return View(adj);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult CreateAdjustment([Bind(Include = "Quantity,Reason,ItemNum,Sign")]AdjustmentVoucherDTO adjVoucher)
+        {
+            if (ModelState.IsValid)
+            {
+                var adj = new AdjVoucher();
+                adj.RequestEmpNum = er.GetCurrentUser().EmpNum;
+                adj.ItemNum = adjVoucher.ItemNum;
+                adj.CreateDate = DateTime.Today;
+                if (adjVoucher.Sign == 1)
+                { adjVoucher.Quantity = adjVoucher.Quantity * -1; }
+                adj.Quantity = adjVoucher.Quantity;
+                adj.Reason = adjVoucher.Reason;
+                sar.Add(adj);
+                return RedirectToAction("index");
+            }
+            else
+            {
+                adjVoucher.Stationery = sr.GetById(adjVoucher.ItemNum);
+                return View(adjVoucher);
+            }
+
         }
     }
 }
