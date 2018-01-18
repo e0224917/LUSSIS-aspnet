@@ -171,5 +171,13 @@ namespace LUSSIS.Controllers
         {
             return View(rr.GetConsolidatedRequisition());
         }
+        //Stock Clerk click on generate button - post with date selected
+        [HttpPost]
+        public ActionResult Retrieve(DateTime? collectionDate)
+        {
+            return View(rr.ArrangeRetrievalAndDisbursement(new DateTime()));
+        }
+
+
     }
 }
