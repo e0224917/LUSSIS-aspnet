@@ -10,15 +10,8 @@ namespace LUSSIS.Repositories
     {
         public Employee GetEmployeeByEmail(string email)
         {
-            return LUSSISContext.Employees.Where(x => x.EmailAddress == email).First();
+            return LUSSISContext.Employees.First(x => x.EmailAddress == email);
         }
 
-        public LUSSISContext LUSSISContext
-        {
-            get
-            {
-                return Context as LUSSISContext;
-            }
-        }
     }
 }

@@ -93,12 +93,12 @@ namespace LUSSIS.Repositories
 
         public List<Requisition> GetRequisitionsByStatus(string status)
         {
-            return Context.Requisitions.Where(r => r.Status == status).ToList();
+            return LUSSISContext.Requisitions.Where(r => r.Status == status).ToList();
         }
 
         public List<RequisitionDetail> GetRequisitionDetailsByStatus(string status)
         {
-            return Context.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
+            return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
         }
 
         public List<DisbursementDetail> GetUnfullfilledDisDetailList()
