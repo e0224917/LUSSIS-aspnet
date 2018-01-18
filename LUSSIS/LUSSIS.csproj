@@ -208,6 +208,7 @@
     <Compile Include="Controllers\CollectionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\PurchaseOrdersController.cs" />
     <Compile Include="Controllers\RequisitionController.cs" />
     <Compile Include="Controllers\StockAdjustmentController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
@@ -242,6 +243,7 @@
     <Compile Include="Models\WebAPI\EmployeeDTO.cs" />
     <Compile Include="Models\WebAPI\StationeryDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
+    <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
@@ -332,6 +334,19 @@
     <Content Include="Views\Requisition\Detail.cshtml" />
     <Content Include="Views\Requisition\_Detail.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
+    <Content Include="Views\StockAdjustment\AdjustmentApproveReject.cshtml" />
+    <Content Include="Views\PurchaseOrders\Create.cshtml" />
+    <Content Include="Views\PurchaseOrders\Delete.cshtml" />
+    <Content Include="Views\PurchaseOrders\Details.cshtml" />
+    <Content Include="Views\PurchaseOrders\Edit.cshtml" />
+    <Content Include="Views\PurchaseOrders\Index.cshtml" />
+    <Content Include="Views\StockAdjustment\Create.cshtml" />
+    <Content Include="Views\StockAdjustment\Delete.cshtml" />
+    <Content Include="Views\StockAdjustment\Details.cshtml" />
+    <Content Include="Views\StockAdjustment\Edit.cshtml" />
+    <Content Include="Views\StockAdjustment\Index.cshtml" />
+    <Content Include="Views\StockAdjustment\Approve.cshtml" />
+    <Content Include="Views\StockAdjustment\ShowDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
