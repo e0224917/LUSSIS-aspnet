@@ -40,9 +40,9 @@ namespace LUSSIS.Models
 
         public int? ApprovalEmpNum { get; set; }
 
-        public virtual Employee Employee { get; set; }
+        public virtual Employee OrderEmployee { get; set; }
 
-        public virtual Employee Employee1 { get; set; }
+        public virtual Employee ApprovalEmployee { get; set; }
 
         public virtual Supplier Supplier { get; set; }
 

@@ -12,16 +12,16 @@ namespace LUSSIS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Employee()
         {
-            AdjVouchers = new HashSet<AdjVoucher>();
-            AdjVouchers1 = new HashSet<AdjVoucher>();
+            ApprovalAdjVouchers = new HashSet<AdjVoucher>();
+            RequestAdjVouchers = new HashSet<AdjVoucher>();
             CollectionPoints = new HashSet<CollectionPoint>();
             Delegates = new HashSet<Delegate>();
             Departments = new HashSet<Department>();
             Disbursements = new HashSet<Disbursement>();
             PurchaseOrders = new HashSet<PurchaseOrder>();
-            PurchaseOrders1 = new HashSet<PurchaseOrder>();
+            ApprovalPurchaseOrders = new HashSet<PurchaseOrder>();
+            ApprovalRequisitions = new HashSet<Requisition>();
             Requisitions = new HashSet<Requisition>();
-            Requisitions1 = new HashSet<Requisition>();
         }
 
         public string FullName
@@ -55,10 +55,10 @@ namespace LUSSIS.Models
         public string DeptCode { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AdjVoucher> AdjVouchers { get; set; }
+        public virtual ICollection<AdjVoucher> ApprovalAdjVouchers { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AdjVoucher> AdjVouchers1 { get; set; }
+        public virtual ICollection<AdjVoucher> RequestAdjVouchers { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CollectionPoint> CollectionPoints { get; set; }
@@ -78,12 +78,12 @@ namespace LUSSIS.Models
         public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PurchaseOrder> PurchaseOrders1 { get; set; }
+        public virtual ICollection<PurchaseOrder> ApprovalPurchaseOrders { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Requisition> ApprovalRequisitions { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Requisition> Requisitions { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Requisition> Requisitions1 { get; set; }
     }
 }
