@@ -6,28 +6,43 @@ using LUSSIS.Models;
 
 namespace LUSSIS.Repositories
 {
-    public class DisbursementRepository : Repository<Disbursement, string>
+    public class DisbursementRepository : Repository<Disbursement, int>
     {
         public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
-            return LUSSISContext.Disbursements.First(x => x.CollectionDate > nowDate && x.DeptCode == deptCode);
+            try
+            {
+                return LUSSISContext.Disbursements.First(x => x.CollectionDate > nowDate && x.DeptCode == deptCode);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public IEnumerable<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)
+        public CollectionPoint GetCollectionPointByDisbursement(Disbursement disbursement)
+        {
+            return LUSSISContext.CollectionPoints.First(y => y.CollectionPointId == disbursement.CollectionPointId);
+        }
+
+        public List<CollectionPoint> GetCollectionPointByDeptCode(string deptCode)
+        {
+            Department d = new Department();
+            d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
+            return LUSSISContext.CollectionPoints.Where(x => x.CollectionPointId == d.CollectionPointId).ToList();
+        }
+
+        public List<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)
         {
             return LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == disbursement.DisbursementId).ToList();
         }
-        public List<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
+        public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
         {
             return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status).ToList();
         }
-
-        public LUSSISContext LUSSISContext
+        public IEnumerable<DisbursementDetail> GetUnfullfilledDisDetailList()
         {
-            get
-            {
-                return Context as LUSSISContext;
-            }
+            return LUSSISContext.DisbursementDetails.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();
         }
     }
 }

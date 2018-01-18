@@ -17,9 +17,5 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Stationeries.Where(s => s.Category.CategoryName == category);
         }
 
-        public LUSSISContext LUSSISContext
-        {
-            get { return Context as LUSSISContext; }
-        }
     }
 }

@@ -3,41 +3,40 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - LUSSIS</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                    <li>@Html.ActionLink("Supplier", "Index", "Suppliers")</li>
-                    <li>@Html.ActionLink("Stock Adjustment", "History", "StockAdjustment")</li>
-                    <li>@Html.ActionLink("Collection", "Index", "Collection")</li>
-                    <li>@Html.ActionLink("Stock Adjustment", "CreateAdjustments", "StockAdjustment")</li>
+            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav">
+                    <li class="nav-item">@Html.ActionLink("Home", "Index", "Home", null, new{ @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("About", "About", "Home", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Contact", "Contact", "Home", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Supplier", "Index", "Suppliers", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Stock Adjustment", "History", "StockAdjustment", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Collection", "Index", "Collection", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Stock Adjustment", "CreateAdjustments", "StockAdjustment", null, new { @class = "nav-link" })</li>
                 </ul>
-                @Html.Partial("_LoginPartial")
-            </div>
-        </div>
+    @Html.Partial("_LoginPartial")
     </div>
-    <div class="container body-content">
+    </div>
+    </div>
+    <div class="container">
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+    </div>
+    <div class="container">
+        <footer class="text-muted">
+            <p>&copy; @DateTime.Now.Year - LUSSIS By Sa45Team7</p>
         </footer>
     </div>
 

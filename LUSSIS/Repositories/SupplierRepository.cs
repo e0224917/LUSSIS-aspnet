@@ -14,9 +14,5 @@ namespace LUSSIS.Repositories
         {
         }
 
-        public LUSSISContext LUSSISContext
-        {
-            get { return Context as LUSSISContext; }
-        }
     }
 }

@@ -43,48 +43,48 @@ namespace LUSSIS.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Employee>()
-                .HasMany(e => e.AdjVouchers)
-                .WithOptional(e => e.Employee)
+                .HasMany(e => e.ApprovalAdjVouchers)
+                .WithOptional(e => e.ApprovalEmployee)
                 .HasForeignKey(e => e.ApprovalEmpNum);
 
             modelBuilder.Entity<Employee>()
-                .HasMany(e => e.AdjVouchers1)
-                .WithOptional(e => e.Employee1)
+                .HasMany(e => e.RequestAdjVouchers)
+                .WithOptional(e => e.RequestEmployee)
                 .HasForeignKey(e => e.RequestEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.CollectionPoints)
-                .WithOptional(e => e.Employee)
+                .WithOptional(e => e.InChargeEmployee)
                 .HasForeignKey(e => e.InChargeEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Departments)
-                .WithOptional(e => e.Employee)
+                .WithOptional(e => e.RepEmployee)
                 .HasForeignKey(e => e.RepEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Disbursements)
-                .WithOptional(e => e.Employee)
+                .WithOptional(e => e.AcknowledgeEmployee)
                 .HasForeignKey(e => e.AcknowledgeEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.PurchaseOrders)
-                .WithOptional(e => e.Employee)
+                .WithOptional(e => e.OrderEmployee)
                 .HasForeignKey(e => e.OrderEmpNum);
 
             modelBuilder.Entity<Employee>()
-                .HasMany(e => e.PurchaseOrders1)
-                .WithOptional(e => e.Employee1)
+                .HasMany(e => e.ApprovalPurchaseOrders)
+                .WithOptional(e => e.ApprovalEmployee)
                 .HasForeignKey(e => e.ApprovalEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Requisitions)
-                .WithOptional(e => e.Employee)
+                .WithOptional(e => e.ApprovalEmployee)
                 .HasForeignKey(e => e.ApprovalEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Requisitions1)
-                .WithOptional(e => e.Employee1)
+                .WithOptional(e => e.RequisitionEmployee)
                 .HasForeignKey(e => e.RequisitionEmpNum);
 
             modelBuilder.Entity<PurchaseOrder>()

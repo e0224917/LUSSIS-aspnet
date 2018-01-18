@@ -1,4 +1,6 @@
-﻿using LUSSIS.Repositories;
+﻿using LUSSIS.Models;
+using LUSSIS.Models.WebDTO;
+using LUSSIS.Repositories;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -8,24 +10,32 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Controllers
 {
-    [Authorize]
+    
+[Authorize]
     public class CollectionController : Controller
     {
         DisbursementRepository disbursementRepo = new DisbursementRepository();
         EmployeeRepository employeeRepo = new EmployeeRepository();
+        Repository<CollectionPoint, int> repo = new Repository<CollectionPoint, int>();
 
-        // GET: Collection
         public ActionResult Index()
         {
             string userName = User.Identity.GetUserName();
-            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
-            return View(disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept));
+            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;          
+            Disbursement disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
+            return View(disbursement);
         }
 
-        // GET: Collection/Details/5
-        public ActionResult Details(int id)
+        public ActionResult SetCollection()
         {
-            return View();
+            ManageCollectionDTO mcdto = new ManageCollectionDTO();
+            string userName = User.Identity.GetUserName();
+            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
+            mcdto.Disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
+            mcdto.CollectionPoint = disbursementRepo.GetCollectionPointByDeptCode(employeeDept);
+            mcdto.GetAll = repo.GetAll();
+  
+            return View(mcdto);
         }
 
         // GET: Collection/Create
