@@ -78,12 +78,12 @@ namespace LUSSIS.Models
                 .HasForeignKey(e => e.ApprovalEmpNum);
 
             modelBuilder.Entity<Employee>()
-                .HasMany(e => e.ApprovalRequisitions)
+                .HasMany(e => e.Requisitions)
                 .WithOptional(e => e.ApprovalEmployee)
                 .HasForeignKey(e => e.ApprovalEmpNum);
 
             modelBuilder.Entity<Employee>()
-                .HasMany(e => e.Requisitions)
+                .HasMany(e => e.Requisitions1)
                 .WithOptional(e => e.RequisitionEmployee)
                 .HasForeignKey(e => e.RequisitionEmpNum);
 

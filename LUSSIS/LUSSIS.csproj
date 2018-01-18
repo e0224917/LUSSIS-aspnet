@@ -208,6 +208,7 @@
     <Compile Include="Controllers\CollectionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\PurchaseOrdersController.cs" />
     <Compile Include="Controllers\RequisitionController.cs" />
     <Compile Include="Controllers\StockAdjustmentController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
@@ -228,6 +229,18 @@
     <Compile Include="Migrations\201801180255533_SpecifyEmp.cs" />
     <Compile Include="Migrations\201801180255533_SpecifyEmp.Designer.cs">
       <DependentUpon>201801180255533_SpecifyEmp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801180619110_UpdateFix1.cs" />
+    <Compile Include="Migrations\201801180619110_UpdateFix1.Designer.cs">
+      <DependentUpon>201801180619110_UpdateFix1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801180634346_AddIdentity.cs" />
+    <Compile Include="Migrations\201801180634346_AddIdentity.Designer.cs">
+      <DependentUpon>201801180634346_AddIdentity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801180649294_Changes.cs" />
+    <Compile Include="Migrations\201801180649294_Changes.Designer.cs">
+      <DependentUpon>201801180649294_Changes.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
@@ -255,6 +268,7 @@
     <Compile Include="Models\WebAPI\StationeryDTO.cs" />
     <Compile Include="Models\WebDTO\ManageCollectionDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
+    <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
@@ -343,14 +357,23 @@
     <Content Include="Views\StockAdjustment\CreateAdjustments.cshtml" />
     <Content Include="Views\StockAdjustment\_CreateAdjustments.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
-    <Content Include="Views\Requisition\Pending.cshtml" />
     <Content Include="Views\Requisition\Detail.cshtml" />
     <Content Include="Views\Requisition\_Detail.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
+    <Content Include="Views\StockAdjustment\AdjustmentApproveReject.cshtml" />
+    <Content Include="Views\PurchaseOrders\Create.cshtml" />
+    <Content Include="Views\PurchaseOrders\Delete.cshtml" />
+    <Content Include="Views\PurchaseOrders\Details.cshtml" />
+    <Content Include="Views\PurchaseOrders\Edit.cshtml" />
+    <Content Include="Views\PurchaseOrders\Index.cshtml" />
+    <Content Include="Views\StockAdjustment\Index.cshtml" />
+    <Content Include="Views\StockAdjustment\Approve.cshtml" />
+    <Content Include="Views\StockAdjustment\ShowDialog.cshtml" />
+    <Content Include="Views\Collection\SetCollection.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
+    <Content Include="Views\Requisition\Pending.cshtml" />
     <Content Include="Views\Requisition\Consolidated.cshtml" />
     <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
-    <Content Include="Views\Collection\SetCollection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -377,6 +400,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801180255533_SpecifyEmp.resx">
       <DependentUpon>201801180255533_SpecifyEmp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801180619110_UpdateFix1.resx">
+      <DependentUpon>201801180619110_UpdateFix1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801180634346_AddIdentity.resx">
+      <DependentUpon>201801180634346_AddIdentity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801180649294_Changes.resx">
+      <DependentUpon>201801180649294_Changes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

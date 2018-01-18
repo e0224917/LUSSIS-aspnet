@@ -45,5 +45,6 @@ namespace LUSSIS.Models
         public virtual Employee RequestEmployee { get; set; }
 
         public virtual Stationery Stationery { get; set; }
+
     }
 }

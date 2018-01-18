@@ -1,23 +1,24 @@
 ﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
 
 @{
-    ViewBag.Title = "History";
+    ViewBag.Title = "Index";
 }
 
-<h2>History</h2>
+<h2>Index</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
-
 </p>
-@Html.ActionLink("Adjustment", "AdjustmentApproveReject")
+<p>
+    @Html.ActionLink("Adjustment", "AdjustmentApproveReject")
+</p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CreateDate)
+            @Html.DisplayNameFor(model => model.Employee.Title)
         </th>
         <th>
-            @Html.DisplayName("Applied by")
+            @Html.DisplayNameFor(model => model.Employee1.Title)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Stationery.Description)
@@ -29,6 +30,12 @@
             @Html.DisplayNameFor(model => model.Reason)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ApprovalDate)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Status)
         </th>
         <th>
@@ -37,14 +44,13 @@
         <th></th>
     </tr>
 
-    @foreach (var item in Model)
-    {
+@foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.CreateDate)
+            @Html.DisplayFor(modelItem => item.Employee.Title)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Employee1.FullName)
+            @Html.DisplayFor(modelItem => item.Employee1.Title)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Stationery.Description)
@@ -56,16 +62,23 @@
             @Html.DisplayFor(modelItem => item.Reason)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.CreateDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ApprovalDate)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.Status)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Remark)
         </td>
         <td>
-            @Html.ActionLink("Approve", "Edit", new { id = item.AdjVoucherId }) |
-            @Html.ActionLink("Reject", "Details", new { id = item.AdjVoucherId }) |
+            @Html.ActionLink("Edit", "Edit", new { id=item.AdjVoucherId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.AdjVoucherId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.AdjVoucherId })
         </td>
     </tr>
-    }
+}
 
 </table>

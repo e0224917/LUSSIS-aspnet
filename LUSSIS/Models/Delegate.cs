@@ -9,6 +9,7 @@ namespace LUSSIS.Models
     [Table("Delegate")]
     public partial class Delegate
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DelegateId { get; set; }
 
         public int? EmpNum { get; set; }

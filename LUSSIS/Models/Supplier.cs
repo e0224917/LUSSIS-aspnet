@@ -16,7 +16,7 @@ namespace LUSSIS.Models
             StationerySuppliers = new HashSet<StationerySupplier>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SupplierId { get; set; }
 
         [StringLength(50)]
