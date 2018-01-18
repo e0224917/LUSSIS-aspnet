@@ -115,7 +115,14 @@ namespace LUSSIS.Repositories
                 RemainingQty = 0
             };
         }
-        
+        public IEnumerable<Requisition> GetRequisitionByEmpNum(int EmpNum)
+        {
+            return LUSSISContext.Requisitions.Where(s => s.RequisitionEmployee.EmpNum == EmpNum);
+        }
+        public IEnumerable<RequisitionDetail> GetRequisitionDetail(int RequisitionId)
+        {
+            return LUSSISContext.RequisitionDetails.Where(s => s.RequisitionId == RequisitionId);
+        }
     }
 
     

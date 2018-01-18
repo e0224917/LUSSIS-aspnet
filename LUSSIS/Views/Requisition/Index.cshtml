@@ -1,0 +1,56 @@
+﻿@model PagedList.IPagedList <LUSSIS.Models.Stationery>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    
+}
+
+<h2>Stationery</h2>
+@using (Html.BeginForm())
+{
+    <p>
+        Find By Description: @Html.TextBox("SearchString")
+        <input type="submit" value="Search" />
+    </p>
+}
+<p>
+
+</p>
+<table class="table table-striped">
+    <tr>
+        <th>
+            Description
+        </th>
+        <th>
+            UOM
+        </th>
+        <th>
+            Order Quantity
+        <th>
+            Manage
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnitOfMeasure)                
+            </td>
+
+            <td>
+                <input type="number" name="qty" min="0" max="1000">
+            </td>
+            <td>
+                <input type="submit" value="Add To Cart" />
+            </td>
+        </tr>
+    }
+
+</table>
+Page @(Model.PageCount<Model.PageNumber?0:Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model,page=>Url.Action("Index",new { page,currentFilter=ViewBag.CurrentFilter}))
+

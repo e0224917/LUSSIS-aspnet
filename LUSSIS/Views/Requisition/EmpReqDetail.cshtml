@@ -1,0 +1,46 @@
+﻿@model IEnumerable<LUSSIS.Models.RequisitionDetail>
+
+@{
+    ViewBag.Title = "EmpReqDetail";
+    
+}
+
+<h2>Requisition Detail</h2>
+
+<p>
+
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Stationery Item
+        </th>
+        <th>
+            UOM
+        </th>
+        <th>
+            Quantity
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stationery.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+
