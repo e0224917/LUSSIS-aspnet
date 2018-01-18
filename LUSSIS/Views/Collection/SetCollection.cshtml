@@ -2,7 +2,7 @@
 
 <h2>Manage Collection Point</h2>
 
-<table class="table" col-width="100px">
+<table class="table">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
@@ -14,29 +14,37 @@
     <tr>
 
         <td>
-            @if (Model.Disbursement != null)
-            {
 
-                @Html.DisplayFor(model => model.Disbursement.CollectionPoint.CollectionName)
-            }
-            else
-            {
                 @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
-            }
 
         </td>
         <td>
-            @if (Model.Disbursement != null)
-            {
-                @Html.DisplayFor(model => model.Disbursement.CollectionPoint.CollectionName)
-            }
-            else
-            {
                 @Html.DisplayFor(model => model.CollectionPoint.Time)
-            }
+
         </td>
     </tr>
 </table>
+@using (Html.BeginForm("UpdateCollection", "Collection", FormMethod.Post))
+{
+
+    foreach (var item in Model.GetAll)
+    {
+
+<tr>
+
+    @Html.RadioButtonFor(m => m.CollectionPoint.CollectionPointId, item.CollectionPointId, 
+    item.CollectionName == Model.CollectionPoint.CollectionName? new { @checked = "checked" } : null)
+    @item.CollectionName
+    @item.Time
+</tr>
+        <br />
+    }
+
+    <br />
+    <input type="submit" value="Submit" />
+
+}
+
 <style type="text/css">
     td {
         width: 2%;

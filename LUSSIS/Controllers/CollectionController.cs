@@ -10,11 +10,15 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Controllers
 {
-    [Authorize]
+    
+[Authorize]
     public class CollectionController : Controller
     {
         DisbursementRepository disbursementRepo = new DisbursementRepository();
         EmployeeRepository employeeRepo = new EmployeeRepository();
+        Repository<CollectionPoint, int> collectionRepo = new Repository<CollectionPoint, int>();
+        Repository<Department, string> departmentRepo = new Repository<Department, string>();
+        ManageCollectionDTO mcdto = new ManageCollectionDTO();
 
         public ActionResult Index()
         {
@@ -26,11 +30,11 @@ namespace LUSSIS.Controllers
 
         public ActionResult SetCollection()
         {
-            ManageCollectionDTO mcdto = new ManageCollectionDTO();
             string userName = User.Identity.GetUserName();
             string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
-            mcdto.Disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
             mcdto.CollectionPoint = disbursementRepo.GetCollectionPointByDeptCode(employeeDept);
+            mcdto.GetAll = collectionRepo.GetAll();
+
             return View(mcdto);
         }
 
@@ -39,6 +43,22 @@ namespace LUSSIS.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public ActionResult UpdateCollection(ManageCollectionDTO mcdto)
+        {
+            if (ModelState.IsValid)
+            {
+                string userName = User.Identity.GetUserName();
+                string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
+                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetEmployeeByEmail(userName));
+                department.CollectionPointId = mcdto.CollectionPoint.CollectionPointId;
+                employeeRepo.UpdateDepartment(department);
+            }
+            
+            return RedirectToAction("SetCollection");
+        }
+
 
         // POST: Collection/Create
         [HttpPost]
