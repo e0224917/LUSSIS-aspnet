@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using LUSSIS.Models;
@@ -13,14 +14,14 @@ namespace LUSSIS.Repositories
 
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
-        DisbursementRepository disRepo = new DisbursementRepository();
+        private readonly DisbursementRepository disRepo = new DisbursementRepository();
 
         //consolidate requisition details(group by item) + disbursement table status = disbursement details(group by item)
         public List<RetrievalItemDTO> GetConsolidatedRequisition()
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
             ConsolidateRequisitionQty(itemsToRetrieve, GetRequisitionDetailsByStatus("approved"));
-            ConsolidateRemainingQty(itemsToRetrieve, GetUnfullfilledDisDetailList());
+            ConsolidateRemainingQty(itemsToRetrieve, disRepo.GetUnfullfilledDisDetailList());
             return itemsToRetrieve;
         }
 
@@ -100,13 +101,7 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
         }
-
-        public List<DisbursementDetail> GetUnfullfilledDisDetailList()
-        {
-            List<DisbursementDetail> unfullfilledDisList = disRepo.GetDisbursementDetailsByStatus("unfullfilled");
-            return unfullfilledDisList.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();
-        }
-
+       
         //public as might need it in Disbursement later
         public RetrievalItemDTO convertStatoDTO(Stationery s)
         {
@@ -121,6 +116,8 @@ namespace LUSSIS.Repositories
                 RemainingQty = 0
             };
         }
-
+        
     }
+
+    
 }

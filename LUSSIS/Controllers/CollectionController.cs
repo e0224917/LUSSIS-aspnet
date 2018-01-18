@@ -1,4 +1,6 @@
-﻿using LUSSIS.Repositories;
+﻿using LUSSIS.Models;
+using LUSSIS.Models.WebDTO;
+using LUSSIS.Repositories;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -14,12 +16,12 @@ namespace LUSSIS.Controllers
         DisbursementRepository disbursementRepo = new DisbursementRepository();
         EmployeeRepository employeeRepo = new EmployeeRepository();
 
-        // GET: Collection
         public ActionResult Index()
         {
             string userName = User.Identity.GetUserName();
-            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
-            return View(disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept));
+            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;          
+            Disbursement disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
+            return View(disbursement);
         }
 
         // GET: Collection/Details/5
