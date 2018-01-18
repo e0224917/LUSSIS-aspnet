@@ -24,10 +24,14 @@ namespace LUSSIS.Controllers
             return View(disbursement);
         }
 
-        // GET: Collection/Details/5
-        public ActionResult Details(int id)
+        public ActionResult SetCollection()
         {
-            return View();
+            ManageCollectionDTO mcdto = new ManageCollectionDTO();
+            string userName = User.Identity.GetUserName();
+            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
+            mcdto.Disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
+            mcdto.CollectionPoint = disbursementRepo.GetCollectionPointByDeptCode(employeeDept);
+            return View(mcdto);
         }
 
         // GET: Collection/Create

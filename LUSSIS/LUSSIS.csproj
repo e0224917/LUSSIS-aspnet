@@ -241,6 +241,7 @@
     <Compile Include="Models\Supplier.cs" />
     <Compile Include="Models\WebAPI\EmployeeDTO.cs" />
     <Compile Include="Models\WebAPI\StationeryDTO.cs" />
+    <Compile Include="Models\WebDTO\ManageCollectionDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
@@ -333,6 +334,7 @@
     <Content Include="Views\Requisition\_Detail.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
+    <Content Include="Views\Collection\SetCollection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
