@@ -22,12 +22,5 @@ namespace LUSSIS.Repositories
             return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status).ToList();
         }
 
-        public LUSSISContext LUSSISContext
-        {
-            get
-            {
-                return Context as LUSSISContext;
-            }
-        }
     }
 }

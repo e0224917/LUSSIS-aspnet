@@ -19,6 +19,7 @@ namespace LUSSIS.Controllers.WebAPI
         private LUSSISContext db = new LUSSISContext();
 
         [HttpGet]
+        [AllowAnonymous]
         [ResponseType(typeof(string))]
         public string TestAuth()
         {
@@ -26,6 +27,7 @@ namespace LUSSIS.Controllers.WebAPI
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ResponseType(typeof(EmployeeDTO))]
         public async Task<IHttpActionResult> Login(LoginViewModel model)
         {

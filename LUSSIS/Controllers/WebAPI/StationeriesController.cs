@@ -22,19 +22,14 @@ namespace LUSSIS.Controllers.WebAPI
         // GET: api/Stationeries
         public IEnumerable<StationeryDTO> GetStationeries()
         {
-            var list = repo.GetAll();
-            var result = new List<StationeryDTO>();
-            foreach (Stationery item in list)
-            {
-                result.Add(new StationeryDTO()
+            return repo.GetAll().Select(item => new StationeryDTO()
                 {
                     ItemNum = item.ItemNum,
                     BinNum = item.BinNum,
                     AvailableQty = item.AvailableQty,
-                    CurrentQty =item.CurrentQty
-                });
-            }
-            return result;
+                    CurrentQty = item.CurrentQty
+                })
+                .ToList();
         }
 
         // GET: api/Stationeries/C001

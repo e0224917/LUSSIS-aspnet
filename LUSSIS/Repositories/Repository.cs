@@ -10,72 +10,72 @@ namespace LUSSIS.Repositories
 {
     public class Repository<TEntity, ID> : IRepository<TEntity, ID> where TEntity : class
     {
-        protected readonly LUSSISContext Context;
+        protected readonly LUSSISContext LUSSISContext;
 
         public Repository()
         {
-            Context = new LUSSISContext();
+            LUSSISContext = new LUSSISContext();
         }
 
         public void Add(TEntity entity)
         {
-            Context.Set<TEntity>().Add(entity);
-            Context.SaveChanges();
+            LUSSISContext.Set<TEntity>().Add(entity);
+            LUSSISContext.SaveChanges();
         }
 
         public async Task<int> AddAsync(TEntity entity)
         {
-            Context.Set<TEntity>().Add(entity);
-            return await Context.SaveChangesAsync();
+            LUSSISContext.Set<TEntity>().Add(entity);
+            return await LUSSISContext.SaveChangesAsync();
         }
 
         public void Delete(TEntity entity)
         {
-            Context.Set<TEntity>().Remove(entity);
-            Context.SaveChanges();
+            LUSSISContext.Set<TEntity>().Remove(entity);
+            LUSSISContext.SaveChanges();
         }
 
         public async Task<int> DeleteAsync(TEntity entity)
         {
-            Context.Set<TEntity>().Remove(entity);
-            return await Context.SaveChangesAsync();
+            LUSSISContext.Set<TEntity>().Remove(entity);
+            return await LUSSISContext.SaveChangesAsync();
         }
 
         public IEnumerable<TEntity> GetAll()
         {
-            return Context.Set<TEntity>();
+            return LUSSISContext.Set<TEntity>();
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await Context.Set<TEntity>().ToListAsync();
+            return await LUSSISContext.Set<TEntity>().ToListAsync();
         }
 
         public TEntity GetById(ID id)
         {
-            return Context.Set<TEntity>().Find(id);
+            return LUSSISContext.Set<TEntity>().Find(id);
         }
 
         public async Task<TEntity> GetByIdAsync(ID id)
         {
-            return await Context.Set<TEntity>().FindAsync(id);
+            return await LUSSISContext.Set<TEntity>().FindAsync(id);
         }
 
         public void Update(TEntity entity)
         {
-            Context.Entry(entity).State = EntityState.Modified;
-            Context.SaveChanges();
+            LUSSISContext.Entry(entity).State = EntityState.Modified;
+            LUSSISContext.SaveChanges();
         }
 
         public async Task<int> UpdateAsync(TEntity entity)
         {
-            Context.Entry(entity).State = EntityState.Modified;
-            return await Context.SaveChangesAsync();
+            LUSSISContext.Entry(entity).State = EntityState.Modified;
+            return await LUSSISContext.SaveChangesAsync();
         }
 
         public void Dispose()
         {
-            Context.Dispose();
+            LUSSISContext.Dispose();
         }
     }
 }
