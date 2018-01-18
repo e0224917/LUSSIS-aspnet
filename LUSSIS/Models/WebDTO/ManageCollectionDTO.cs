@@ -9,6 +9,14 @@ namespace LUSSIS.Models.WebDTO
     {
         public CollectionPoint CollectionPoint { get; set; }
 
+        public string CollectionName
+        {
+            get
+            {
+                return CollectionName + "  ";
+            }
+        }
+
         public IEnumerable<CollectionPoint> GetAll { get; set; }
 
     }

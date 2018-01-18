@@ -1,5 +1,9 @@
 ﻿@model LUSSIS.Models.WebDTO.ManageCollectionDTO
 
+@{
+    ViewBag.Title = "Manage Collection Point";
+}
+
 <h2>Manage Collection Point</h2>
 
 <table class="table">
@@ -7,36 +11,37 @@
         <th>
             @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
         </th>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.CollectionPoint.Time)
-        </th>
+        </th>*@
     </tr>
     <tr>
 
         <td>
 
-                @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
+            @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
 
-        </td>
-        <td>
-                @Html.DisplayFor(model => model.CollectionPoint.Time)
+        @*</td>
+        <td>*@
+            @Html.DisplayFor(model => model.CollectionPoint.Time)
 
         </td>
     </tr>
 </table>
+<hr />
 @using (Html.BeginForm("UpdateCollection", "Collection", FormMethod.Post))
 {
 
     foreach (var item in Model.GetAll)
     {
 
-<tr>
+        <tr>
 
-    @Html.RadioButtonFor(m => m.CollectionPoint.CollectionPointId, item.CollectionPointId, 
-    item.CollectionName == Model.CollectionPoint.CollectionName? new { @checked = "checked" } : null)
-    @item.CollectionName
-    @item.Time
-</tr>
+            @Html.RadioButtonFor(m => m.CollectionPoint.CollectionPointId, item.CollectionPointId,
+                item.CollectionName == Model.CollectionPoint.CollectionName ? new { @checked = "checked" } : null)
+            @item.CollectionName
+            @item.Time
+        </tr>
         <br />
     }
 
@@ -44,6 +49,8 @@
     <input type="submit" value="Submit" />
 
 }
+<br />
+<iframe src="https://snazzymaps.com/embed/41737" width="1200" height="500" style="border:none;"></iframe>
 
 <style type="text/css">
     td {

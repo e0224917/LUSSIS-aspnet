@@ -22,16 +22,14 @@ namespace LUSSIS.Controllers
 
         public ActionResult Index()
         {
-            string userName = User.Identity.GetUserName();
-            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;          
+            string employeeDept = employeeRepo.GetCurrentUser().DeptCode;          
             Disbursement disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
             return View(disbursement);
         }
 
         public ActionResult SetCollection()
         {
-            string userName = User.Identity.GetUserName();
-            string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
+            string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
             mcdto.CollectionPoint = disbursementRepo.GetCollectionPointByDeptCode(employeeDept);
             mcdto.GetAll = collectionRepo.GetAll();
 
