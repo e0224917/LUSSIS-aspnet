@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "EmpCart";
+   
+}
+
+
+<h2>Requisition Cart</h2>
+
+<p>
+    <input type="submit" value="Submit Requisition" />
+    <input type="text">
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Stationery Item
+        </th>
+        <th>
+            UOM
+        </th>
+        <th>
+            Quantity
+        </th>
+        <th>
+            Delete
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr></tr>
+    }
+
+</table>
+
+
+
+
+
+

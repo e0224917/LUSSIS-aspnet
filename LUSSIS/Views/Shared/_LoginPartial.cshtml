@@ -1,16 +1,28 @@
 ﻿@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.Owin
+
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
-    @Html.AntiForgeryToken()
+        @Html.AntiForgeryToken()
 
-    <ul class="nav navbar-nav navbar-right">
-        <li>
-            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage Account", @class = "nav-link" })
-        </li>
-        <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-    </ul>
+        <ul class="nav navbar-nav navbar-right">
+            @{
+                var userManager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                var roles = userManager.GetRoles(User.Identity.GetUserId());
+            }
+            @if (roles.Contains("staff"))
+            {
+                <li>
+                    @Html.ActionLink("My Cart (" + (Session["MyCart"] as ShoppingCart).GetCartItemCount() + ")", "EmpCart")
+                </li>
+            }
+            <li>
+                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new {title = "Manage Account", @class = "nav-link"})
+            </li>
+            <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+        </ul>
     }
 }
 else

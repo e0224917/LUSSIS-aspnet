@@ -16,6 +16,19 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Stationeries.Where(s => s.Category.CategoryName == category);
         }
-
+        public IEnumerable<Stationery> GetByDescription(string Description)
+        {
+            return LUSSISContext.Stationeries.Where(s => s.Description.Contains(Description));
+        }
+        public IEnumerable<String> GetAllCategory()
+        {
+            List<String> slist = new List<string>();
+            List<Category> clist = LUSSISContext.Categories.ToList();
+            foreach (Category c in clist)
+            {
+                slist.Add(c.CategoryName);
+            }
+            return slist;
+        }
     }
 }

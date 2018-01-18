@@ -13,12 +13,26 @@ namespace LUSSIS.Repositories
     {
                 public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
-            return LUSSISContext.Disbursements.First(x => x.CollectionDate > nowDate && x.DeptCode == deptCode);
+            try
+            {
+                return LUSSISContext.Disbursements.First(x => x.CollectionDate > nowDate && x.DeptCode == deptCode);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public CollectionPoint GetCollectionPointByDisbursement(Disbursement disbursement)
         {
             return LUSSISContext.CollectionPoints.First(y => y.CollectionPointId == disbursement.CollectionPointId);
+        }
+
+        public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
+        {
+            Department d = new Department();
+            d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
+            return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == d.CollectionPointId);
         }
 
         public List<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)

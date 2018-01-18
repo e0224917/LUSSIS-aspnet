@@ -15,6 +15,7 @@ namespace LUSSIS.Models
         }
 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ReceiveId { get; set; }
 
         public int? PoNum { get; set; }

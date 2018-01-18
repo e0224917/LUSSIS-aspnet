@@ -15,6 +15,7 @@ namespace LUSSIS.Models
             RequisitionDetails = new HashSet<RequisitionDetail>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequisitionId { get; set; }
 
         public int? RequisitionEmpNum { get; set; }
@@ -36,10 +37,8 @@ namespace LUSSIS.Models
         [StringLength(20)]
         public string Status { get; set; }
 
-        [ForeignKey("ApprovalEmpNum")]
         public virtual Employee ApprovalEmployee { get; set; }
 
-        [ForeignKey("RequisitionEmpNum")]
         public virtual Employee RequisitionEmployee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
