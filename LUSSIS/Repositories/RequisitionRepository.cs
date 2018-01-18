@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using LUSSIS.Models;
@@ -13,21 +14,21 @@ namespace LUSSIS.Repositories
 
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
-        DisbursementRepository disRepo = new DisbursementRepository();
+        private readonly DisbursementRepository disRepo = new DisbursementRepository();
 
         //consolidate requisition details(group by item) + disbursement table status = disbursement details(group by item)
-        public List<RetrievalItemDTO> GetConsolidatedRequisition()
+        public IEnumerable<RetrievalItemDTO> GetConsolidatedRequisition()
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
             ConsolidateRequisitionQty(itemsToRetrieve, GetRequisitionDetailsByStatus("approved"));
-            ConsolidateRemainingQty(itemsToRetrieve, GetUnfullfilledDisDetailList());
+            ConsolidateRemainingQty(itemsToRetrieve, disRepo.GetUnfullfilledDisDetailList());
             return itemsToRetrieve;
         }
 
         /*
          * helper method to consolidate requisitions for one item into one RetrievalItemDTO
         */
-        private void ConsolidateRequisitionQty(List<RetrievalItemDTO> targetRetreivalList, List<RequisitionDetail> requisitionDetailList)
+        private void ConsolidateRequisitionQty(List<RetrievalItemDTO> targetRetreivalList, IEnumerable<RequisitionDetail> requisitionDetailList)
         {
             //group RequisitionDetail list by item: e.g.: List<ReqDetail>-for-pen, List<ReqDetail>-for-Paper, and store these lists in List:
             List<List<RequisitionDetail>> groupedReqList = requisitionDetailList.GroupBy(rd=>rd.ItemNum).Select(grp=>grp.ToList()).ToList();
@@ -48,7 +49,7 @@ namespace LUSSIS.Repositories
         /*
          * helper method to consolidate unfullfilled Disbursements for one item into one RetrievalItemDTO
         */
-        private void ConsolidateRemainingQty(List<RetrievalItemDTO> targetRetreivalList, List<DisbursementDetail> unfullfilledDisDetailList)
+        private void ConsolidateRemainingQty(List<RetrievalItemDTO> targetRetreivalList, IEnumerable<DisbursementDetail> unfullfilledDisDetailList)
         {
             List<List<DisbursementDetail>> groupedDisList = unfullfilledDisDetailList.GroupBy(rd => rd.ItemNum).Select(grp => grp.ToList()).ToList();
 
@@ -60,8 +61,7 @@ namespace LUSSIS.Repositories
 
                 foreach (DisbursementDetail dd in perItemDisList)
                 {
-                    //dto.RequestedQty += dd.RequestedQty - dd.ActualQty;
-                    dto.RequestedQty += (dd.RequestedQty > dd.ActualQty? dd.RequestedQty - dd.ActualQty: 0);
+                    dto.RequestedQty += dd.RequestedQty - dd.ActualQty;
                 }
             }
         }
@@ -91,22 +91,16 @@ namespace LUSSIS.Repositories
         }
 
 
-        public List<Requisition> GetRequisitionsByStatus(string status)
+        public IEnumerable<Requisition> GetRequisitionsByStatus(string status)
         {
             return LUSSISContext.Requisitions.Where(r => r.Status == status).ToList();
         }
 
-        public List<RequisitionDetail> GetRequisitionDetailsByStatus(string status)
+        public IEnumerable<RequisitionDetail> GetRequisitionDetailsByStatus(string status)
         {
             return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
         }
-
-        public List<DisbursementDetail> GetUnfullfilledDisDetailList()
-        {
-            List<DisbursementDetail> unfullfilledDisList = disRepo.GetDisbursementDetailsByStatus("unfullfilled");
-            return unfullfilledDisList.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();
-        }
-
+       
         //public as might need it in Disbursement later
         public RetrievalItemDTO convertStatoDTO(Stationery s)
         {
@@ -121,6 +115,8 @@ namespace LUSSIS.Repositories
                 RemainingQty = 0
             };
         }
-
+        
     }
+
+    
 }

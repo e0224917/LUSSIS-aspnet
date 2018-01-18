@@ -32,9 +32,17 @@ namespace LUSSIS.Models
 
         public int? RequestEmpNum { get; set; }
 
-        public virtual Employee Employee { get; set; }
+        [StringLength(10)]
+        public string Status { get; set; }
 
-        public virtual Employee Employee1 { get; set; }
+        [StringLength(50)]
+        public string Remark { get; set; }
+
+        [ForeignKey("ApprovalEmpNum")]
+        public virtual Employee ApprovalEmployee { get; set; }
+
+        [ForeignKey("RequestEmpNum")]
+        public virtual Employee RequestEmployee { get; set; }
 
         public virtual Stationery Stationery { get; set; }
     }
