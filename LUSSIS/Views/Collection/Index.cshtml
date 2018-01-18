@@ -7,12 +7,54 @@
         <th>
             @Html.DisplayNameFor(model => model.CollectionDate)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
+        </th>
     </tr>
     <tr>
         <td>
             @Html.DisplayFor(model => model.CollectionDate)
         </td>
+        <td>
+            @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
+            @Html.DisplayFor(model => model.CollectionPoint.Time)
+        </td>
     </tr>
+</table>
+<hr />
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DisbursementDetails.First().Stationery.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DisbursementDetails.First().Stationery.UnitOfMeasure)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DisbursementDetails.First().RequestedQty)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DisbursementDetails.First().ActualQty)
+        </th>
+    </tr>
+    @foreach (var item in Model.DisbursementDetails)
+    {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Stationery.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestedQty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActualQty)
+            </td>
+        </tr>
+    }
 </table>
 
 
