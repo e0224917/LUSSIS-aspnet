@@ -11,12 +11,12 @@ namespace LUSSIS.Controllers
 {
     public class RequisitionController : Controller
     {
-        private LUSSISContext db = new LUSSISContext();
+        //private LUSSISContext db = new LUSSISContext();
         private RequisitionRepository rr = new RequisitionRepository();
         // GET: Requisition
         public ActionResult PendingRequisition()
         {
-            List<Requisition> PendingReq = rr.GetPendingRequisitions();
+            List<Requisition> PendingReq = rr.GetRequisitionsByStatus("pending");
             return View(PendingReq);
         }
 
