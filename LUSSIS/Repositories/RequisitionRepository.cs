@@ -14,14 +14,21 @@ namespace LUSSIS.Repositories
 
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
-        private readonly DisbursementRepository disRepo = new DisbursementRepository();
+        //use the date to create new disbursement, and return list of retrieval items based 
+        public IEnumerable<RetrievalItemDTO> ArrangeRetrievalAndDisbursement(DateTime collectionDate)
+        {
+            Debug.WriteLine(collectionDate.ToShortDateString());
+            IEnumerable<RetrievalItemDTO> itemsToRetrieve = GetConsolidatedRequisition();
+            new DisbursementRepository().CreateDisbursement(collectionDate);
+            return itemsToRetrieve;
+        }
 
         //consolidate requisition details(group by item) + disbursement table status = disbursement details(group by item)
         public IEnumerable<RetrievalItemDTO> GetConsolidatedRequisition()
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
             ConsolidateRequisitionQty(itemsToRetrieve, GetRequisitionDetailsByStatus("approved"));
-            ConsolidateRemainingQty(itemsToRetrieve, disRepo.GetUnfullfilledDisDetailList());
+            ConsolidateRemainingQty(itemsToRetrieve, new DisbursementRepository().GetUnfullfilledDisDetailList());
             return itemsToRetrieve;
         }
 
@@ -45,7 +52,7 @@ namespace LUSSIS.Repositories
                 }
             }
         }
-
+       
         /*
          * helper method to consolidate unfullfilled Disbursements for one item into one RetrievalItemDTO
         */
@@ -66,6 +73,7 @@ namespace LUSSIS.Repositories
             }
         }
 
+        
         /*
          * helper method
          * check if a stat's equivlent DTO exist in the target DTO list
@@ -101,8 +109,8 @@ namespace LUSSIS.Repositories
             return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
         }
        
-        //public as might need it in Disbursement later
-        public RetrievalItemDTO convertStatoDTO(Stationery s)
+        
+        private RetrievalItemDTO convertStatoDTO(Stationery s)
         {
             return new RetrievalItemDTO()
             {

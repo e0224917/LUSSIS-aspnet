@@ -215,6 +215,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PurchaseOrdersController.cs" />
+    <Compile Include="Controllers\RepAndDelegateController.cs" />
     <Compile Include="Controllers\RequisitionController.cs" />
     <Compile Include="Controllers\StockAdjustmentController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
@@ -268,6 +269,7 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\RepAndDelegateDTO.cs" />
     <Compile Include="Models\WebDTO\ShoppingCart.cs" />
     <Compile Include="Models\Stationery.cs" />
     <Compile Include="Models\StationerySupplier.cs" />
@@ -382,7 +384,6 @@
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
     <Content Include="Views\Requisition\Pending.cshtml" />
     <Content Include="Views\Requisition\Consolidated.cshtml" />
-    <Content Include="Views\Collection\SetCollection.cshtml" />
     <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
     <Content Include="Views\Shared\_LayoutEmpReq.cshtml" />
     <Content Include="Views\Requisition\EmpCart.cshtml" />
@@ -391,9 +392,11 @@
     <Content Include="Views\Requisition\Index.cshtml" />
     <Content Include="Views\PurchaseOrders\Receive.cshtml" />
     <Content Include="Views\PurchaseOrders\Index.cshtml" />
+    <Content Include="Views\RepAndDelegate\DepartmentRep.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Disbursement\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

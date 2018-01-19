@@ -17,7 +17,7 @@ namespace LUSSIS.Controllers
         DisbursementRepository disbursementRepo = new DisbursementRepository();
         EmployeeRepository employeeRepo = new EmployeeRepository();
         Repository<CollectionPoint, int> collectionRepo = new Repository<CollectionPoint, int>();
-        Repository<Department, string> departmentRepo = new Repository<Department, string>();
+ 
         ManageCollectionDTO mcdto = new ManageCollectionDTO();
 
         public ActionResult Index()
@@ -36,20 +36,15 @@ namespace LUSSIS.Controllers
             return View(mcdto);
         }
 
-        // GET: Collection/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+
 
         [HttpPost]
         public ActionResult UpdateCollection(ManageCollectionDTO mcdto)
         {
             if (ModelState.IsValid)
             {
-                string userName = User.Identity.GetUserName();
-                string employeeDept = employeeRepo.GetEmployeeByEmail(userName).DeptCode;
-                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetEmployeeByEmail(userName));
+                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
+                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
                 department.CollectionPointId = mcdto.CollectionPoint.CollectionPointId;
                 employeeRepo.UpdateDepartment(department);
             }
