@@ -1,4 +1,4 @@
-﻿@model LUSSIS.Models.PurchaseOrder
+﻿@model LUSSIS.Controllers.PurchaseOrderViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -7,68 +7,101 @@
 <h2>Details</h2>
 
 <div>
-    <h4>PurchaseOrder</h4>
+    <h4>Purchase Order @Model.PoNum</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Employee.Title)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Employee.Title)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Employee1.Title)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Employee1.Title)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Supplier.SupplierName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Supplier.SupplierName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CreateDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CreateDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.OrderDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.OrderDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ApprovalDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ApprovalDate)
-        </dd>
-
-    </dl>
+    <div>
+        <div class="form-group">
+            <label type="text" class="control-label col-md-2">@Html.DisplayNameFor(model => model.CreateDate)</label>
+            <div class="col-md-10">
+                <input type="date" value="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" disabled/>    
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label type="text" class="control-label col-md-2">@Html.DisplayNameFor(model => model.OrderDate)</label>
+            <div class="col-md-10">
+                <input type="date" value="@Model.OrderDate.Value.ToString("yyyy-MM-dd")" disabled/>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label type="text" class="control-label col-md-2">@Html.DisplayNameFor(model => model.Status)</label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.Status" disabled/>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label type="text" class="control-label col-md-2">@Html.DisplayNameFor(model => model.ApprovalDate)</label>
+            <div class="col-md-10">
+                <input type="date" value="@Model.ApprovalDate.Value.ToString("yyyy-MM-dd")" disabled/>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label type="text" class="control-label col-md-2">@Html.DisplayNameFor(model => model.OrderEmpNum) </label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.OrderEmployee.FullName" disabled/>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label type="text" class="control-label col-md-2">@Html.DisplayNameFor(model => model.ApprovalEmpNum)  </label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.ApprovalEmployee.FullName" disabled/>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label type="text" class="control-label col-md-2">@Html.DisplayNameFor(model => model.Supplier.SupplierName)  </label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.Supplier.SupplierName" disabled/>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label type="text" class="control-label col-md-2">@Html.DisplayNameFor(model => model.Supplier.ContactName) </label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.Supplier.ContactName" disabled/>
+            </div>
+        </div>
+    </div>
+    <table class="table">
+        <tr>
+            <th>No</th>
+            <th>Product</th>
+            <th>Item No</th>
+            <th>Unit of Measure</th>
+            <th>Unit Price</th>
+            <th>Total Cost</th>
+            <th>Status</th>
+        </tr>
+        @for (int i = 0; i < Model.PurchaseOrderDetails.Count; i++)
+        {
+            <tr>
+                <td>@(i + 1)</td>
+                <td>@Model.PurchaseOrderDetails[i].Stationery.Description</td>
+                <td>@Model.PurchaseOrderDetails[i].Stationery.ItemNum</td>
+                <td>@Model.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
+                <td>@Model.PurchaseOrderDetails[i].UnitPrice</td>
+                <td>@(@Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails.Skip(i).First().OrderQty)</td>
+                <td>@(Model.PurchaseOrderDetails[i].ReceiveQty > 0 ? "Delivered" : "Not Delivered")</td>
+            </tr>
+        }
+    </table>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.PoNum }) |
+    @if (Model.Status == "approved")
+    {
+        @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum })
+    }
     @Html.ActionLink("Back to List", "Index")
 </p>
+

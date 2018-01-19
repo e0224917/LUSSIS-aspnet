@@ -30,5 +30,49 @@ namespace LUSSIS.Repositories
             }
             return slist;
         }
+
+        public IEnumerable<Stationery> GetStationeryBySupplierId(int? id)
+        {
+            var q = from t1 in LUSSISContext.Stationeries
+                    join t2 in LUSSISContext.StationerySuppliers
+                    on t1.ItemNum equals t2.ItemNum
+                    where t2.Supplier.SupplierId==id
+                    select t1;
+            return q.AsEnumerable<Stationery>();
+        }
+
+        public IEnumerable<StationerySupplier> GetStationerySupplierBySupplierId(int? id)
+        {
+            var q = from t1 in LUSSISContext.Stationeries
+                    join t2 in LUSSISContext.StationerySuppliers
+                    on t1.ItemNum equals t2.ItemNum
+                    where t2.Supplier.SupplierId == id
+                    select t2;
+            return q.AsEnumerable<StationerySupplier>();
+        }
+
+        public Dictionary<Supplier, List<Stationery>> GetOutstandingStationeryByAllSupplier()
+        {
+            Dictionary<Supplier, List<Stationery>> dic = new Dictionary<Supplier, List<Stationery>>();
+            List<Stationery> slist= LUSSISContext.Stationeries.Where(x => x.CurrentQty < x.ReorderLevel).ToList();
+            if (slist != null)
+            {
+                for (int i = 0; i < slist.Count; i++)
+                {
+                    Supplier primarySupplier = slist[i].PrimarySupplier();
+                    if (dic.ContainsKey(primarySupplier))
+                    {
+                        List<Stationery> value = null;
+                        dic.TryGetValue(primarySupplier, out value);
+                        value.Add(slist[i]);
+                    }
+                    else
+                    {
+                        dic.Add(primarySupplier, new List<Stationery>() { slist[i] });
+                    }
+                }
+            }
+            return dic;
+        }
     }
 }

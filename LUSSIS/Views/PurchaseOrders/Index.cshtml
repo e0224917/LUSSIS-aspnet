@@ -3,67 +3,165 @@
 @{
     ViewBag.Title = "Index";
 }
+@Scripts.Render("~/bundles/jquery")
 
 <h2>Index</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
+
+<table class="table display" id="table_with_pages">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Employee.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Employee1.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Supplier.SupplierName)
-        </th>
         <th>
             @Html.DisplayNameFor(model => model.CreateDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.OrderDate)
+            @Html.DisplayNameFor(model => model.SupplierId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrderEmpNum)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Status)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ApprovalDate)
-        </th>
-        <th></th>
+        <th>View Details</th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Employee.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Employee1.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreateDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OrderDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ApprovalDate)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.PoNum }) |
-            @Html.ActionLink("Details", "Details", new { id=item.PoNum }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.PoNum })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderEmployee.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("View Details", "Details", new { id = item.PoNum })
+            </td>
+        </tr>
+    }
 
 </table>
+
+
+<script>
+    $(function () {
+        $('#table_with_pages').paging({ limit: 10 });
+    })
+
+        (function ($) {
+            $(function () {
+                $.widget("zpd.paging", {
+                    options: {
+                        limit: 5,
+                        rowDisplayStyle: 'block',
+                        activePage: 0,
+                        rows: []
+                    },
+                    _create: function () {
+                        var rows = $("tbody", this.element).children();
+                        this.options.rows = rows;
+                        this.options.rowDisplayStyle = rows.css('display');
+                        var nav = this._getNavBar();
+                        this.element.after(nav);
+                        this.showPage(0);
+                    },
+                    _getNavBar: function () {
+                        var rows = this.options.rows;
+                        var nav = $('<div>', { class: 'paging-nav' });
+                        for (var i = 0; i < Math.ceil(rows.length / this.options.limit); i++) {
+                            this._on($('<a>', {
+                                href: '#',
+                                text: (i + 1),
+                                "data-page": (i)
+                            }).appendTo(nav),
+
+                                { click: "pageClickHandler" });
+                        }
+                        //create previous link
+                        this._on($('<a>', {
+                            href: '#',
+                            text: '<<',
+                            "data-direction": -1
+                        }).prependTo(nav),
+                            { click: "pageStepHandler" });
+                        //create next link
+                        this._on($('<a>', {
+                            href: '#',
+                            text: '>>',
+                            "data-direction": +1
+                        }).appendTo(nav),
+                            { click: "pageStepHandler" });
+                        return nav;
+                    },
+                    showPage: function (pageNum) {
+                        var num = pageNum * 1; //it has to be numeric
+                        this.options.activePage = num;
+                        var rows = this.options.rows;
+                        var limit = this.options.limit;
+                        for (var i = 0; i < rows.length; i++) {
+                            if (i >= limit * num && i < limit * (num + 1)) {
+                                $(rows[i]).css('display', this.options.rowDisplayStyle);
+                            } else {
+                                $(rows[i]).css('display', 'none');
+                            }
+                        }
+                    },
+                    pageClickHandler: function (event) {
+                        event.preventDefault();
+                        $(event.target).siblings().attr('class', "");
+                        $(event.target).attr('class', "selected-page");
+                        var pageNum = $(event.target).attr('data-page');
+                        this.showPage(pageNum);
+                    },
+                    pageStepHandler: function (event) {
+                        event.preventDefault();
+                        //get the direction and ensure it's numeric
+                        var dir = $(event.target).attr('data-direction') * 1;
+                        var pageNum = this.options.activePage + dir;
+                        //if we're in limit, trigger the requested pages link
+                        if (pageNum >= 0 && pageNum < this.options.rows.length) {
+                            $("a[data-page=" + pageNum + "]", $(event.target).parent()).click();
+                        }
+                    }
+                });
+            });
+        })(jQuery);
+</script>
+
+<style>
+    .paging-nav {
+        /*text-align: right;*/
+        padding-top: 2px;
+    }
+
+        .paging-nav a {
+            margin: auto 1px;
+            text-decoration: none;
+            display: inline-block;
+            padding: 1px 7px;
+            background: #5b6167;
+            color: white;
+            border-radius: 3px;
+            font-size: 15px;
+        }
+
+        .paging-nav .selected-page {
+            background: #187ed5;
+            font-weight: bold;
+        }
+
+    .paging-nav {
+        width: 400px;
+        /*margin: 0 auto;*/
+        font-family: Arial, sans-serif;
+    }
+</style>

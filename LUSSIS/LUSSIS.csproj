@@ -375,7 +375,6 @@
     <Content Include="Views\PurchaseOrders\Delete.cshtml" />
     <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\PurchaseOrders\Edit.cshtml" />
-    <Content Include="Views\PurchaseOrders\Index.cshtml" />
     <Content Include="Views\StockAdjustment\Index.cshtml" />
     <Content Include="Views\StockAdjustment\Approve.cshtml" />
     <Content Include="Views\StockAdjustment\ShowDialog.cshtml" />
@@ -390,6 +389,8 @@
     <Content Include="Views\Requisition\EmpReq.cshtml" />
     <Content Include="Views\Requisition\EmpReqDetail.cshtml" />
     <Content Include="Views\Requisition\Index.cshtml" />
+    <Content Include="Views\PurchaseOrders\Receive.cshtml" />
+    <Content Include="Views\PurchaseOrders\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

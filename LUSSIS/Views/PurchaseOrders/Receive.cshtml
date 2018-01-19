@@ -1,0 +1,126 @@
+﻿@model LUSSIS.Controllers.POReceiveViewModel
+
+@{
+    ViewBag.Title = "Receive";
+}
+
+<h2>Receive</h2>
+
+@using (Html.BeginForm())
+{
+    <div>
+        <h4>Purchase Order @Html.DisplayFor(model => model.PO.PoNum)</h4>
+        <hr />
+        @Html.HiddenFor(model => model.PO.PoNum)
+
+        @Html.AntiForgeryToken()
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.PoNum)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.PoNum)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.CreateDate)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.CreateDate, new { disabled = "disabled" })
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.OrderDate)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.OrderDate, new { disabled = "disabled" })
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.Status)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.Status, new { disabled = "disabled" })
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.ApprovalDate)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.ApprovalDate, new { disabled = "disabled" })
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.OrderEmpNum)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.OrderEmpNum, new { disabled = "disabled" })
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.ApprovalEmpNum)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.ApprovalEmpNum, new { disabled = "disabled" })
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.SupplierId)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.SupplierId, new { disabled = "disabled" })
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.Supplier.SupplierName)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.Supplier.SupplierName, new { disabled = "disabled" })
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PO.Supplier.ContactName)
+            </dt>
+            <dd>
+                @Html.TextBoxFor(model => model.PO.Supplier.ContactName, new { disabled = "disabled" })
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReceiveTrans.DeliveryOrderNum)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.ReceiveTrans.DeliveryOrderNum)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReceiveTrans.ReceiveDate)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.ReceiveTrans.ReceiveDate)
+            </dd>
+
+        </dl>
+        <table class="table">
+            <tr>
+                <th>No</th>
+                <th>Product</th>
+                <th>Unit of Measure</th>
+                <th>Order Qty</th>
+                <th>Received Qty (Before)</th>
+                <th>Received Qty (Now)</th>
+            </tr>
+
+            @if (Model.PO != null)
+            {
+                for (int i = 0; i < Model.PO.PurchaseOrderDetails.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@Model.PO.PurchaseOrderDetails.ElementAt(i).Stationery.Description</td>
+                        <td>@Model.PO.PurchaseOrderDetails.ElementAt(i).Stationery.UnitOfMeasure</td>
+                        <td>@Model.PO.PurchaseOrderDetails.ElementAt(i).OrderQty</td>
+                        <td>@Model.PO.PurchaseOrderDetails.ElementAt(i).ReceiveQty</td>
+                        <td>
+                            @Html.HiddenFor(model => model.ReceiveTrans.ReceiveTransDetails[i].ItemNum)
+                            @Html.EditorFor(model => model.ReceiveTrans.ReceiveTransDetails[i].Quantity)
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+    <p>
+
+        <input type="submit" value="Receive" />
+
+    </p>
+}
