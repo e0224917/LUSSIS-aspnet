@@ -209,14 +209,32 @@ namespace LUSSIS.Controllers
             //TODO: pass the selected DateTime object to controller
             return View(rr.ArrangeRetrievalAndDisbursement(new DateTime()));
         }
-        public ActionResult EmpCart()
+
+        [HttpGet]
+        public ActionResult ApproveReq(int Id, String Status)
         {
-            ShoppingCart mycart =(ShoppingCart) Session["MyCart"];
-            return View(mycart.GetAllCartItem());
+            ReqApproveRejectDTO reqDTO = new ReqApproveRejectDTO();
+            reqDTO.RequisitionId = Id;
+            reqDTO.Status = Status;
+            return PartialView("ApproveReq", reqDTO);
         }
+
         [HttpPost]
-        public ActionResult DeleteCartItem(string id,int qty)
+        public ActionResult ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]ReqApproveRejectDTO RADTO)
         {
+            if (ModelState.IsValid)
+            {
+                Requisition req = rr.GetById(RADTO.RequisitionId);
+                req.Status = RADTO.Status;
+                req.ApprovalRemarks = RADTO.ApprovalRemarks;
+                req.ApprovalEmpNum = er.GetCurrentUser().EmpNum;
+                req.ApprovalDate = DateTime.Today;
+                rr.Update(req);
+                return PartialView();
+            }
+            return PartialView(RADTO);
+        }
+
 
             ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
             mycart.deleteCart(id);

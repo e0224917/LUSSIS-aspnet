@@ -270,6 +270,7 @@
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
     <Compile Include="Models\WebDTO\RepAndDelegateDTO.cs" />
+    <Compile Include="Models\WebDTO\ReqApproveRejectDTO.cs" />
     <Compile Include="Models\WebDTO\ShoppingCart.cs" />
     <Compile Include="Models\Stationery.cs" />
     <Compile Include="Models\StationerySupplier.cs" />
@@ -393,7 +394,8 @@
     <Content Include="Views\Requisition\EmpReq.cshtml" />
     <Content Include="Views\Requisition\EmpReqDetail.cshtml" />
     <Content Include="Views\Requisition\Index.cshtml" />
-    <Content Include="Views\RepAndDelegate\DeptRep.cshtml" />
+    <Content Include="Views\RepAndDelegate\DepartmentRep.cshtml" />
+    <Content Include="Views\Requisition\ApproveReq.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

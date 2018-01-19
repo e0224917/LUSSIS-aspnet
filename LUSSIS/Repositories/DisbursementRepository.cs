@@ -15,7 +15,9 @@ namespace LUSSIS.Repositories
         {
             try
             {
-                return LUSSISContext.Disbursements.First(x => x.CollectionDate > nowDate && x.DeptCode == deptCode);
+                DateTime updatedDate = nowDate.Subtract(new TimeSpan(1, 0, 0, 0));
+                List<Disbursement> disbList = LUSSISContext.Disbursements.Where(x => x.DeptCode == deptCode).ToList();
+                return disbList.First(x => x.CollectionDate > updatedDate && x.Status == "in process");
             }
             catch
             {

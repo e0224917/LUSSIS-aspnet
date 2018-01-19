@@ -1,0 +1,38 @@
+﻿@model LUSSIS.Models.WebDTO.ReqApproveRejectDTO
+<div>
+    <form id="approveForm">
+        <span>Your comments (optional):</span>
+        <br />
+        @Html.EditorFor(m => m.ApprovalRemarks, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(m => m.ApprovalRemarks, "", new { @class = "text-danger" })
+        @Html.HiddenFor(m => m.RequisitionId)
+        @Html.HiddenFor(m => m.Status)
+
+        <br />
+        <a href="#" class="btn btn-default" id="approve">
+            @((Model.Status == "approved") ? "Confirm Approve" : "Confirm Reject")
+        </a>
+
+
+        <a href="#" class="btn btn-default" data-dismiss="modal"> Cancel</a>
+    </form>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#approve").click(function () {
+            var formdata = $("#approveForm").serialize();
+
+            $.ajax({
+                type: "POST",
+                url: "/Requisition/ApproveReq",
+                data: formdata,
+                success: function () {
+                    $("#myApproveModal").modal("hide");
+                }
+            })
+            location.reload()
+        })
+    })
+</script>
