@@ -1,7 +1,8 @@
-﻿
+﻿@model IEnumerable<LUSSIS.Models.WebDTO.Cart>
+
 @{
     ViewBag.Title = "EmpCart";
-   
+
 }
 
 
@@ -29,7 +30,20 @@
 
     @foreach (var item in Model)
     {
-        <tr></tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.stationery.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.quantity)
+        </td>
+        <td>
+            @Html.ActionLink("Delete", "DeleteCart", new { id = item.RequisitionId })
+        </td>
+    </tr>
     }
 
 </table>

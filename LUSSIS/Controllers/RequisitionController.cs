@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
+using LUSSIS.Models.WebDTO;
 
 namespace LUSSIS.Controllers
 {
@@ -178,7 +179,14 @@ namespace LUSSIS.Controllers
             //TODO: pass the selected DateTime object to controller
             return View(rr.ArrangeRetrievalAndDisbursement(new DateTime()));
         }
-
-
+        public ActionResult EmpCart()
+        {
+            ShoppingCart mycart =(ShoppingCart) Session["MyCart"];
+            return View(mycart.GetAllCartItem());
+        }
+        public ActionResult DeleteCart()
+        {
+            return View();
+        }
     }
 }
