@@ -1,5 +1,7 @@
 ﻿using System.Web;
+using System.Web.Http.Filters;
 using System.Web.Mvc;
+using LUSSIS.Filters;
 
 namespace LUSSIS
 {
@@ -9,6 +11,11 @@ namespace LUSSIS
         {
             filters.Add(new HandleErrorAttribute());
             filters.Add(new AuthorizeAttribute());
+        }
+
+        public static void RegisterApiFilters(HttpFilterCollection filters)
+        {
+            filters.Add(new ValidateModelAttribute());
         }
     }
 }

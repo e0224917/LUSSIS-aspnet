@@ -1,13 +1,11 @@
 ﻿using LUSSIS.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNet.Identity;
 using System.Threading.Tasks;
 using System.Web.Http.Description;
 using LUSSIS.Models.WebAPI;
@@ -31,25 +29,40 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(EmployeeDTO))]
         public async Task<IHttpActionResult> Login(LoginViewModel model)
         {
-            string email = model.Email;
-            string pass = model.Password;
-            var manager = HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
-            var result = await manager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-
-            if (result != SignInStatus.Success) return BadRequest();
-
-            var emp = db.Employees.First(em => em.EmailAddress == email);
-            var e = new EmployeeDTO
+            try
             {
-                EmpNum = emp.EmpNum,
-                Title = emp.Title,
-                FirstName = emp.FirstName,
-                LastName = emp.LastName,
-                EmailAddress = emp.EmailAddress,
-                JobTitle = emp.JobTitle,
-                DeptCode = emp.DeptCode
-            };
-            return Ok(e);
+                var manager = HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
+                var result = await manager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe,
+                    shouldLockout: false);
+
+                if (result != SignInStatus.Success) return BadRequest();
+
+                var emp = db.Employees.First(em => em.EmailAddress == model.Email);
+                int num = emp.EmpNum;
+                var delegateEmp = db.Delegates.AsEnumerable().LastOrDefault(d => d.EmpNum == num);
+
+                bool isDelegated = false;
+                if (delegateEmp != null)
+                    isDelegated = DateTime.Today >= delegateEmp.StartDate && DateTime.Today <= delegateEmp.EndDate;
+
+                var e = new EmployeeDTO
+                {
+                    EmpNum = emp.EmpNum,
+                    Title = emp.Title,
+                    FirstName = emp.FirstName,
+                    LastName = emp.LastName,
+                    EmailAddress = emp.EmailAddress,
+                    JobTitle = emp.JobTitle,
+                    DeptCode = emp.DeptCode,
+                    DeptName = emp.Department.DeptName,
+                    IsDelegated = isDelegated
+                };
+                return Ok(e);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
         }
     }
 }
