@@ -166,10 +166,24 @@ namespace LUSSIS.Controllers
         //TODO: Add authorization - Stock Clerk only 
         //click on generate button - post with date selected
         [HttpPost]
-        public ActionResult Retrieve(DateTime? collectionDate)
+        [ValidateAntiForgeryToken]
+        public ActionResult Retrieve([Bind(Include = "collectionDate")] RetrievalItemsWithDateDTO listWithDate)
         {
-            //TODO: pass the selected DateTime object to controller
-            return View(rr.ArrangeRetrievalAndDisbursement(new DateTime()));
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return View(reqRepo.ArrangeRetrievalAndDisbursement(listWithDate.collectionDate));
+                }
+
+                throw new InvalidDateException();
+            }
+            catch (InvalidDateException /* dex */)
+            {
+
+            }
+
+            return View("Retrieve");
         }
 
         [HttpGet]
