@@ -25,6 +25,8 @@ namespace LUSSIS
         {
             ShoppingCart shoppingCart = new ShoppingCart();
             Session["MyCart"] = shoppingCart;
+            Session["Name"] = "";
+            Session["Roles"] = new List<string>();
         }
     }
 }

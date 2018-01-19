@@ -1,6 +1,4 @@
 ﻿@using LUSSIS.Models.WebDTO
-@using Microsoft.AspNet.Identity
-@using Microsoft.AspNet.Identity.Owin
 
 @if (Request.IsAuthenticated)
 {
@@ -9,18 +7,15 @@
         @Html.AntiForgeryToken()
 
         <ul class="nav navbar-nav navbar-right">
-            @{
-                var userManager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                var roles = userManager.GetRoles(User.Identity.GetUserId());
-            }
-            @if (roles.Contains("staff"))
+
+            @if ((Session["Roles"] as List<String>).Contains("staff") || (Session["Roles"] as List<String>).Contains("head"))
             {
                 <li>
-                    @Html.ActionLink("My Cart (" + (Session["MyCart"] as ShoppingCart).GetCartItemCount() + ")", "EmpCart")
+                    @Html.ActionLink("My Cart (" + (Session["MyCart"] as ShoppingCart).GetCartItemCount() + ")", "EmpCart", "Requisition", null, new { title = "Current Request", @class = "nav-link" })
                 </li>
             }
             <li>
-                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new {title = "Manage Account", @class = "nav-link"})
+                @Html.ActionLink("Welcome, " + (string) Session["Name"], "Index", "Manage", routeValues: null, htmlAttributes: new {title = "Manage Account", @class = "nav-link"})
             </li>
             <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>
