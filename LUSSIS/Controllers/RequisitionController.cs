@@ -13,17 +13,19 @@ namespace LUSSIS.Controllers
 {
     public class RequisitionController : Controller
     {
-        private LUSSISContext db = new LUSSISContext();
+       
         private RequisitionRepository rr = new RequisitionRepository();
         private EmployeeRepository er = new EmployeeRepository();
 
+
+        //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
         public ActionResult Pending()
         {
             return View(rr.GetRequisitionsByStatus("pending"));
         }
 
-
+        //TODO: Add authroization - DepartmentHead or Delegate only
         [HttpGet]
         public async Task<ActionResult> Detail(int reqId)
         {
@@ -34,24 +36,26 @@ namespace LUSSIS.Controllers
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest); ;
         }
+
+        //TODO: Add authroization - DepartmentHead or Delegate only
         [HttpPost]
         public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks")] Requisition requisition, string SubmitButton)
         {
             if (ModelState.IsValid)
             {
-                requisition.Status = "approved";
+
                 requisition.ApprovalEmpNum = er.GetCurrentUser().EmpNum;
                 requisition.ApprovalDate = DateTime.Today;
                 if (SubmitButton == "Approve")
                 {
-
+                    requisition.Status = "approved";
                     await rr.UpdateAsync(requisition);
                     return RedirectToAction("index");
                 }
 
                 if (SubmitButton == "Reject")
                 {
-
+                    requisition.Status = "reject";
                     await rr.UpdateAsync(requisition);
                     return RedirectToAction("index");
                 }
@@ -59,26 +63,28 @@ namespace LUSSIS.Controllers
             return RedirectToAction("index");
         }
 
-
-        // GET: Requisition/Details/5
+        //TODO: View requisition details (without approve and reject button)
+        // [employee page] GET: Requisition/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
+        //TODO: return create page, only showing necessary fields
         // GET: Requisition/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Requisition/Create
+        // TODO: 1. create new requisition, 2. it's status set to pending, 3. send notification to departmenthead
+        // [employee page] POST: Requisition/Create
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
             try
             {
-                // TODO: Add insert logic here
+                
 
                 return RedirectToAction("Index");
             }
@@ -88,21 +94,21 @@ namespace LUSSIS.Controllers
             }
         }
 
-        // GET: Requisition/Edit/5
+        // TODO: only implement once main project is done. Enable editing if status is pending
+        // [employee page]  GET: Requisition/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Requisition/Edit/5
+        // TODO: only enable editing if status is pending
+        // [employee page]  POST: Requisition/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
+               return RedirectToAction("Index");
             }
             catch
             {
@@ -110,33 +116,12 @@ namespace LUSSIS.Controllers
             }
         }
 
-        // GET: Requisition/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Requisition/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
         private RequisitionRepository reqrepo = new RequisitionRepository();
         private StationeryRepository strepo = new StationeryRepository();
         // GET: DeptEmpReqs
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
-            List<Stationery> stationerys = new List<Stationery>();
+            List<Stationery> stationeries = new List<Stationery>();
             if (searchString != null)
             { page = 1; }
             else
@@ -144,12 +129,13 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
             if (!String.IsNullOrEmpty(searchString))
-            { stationerys = strepo.GetByDescription(searchString).ToList(); }
-            else { stationerys = strepo.GetAll().ToList(); }
+            { stationeries = strepo.GetByDescription(searchString).ToList(); }
+            else { stationeries = strepo.GetAll().ToList(); }
             int pageSize = 20;
             int pageNumber = (page ?? 1);
-            return View(stationerys.ToPagedList(pageNumber, pageSize));
+            return View(stationeries.ToPagedList(pageNumber, pageSize));
         }
+
         //GET: MyRequisitions
         //public async Task<ActionResult> EmpReq(int EmpNum)
         //{
@@ -166,12 +152,17 @@ namespace LUSSIS.Controllers
             List<RequisitionDetail> requisitionDetail = reqrepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
-        //Stock Clerk's page
+        
+        
+        //TODO: Add authorization - Stock Clerk only
+        
         public ActionResult Consolidated()
         {
             return View(rr.GetConsolidatedRequisition());
         }
-        //Stock Clerk click on generate button - post with date selected
+
+        //TODO: Add authorization - Stock Clerk only 
+        //click on generate button - post with date selected
         [HttpPost]
         public ActionResult Retrieve(DateTime? collectionDate)
         {

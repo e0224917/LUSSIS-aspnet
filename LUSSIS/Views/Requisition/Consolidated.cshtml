@@ -1,4 +1,5 @@
 ﻿
+@using LUSSIS.Models.WebDTO
 @model IEnumerable<LUSSIS.Models.WebDTO.RetrievalItemDTO>
 
 @{
@@ -16,13 +17,13 @@ else
  <hr />
  <nav class="navbar navbar-expand-lg navbar-light bg-light">
      <div class="navbar-nav mr-auto"></div>
-@using (Html.BeginForm("Retrieve", "Requisition", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
-{
-    <span class="nav-item nav-link">Select a collection date for this disbursement </span>
-    <input type="date" class="form-control mr-sm-2" id="collectionDate" />
-    <button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button>
-    }
-</nav>
+     @using (Html.BeginForm("Retrieve", "Requisition", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
+    {
+        <span class="nav-item nav-link">Select a collection date for this disbursement </span>
+        <input type="date" class="form-control mr-sm-2" id="collectionDate" />
+        <button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button>
+}
+ </nav>
 <hr />
 
 <table id="long-table" class="table table-hover">
