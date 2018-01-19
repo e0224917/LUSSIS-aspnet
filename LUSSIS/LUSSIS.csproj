@@ -252,6 +252,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
+    <Compile Include="Models\WebDTO\AdjVoucherColView.cs" />
     <Compile Include="Models\WebDTO\Cart.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\CollectionPoint.cs" />

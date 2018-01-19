@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
+﻿@model LUSSIS.Models.WebDTO.AdjVoucherColView
 
 @{
     ViewBag.Title = "CreateAdjustments";
@@ -11,35 +11,72 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>AdjVoucher</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <fieldset>
-            <table>
-                <tr>
-                    <th>@Html.Label("Item Code ")</th>
-                    <th>@Html.Label("Adjustment Type ")</th>
-                    <th>@Html.Label("Qty Adjusted ")</th>
-                    <th colspan="2">@Html.Label("Reason")</th>
-                    <th></th>
-                </tr>
-                <tbody>
 
-                @Html.Partial("_CreateAdjustments")
-    }
-                </tbody>
-            </table>
-            <button id="add" type="button">Add</button>
-        </fieldset>
-    </div>
+    <Table id="AdjustmentsDiv">
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.MyList.First().ItemNum)</th>
+            <th>@Html.DisplayNameFor(model => model.MyList.First().Sign)</th>
+            <th>@Html.DisplayNameFor(model => model.MyList.First().Quantity)</th>
+            <th>@Html.DisplayNameFor(model => model.MyList.First().Reason)</th>
+            <th>Remove</th>
+        </tr>
+        <tbody>
+            @*@Html.Partial("_CreateAdjustments", new LUSSIS.Models.WebDTO.AdjustmentVoucherDTO())*@
+            @foreach (var adjustment in Model.MyList)
+            {
+                Html.Partial("_CreateAdjustments", adjustment);
+            }
+
+        </tbody>
+    </Table>
+
+    <button id="add" type="button">Add</button>
+    <input type="submit" value="" />
+
 
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script type="text/javascript">
+        $(document).on("click", ".deleteContact", function () {
+            $(this).closest("tr").remove();
+        });
+    </script>
+    <script>
+var url = '@Url.Action("_CreateAdjustments")';
+var form = $('form');
+var Adjustments = $('#AdjustmentsDiv');
+$('#add').click(function() {
+    $.get(url, function(response) {
+        Adjustments.append(response);
+        // Reparse the validator for client side validation
+        form.data('validator', null);
+        $.validator.unobtrusive.parse(form);
+    });
+    });
+
+
+//$('.delete').click(function () {
+//        var container = $(this).closest('.recipient');
+//        var id = container.find('.id').val();
+//        if (id) {
+//            // make ajax post to delete item
+//            $.post(yourDeleteUrl, { id: id }, function (result) {
+//                container.remove();
+//            }.fail(function (result) {
+//                // Oops, something went wrong (display error message?)
+//            }
+//    } else {
+//            // It never existed, so just remove the container
+//            container.remove();
+//        }
+//    });
+
+    </script>
 }
+
+
+
+
