@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - LUSSIS</title>
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    @*@Scripts.Render("~/bundles/modernizr")*@
 
 </head>
 <body>
@@ -25,12 +25,12 @@
                     <li class="nav-item">@Html.ActionLink("Stock Adjustment", "History", "StockAdjustment", null, new { @class = "nav-link" })</li>
                     <li class="nav-item">@Html.ActionLink("Collection", "Index", "Collection", null, new { @class = "nav-link" })</li>
                     <li class="nav-item">@Html.ActionLink("Stock Adjustment", "CreateAdjustments", "StockAdjustment", null, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("Stationery", "Index" ,"Requisition",null, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("Requisition", "EmpReq" ,"Requisition",null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Stationery", "Index", "Requisition", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Requisition", "EmpReq", "Requisition", null, new { @class = "nav-link" })</li>
                 </ul>
-    @Html.Partial("_LoginPartial")
-    </div>
-    </div>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
     </div>
     <div class="container">
         @RenderBody()
@@ -44,6 +44,7 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/datetime")
     @RenderSection("scripts", required: false)
 </body>
 </html>

@@ -1,12 +1,14 @@
 ﻿
+@using System.Web.UI.WebControls
 @using LUSSIS.Models.WebDTO
-@model IEnumerable<LUSSIS.Models.WebDTO.RetrievalItemDTO>
+@model RetrievalItemsWithDateDTO
+
 
 @{
     ViewBag.Title = "Consolidated";
 }
-<h2>Consolidated Stationery Requisition</h2>
-@if (Model==null || !Model.Any())
+<h2>Consolidated Stationery Requisitions</h2>
+@if (Model.retrievalItems == null || !Model.retrievalItems.Any())
 {
     <div class="alert alert-dismissible alert-info">
         <strong>Interesting...</strong> There is no requisition and remaining items to be viewed.
@@ -14,55 +16,76 @@
 }
 else
 {
- <hr />
- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-     <div class="navbar-nav mr-auto"></div>
-     @using (Html.BeginForm("Retrieve", "Requisition", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
+    <hr />
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="navbar-nav mr-auto"></div>
+        @using (Html.BeginForm("Retrieve", "Requisition", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
     {
-        <span class="nav-item nav-link">Select a collection date for this disbursement </span>
-        <input type="date" class="form-control mr-sm-2" id="collectionDate" />
-        <button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button>
-}
- </nav>
-<hr />
+        @Html.AntiForgeryToken()
+        @Html.LabelFor(model => model.collectionDate, "Select a collection date", new { @class = "nav-item nav-link" })
+        @Html.EditorFor(model => model.collectionDate, new { @class = "form-control mr-sm-2", id = "collectionDate", @Value = Model.collectionDate.Date})
+        @Html.ValidationMessageFor(model => model.collectionDate, "must be later than today", new { @class = "invalid-feedback" })
+        <div class="nav-item nav-link"><button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button></div>
+    }
+    </nav>
+    <hr />
 
-<table id="long-table" class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">Bin Num</th>
-            <th scope="col">Stationery</th>
-            <th scope="col">UOM</th>
-            <th scope="col">Requested Qty*</th>
-            <th scope="col">Available Qty</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table id="long-table" class="table table-hover">
+        <thead>
             <tr>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.BinNum)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UnitOfMeasure)
-                </td>
-
-                <td>
-                    @(item.RequestedQty + item.RemainingQty)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AvailableQty)
-                </td>
-
+                <th scope="col">Bin Num</th>
+                <th scope="col">Stationery</th>
+                <th scope="col">UOM</th>
+                <th scope="col">Requested Qty*</th>
+                <th scope="col">Available Qty</th>
+                <th></th>
             </tr>
-            }
-    </tbody>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.retrievalItems)
+            {
+                <tr>
 
-</table>
-<small id="fileHelp" class="form-text text-muted">*Unfullfilled Qty from previous disbursements has been added to Requested Qty</small>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BinNum)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnitOfMeasure)
+                    </td>
+
+                    <td>
+                        @(item.RequestedQty + item.RemainingQty)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AvailableQty)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+
+    </table>
+    <small id="fileHelp" class="form-text text-muted">*Unfullfilled Qty from previous disbursements has been added to Requested Qty</small>
+}
+
+
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            $('#collectionDate').datetimepicker({
+                defaultDate: '@Model.collectionDate.Date',
+                format: "yyyy-mm-dd",
+                minDate: getMoment(),
+                maxDate: getMoment().add(1, 'year'),
+                showClose: true,
+                showClear: true,
+                toolbarPlacement: 'top'
+            });
+         });
+        
+    </script>
 }

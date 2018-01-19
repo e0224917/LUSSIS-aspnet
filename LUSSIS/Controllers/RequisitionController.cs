@@ -7,6 +7,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Exception;
+using LUSSIS.Models.WebDTO;
 using PagedList;
 
 namespace LUSSIS.Controllers
@@ -14,22 +16,22 @@ namespace LUSSIS.Controllers
     public class RequisitionController : Controller
     {
        
-        private RequisitionRepository rr = new RequisitionRepository();
-        private EmployeeRepository er = new EmployeeRepository();
-
+        private RequisitionRepository reqRepo = new RequisitionRepository();
+        private EmployeeRepository empRepo = new EmployeeRepository();
+        private StationeryRepository statRepo = new StationeryRepository();
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
         public ActionResult Pending()
         {
-            return View(rr.GetRequisitionsByStatus("pending"));
+            return View(reqRepo.GetRequisitionsByStatus("pending"));
         }
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         [HttpGet]
         public async Task<ActionResult> Detail(int reqId)
         {
-            var req = await rr.GetByIdAsync(reqId);
+            var req = await reqRepo.GetByIdAsync(reqId);
             if (req != null)
             {
                 return View(req);
@@ -44,19 +46,19 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
 
-                requisition.ApprovalEmpNum = er.GetCurrentUser().EmpNum;
+                requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
                 requisition.ApprovalDate = DateTime.Today;
                 if (SubmitButton == "Approve")
                 {
                     requisition.Status = "approved";
-                    await rr.UpdateAsync(requisition);
+                    await reqRepo.UpdateAsync(requisition);
                     return RedirectToAction("index");
                 }
 
                 if (SubmitButton == "Reject")
                 {
                     requisition.Status = "reject";
-                    await rr.UpdateAsync(requisition);
+                    await reqRepo.UpdateAsync(requisition);
                     return RedirectToAction("index");
                 }
             }
@@ -116,8 +118,7 @@ namespace LUSSIS.Controllers
             }
         }
 
-        private RequisitionRepository reqrepo = new RequisitionRepository();
-        private StationeryRepository strepo = new StationeryRepository();
+        
         // GET: DeptEmpReqs
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
@@ -129,8 +130,8 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
             if (!String.IsNullOrEmpty(searchString))
-            { stationeries = strepo.GetByDescription(searchString).ToList(); }
-            else { stationeries = strepo.GetAll().ToList(); }
+            { stationeries = statRepo.GetByDescription(searchString).ToList(); }
+            else { stationeries = statRepo.GetAll().ToList(); }
             int pageSize = 20;
             int pageNumber = (page ?? 1);
             return View(stationeries.ToPagedList(pageNumber, pageSize));
@@ -139,36 +140,48 @@ namespace LUSSIS.Controllers
         //GET: MyRequisitions
         //public async Task<ActionResult> EmpReq(int EmpNum)
         //{
-        //    return View(reqrepo.GetRequisitionByEmpNum(EmpNum));
+        //    return View(reqRepo.GetRequisitionByEmpNum(EmpNum));
         //}
         public ActionResult EmpReq()
         {
-            return View(reqrepo.GetAll());
+            return View(reqRepo.GetAll());
         }
         // GET: Requisitions/Details/
         [HttpGet]
         public ActionResult EmpReqDetail(int id)
         {
-            List<RequisitionDetail> requisitionDetail = reqrepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
+            List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
         
         
         //TODO: Add authorization - Stock Clerk only
-        
         public ActionResult Consolidated()
         {
-            return View(rr.GetConsolidatedRequisition());
+
+            return View(new RetrievalItemsWithDateDTO{retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(), collectionDate = DateTime.Today});
         }
 
         //TODO: Add authorization - Stock Clerk only 
         //click on generate button - post with date selected
         [HttpPost]
-        public ActionResult Retrieve(DateTime? collectionDate)
+        [ValidateAntiForgeryToken]
+        public ActionResult Retrieve([Bind(Include = "collectionDate")] RetrievalItemsWithDateDTO listWithDate)
         {
-            return View(rr.ArrangeRetrievalAndDisbursement(new DateTime()));
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return View(reqRepo.ArrangeRetrievalAndDisbursement(listWithDate.collectionDate));
+                }
+                throw new InvalidDateException();
+            }
+            catch (InvalidDateException /* dex */)
+            {
+               
+            }
+            return View("Retrieve");
+
         }
-
-
     }
 }

@@ -14,18 +14,18 @@ namespace LUSSIS.Views
     public class DisbursementsController : Controller
     {
         private LUSSISContext db = new LUSSISContext();
-        private DisbursementRepository dr;
+        private DisbursementRepository disRepo;
 
         // GET: Disbursements
         public ActionResult Index()
         {
-            return View(dr.GetInProcessDisbursements());
+            return View(disRepo.GetInProcessDisbursements());
         }
 
         // GET: Disbursements/Details/5
         public ActionResult Details(int id)
         {
-            Disbursement disbursement = dr.GetById(id);
+            Disbursement disbursement = disRepo.GetById(id);
             if (disbursement == null)
             {
                 return HttpNotFound();
@@ -36,7 +36,7 @@ namespace LUSSIS.Views
        // GET: Disbursements/Edit/5
         public ActionResult Edit(int id)
         {
-            Disbursement disbursement = dr.GetById(id);
+            Disbursement disbursement = disRepo.GetById(id);
             if (disbursement == null)
             {
                 return HttpNotFound();

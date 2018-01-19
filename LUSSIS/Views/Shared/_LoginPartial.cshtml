@@ -20,7 +20,7 @@
                 </li>
             }
             <li>
-                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new {title = "Manage Account", @class = "nav-link"})
+                @Html.ActionLink("Hello " + String.Concat((User.Identity.GetUserName()).TakeWhile(s=>s!= '@')) + "!", "Index", "Manage", routeValues: null, htmlAttributes: new {title = "Manage Account", @class = "nav-link"})
             </li>
             <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>
