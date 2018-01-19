@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
+using LUSSIS.Models.WebDTO;
 
 namespace LUSSIS.Controllers
 {
@@ -177,6 +178,31 @@ namespace LUSSIS.Controllers
         {
             //TODO: pass the selected DateTime object to controller
             return View(rr.ArrangeRetrievalAndDisbursement(new DateTime()));
+        }
+
+        [HttpGet]
+        public ActionResult ApproveReq(int Id, String Status)
+        {
+            ReqApproveRejectDTO reqDTO = new ReqApproveRejectDTO();
+            reqDTO.RequisitionId = Id;
+            reqDTO.Status = Status;
+            return PartialView("ApproveReq", reqDTO);
+        }
+
+        [HttpPost]
+        public ActionResult ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]ReqApproveRejectDTO RADTO)
+        {
+            if (ModelState.IsValid)
+            {
+                Requisition req = rr.GetById(RADTO.RequisitionId);
+                req.Status = RADTO.Status;
+                req.ApprovalRemarks = RADTO.ApprovalRemarks;
+                req.ApprovalEmpNum = er.GetCurrentUser().EmpNum;
+                req.ApprovalDate = DateTime.Today;
+                rr.Update(req);
+                return PartialView();
+            }
+            return PartialView(RADTO);
         }
 
 
