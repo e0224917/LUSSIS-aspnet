@@ -80,6 +80,16 @@ namespace LUSSIS.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    var context = new LUSSISContext();
+                    var emp = context.Employees.FirstOrDefault(e => e.EmailAddress == model.Email);
+                    string name = emp.Title + ". " + emp.FirstName;
+                    Session["Name"] = (string) name;
+
+                    var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                    string id = SignInManager.AuthenticationManager
+                        .AuthenticationResponseGrant.Identity.GetUserId();
+                    Session["Roles"] = userManager.GetRoles(id);
+
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -87,7 +97,7 @@ namespace LUSSIS.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError("", "Wrong email or password. Please try again.");
                     return View(model);
             }
         }
@@ -363,6 +373,8 @@ namespace LUSSIS.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            Session["Name"] = "";
+            Session["Roles"] = new List<string>();
             return RedirectToAction("Index", "Home");
         }
 
