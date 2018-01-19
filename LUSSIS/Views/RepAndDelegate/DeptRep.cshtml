@@ -1,0 +1,71 @@
+﻿@model LUSSIS.Models.WebDTO.RepAndDelegateDTO
+@{
+    ViewBag.Title = "Department Rep";
+}
+
+<h2>Department Rep</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Department.RepEmployee)
+        </th>
+    </tr>
+    <tr>
+        <td>
+
+
+            @Html.DisplayFor(model => model.Department.RepEmployee.FirstName)
+        </td>
+    </tr>
+</table>
+<table>
+    @foreach (var item in Model.GetAllByDepartment)
+    {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+        </tr>
+    }
+</table>
+<script src="https://code.jquery.com/jquery-1.8.3.min.js"></script>
+<script>
+    $("document").ready(function () {
+
+        $("#box").on("keyup", function () {
+            var searchText = $(this).val();
+            searchText = searchText.toLowerCase();
+            searchText = searchText.replace(/\s+/g, '');
+            $('.navList > option').each(function () {
+                var currentLiText = $(this).text(),
+                    showCurrentLi = ((currentLiText.toLowerCase()).replace(/\s+/g, '')).indexOf(searchText) !== -1;
+
+                $(this).toggle(showCurrentLi);
+
+            });
+        });
+    });  
+</script>
+
+<input placeholder="Search Me" id="box" type="text" />
+
+<select class="navList" size="1">
+    <option disabled selected> -- select an option -- </option>
+    <option value="1">apple</option>
+    <option value="2">banana</option>
+    <option value="3">grapes</option>
+    <option value="4">pear</option>
+    <option value="5">orange</option>
+    <option value="6">avocado</option>
+    <option value="7">peach</option>
+</select>>
+
+
+
+
+
