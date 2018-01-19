@@ -4,13 +4,43 @@
     ViewBag.Title = "EmpCart";
 
 }
-
+<script src="~/Scripts/jquery-1.10.2.min.js"
+        type="text/javascript"></script>
+<script type="text/javascript">
+    $(function () {
+        // Document.ready -> link up remove event handler
+        $(".RemoveLink").click(function () {
+            // Get the id from the link
+            var stationeryToDelete = $(this).attr("data-id");
+            var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
+            if (stationeryToDelete != '') {
+                // Perform the ajax post
+                $.post("/Requisition/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
+                    function (data) {
+                        // Successful requests get here
+                        // Update the page elements
+                        location.reload();
+                        //if (data.ItemCount == 0) {
+                        //    $('#row-' + data.DeleteId).fadeOut('slow');
+                        //} else {
+                        //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
+                        //}
+                        //$('#cart-total').text(data.CartTotal);
+                        //$('#update-message').text(data.Message);
+                        //$('#cart-status').text('Cart (' + data.CartCount + ')');
+                    });
+            }
+        });
+    });
+</script>
 
 <h2>Requisition Cart</h2>
-
+<form action="/Requisition/SubmitReq" method="post">
 <p>
-    <input type="submit" value="Submit Requisition" />
-    <input type="text">
+    <input type="text" name="remarks">
+</p>
+<p>
+    <input type="submit" name="button" value="Submit Requisition" />
 </p>
 <table class="table">
     <tr>
@@ -27,27 +57,31 @@
             Delete
         </th>
     </tr>
-
-    @foreach (var item in Model)
+    @if (!IsPost)
     {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.stationery.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.quantity)
-        </td>
-        <td>
-            @Html.ActionLink("Delete", "DeleteCart", new { id = item.RequisitionId })
-        </td>
-    </tr>
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.stationery.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
+                </td>
+                <td>
+
+                    <input type="number" name="qty" min="0" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
+                </td>
+                <td>
+                    <input type="submit" value="Delete" class="RemoveLink" data-id="@item.stationery.ItemNum" />
+                </td>
+            </tr>
+        }
     }
 
-</table>
 
+</table>
+</form>
 
 
 
