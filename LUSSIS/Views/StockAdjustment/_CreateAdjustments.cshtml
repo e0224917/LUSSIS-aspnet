@@ -1,12 +1,38 @@
-﻿@model LUSSIS.Models.AdjVoucher
-@using (Html.BeginCollectionItem("Vouchers"))
-{
-    <tr>
-        <td>@Html.EditorFor(model => model.ItemNum)</td>
-        <td></td>
-        <td>@Html.EditorFor(model => model.Quantity)</td>
-        <td colspan="2">@Html.EditorFor(model => model.Reason)</td>
-        <td><input type="button" value="Delete" class="btn btn-default"
-       onclick="$(this).parent().remove();" /></td>
-    </tr>
-}
+﻿@model LUSSIS.Models.WebDTO.AdjustmentVoucherDTO
+
+<tr>
+    @using (Html.BeginCollectionItem("MyList"))
+    {
+        <td>
+            @Html.EditorFor(model => model.ItemNum)
+            @Html.ValidationMessageFor(model => model.ItemNum, "", new { @class = "text-danger" })
+        </td>
+        <td>
+            - @Html.RadioButtonFor(model => model.Sign, 1)
+            + @Html.RadioButtonFor(model => model.Sign, 2)
+            @Html.ValidationMessageFor(model => model.Sign, "", new { @class = "text-danger" })
+        </td>
+        <td>
+            @Html.EditorFor(model => model.Quantity)
+            @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+        </td>
+        <td>
+            @Html.EditorFor(model => model.Reason)
+            @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+        </td>
+        <td>
+            <input type="button" value="Delete" class="deleteContact btn btn-default"/>
+            @*<input type="button" value="Delete" class="btn btn-default"
+                   onclick="$(this).parent().remove();" />*@
+        </td>
+
+    }
+</tr>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+    $(document).on("click", ".deleteContact", function () {
+        $(this).closest("tr").remove();
+    });
+</script>

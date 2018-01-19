@@ -14,7 +14,7 @@ namespace LUSSIS.Models.WebDTO
         [StringLength(20)]
         public string ItemNum { get; set; }
 
-
+        [Range (0,10000, ErrorMessage="Enter number between 0 to 10000")]
         public int Quantity { get; set; }
 
 
@@ -25,8 +25,11 @@ namespace LUSSIS.Models.WebDTO
 
         public virtual Stationery Stationery { get; set; }
 
+        [Display(Name="Adjustment Type")]
+        [Required(ErrorMessage = "This field is required")]
+        public int? Sign { get; set; }
 
-        [Required(ErrorMessage ="This field is required")]
-        public int? Sign{ get; set; }
+        public IList<AdjustmentVoucherDTO> MyList { get; set; }
+
     }
 }

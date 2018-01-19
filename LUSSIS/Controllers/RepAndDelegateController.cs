@@ -1,6 +1,7 @@
 ﻿using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,38 @@ namespace LUSSIS.Controllers
             return View();
         }
 
-        public ActionResult DepartmentRep()
+        public ActionResult DeptRep()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
             raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
             return View(raddto);
+        }
+
+        [HttpPost]
+        public JsonResult GetVendors(string prefix = " ")
+        {
+            raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+            //List<Employee> empList = employeeRepo.GetAllByDepartment(raddto.Department);
+            raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            var list = raddto.GetAllByDepartment.Where(y => y.FullName.Contains(prefix)).Select(x => new
+            {
+                FullName = x.FullName,
+                EmpNum = x.EmpNum
+            });     
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateRep(string repEmp)
+        {
+            if (ModelState.IsValid)
+            {
+                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
+                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+                employeeRepo.ChangeRep(department, repEmp);
+            }
+
+            return RedirectToAction("DeptRep");
         }
 
         // GET: RepAndDelegate/Details/5
