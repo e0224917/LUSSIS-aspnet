@@ -109,8 +109,8 @@ namespace LUSSIS.Repositories
             return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
         }
        
-        //public as might need it in Disbursement later
-        public RetrievalItemDTO convertStatoDTO(Stationery s)
+        
+        private RetrievalItemDTO convertStatoDTO(Stationery s)
         {
             return new RetrievalItemDTO()
             {

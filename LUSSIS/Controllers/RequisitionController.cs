@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using LUSSIS.Exception;
 using LUSSIS.Models.WebDTO;
 using PagedList;
+using LUSSIS.Models.WebDTO;
 
 namespace LUSSIS.Controllers
 {
@@ -165,22 +166,37 @@ namespace LUSSIS.Controllers
         //TODO: Add authorization - Stock Clerk only 
         //click on generate button - post with date selected
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Retrieve([Bind(Include = "collectionDate")] RetrievalItemsWithDateDTO listWithDate)
+        public ActionResult Retrieve(DateTime? collectionDate)
         {
-            try
+            //TODO: pass the selected DateTime object to controller
+            return View(rr.ArrangeRetrievalAndDisbursement(new DateTime()));
+        }
+
+        [HttpGet]
+        public ActionResult ApproveReq(int Id, String Status)
+        {
+            ReqApproveRejectDTO reqDTO = new ReqApproveRejectDTO();
+            reqDTO.RequisitionId = Id;
+            reqDTO.Status = Status;
+            return PartialView("ApproveReq", reqDTO);
+        }
+
+        [HttpPost]
+        public ActionResult ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]ReqApproveRejectDTO RADTO)
+        {
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    return View(reqRepo.ArrangeRetrievalAndDisbursement(listWithDate.collectionDate));
-                }
-                throw new InvalidDateException();
+                Requisition req = rr.GetById(RADTO.RequisitionId);
+                req.Status = RADTO.Status;
+                req.ApprovalRemarks = RADTO.ApprovalRemarks;
+                req.ApprovalEmpNum = er.GetCurrentUser().EmpNum;
+                req.ApprovalDate = DateTime.Today;
+                rr.Update(req);
+                return PartialView();
             }
-            catch (InvalidDateException /* dex */)
-            {
-               
-            }
-            return View("Retrieve");
+            return PartialView(RADTO);
+        }
+
 
         }
     }

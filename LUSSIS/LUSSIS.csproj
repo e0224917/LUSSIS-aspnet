@@ -270,6 +270,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
+    <Compile Include="Models\WebDTO\AdjVoucherColView.cs" />
     <Compile Include="Models\WebDTO\Cart.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\CollectionPoint.cs" />
@@ -287,6 +288,8 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\RepAndDelegateDTO.cs" />
+    <Compile Include="Models\WebDTO\ReqApproveRejectDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemsWithDateDTO.cs" />
     <Compile Include="Models\WebDTO\ShoppingCart.cs" />
     <Compile Include="Models\Stationery.cs" />
@@ -299,8 +302,10 @@
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\CollectionRepository.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
+    <Compile Include="Repositories\Interface\ICollectionRepository.cs" />
     <Compile Include="Repositories\Interface\IEmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\IDisbursementRepository.cs" />
     <Compile Include="Repositories\Interface\IPORepository.cs" />
@@ -506,6 +511,8 @@
     <Content Include="Views\Requisition\EmpReq.cshtml" />
     <Content Include="Views\Requisition\EmpReqDetail.cshtml" />
     <Content Include="Views\Requisition\Index.cshtml" />
+    <Content Include="Views\RepAndDelegate\DepartmentRep.cshtml" />
+    <Content Include="Views\Requisition\ApproveReq.cshtml" />
     <Content Include="Views\Shared\_DeptEmployeeLayout.cshtml" />
     <Content Include="Views\Requisition\Retrieve.cshtml" />
     <Content Include="Views\Disbursement\Create.cshtml" />
@@ -516,7 +523,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\RepAndDelegate\" />
+    <Folder Include="Views\Disbursement\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

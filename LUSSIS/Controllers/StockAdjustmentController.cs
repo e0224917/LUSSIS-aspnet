@@ -176,9 +176,46 @@ namespace LUSSIS.Controllers
             base.Dispose(disposing);
         }
 
+        [HttpGet]
         public ActionResult CreateAdjustments()
         {
-            return View();
+            AdjVoucherColView kk = new AdjVoucherColView();
+            List<AdjustmentVoucherDTO> pp = new List<AdjustmentVoucherDTO>();
+            AdjustmentVoucherDTO dd = new AdjustmentVoucherDTO();
+            dd.Quantity = 3;
+            pp.Add(dd);
+            kk.MyList = pp;
+
+            return View("CreateAdjustments", kk);
+
+        }
+
+        [HttpPost]
+        public ActionResult CreateAdjustments(AdjVoucherColView kk)
+        {
+            int ENum = er.GetCurrentUser().EmpNum;
+            DateTime todayDate = DateTime.Today;
+            if (ModelState.IsValid)
+            {
+                foreach (AdjustmentVoucherDTO AVDTO in kk.MyList)
+                {
+                    AdjVoucher Adj = new AdjVoucher();
+                    Adj.ItemNum = AVDTO.ItemNum;
+                    Adj.Quantity = AVDTO.Quantity;
+                    Adj.Reason = AVDTO.Reason;
+                    Adj.RequestEmpNum = ENum;
+                    Adj.CreateDate = todayDate;
+                    sar.Add(Adj);
+                }
+                return RedirectToAction("index");
+            }
+            return View(kk);
+        }
+
+
+        public PartialViewResult _CreateAdjustments()
+        {
+            return PartialView("_CreateAdjustments", new AdjustmentVoucherDTO());
 
         }
 

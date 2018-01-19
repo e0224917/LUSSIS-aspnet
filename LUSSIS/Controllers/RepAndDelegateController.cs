@@ -1,4 +1,7 @@
-﻿using System;
+﻿using LUSSIS.Models;
+using LUSSIS.Models.WebDTO;
+using LUSSIS.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,10 +11,20 @@ namespace LUSSIS.Controllers
 {
     public class RepAndDelegateController : Controller
     {
+        EmployeeRepository employeeRepo = new EmployeeRepository();
+        RepAndDelegateDTO raddto = new RepAndDelegateDTO();
+
         // GET: RepAndDelegate
         public ActionResult Index()
         {
             return View();
+        }
+
+        public ActionResult DepartmentRep()
+        {
+            raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+            raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            return View(raddto);
         }
 
         // GET: RepAndDelegate/Details/5
