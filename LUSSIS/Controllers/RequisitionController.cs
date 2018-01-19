@@ -200,16 +200,15 @@ namespace LUSSIS.Controllers
         {
             if (ModelState.IsValid)
             {
-                Requisition req = rr.GetById(RADTO.RequisitionId);
+                Requisition req = reqRepo.GetById(RADTO.RequisitionId);
                 req.Status = RADTO.Status;
                 req.ApprovalRemarks = RADTO.ApprovalRemarks;
-                req.ApprovalEmpNum = er.GetCurrentUser().EmpNum;
+                req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
                 req.ApprovalDate = DateTime.Today;
-                rr.Update(req);
+                reqRepo.Update(req);
                 return PartialView();
             }
             return PartialView(RADTO);
-        }
 
 
         }

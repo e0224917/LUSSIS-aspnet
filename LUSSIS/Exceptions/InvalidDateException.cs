@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace LUSSIS.Exception
+namespace LUSSIS.Exceptions
 {
     public class InvalidDateException : System.Exception
     {
