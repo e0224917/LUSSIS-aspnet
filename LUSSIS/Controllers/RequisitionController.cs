@@ -7,7 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using LUSSIS.Exception;
+using LUSSIS.Exceptions;
 using LUSSIS.Models.WebDTO;
 using PagedList;
 using LUSSIS.Models.WebDTO;
