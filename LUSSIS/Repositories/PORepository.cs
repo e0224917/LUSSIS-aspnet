@@ -14,9 +14,10 @@ namespace LUSSIS.Repositories
     {
         public PORepository() { }
 
+
         public List<PurchaseOrder> GetPendingApprovalPO()
         {
-            IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == "fulfilled");
+            IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == "pending");
             return list.ToList();
         }
 

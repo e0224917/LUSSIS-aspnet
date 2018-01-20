@@ -1,0 +1,128 @@
+﻿@using LUSSIS.Models;
+
+@{
+    ViewBag.Title = "Summary";
+}
+
+<h2>Purchase Order Summary</h2>
+
+<h4>Items Below Reorder Level</h4>
+@if (ViewBag.OutstandingStationeryList.Count == 0)
+{
+    <h6>There are no stationeries recommended for purchase</h6>
+}
+else
+{
+    foreach (KeyValuePair<Supplier, List<Stationery>> entry in @ViewBag.OutstandingStationeryList)
+    {
+        @entry.Key.SupplierName;
+
+        <table class="table">
+            <tr>
+                <th>No</th>
+                <th>Item Description</th>
+                <th>Quantity</th>
+                <th>Reorder Level</th>
+                <th>Reorder Quantity</th>
+            </tr>
+            @for (int i = 0; i < entry.Value.Count; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@entry.Value[i].Description</td>
+                    <td>@entry.Value[i].CurrentQty</td>
+                    <td>@entry.Value[i].ReorderLevel</td>
+                    <td>@entry.Value[i].ReorderQty</td>
+                </tr>
+            }
+        </table>
+        <div class="text-right">
+            <a href="/PurchaseOrders/Create?supplierId=@entry.Key.SupplierId" class="btn-block">Generate PO</a>
+        </div>
+        <br />
+    }
+}
+
+    <h4>Purchase Order Pending Approval</h4>
+    @if (ViewBag.PendingApprovalPOList == null)
+    {
+        <h6>There are no Purchase Orders pending approval</h6>
+    }
+    else
+    {
+        <table class="table">
+            <tr>
+                <th>No</th>
+                <th>Purchase Order No</th>
+                <th>Supplier</th>
+                <th>Created Date</th>
+                <th>Created By</th>
+            </tr>
+            @for (int i = 0; i < ViewBag.pendingApprovalPOList.Count; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td><a href="/PurchaseOrders/Details/@ViewBag.PendingApprovalPOList[i].PoNum">@ViewBag.PendingApprovalPOList[i].PoNum</a></td>
+                    <td>@ViewBag.PendingApprovalPOList[i].Supplier.SupplierName</td>
+                    <td>@ViewBag.PendingApprovalPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
+                    <td>@ViewBag.PendingApprovalPOList[i].OrderEmpNum</td>
+                </tr>
+            }
+        </table>
+    }
+
+    <h4>Approved Purchase Order</h4>
+    @if (ViewBag.ApprovedPOList == null)
+    {
+        <h6>There are no Purchase Orders to be sent to suppliers</h6>
+    }
+    else
+    {
+        <table class="table">
+            <tr>
+                <th>No</th>
+                <th>Purchase Order No</th>
+                <th>Supplier</th>
+                <th>Created Date</th>
+                <th>Created By</th>
+            </tr>
+            @for (int i = 0; i < ViewBag.ApprovedPOList.Count; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td><a href="/PurchaseOrders/Order?p=@ViewBag.ApprovedPOList[i].PoNum">@ViewBag.ApprovedPOList[i].PoNum</a></td>
+                    <td>@ViewBag.ApprovedPOList[i].Supplier.SupplierName</td>
+                    <td>@ViewBag.ApprovedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
+                    <td>@ViewBag.ApprovedPOList[i].OrderEmpNum</td>
+                </tr>
+            }
+        </table>
+    }
+
+    <h4>Purchase Order Awaiting Fulfilment</h4>
+    @if (ViewBag.OrderedPOList == null)
+    {
+        <h6>There are no stationeries expected to arrive</h6>
+    }
+    else
+    {
+        <table class="table">
+            <tr>
+                <th>No</th>
+                <th>Purchase Order No</th>
+                <th>Supplier</th>
+                <th>Created Date</th>
+                <th>Created By</th>
+            </tr>
+            @for (int i = 0; i < ViewBag.OrderedPOList.Count; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td><a href="/PurchaseOrders/Receive?p=@ViewBag.OrderedPOList[i].PoNum">@ViewBag.OrderedPOList[i].PoNum</a></td>
+                    <td>@ViewBag.OrderedPOList[i].Supplier.SupplierName</td>
+                    <td>@ViewBag.OrderedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
+                    <td>@ViewBag.OrderedPOList[i].OrderEmpNum</td>
+                </tr>
+            }
+        </table>
+    }

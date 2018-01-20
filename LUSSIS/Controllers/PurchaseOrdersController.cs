@@ -4,110 +4,16 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Models;
+using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
+
 
 namespace LUSSIS.Controllers
 {
-    public class SummaryViewModel
-    {
-        public Dictionary<Supplier, List<Stationery>> outstandingStationeryList { get; set; }
-        public List<PurchaseOrder> pendingApprovalPOList { get; set; }
-        public List<PurchaseOrder> approvedPOList { get; set; }
-    }
-
-    public class POReceiveViewModel
-    {
-        public ReceiveTransViewModel ReceiveTrans { get; set; }
-        public PurchaseOrder PO { get; set; }
-    }
-    public class ReceiveTransViewModel
-    {
-        public ReceiveTransViewModel()
-        {
-            ReceiveTransDetails = new List<ReceiveTransDetail>();
-        }
-
-        public int ReceiveId { get; set; }
-        public int? PoNum { get; set; }
-        public DateTime? ReceiveDate { get; set; }
-        public string InvoiceNum { get; set; }
-        public string DeliveryOrderNum { get; set; }
-        public List<ReceiveTransDetail> ReceiveTransDetails { get; set; }
-        public ReceiveTran ConvertToReceiveTran()
-        {
-            ReceiveTran receive = new ReceiveTran();
-            receive.ReceiveId = this.ReceiveId;
-            receive.PoNum = this.PoNum;
-            receive.ReceiveDate = this.ReceiveDate;
-            receive.InvoiceNum = this.InvoiceNum;
-            receive.DeliveryOrderNum = this.DeliveryOrderNum;
-            receive.ReceiveTransDetails=this.ReceiveTransDetails;
-            return receive;
-        }
-    }
-
-    public class PurchaseOrderViewModel
-    {
-        public PurchaseOrderViewModel()
-        {
-            PurchaseOrderDetails = new List<PurchaseOrderDetail>();
-            ReceiveTrans = new List<ReceiveTran>();
-        }
-        public int PoNum { get; set; }
-        public int? SupplierId { get; set; }
-        public DateTime? CreateDate { get; set; }
-        public DateTime? OrderDate { get; set; }
-        public string Status { get; set; }
-        public DateTime? ApprovalDate { get; set; }
-        public int? OrderEmpNum { get; set; }
-        public int? ApprovalEmpNum { get; set; }
-        public double ShippingFee { get; set; }
-        public double GST { get; set; }
-        public double TotalAmt { get; set; }
-        public Employee OrderEmployee { get; set; }
-        public Employee ApprovalEmployee { get; set; }
-        public Supplier Supplier { get; set; }
-        public List<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
-        public List<ReceiveTran> ReceiveTrans { get; set; }
-        public PurchaseOrder ConvertToPurchaseOrder()
-        {
-            PurchaseOrder po = new PurchaseOrder();
-            po.PoNum = this.PoNum;
-            po.SupplierId = this.SupplierId;
-            po.CreateDate = this.CreateDate;
-            po.OrderDate = this.OrderDate;
-            po.Status = this.Status;
-            po.ApprovalDate = this.ApprovalDate;
-            po.OrderEmpNum = this.OrderEmpNum;
-            po.ApprovalEmpNum = this.ApprovalEmpNum;
-            po.OrderEmployee = this.OrderEmployee;
-            po.ApprovalEmployee = this.ApprovalEmployee;
-            po.Supplier = this.Supplier;
-            po.PurchaseOrderDetails = this.PurchaseOrderDetails;
-            po.ReceiveTrans = this.ReceiveTrans;
-            return po;
-        }
-        public PurchaseOrderViewModel(PurchaseOrder po)
-        {
-            this.PoNum = po.PoNum;
-            this.SupplierId = po.SupplierId;
-            this.CreateDate = po.CreateDate;
-            this.OrderDate = po.OrderDate;
-            this.Status = po.Status;
-            this.ApprovalDate = po.ApprovalDate;
-            this.OrderEmpNum = po.OrderEmpNum;
-            this.ApprovalEmpNum = po.ApprovalEmpNum;
-            this.OrderEmployee = po.OrderEmployee;
-            this.ApprovalEmployee = po.ApprovalEmployee;
-            this.Supplier = po.Supplier;
-            this.PurchaseOrderDetails = po.PurchaseOrderDetails.ToList();
-            this.ReceiveTrans = po.ReceiveTrans.ToList();
-        }
-
-    }
 
     public class PurchaseOrdersController : Controller
     {
@@ -115,15 +21,16 @@ namespace LUSSIS.Controllers
         private StationeryRepository sr = new StationeryRepository();
         private EmployeeRepository er = new EmployeeRepository();
         private SupplierRepository sur = new SupplierRepository();
+        public const double GST_RATE = 0.07;
 
         // GET: PurchaseOrders
         public ActionResult Index()
         {
             var purchaseOrders = pr.GetAll();
-            return View(purchaseOrders.ToList().OrderByDescending(x=>x.CreateDate));
+            return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate));
         }
 
-        // GET: PurchaseOrders/Details/5
+        // GET: PurchaseOrders/Details/10005
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -135,23 +42,47 @@ namespace LUSSIS.Controllers
             {
                 return HttpNotFound();
             }
-            return View(new PurchaseOrderViewModel(purchaseOrder));
+            PurchaseOrderDTO po = new PurchaseOrderDTO(purchaseOrder);
+
+            //ViewBag.PurchaseOrder = po;
+            return View(po);
         }
 
-        // GET: PurchaseOrders/Create?supplierId=5
-        public ActionResult Create(int? supplierId)
+
+        //GET: PurchaseOrders/Summary
+        public ActionResult Summary()
         {
-            Supplier supplier;
-            PurchaseOrder po = new PurchaseOrder();
+            ViewBag.OutstandingStationeryList = sr.GetOutstandingStationeryByAllSupplier();
+            ViewBag.PendingApprovalPOList = pr.GetPOByStatus("pending");
+            ViewBag.OrderedPOList = pr.GetPOByStatus("ordered");
+            ViewBag.ApprovedPOList = pr.GetPOByStatus("approved");
+            return View();
+        }
+
+
+        // GET: PurchaseOrders/Create or PurchaseOrders/Create?supplierId=1
+        public ActionResult Create(int? supplierId, string error = null)
+        {
+            //catch error from redirect
+            ViewBag.Error = error;
+
+            PurchaseOrderDTO po = new PurchaseOrderDTO(); //view model
             List<Stationery> stationeries;  //for dropdown list
-            int countOfLines = 1;
+            int countOfLines = 1; //no of purchase detail lines to show
 
             if (supplierId == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                Supplier selectASupplier = new Supplier();
+                selectASupplier.SupplierId = -1;
+                selectASupplier.SupplierName = "Select a Supplier";
+                ViewBag.Suppliers = sur.GetAll().Concat(new Supplier[] { selectASupplier });
+                ViewBag.Supplier = selectASupplier;
+                PurchaseOrderDTO nothingToShow = new PurchaseOrderDTO();
+                nothingToShow.SupplierId = -1;
+                return View(nothingToShow);
             }
 
-            supplier = sur.GetById(Convert.ToInt32(supplierId));
+            Supplier supplier = sur.GetById(Convert.ToInt32(supplierId));
             po.Supplier = supplier;
             po.SupplierId = supplier.SupplierId;
             po.CreateDate = DateTime.Today;
@@ -162,22 +93,24 @@ namespace LUSSIS.Controllers
             {
                 if (stationery.CurrentQty < stationery.ReorderLevel)
                 {
-                    PurchaseOrderDetail pdetails = new PurchaseOrderDetail();
-                    pdetails.Stationery = stationery;
+                    PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
                     pdetails.OrderQty = stationery.ReorderLevel - stationery.CurrentQty;
                     pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
-                    pdetails.PurchaseOrder = po;
-                    po.PurchaseOrderDetails.Add(pdetails);
+                    pdetails.ItemNum = stationery.ItemNum;
+                    po.PurchaseOrderDetailsDTO.Add(pdetails);
                 }
             }
-            countOfLines = po.PurchaseOrderDetails.Count;
+            countOfLines = po.PurchaseOrderDetailsDTO.Count;
 
-            //create empty puchase details to populate newly created items
-            for(int i = countOfLines; i < 100; i++)
+
+            //create empty puchase details so user can add up to 100 line items per PO
+            for (int i = countOfLines; i < 100; i++)
             {
-                PurchaseOrderDetail pdetails = new PurchaseOrderDetail();
-                pdetails.PurchaseOrder = po;
-                po.PurchaseOrderDetails.Add(pdetails);
+                PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
+                pdetails.OrderQty = 0;
+                pdetails.UnitPrice = stationeries.First().UnitPrice(Convert.ToInt32(supplierId));
+                pdetails.ItemNum = stationeries.First().ItemNum;
+                po.PurchaseOrderDetailsDTO.Add(pdetails);
             }
 
             //fill ViewBag to populate stationery dropdown lists
@@ -185,12 +118,10 @@ namespace LUSSIS.Controllers
             ViewBag.Suppliers = sur.GetAll();
             ViewBag.Supplier = supplier;
             ViewBag.countOfLines = countOfLines;
-            
+            ViewBag.GST_RATE = GST_RATE;
 
-
-            return View(new PurchaseOrderViewModel(po));
+            return View(po);
         }
-
 
 
         // POST: PurchaseOrders/Create
@@ -198,49 +129,76 @@ namespace LUSSIS.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PurchaseOrderViewModel purchaseOrderViewModel) //[Bind(Include = "PoNum,SupplierId,CreateDate,OrderDate,Status,ApprovalDate,OrderEmpNum,ApprovalEmpNum")] 
+        public ActionResult Create(PurchaseOrderDTO purchaseOrderDTO)
         {
-            PurchaseOrder purchaseOrder = purchaseOrderViewModel.ConvertToPurchaseOrder();
-            if (ModelState.IsValid)
+            try
             {
-                //validation
-                if (purchaseOrder.CreateDate == null) purchaseOrder.CreateDate = DateTime.Today;
-                purchaseOrder.OrderEmpNum = er.GetCurrentUser().EmpNum;
-                purchaseOrder.Status = "pending";
+                if (ModelState.IsValid)
+                    throw new Exception("IT Error: please contact your administrator");
 
-                //persist data
-                pr.Add(purchaseOrder);
-                for (int i = purchaseOrder.PurchaseOrderDetails.Count - 1; i >= 0; i--)
+                //create PO
+                PurchaseOrder purchaseOrder = new PurchaseOrder();
+
+                //set PO values
+                purchaseOrder.OrderEmpNum = er.GetCurrentUser().EmpNum;
+                if (purchaseOrderDTO.CreateDate == null)
+                    purchaseOrder.CreateDate = DateTime.Today;
+                else
+                    purchaseOrder.CreateDate = purchaseOrderDTO.CreateDate;
+                purchaseOrder.Status = "pending";
+                purchaseOrder.SupplierId = purchaseOrderDTO.SupplierId;
+
+                //set PO detail values
+                for (int i = purchaseOrderDTO.PurchaseOrderDetailsDTO.Count - 1; i >= 0; i--)
                 {
-                    if (purchaseOrder.PurchaseOrderDetails.Skip(i).First().OrderQty < 0)
+                    PurchaseOrderDetailDTO pdetail = purchaseOrderDTO.PurchaseOrderDetailsDTO.ElementAt(i);
+                    if (pdetail.OrderQty > 0)
                     {
-                        purchaseOrder.PurchaseOrderDetails.Remove(purchaseOrder.PurchaseOrderDetails.Skip(i).First());
+                        PurchaseOrderDetail newPdetail = new PurchaseOrderDetail();
+                        newPdetail.ItemNum = pdetail.ItemNum;
+                        newPdetail.OrderQty = pdetail.OrderQty;
+                        newPdetail.UnitPrice = pdetail.UnitPrice;
+                        newPdetail.ReceiveQty = 0;
+                        purchaseOrder.PurchaseOrderDetails.Add(newPdetail);
                     }
+                    else
+                        throw new Exception("Purchase Order was not created, ordered quantity cannot be negative");
                 }
+                if (purchaseOrder.PurchaseOrderDetails.Count == 0)
+                    throw new Exception("Purchase Order was not created, no items found");
+
+                //save to database
+                pr.Add(purchaseOrder);
+
                 return RedirectToAction("Summary");
             }
-
-            return View(purchaseOrder);
+            catch (Exception e)
+            {
+                return RedirectToAction("Create", new { supplierId = purchaseOrderDTO.SupplierId.ToString(), error = e.Message });
+            }
         }
 
-        //GET: PurchaseOrders/Receive?p=100001
-        [HttpGet]
-        public ActionResult Receive(int? p = null)
-        {
-            PurchaseOrder po = null;
-            POReceiveViewModel pOReceive = new POReceiveViewModel();
-            ReceiveTransViewModel receive = new ReceiveTransViewModel();
 
+        //GET: PurchaseOrders/Receive?p=10001
+        [HttpGet]
+        public ActionResult Receive(int? p = null, string error = null)
+        {
+            //catch error from redirect
+            ViewBag.Error = error;
+
+            PurchaseOrderDTO po = null;    //to be put in ViewBag to display
+            ReceiveTransDTO receive = new ReceiveTransDTO();    //model to bind data
 
             if (p == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewBag.OrderedPO = pr.GetPOByStatus("ordered");
+                return View();
             }
 
             //populate PO and ReceiveTrans if PO number is given
-
-            po = pr.GetById(Convert.ToInt32(p));
-            pOReceive.PO = po;
+            po = new PurchaseOrderDTO(pr.GetById(Convert.ToInt32(p)));
+            if (po.Status != "ordered")
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             for (int i = 0; i < po.PurchaseOrderDetails.Count; i++)
             {
                 ReceiveTransDetail rdetail = new ReceiveTransDetail();
@@ -248,102 +206,124 @@ namespace LUSSIS.Controllers
                 rdetail.Quantity = 0;
                 receive.ReceiveTransDetails.Add(rdetail);
             }
-
+            receive.ReceiveDate = DateTime.Today;
 
             ViewBag.PurchaseOrder = po;
-            pOReceive.ReceiveTrans = receive;
-            return View(pOReceive);
+            return View(receive);
         }
 
         //POST: PurchaseOrders/Receive
         [HttpPost]
-        public ActionResult Receive(POReceiveViewModel poReceive)
+        public ActionResult Receive(ReceiveTransDTO receiveModel)
         {
-            PurchaseOrder po = pr.GetById(Convert.ToInt32(poReceive.PO.PoNum));
-            ReceiveTran receive = poReceive.ReceiveTrans.ConvertToReceiveTran();
-            bool fulfilled = true;
-
-            //update received quantity
-            for (int i = po.PurchaseOrderDetails.Count - 1; i >= 0; i--)
+            try
             {
-                int arrQty = Convert.ToInt32(receive.ReceiveTransDetails.Skip(i).First().Quantity);
-                if (arrQty > 0)
-                {
-                    po.PurchaseOrderDetails.Skip(i).First().ReceiveQty += arrQty;
-                    if (po.PurchaseOrderDetails.Skip(i).First().ReceiveQty < po.PurchaseOrderDetails.Skip(i).First().OrderQty)
-                        fulfilled = false;
-                }
-                else if (arrQty == 0)
-                {
-                    receive.ReceiveTransDetails.Remove(receive.ReceiveTransDetails.Skip(i).First());
-                }
-            }
-            if (fulfilled) po.Status = "fulfilled";
-            pr.Update(poReceive.PO);
+                if (!ModelState.IsValid)
+                    throw new Exception("IT Error: please contact your administrator");
 
-            //update stationery master
-            foreach (ReceiveTransDetail rd in receive.ReceiveTransDetails)
+                PurchaseOrder po = pr.GetById(Convert.ToInt32(receiveModel.PoNum));
+                ReceiveTran receive = receiveModel.ConvertToReceiveTran();
+                if (receive.ReceiveDate == null) receive.ReceiveDate = DateTime.Today;
+                bool fulfilled = true;
+
+                //check for validity
+                int? totalQty = 0;
+                foreach (ReceiveTransDetail rdetail in receive.ReceiveTransDetails)
+                {
+                    totalQty += rdetail.Quantity;
+                    if (rdetail.Quantity < 0)
+                        throw new Exception("Record not saved, received quantity cannot be negative");
+                }
+                if (totalQty == 0)
+                    throw new Exception("Record not saved, not receipt of goods found");
+
+
+                //update received quantity in purchase order
+                for (int i = po.PurchaseOrderDetails.Count - 1; i >= 0; i--)
+                {
+                    int receiveQty = Convert.ToInt32(receive.ReceiveTransDetails.ElementAt(i).Quantity);
+                    if (receiveQty > 0)
+                    {
+                        //update po received qty
+                        po.PurchaseOrderDetails.ElementAt(i).ReceiveQty += receiveQty;
+                        if (po.PurchaseOrderDetails.ElementAt(i).ReceiveQty < po.PurchaseOrderDetails.ElementAt(i).OrderQty)
+                            fulfilled = false;
+
+                        //update stationery
+                        Stationery s = sr.GetById(po.PurchaseOrderDetails.ElementAt(i).Stationery.ItemNum);
+                        s.AverageCost = ((s.AverageCost * s.CurrentQty)
+                                        + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + GST_RATE))
+                                        / (s.CurrentQty + receiveQty);
+                        s.CurrentQty += receiveQty;
+                        s.AvailableQty += receiveQty;
+                        sr.Update(s);   //persist stationery data here
+                    }
+                    else if (receiveQty == 0)
+                        //keep only the receive transactions details with non-zero quantity
+                        receive.ReceiveTransDetails.Remove(receive.ReceiveTransDetails.ElementAt(i));
+                }
+
+                //update purchase order and create receive trans
+                if (fulfilled) po.Status = "fulfilled";
+                po.ReceiveTrans.Add(receive);
+                pr.Update(po);
+
+                return RedirectToAction("Summary");
+            }
+            catch (Exception e)
             {
-                Stationery s = rd.Stationery;
-                s.AverageCost = (s.AverageCost * s.CurrentQty) + (rd.Quantity);
-                s.CurrentQty += rd.Quantity;
-                sr.Update(s);
+                return RedirectToAction("Receive", new { p = receiveModel.PoNum.ToString(), error = e.Message });
             }
-
-
-            return RedirectToAction("Summary");
         }
 
-        //GET: PurchaseOrders/Summary
-        public ActionResult Summary()
+
+
+        //GET: PurchaseOrders/Order?p=10001
+        [HttpGet]
+        public async Task<ActionResult> Order(int? p = null, string error = null)
         {
-            SummaryViewModel model = new SummaryViewModel();
-            model.outstandingStationeryList = sr.GetOutstandingStationeryByAllSupplier();
-            model.pendingApprovalPOList = pr.GetPendingApprovalPO();
-            model.approvedPOList = pr.GetApprovedPO();
-            return View(model);
+            //catch error from redirect
+            ViewBag.Error = error;
+
+            PurchaseOrderDTO po = null;
+            if (p == null)
+            {
+                ViewBag.ApprovedPO = pr.GetPOByStatus("approved");
+                return View();
+            }
+
+            //populate PO DTO if PO number is given
+            PurchaseOrder purchaseOrder = await pr.GetByIdAsync(Convert.ToInt32(p));
+            if (purchaseOrder.Status != "approved")
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            po = new PurchaseOrderDTO(purchaseOrder);
+            po.OrderDate = DateTime.Today;
+
+            return View(po);
         }
 
-        /*
-        * Auto generated
-        * 
-    // GET: PurchaseOrders/Edit/5
-    public ActionResult Edit(int? id)
-    {
-    if (id == null)
-    {
-        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-    }
-    PurchaseOrder purchaseOrder = db.PurchaseOrders.Find(id);
-    if (purchaseOrder == null)
-    {
-        return HttpNotFound();
-    }
-    ViewBag.OrderEmpNum = new SelectList(db.Employees, "EmpNum", "Title", purchaseOrder.OrderEmpNum);
-    ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title", purchaseOrder.ApprovalEmpNum);
-    ViewBag.SupplierId = new SelectList(db.Suppliers, "SupplierId", "SupplierName", purchaseOrder.SupplierId);
-    return View(purchaseOrder);
-    }
 
-    // POST: PurchaseOrders/Edit/5
-    // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-    // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Edit([Bind(Include = "PoNum,SupplierId,CreateDate,OrderDate,Status,ApprovalDate,OrderEmpNum,ApprovalEmpNum")] PurchaseOrder purchaseOrder)
-    {
-    if (ModelState.IsValid)
-    {
-        db.Entry(purchaseOrder).State = EntityState.Modified;
-        db.SaveChanges();
-        return RedirectToAction("Index");
-    }
-    ViewBag.OrderEmpNum = new SelectList(db.Employees, "EmpNum", "Title", purchaseOrder.OrderEmpNum);
-    ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title", purchaseOrder.ApprovalEmpNum);
-    ViewBag.SupplierId = new SelectList(db.Suppliers, "SupplierId", "SupplierName", purchaseOrder.SupplierId);
-    return View(purchaseOrder);
-    }
-    */
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Order(PurchaseOrderDTO po)
+        {
+            try
+            {
+                if(!ModelState.IsValid)
+                    throw new Exception("IT Error: please contact your administrator");
+                PurchaseOrder purchaseorder = pr.GetById(po.PoNum);
+                purchaseorder.Status = "ordered";
+                purchaseorder.OrderDate = po.OrderDate;
+                if (po.OrderDate < po.CreateDate)
+                    throw new Exception("Record not saved, ordered date cannot be before created date");
+                pr.Update(purchaseorder);
+                return RedirectToAction("Summary");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Order", new { p = po.PoNum.ToString(), error = e.Message });
+            }
+        }
     }
 }
 
