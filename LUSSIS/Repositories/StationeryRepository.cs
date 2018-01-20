@@ -31,7 +31,7 @@ namespace LUSSIS.Repositories
             return slist;
         }
 
-        public IEnumerable<String> GetAllItemNum()
+        public List<String> GetAllItemNum()
         {
             List<String> slist = new List<string>();
             List<Stationery> stlist = LUSSISContext.Stationeries.ToList();
