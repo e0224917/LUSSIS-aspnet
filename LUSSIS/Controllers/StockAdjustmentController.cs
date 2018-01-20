@@ -179,15 +179,12 @@ namespace LUSSIS.Controllers
         [HttpGet]
         public ActionResult CreateAdjustments()
         {
-            AdjVoucherColView kk = new AdjVoucherColView();
-            List<AdjustmentVoucherDTO> pp = new List<AdjustmentVoucherDTO>();
-            AdjustmentVoucherDTO dd = new AdjustmentVoucherDTO();
-            dd.Quantity = 3;
-            pp.Add(dd);
-            kk.MyList = pp;
-
-            return View("CreateAdjustments", kk);
-
+            AdjVoucherColView aVCV = new AdjVoucherColView();
+            List<AdjustmentVoucherDTO> aVlist = new List<AdjustmentVoucherDTO>();
+            AdjustmentVoucherDTO aV = new AdjustmentVoucherDTO();
+            aVlist.Add(aV);
+            aVCV.MyList = aVlist;
+            return View("CreateAdjustments", aVCV);
         }
 
         [HttpPost]
@@ -197,15 +194,22 @@ namespace LUSSIS.Controllers
             DateTime todayDate = DateTime.Today;
             if (ModelState.IsValid)
             {
-                foreach (AdjustmentVoucherDTO AVDTO in kk.MyList)
+                if (kk.MyList != null)
                 {
-                    AdjVoucher Adj = new AdjVoucher();
-                    Adj.ItemNum = AVDTO.ItemNum;
-                    Adj.Quantity = AVDTO.Quantity;
-                    Adj.Reason = AVDTO.Reason;
-                    Adj.RequestEmpNum = ENum;
-                    Adj.CreateDate = todayDate;
-                    sar.Add(Adj);
+                    foreach (AdjustmentVoucherDTO AVDTO in kk.MyList)
+                    {
+                        AdjVoucher Adj = new AdjVoucher();
+                        if (AVDTO.Sign == false)
+                        {
+                            AVDTO.Quantity = AVDTO.Quantity * -1;
+                        }
+                        Adj.ItemNum = AVDTO.ItemNum;
+                        Adj.Quantity = AVDTO.Quantity;
+                        Adj.Reason = AVDTO.Reason;
+                        Adj.RequestEmpNum = ENum;
+                        Adj.CreateDate = todayDate;
+                        sar.Add(Adj);
+                    }
                 }
                 return RedirectToAction("index");
             }
@@ -244,7 +248,7 @@ namespace LUSSIS.Controllers
                 adj.RequestEmpNum = er.GetCurrentUser().EmpNum;
                 adj.ItemNum = adjVoucher.ItemNum;
                 adj.CreateDate = DateTime.Today;
-                if (adjVoucher.Sign == 1)
+                if (adjVoucher.Sign == false)
                 { adjVoucher.Quantity = adjVoucher.Quantity * -1; }
                 adj.Quantity = adjVoucher.Quantity;
                 adj.Reason = adjVoucher.Reason;

@@ -36,32 +36,28 @@
 
 @using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
 {
-    <input id="Emp" type="text" placeholder="Search for Employee" name="FullName"/>
+    <input id="Emp" type="text" placeholder="Search for Employee" name="FullName" />
     <input type="submit" value="Set New Department Rep" />
     <input type="hidden" id="Emp2" name="RepEmp" />
     @ViewBag.Message
 }
 
 @section scripts {
-    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-
-
-
             $('#Department.RepEmpNum').val();
             $("#Emp").autocomplete({
                 source: function (request, response) {
                     $.ajax({
-                        url: "/RepAndDelegate/GetVendors",
-                        type: "POST",
+                        url: "/RepAndDelegate/GetEmpJson",
+                        type: "GET",
                         dataType: "json",
                         data: { prefix: request.term },
                         success: function (data) {
                             response($.map(data, function (item) {
                                 return { label: item.FullName, value: item.EmpNum };
                             }))
-
                         }
                     })
                 },
@@ -78,23 +74,5 @@
     </script>
 }
 
-@*@using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
-
-        <div class="form-horizontal">
-
-            <hr />
-
-            <div class="form-group">
-
-                <div class="col-md-12">
-                    @Html.EditorFor(model => model.Department.RepEmployee.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-
-                </div>
-            </div>
-
-        </div>
-    }*@
 
 

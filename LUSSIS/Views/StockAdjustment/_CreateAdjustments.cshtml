@@ -1,38 +1,42 @@
 ﻿@model LUSSIS.Models.WebDTO.AdjustmentVoucherDTO
 
+@{
+    ViewBag.Title = "_CreateAdjustments";
+}
 <tr>
     @using (Html.BeginCollectionItem("MyList"))
     {
         <td>
-            @Html.EditorFor(model => model.ItemNum)
+            @*@Html.DropDownList("ItemNum", null, htmlAttributes: new { @class = "form-control" })*@
+            @Html.EditorFor(model => model.ItemNum) <br /><span style="font-size:0">a </span>
             @Html.ValidationMessageFor(model => model.ItemNum, "", new { @class = "text-danger" })
         </td>
         <td>
-            - @Html.RadioButtonFor(model => model.Sign, 1)
-            + @Html.RadioButtonFor(model => model.Sign, 2)
+            - @Html.RadioButtonFor(model => model.Sign, false)
+            + @Html.RadioButtonFor(model => model.Sign, true) <br /><span style="font-size:0">a </span>
             @Html.ValidationMessageFor(model => model.Sign, "", new { @class = "text-danger" })
         </td>
         <td>
-            @Html.EditorFor(model => model.Quantity)
+            @Html.EditorFor(model => model.Quantity) <br /> <span style="font-size:0">a </span>
             @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
         </td>
         <td>
-            @Html.EditorFor(model => model.Reason)
-            @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+            @Html.EditorFor(model => model.Reason) <br /><span style="font-size:0">a </span>
         </td>
         <td>
-            <input type="button" value="Delete" class="deleteContact btn btn-default"/>
-            @*<input type="button" value="Delete" class="btn btn-default"
-                   onclick="$(this).parent().remove();" />*@
+            <input type="button" value="Delete" class="deleteEntry btn btn-default" />
+            <br /><span style="font-size:0">a </span>
         </td>
 
     }
 </tr>
+
+
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script type="text/javascript">
-    $(document).on("click", ".deleteContact", function () {
+    $(document).on("click", ".deleteEntry", function () {
         $(this).closest("tr").remove();
     });
 </script>

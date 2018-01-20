@@ -28,18 +28,21 @@ namespace LUSSIS.Controllers
             return View(raddto);
         }
 
-        [HttpPost]
-        public JsonResult GetVendors(string prefix = " ")
+        [HttpGet]
+        public JsonResult GetEmpJson(string prefix)
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
             //List<Employee> empList = employeeRepo.GetAllByDepartment(raddto.Department);
             raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
-            var list = raddto.GetAllByDepartment.Where(y => y.FullName.Contains(prefix)).Select(x => new
+            var list = raddto.GetAllByDepartment.Where(x => x.FullName.Contains(prefix)).ToList();
+
+            var selectedEmp = list.Select(x => new
             {
                 FullName = x.FullName,
                 EmpNum = x.EmpNum
-            });     
-            return Json(list, JsonRequestBehavior.AllowGet);
+            });   
+            
+            return Json(selectedEmp, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

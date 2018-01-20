@@ -41,8 +41,8 @@
         <div class="form-group">
             @Html.Label("Adjustment Type: ", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                - @Html.RadioButtonFor(model => model.Sign, 1)
-                + @Html.RadioButtonFor(model => model.Sign, 2)
+                - @Html.RadioButtonFor(model => model.Sign, false)
+                + @Html.RadioButtonFor(model => model.Sign, true)
                 @Html.ValidationMessageFor(model => model.Sign, "", new { @class = "text-danger" })
             </div>
         </div>
