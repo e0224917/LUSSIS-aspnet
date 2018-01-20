@@ -242,6 +242,7 @@
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Exceptions\InvalidDateException.cs" />
+    <Compile Include="Exceptions\InvalidSetRepException.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -577,6 +578,7 @@
     <Content Include="Scripts\popper.min.js.map" />
     <Content Include="Scripts\README.md" />
     <Content Include="Views\RepAndDelegate\DeptRep.cshtml" />
+    <Content Include="Views\RepAndDelegate\DeptDelegate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

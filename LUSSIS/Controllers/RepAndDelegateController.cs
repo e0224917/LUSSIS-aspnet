@@ -7,9 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Exceptions;
 
 namespace LUSSIS.Controllers
 {
+
+    [Authorize(Roles = "head")]
     public class RepAndDelegateController : Controller
     {
         EmployeeRepository employeeRepo = new EmployeeRepository();
@@ -24,7 +27,7 @@ namespace LUSSIS.Controllers
         public ActionResult DeptRep()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            raddto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(raddto.Department);
             return View(raddto);
         }
 
@@ -32,11 +35,10 @@ namespace LUSSIS.Controllers
         public JsonResult GetEmpJson(string prefix)
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            //List<Employee> empList = employeeRepo.GetAllByDepartment(raddto.Department);
-            raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
-            var list = raddto.GetAllByDepartment.Where(x => x.FullName.Contains(prefix)).ToList();
-
-            var selectedEmp = list.Select(x => new
+            //raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            //var Emplist = raddto.GetAllByDepartment;
+            var selectedlist = employeeRepo.GetSelectionByDepartment(prefix, raddto.Department);
+            var selectedEmp = selectedlist.Select(x => new
             {
                 FullName = x.FullName,
                 EmpNum = x.EmpNum
@@ -52,9 +54,8 @@ namespace LUSSIS.Controllers
             {
                 string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
                 Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                employeeRepo.ChangeRep(department, repEmp);
+                employeeRepo.ChangeRep(department, repEmp);       
             }
-
             return RedirectToAction("DeptRep");
         }
 
