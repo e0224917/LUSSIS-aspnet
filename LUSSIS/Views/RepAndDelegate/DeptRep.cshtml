@@ -1,0 +1,120 @@
+﻿@model LUSSIS.Models.WebDTO.RepAndDelegateDTO
+@{
+    ViewBag.Title = "Department Rep";
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<h2>Department Rep</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Department.RepEmployee)
+        </th>
+    </tr>
+    <tr>
+        <td>
+
+
+            @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
+        </td>
+    </tr>
+</table>
+@*<table>
+        @foreach (var item in Model.GetAllByDepartment)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+            </tr>
+        }
+    </table>*@
+
+@using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
+{
+    <input id="Emp" type="text" placeholder="Search for Employee" name="FullName" />
+    <input type="submit" value="Set New Department Rep" />
+    <input type="hidden" id="Emp2" name="RepEmp" />
+    <br />
+    <label id="tagsname" />
+    if (ViewBag.Message != null)
+    {
+        <span><font color="red" />@ViewBag.Message</span>
+    }
+}
+
+@section scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(':input[type="submit"]').prop('disabled', true);
+            $('#Department.RepEmpNum').val();
+            $('input[type="text"]').keyup(function () {
+                if ($(this).val() == '') {
+                    $(':input[type="submit"]').prop('disabled', true);
+                    $('#tagsname').html('You selected none ');
+                }
+                else {
+                    $(':input[type="submit"]').prop('disabled', false);
+                }
+            });
+            $("#Emp").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/RepAndDelegate/GetEmpJson",
+                        type: "GET",
+                        dataType: "json",
+                        data: { prefix: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.FullName, value: item.EmpNum };
+                            }))
+                        }
+                    })
+                },
+                select: function (event, ui) {
+                    event.preventDefault();
+                    $('#Emp2').val(ui.item.value);
+                    $(this).val(ui.item.label); 
+                    if (ui.item == null) {
+                        $("#Emp").val('');
+                        $(':input[type="submit"]').prop('disabled', true);
+                    }
+                    else
+                    {
+                        $('#tagsname').html('You selected: ' + ui.item.label);
+                    }
+                },
+                change: function (event, ui) {
+                    if (ui.item == null) {
+                        $("#Emp").val('');
+                        $(':input[type="submit"]').prop('disabled', true);
+                    }
+                    else {
+                        $(':input[type="submit"]').prop('disabled', false);
+                    }
+                },
+                focus: function (event, ui) {
+                    $(this).val(ui.item.label);
+                    if (ui.item == null) {
+                        $("#Emp").val('');
+                        $(':input[type="submit"]').prop('disabled', true);
+                    }
+                    else {
+                        $(':input[type="submit"]').prop('disabled', false);
+                    }
+                },
+                messages: {
+                    noResults: "", results: ""
+                }
+            });;
+        })
+    </script>
+}
+
+
+

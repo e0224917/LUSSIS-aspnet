@@ -1,12 +1,42 @@
-﻿@model LUSSIS.Models.AdjVoucher
-@using (Html.BeginCollectionItem("Vouchers"))
-{
-    <tr>
-        <td>@Html.EditorFor(model => model.ItemNum)</td>
-        <td></td>
-        <td>@Html.EditorFor(model => model.Quantity)</td>
-        <td colspan="2">@Html.EditorFor(model => model.Reason)</td>
-        <td><input type="button" value="Delete" class="btn btn-default"
-       onclick="$(this).parent().remove();" /></td>
-    </tr>
+﻿@model LUSSIS.Models.WebDTO.AdjustmentVoucherDTO
+
+@{
+    ViewBag.Title = "_CreateAdjustments";
 }
+<tr>
+    @using (Html.BeginCollectionItem("MyList"))
+    {
+        <td>
+            @*@Html.DropDownList("ItemNum", null, htmlAttributes: new { @class = "form-control" })*@
+            @Html.EditorFor(model => model.ItemNum) <br /><span style="font-size:0">a </span>
+            @Html.ValidationMessageFor(model => model.ItemNum, "", new { @class = "text-danger" })
+        </td>
+        <td>
+            - @Html.RadioButtonFor(model => model.Sign, false)
+            + @Html.RadioButtonFor(model => model.Sign, true) <br /><span style="font-size:0">a </span>
+            @Html.ValidationMessageFor(model => model.Sign, "", new { @class = "text-danger" })
+        </td>
+        <td>
+            @Html.EditorFor(model => model.Quantity) <br /> <span style="font-size:0">a </span>
+            @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+        </td>
+        <td>
+            @Html.EditorFor(model => model.Reason) <br /><span style="font-size:0">a </span>
+        </td>
+        <td>
+            <input type="button" value="Delete" class="deleteEntry btn btn-default" />
+            <br /><span style="font-size:0">a </span>
+        </td>
+
+    }
+</tr>
+
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+    $(document).on("click", ".deleteEntry", function () {
+        $(this).closest("tr").remove();
+    });
+</script>

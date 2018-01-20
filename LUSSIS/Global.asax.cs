@@ -16,15 +16,19 @@ namespace LUSSIS
         {
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            FilterConfig.RegisterApiFilters(GlobalConfiguration.Configuration.Filters);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
+            //GlobalConfiguration.Configuration.Formatters.JsonFormatter.S‌​erializerSettings.Re‌​ferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
         }
         void Session_Start(object sender, EventArgs e)
         {
             ShoppingCart shoppingCart = new ShoppingCart();
             Session["MyCart"] = shoppingCart;
+            Session["Name"] = "";
+            Session["Roles"] = new List<string>();
         }
     }
 }

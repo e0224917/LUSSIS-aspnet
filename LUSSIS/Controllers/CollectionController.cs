@@ -16,7 +16,7 @@ namespace LUSSIS.Controllers
     {
         DisbursementRepository disbursementRepo = new DisbursementRepository();
         EmployeeRepository employeeRepo = new EmployeeRepository();
-        Repository<CollectionPoint, int> collectionRepo = new Repository<CollectionPoint, int>();
+        CollectionRepository collectionRepo = new CollectionRepository();
  
         ManageCollectionDTO mcdto = new ManageCollectionDTO();
 

@@ -9,6 +9,6 @@ namespace LUSSIS.Models.WebDTO
     {
         public Department Department { get; set; }
 
-        public IEnumerable<Employee> GetAllByDepartment { get; set; }
+        public List<Employee> GetStaffRepByDepartment { get; set; }
     }
 }

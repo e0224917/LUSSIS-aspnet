@@ -115,7 +115,7 @@ namespace LUSSIS.Controllers
                 await repo.DeleteAsync(supplier);
                 return RedirectToAction("Index");
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 ModelState.AddModelError("","This supplier has existed stationeries.");
                 return View(supplier);
