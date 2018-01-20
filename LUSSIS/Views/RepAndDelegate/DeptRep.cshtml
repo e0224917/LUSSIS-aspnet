@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Department Rep";
 }
-
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <h2>Department Rep</h2>
 
 <table class="table">
@@ -19,53 +19,60 @@
         </td>
     </tr>
 </table>
-<table>
-    @foreach (var item in Model.GetAllByDepartment)
-    {
-        <tr>
+@*<table>
+        @foreach (var item in Model.GetAllByDepartment)
+        {
+            <tr>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-        </tr>
-    }
-</table>
-<script src="https://code.jquery.com/jquery-1.8.3.min.js"></script>
-<script>
-    $("document").ready(function () {
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+            </tr>
+        }
+    </table>*@
 
-        $("#box").on("keyup", function () {
-            var searchText = $(this).val();
-            searchText = searchText.toLowerCase();
-            searchText = searchText.replace(/\s+/g, '');
-            $('.navList > option').each(function () {
-                var currentLiText = $(this).text(),
-                    showCurrentLi = ((currentLiText.toLowerCase()).replace(/\s+/g, '')).indexOf(searchText) !== -1;
+@using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
+{
+    <input id="Emp" type="text" placeholder="Search for Employee" name="FullName" />
+    <input type="submit" value="Set New Department Rep" />
+    <input type="hidden" id="Emp2" name="RepEmp" />
+    @ViewBag.Message
+}
 
-                $(this).toggle(showCurrentLi);
-
+@section scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#Department.RepEmpNum').val();
+            $("#Emp").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/RepAndDelegate/GetEmpJson",
+                        type: "GET",
+                        dataType: "json",
+                        data: { prefix: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.FullName, value: item.EmpNum };
+                            }))
+                        }
+                    })
+                },
+                select: function (event, ui) {
+                    event.preventDefault();
+                    $('#Emp2').val(ui.item.value);
+                    $(this).val(ui.item.label);
+                },
+                messages: {
+                    noResults: "", results: ""
+                }
             });
-        });
-    });  
-</script>
-
-<input placeholder="Search Me" id="box" type="text" />
-
-<select class="navList" size="1">
-    <option disabled selected> -- select an option -- </option>
-    <option value="1">apple</option>
-    <option value="2">banana</option>
-    <option value="3">grapes</option>
-    <option value="4">pear</option>
-    <option value="5">orange</option>
-    <option value="6">avocado</option>
-    <option value="7">peach</option>
-</select>>
-
-
+        })
+    </script>
+}
 
 
 

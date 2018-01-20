@@ -21,7 +21,7 @@ namespace LUSSIS.Models
         public int? RequisitionEmpNum { get; set; }
 
         [Column(TypeName = "date")]
-        [DisplayFormat(DataFormatString = "{0:d}")]
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime? RequisitionDate { get; set; }
 
         public int? ApprovalEmpNum { get; set; }

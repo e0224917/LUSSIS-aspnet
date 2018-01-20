@@ -25,9 +25,13 @@ namespace LUSSIS.Controllers.WebAPI
             return repo.GetAll().Select(item => new StationeryDTO()
                 {
                     ItemNum = item.ItemNum,
-                    BinNum = item.BinNum,
+                    Category = item.Category.CategoryName,
+                    Description = item.Description,
+                    ReorderLevel = item.ReorderLevel,
+                    ReorderQty = item.ReorderQty,
                     AvailableQty = item.AvailableQty,
-                    CurrentQty = item.CurrentQty
+                    UnitOfMeasure = item.UnitOfMeasure,
+                    BinNum = item.BinNum
                 })
                 .ToList();
         }
@@ -36,13 +40,13 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(StationeryDTO))]
         public async Task<IHttpActionResult> GetStationery(string id)
         {
-            Stationery stationery = await repo.GetByIdAsync(id);
+            var stationery = await repo.GetByIdAsync(id);
             if (stationery == null)
             {
                 return NotFound();
             }
 
-            StationeryDTO dto = new StationeryDTO()
+            var dto = new StationeryDTO()
             {
                 BinNum = stationery.BinNum
             };
@@ -50,40 +54,37 @@ namespace LUSSIS.Controllers.WebAPI
             return Ok(dto);
         }
 
-        // PUT: api/Stationeries/5
-        //[ResponseType(typeof(void))]
-        //public async Task<IHttpActionResult> PutStationery(string id, Stationery stationery)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        // PUT: api/Stationeries/C001
+        [ResponseType(typeof(void))]
+        public async Task<IHttpActionResult> PutStationery(string id, StationeryDTO stationery)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    if (id != stationery.ItemNum)
-        //    {
-        //        return BadRequest();
-        //    }
+            if (id != stationery.ItemNum)
+            {
+                return BadRequest();
+            }
 
-        //    db.Entry(stationery).State = EntityState.Modified;
+            var s = repo.GetById(id);
 
-        //    try
-        //    {
-        //        await db.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!StationeryExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            s.Description = stationery.Description;
+            s.ReorderLevel = stationery.ReorderLevel;
+            s.ReorderQty = stationery.ReorderQty;
+            if (s.AvailableQty != stationery.AvailableQty)
+            {
+                //TODO: create adjustment voucher
+                s.CurrentQty = stationery.AvailableQty;
+            }
 
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
+            s.BinNum = stationery.BinNum;
+
+            await repo.UpdateAsync(s);
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
 
         //// POST: api/Stationeries
         //[ResponseType(typeof(Stationery))]
@@ -131,14 +132,14 @@ namespace LUSSIS.Controllers.WebAPI
         //    return Ok(stationery);
         //}
 
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing)
-        //    {
-        //        db.Dispose();
-        //    }
-        //    base.Dispose(disposing);
-        //}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                repo.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
         //private bool StationeryExists(string id)
         //{

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.WebPages;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories.Interface;
@@ -131,6 +133,12 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.RequisitionDetails.Where(s => s.RequisitionId == RequisitionId);
         }
+
+        public IEnumerable<Requisition> GetPendingListForHead(string dept)
+        {
+            return LUSSISContext.Requisitions.Where(r => r.RequisitionEmployee.DeptCode == dept && r.Status == "pending");
+        }
+
     }
 
     
