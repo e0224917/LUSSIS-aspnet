@@ -31,7 +31,7 @@ namespace LUSSIS.Models.WebDTO
         }
         public void deleteCart(string id)
         {           
-            for(int i = 0; i <= shoppingCart.Count; i++)
+            for(int i = 0; i < shoppingCart.Count; i++)
             {
                 if (shoppingCart[i].stationery.ItemNum == id)
                 {

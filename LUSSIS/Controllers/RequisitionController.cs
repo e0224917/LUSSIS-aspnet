@@ -149,7 +149,7 @@ namespace LUSSIS.Controllers
             if (!String.IsNullOrEmpty(searchString))
             { stationerys = strepo.GetByDescription(searchString).ToList(); }
             else { stationerys = strepo.GetAll().ToList(); }
-            int pageSize = 20;
+            int pageSize = 15;
             int pageNumber = (page ?? 1);
             return View(stationerys.ToPagedList(pageNumber, pageSize));
         }
@@ -160,7 +160,7 @@ namespace LUSSIS.Controllers
         {
             Cart cart = new Cart(strepo.GetById(id), qty);
             (Session["MyCart"] as ShoppingCart).addToCart(cart);
-            return View("Index");
+            return RedirectToAction("Index");
             //return Json("ok");
 
         }
@@ -169,10 +169,13 @@ namespace LUSSIS.Controllers
         //{
         //    return View(reqrepo.GetRequisitionByEmpNum(EmpNum));
         //}
-        public ActionResult EmpReq()
-        {
+        public ActionResult EmpReq(string currentFilter, int? page)
+        {           
             int id=erepo.GetCurrentUser().EmpNum;
-            return View(reqrepo.GetRequisitionByEmpNum(id));
+            List<Requisition> reqlist = reqrepo.GetRequisitionByEmpNum(id).OrderByDescending(s=>s.RequisitionDate).ToList();
+            int pageSize = 15;
+            int pageNumber = (page ?? 1);
+            return View(reqlist.ToPagedList(pageNumber,pageSize));
         }
         // GET: Requisitions/Details/
         [HttpGet]
@@ -184,7 +187,9 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult SubmitReq()
         {
-            int reqEmp=erepo.GetCurrentUser().EmpNum;
+            var itemNum = (List<string> )Session["itemNub"];
+            var itemQty = (List<int>)Session["itemQty"];
+            int reqEmp = erepo.GetCurrentUser().EmpNum;
             DateTime reqDate = System.DateTime.Now.Date;
             string status = "pending";
             string remarks = Request["remarks"];
@@ -194,8 +199,32 @@ namespace LUSSIS.Controllers
             requisition.RequisitionEmpNum = reqEmp;
             requisition.Status = status;
             reqrepo.Add(requisition);
-            
-            return View("EmpReq");
+            for (int i=0;i<itemNum.Count;i++)
+            {
+                RequisitionDetail requisitionDetail = new RequisitionDetail();
+                requisitionDetail.RequisitionId = requisition.RequisitionId;
+                requisitionDetail.ItemNum =itemNum[i] ;
+                requisitionDetail.Quantity = itemQty[i];
+                reqrepo.AddRequisitionDetail(requisitionDetail);
+            }
+            Session["itemNub"] = null;
+            Session["itemQty"] = null;
+            Session["MyCart"]=new ShoppingCart();           
+            //return View();
+            return RedirectToAction("EmpReq");
+        }
+        public ActionResult EmpCart()
+        {
+            ShoppingCart mycart = (ShoppingCart)Session["MyCart"];
+            return View(mycart.GetAllCartItem());
+        }
+        [HttpPost]
+        public ActionResult DeleteCartItem(string id, int qty)
+        {
+
+            ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
+            mycart.deleteCart(id);
+            return RedirectToAction("EmpCart");
         }
         //Stock Clerk's page
         public ActionResult Consolidated()
@@ -236,9 +265,6 @@ namespace LUSSIS.Controllers
         }
 
 
-            ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
-            mycart.deleteCart(id);
-            return View("EmpCart");
-        }
+            
     }
 }

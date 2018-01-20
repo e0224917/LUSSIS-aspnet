@@ -1,5 +1,5 @@
-﻿@model IEnumerable<LUSSIS.Models.Requisition>
-
+﻿@model PagedList.IPagedList<LUSSIS.Models.Requisition>
+@using PagedList.Mvc;
 @{
     ViewBag.Title = "EmpReq";
 }
@@ -50,6 +50,8 @@
     }
 
 </table>
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("EmpReq", new { page, currentFilter = ViewBag.CurrentFilter }))
 
 
 

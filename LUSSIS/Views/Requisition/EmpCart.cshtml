@@ -2,6 +2,8 @@
 
 @{
     ViewBag.Title = "EmpCart";
+    List<string> itemNub = new List<string>();
+    List<int> itemQty = new List<int>();
 
 }
 <script src="~/Scripts/jquery-1.10.2.min.js"
@@ -35,31 +37,32 @@
 </script>
 
 <h2>Requisition Cart</h2>
-<form action="/Requisition/SubmitReq" method="post">
-<p>
-    <input type="text" name="remarks">
-</p>
-<p>
-    <input type="submit" name="button" value="Submit Requisition" />
-</p>
-<table class="table">
-    <tr>
-        <th>
-            Stationery Item
-        </th>
-        <th>
-            UOM
-        </th>
-        <th>
-            Quantity
-        </th>
-        <th>
-            Delete
-        </th>
-    </tr>
-    @if (!IsPost)
-    {
-        foreach (var item in Model)
+@using (Html.BeginForm("SubmitReq", "Requisition"))
+{<p>
+        <input type="text" name="remarks">
+    </p>
+    <p>
+        <input type="submit" name="button" value="Submit Requisition" />
+    </p>
+}
+    <table class="table">
+        <tr>
+            <th>
+                Stationery Item
+            </th>
+            <th>
+                UOM
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Delete
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+       
         {
             <tr>
                 <td>
@@ -69,19 +72,20 @@
                     @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
                 </td>
                 <td>
-
-                    <input type="number" name="qty" min="0" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
+                    <input type="number" name="qty" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
                 </td>
                 <td>
                     <input type="submit" value="Delete" class="RemoveLink" data-id="@item.stationery.ItemNum" />
                 </td>
             </tr>
+            {
+                itemNub.Add(@item.stationery.ItemNum);
+                Session["itemNub"] = itemNub;
+                itemQty.Add(@item.quantity);
+                Session["itemQty"] = itemQty;
+            }
         }
-    }
-
-
-</table>
-</form>
+    </table>
 
 
 
