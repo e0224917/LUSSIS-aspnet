@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <IncludeIisSettings>false</IncludeIisSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -70,6 +71,9 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
     </Reference>
@@ -150,9 +154,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -242,6 +243,7 @@
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Exceptions\InvalidDateException.cs" />
+    <Compile Include="Exceptions\InvalidSetRepException.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -294,6 +296,9 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\PurchaseOrderDetailDTO.cs" />
+    <Compile Include="Models\WebDTO\PurchaseOrderDTO.cs" />
+    <Compile Include="Models\WebDTO\ReceiveTransDTO.cs" />
     <Compile Include="Models\WebDTO\RepAndDelegateDTO.cs" />
     <Compile Include="Models\WebDTO\ReqApproveRejectDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemsWithDateDTO.cs" />
@@ -309,9 +314,11 @@
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CollectionRepository.cs" />
+    <Compile Include="Repositories\DelegateRepository.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\ICollectionRepository.cs" />
+    <Compile Include="Repositories\Interface\IDelegateRepository.cs" />
     <Compile Include="Repositories\Interface\IEmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\IDisbursementRepository.cs" />
     <Compile Include="Repositories\Interface\IPORepository.cs" />
@@ -542,9 +549,7 @@
     <Content Include="Views\StockAdjustment\AdjustmentApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\Create.cshtml" />
     <Content Include="Views\PurchaseOrders\Delete.cshtml" />
-    <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\PurchaseOrders\Edit.cshtml" />
-    <Content Include="Views\PurchaseOrders\Index.cshtml" />
     <Content Include="Views\StockAdjustment\Index.cshtml" />
     <Content Include="Views\StockAdjustment\Approve.cshtml" />
     <Content Include="Views\StockAdjustment\ShowDialog.cshtml" />
@@ -554,6 +559,12 @@
     <Content Include="Views\Requisitions\Consolidated.cshtml" />
     <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
     <Content Include="Views\Shared\_LayoutEmpReq.cshtml" />
+    <Content Include="Views\Requisition\EmpCart.cshtml" />
+    <Content Include="Views\Requisition\EmpReq.cshtml" />
+    <Content Include="Views\Requisition\EmpReqDetail.cshtml" />
+    <Content Include="Views\Requisition\Index.cshtml" />
+    <Content Include="Views\PurchaseOrders\Receive.cshtml" />
+    <Content Include="Views\PurchaseOrders\Index.cshtml" />
     <Content Include="Views\Requisitions\EmpCart.cshtml" />
     <Content Include="Views\Requisitions\EmpReq.cshtml" />
     <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
@@ -577,12 +588,18 @@
     <Content Include="Scripts\README.md" />
     <Content Include="Views\RepAndDelegate\DeptRep.cshtml" />
     <Content Include="Views\Disbursements\_DetailsList.cshtml" />
+    <Content Include="Views\RepAndDelegate\DeptDelegate.cshtml" />
+    <Content Include="Views\PurchaseOrders\Summary.cshtml" />
+    <Content Include="Views\PurchaseOrders\Order.cshtml" />
+    <Content Include="Views\PurchaseOrders\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201801180213580_InitialCreate.resx">

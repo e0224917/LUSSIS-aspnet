@@ -33,7 +33,7 @@ namespace LUSSIS.Controllers.WebAPI
                 var result = await manager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe,
                     shouldLockout: false);
 
-                if (result != SignInStatus.Success) return BadRequest();
+                if (result != SignInStatus.Success) return BadRequest("Wrong email or password. Please try again.");
 
                 var emp = db.Employees.First(em => em.EmailAddress == model.Email);
                 int num = emp.EmpNum;

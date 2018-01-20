@@ -4,66 +4,76 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
+@section Scripts{
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            var table = $('#table_with_pages').DataTable({
+                "filter": false,                     //show-hide search box
+                "paginate": true,                    //show-hide pagination control
+                "pagingType": "simple_numbers",      //Pagination type; currently there are multiple styles [numbers, simple, simple_numbers, ]
+                "pageLength": 10,                     //The page size to specify the length for pagination
+                "lengthChange": false,               // show hide dropdown
+                //"lengthMenu": [[2, 5, 10, 15, -1], [2, 5, 10, 15, "All"]],
+                "info": true,                        //hide showing entries
+                "drawCallback": function () {
+                    //var row = this.api().row('#contactTable tbody tr td .contactCard[isprimary = "Y"]').index();
+                    //alert(row);
+                }
+            });
+        });
+    </script>
+}
+
+
+
+<h2>Purchase Order List</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
+
+<table class="table display" id="table_with_pages">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Employee.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Employee1.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Supplier.SupplierName)
-        </th>
         <th>
             @Html.DisplayNameFor(model => model.CreateDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.OrderDate)
+            @Html.DisplayNameFor(model => model.SupplierId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrderEmpNum)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Status)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ApprovalDate)
-        </th>
-        <th></th>
+        <th>View Details</th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Employee.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Employee1.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreateDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OrderDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ApprovalDate)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.PoNum }) |
-            @Html.ActionLink("Details", "Details", new { id=item.PoNum }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.PoNum })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderEmployee.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("View Details", "Details", new { id = item.PoNum })
+            </td>
+        </tr>
+    }
 
 </table>
+

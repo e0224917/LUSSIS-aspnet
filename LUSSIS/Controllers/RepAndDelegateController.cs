@@ -7,13 +7,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Exceptions;
 
 namespace LUSSIS.Controllers
 {
+
+    [Authorize(Roles = "head")]
     public class RepAndDelegateController : Controller
     {
         EmployeeRepository employeeRepo = new EmployeeRepository();
         RepAndDelegateDTO raddto = new RepAndDelegateDTO();
+        DelegateRepository delegateRepo = new DelegateRepository();
 
         // GET: RepAndDelegate
         public ActionResult Index()
@@ -24,7 +28,7 @@ namespace LUSSIS.Controllers
         public ActionResult DeptRep()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            raddto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(raddto.Department);
             return View(raddto);
         }
 
@@ -32,16 +36,31 @@ namespace LUSSIS.Controllers
         public JsonResult GetEmpJson(string prefix)
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            //List<Employee> empList = employeeRepo.GetAllByDepartment(raddto.Department);
-            raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
-            var list = raddto.GetAllByDepartment.Where(x => x.FullName.Contains(prefix)).ToList();
-
-            var selectedEmp = list.Select(x => new
+            //raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            //var Emplist = raddto.GetAllByDepartment;
+            var selectedlist = employeeRepo.GetSelectionByDepartment(prefix, raddto.Department);
+            var selectedEmp = selectedlist.Select(x => new
             {
                 FullName = x.FullName,
                 EmpNum = x.EmpNum
             });   
             
+            return Json(selectedEmp, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetEmpForDelJson(string prefix)
+        {
+            raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+            //raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            //var Emplist = raddto.GetAllByDepartment;
+            var selectedlist = employeeRepo.GetDelSelectionByDepartment(prefix, raddto.Department);
+            var selectedEmp = selectedlist.Select(x => new
+            {
+                FullName = x.FullName,
+                EmpNum = x.EmpNum
+            });
+
             return Json(selectedEmp, JsonRequestBehavior.AllowGet);
         }
 
@@ -52,10 +71,31 @@ namespace LUSSIS.Controllers
             {
                 string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
                 Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                employeeRepo.ChangeRep(department, repEmp);
+                employeeRepo.ChangeRep(department, repEmp);       
             }
-
             return RedirectToAction("DeptRep");
+        }
+
+        [HttpPost]
+        public ActionResult AddDelegate(string delegateEmp)
+        {
+            if (ModelState.IsValid)
+            {
+                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
+                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+                Models.Delegate del = new Models.Delegate();
+                del.EmpNum = Convert.ToInt32(delegateEmp);
+                delegateRepo.Add(del);
+                
+            }
+            return RedirectToAction("DeptDelegate");
+        }
+
+        public ActionResult DeptDelegate()
+        {
+            raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+            raddto.GetDelegate = employeeRepo.GetCurrentDelegate(raddto.Department);
+            return View(raddto);
         }
 
         // GET: RepAndDelegate/Details/5

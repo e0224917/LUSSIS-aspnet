@@ -10,7 +10,6 @@ using System.Web.Mvc;
 using LUSSIS.Exceptions;
 using LUSSIS.Models.WebDTO;
 using PagedList;
-using LUSSIS.Models.WebDTO;
 
 namespace LUSSIS.Controllers
 {
