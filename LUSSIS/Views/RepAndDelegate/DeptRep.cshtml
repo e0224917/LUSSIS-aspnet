@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Department Rep";
 }
-
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <h2>Department Rep</h2>
 
 <table class="table">
@@ -15,57 +15,106 @@
         <td>
 
 
-            @Html.DisplayFor(model => model.Department.RepEmployee.FirstName)
+            @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
         </td>
     </tr>
 </table>
-<table>
-    @foreach (var item in Model.GetAllByDepartment)
+@*<table>
+        @foreach (var item in Model.GetAllByDepartment)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+            </tr>
+        }
+    </table>*@
+
+@using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
+{
+    <input id="Emp" type="text" placeholder="Search for Employee" name="FullName" />
+    <input type="submit" value="Set New Department Rep" />
+    <input type="hidden" id="Emp2" name="RepEmp" />
+    <br />
+    <label id="tagsname" />
+    if (ViewBag.Message != null)
     {
-        <tr>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-        </tr>
+        <span><font color="red" />@ViewBag.Message</span>
     }
-</table>
-<script src="https://code.jquery.com/jquery-1.8.3.min.js"></script>
-<script>
-    $("document").ready(function () {
+}
 
-        $("#box").on("keyup", function () {
-            var searchText = $(this).val();
-            searchText = searchText.toLowerCase();
-            searchText = searchText.replace(/\s+/g, '');
-            $('.navList > option').each(function () {
-                var currentLiText = $(this).text(),
-                    showCurrentLi = ((currentLiText.toLowerCase()).replace(/\s+/g, '')).indexOf(searchText) !== -1;
-
-                $(this).toggle(showCurrentLi);
-
+@section scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(':input[type="submit"]').prop('disabled', true);
+            $('#Department.RepEmpNum').val();
+            $('input[type="text"]').keyup(function () {
+                if ($(this).val() == '') {
+                    $(':input[type="submit"]').prop('disabled', true);
+                    $('#tagsname').html('You selected none ');
+                }
+                else {
+                    $(':input[type="submit"]').prop('disabled', false);
+                }
             });
-        });
-    });  
-</script>
-
-<input placeholder="Search Me" id="box" type="text" />
-
-<select class="navList" size="1">
-    <option disabled selected> -- select an option -- </option>
-    <option value="1">apple</option>
-    <option value="2">banana</option>
-    <option value="3">grapes</option>
-    <option value="4">pear</option>
-    <option value="5">orange</option>
-    <option value="6">avocado</option>
-    <option value="7">peach</option>
-</select>>
-
-
+            $("#Emp").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/RepAndDelegate/GetEmpJson",
+                        type: "GET",
+                        dataType: "json",
+                        data: { prefix: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.FullName, value: item.EmpNum };
+                            }))
+                        }
+                    })
+                },
+                select: function (event, ui) {
+                    event.preventDefault();
+                    $('#Emp2').val(ui.item.value);
+                    $(this).val(ui.item.label); 
+                    if (ui.item == null) {
+                        $("#Emp").val('');
+                        $(':input[type="submit"]').prop('disabled', true);
+                    }
+                    else
+                    {
+                        $('#tagsname').html('You selected: ' + ui.item.label);
+                    }
+                },
+                change: function (event, ui) {
+                    if (ui.item == null) {
+                        $("#Emp").val('');
+                        $(':input[type="submit"]').prop('disabled', true);
+                    }
+                    else {
+                        $(':input[type="submit"]').prop('disabled', false);
+                    }
+                },
+                focus: function (event, ui) {
+                    $(this).val(ui.item.label);
+                    if (ui.item == null) {
+                        $("#Emp").val('');
+                        $(':input[type="submit"]').prop('disabled', true);
+                    }
+                    else {
+                        $(':input[type="submit"]').prop('disabled', false);
+                    }
+                },
+                messages: {
+                    noResults: "", results: ""
+                }
+            });;
+        })
+    </script>
+}
 
 
 

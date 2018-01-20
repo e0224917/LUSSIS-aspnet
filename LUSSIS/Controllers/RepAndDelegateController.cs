@@ -1,14 +1,18 @@
 ﻿using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Exceptions;
 
 namespace LUSSIS.Controllers
 {
+
+    [Authorize(Roles = "head")]
     public class RepAndDelegateController : Controller
     {
         EmployeeRepository employeeRepo = new EmployeeRepository();
@@ -20,11 +24,39 @@ namespace LUSSIS.Controllers
             return View();
         }
 
-        public ActionResult DepartmentRep()
+        public ActionResult DeptRep()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            raddto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(raddto.Department);
             return View(raddto);
+        }
+
+        [HttpGet]
+        public JsonResult GetEmpJson(string prefix)
+        {
+            raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+            //raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            //var Emplist = raddto.GetAllByDepartment;
+            var selectedlist = employeeRepo.GetSelectionByDepartment(prefix, raddto.Department);
+            var selectedEmp = selectedlist.Select(x => new
+            {
+                FullName = x.FullName,
+                EmpNum = x.EmpNum
+            });   
+            
+            return Json(selectedEmp, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateRep(string repEmp)
+        {
+            if (ModelState.IsValid)
+            {
+                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
+                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+                employeeRepo.ChangeRep(department, repEmp);       
+            }
+            return RedirectToAction("DeptRep");
         }
 
         // GET: RepAndDelegate/Details/5

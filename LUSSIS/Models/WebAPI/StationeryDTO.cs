@@ -18,12 +18,11 @@ namespace LUSSIS.Models.WebAPI
 
         public int? ReorderQty { get; set; }
 
-        public string UnitOfMeasure { get; set; }
+        public int? AvailableQty { get; set; }
 
-        public int? CurrentQty { get; set; }
+        public string UnitOfMeasure { get; set; }
 
         public string BinNum { get; set; }
 
-        public int? AvailableQty { get; set; }
     }
 }

@@ -19,7 +19,8 @@ namespace LUSSIS.Models
         public int DisbursementId { get; set; }
 
         [Column(TypeName = "date")]
-        [DisplayFormat(DataFormatString = "{0:d}")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime? CollectionDate { get; set; }
 
         public int? CollectionPointId { get; set; }
