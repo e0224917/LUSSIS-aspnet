@@ -183,9 +183,16 @@ namespace LUSSIS.Controllers
 
             }
 
-            return View("Retrieve");
+            return RedirectToAction("RetrievalInProcess");
         }
 
+        //TODO: A method to display in process Retrieval
+        public ActionResult RetrievalInProcess()
+        {
+            reqRepo.GetRetrievalInPorcess();
+            return View("Retrieve");
+        }
+        
         [HttpGet]
         public ActionResult ApproveReq(int Id, String Status)
         {

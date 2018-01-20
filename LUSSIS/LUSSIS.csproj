@@ -327,6 +327,7 @@
     <Compile Include="Repositories\StockAdjustmentRepository.cs" />
     <Compile Include="Repositories\SupplierRepository.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Validations\CollectionDateAttribute.cs" />
     <Compile Include="Views\DisbursementsController.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -580,7 +581,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Requisitions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

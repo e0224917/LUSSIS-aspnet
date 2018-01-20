@@ -11,7 +11,7 @@ namespace LUSSIS.Repositories
 {
     public class DisbursementRepository : Repository<Disbursement, int>
     {
-                public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
+        public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
             try
             {
@@ -32,8 +32,7 @@ namespace LUSSIS.Repositories
 
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
-            Department d = new Department();
-            d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
+            Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
             return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == d.CollectionPointId);
         }
 

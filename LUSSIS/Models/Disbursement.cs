@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace LUSSIS.Models
 {
     using System;
@@ -20,6 +22,7 @@ namespace LUSSIS.Models
 
         [Column(TypeName = "date")]
         [DataType(DataType.Date)]
+        [Display(Name="Collection Date")]
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime? CollectionDate { get; set; }
 
