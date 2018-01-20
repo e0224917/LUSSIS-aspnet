@@ -65,7 +65,7 @@ else
                     <td><a href="/PurchaseOrders/Details/@ViewBag.PendingApprovalPOList[i].PoNum">@ViewBag.PendingApprovalPOList[i].PoNum</a></td>
                     <td>@ViewBag.PendingApprovalPOList[i].Supplier.SupplierName</td>
                     <td>@ViewBag.PendingApprovalPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
-                    <td>@ViewBag.PendingApprovalPOList[i].OrderEmpNum</td>
+                    <td>@ViewBag.PendingApprovalPOList[i].OrderEmployee.FullName</td>
                 </tr>
             }
         </table>
@@ -93,7 +93,7 @@ else
                     <td><a href="/PurchaseOrders/Order?p=@ViewBag.ApprovedPOList[i].PoNum">@ViewBag.ApprovedPOList[i].PoNum</a></td>
                     <td>@ViewBag.ApprovedPOList[i].Supplier.SupplierName</td>
                     <td>@ViewBag.ApprovedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
-                    <td>@ViewBag.ApprovedPOList[i].OrderEmpNum</td>
+                    <td>@ViewBag.ApprovedPOList[i].OrderEmployee.FullName</td>
                 </tr>
             }
         </table>
@@ -121,7 +121,7 @@ else
                     <td><a href="/PurchaseOrders/Receive?p=@ViewBag.OrderedPOList[i].PoNum">@ViewBag.OrderedPOList[i].PoNum</a></td>
                     <td>@ViewBag.OrderedPOList[i].Supplier.SupplierName</td>
                     <td>@ViewBag.OrderedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
-                    <td>@ViewBag.OrderedPOList[i].OrderEmpNum</td>
+                    <td>@ViewBag.OrderedPOList[i].OrderEmployee.FullName</td>
                 </tr>
             }
         </table>
