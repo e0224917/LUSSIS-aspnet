@@ -243,6 +243,7 @@
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Exceptions\InvalidDateException.cs" />
+    <Compile Include="Exceptions\InvalidSetRepException.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -295,6 +296,9 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\PurchaseOrderDetailDTO.cs" />
+    <Compile Include="Models\WebDTO\PurchaseOrderDTO.cs" />
+    <Compile Include="Models\WebDTO\ReceiveTransDTO.cs" />
     <Compile Include="Models\WebDTO\RepAndDelegateDTO.cs" />
     <Compile Include="Models\WebDTO\ReqApproveRejectDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemsWithDateDTO.cs" />
@@ -310,9 +314,11 @@
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CollectionRepository.cs" />
+    <Compile Include="Repositories\DelegateRepository.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\ICollectionRepository.cs" />
+    <Compile Include="Repositories\Interface\IDelegateRepository.cs" />
     <Compile Include="Repositories\Interface\IEmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\IDisbursementRepository.cs" />
     <Compile Include="Repositories\Interface\IPORepository.cs" />
@@ -543,9 +549,7 @@
     <Content Include="Views\StockAdjustment\AdjustmentApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\Create.cshtml" />
     <Content Include="Views\PurchaseOrders\Delete.cshtml" />
-    <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\PurchaseOrders\Edit.cshtml" />
-    <Content Include="Views\PurchaseOrders\Index.cshtml" />
     <Content Include="Views\StockAdjustment\Index.cshtml" />
     <Content Include="Views\StockAdjustment\Approve.cshtml" />
     <Content Include="Views\StockAdjustment\ShowDialog.cshtml" />
@@ -559,6 +563,9 @@
     <Content Include="Views\Requisition\EmpReq.cshtml" />
     <Content Include="Views\Requisition\EmpReqDetail.cshtml" />
     <Content Include="Views\Requisition\Index.cshtml" />
+    <Content Include="Views\PurchaseOrders\Receive.cshtml" />
+    <Content Include="Views\PurchaseOrders\Index.cshtml" />
+    <Content Include="Views\RepAndDelegate\DepartmentRep.cshtml" />
     <Content Include="Views\Requisition\ApproveReq.cshtml" />
     <Content Include="Views\Shared\_DeptEmployeeLayout.cshtml" />
     <Content Include="Views\Requisition\Retrieve.cshtml" />
@@ -577,6 +584,10 @@
     <Content Include="Scripts\popper.min.js.map" />
     <Content Include="Scripts\README.md" />
     <Content Include="Views\RepAndDelegate\DeptRep.cshtml" />
+    <Content Include="Views\RepAndDelegate\DeptDelegate.cshtml" />
+    <Content Include="Views\PurchaseOrders\Summary.cshtml" />
+    <Content Include="Views\PurchaseOrders\Order.cshtml" />
+    <Content Include="Views\PurchaseOrders\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
