@@ -17,7 +17,7 @@ namespace LUSSIS.Repositories
             {
                 DateTime updatedDate = nowDate.Subtract(new TimeSpan(1, 0, 0, 0));
                 List<Disbursement> disbList = LUSSISContext.Disbursements.Where(x => x.DeptCode == deptCode).ToList();
-                return disbList.First(x => x.CollectionDate > updatedDate && x.Status == "in process");
+                return disbList.First(x => x.CollectionDate > updatedDate && x.Status == "inprocess");
             }
             catch
             {
@@ -29,11 +29,16 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.CollectionPoints.First(y => y.CollectionPointId == disbursement.CollectionPointId);
         }
+       
 
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
             Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
             return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == d.CollectionPointId);
+        }
+        public IEnumerable<CollectionPoint> GetAllCollectionPoint()
+        {
+            return LUSSISContext.CollectionPoints;
         }
 
         public List<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)
@@ -54,6 +59,10 @@ namespace LUSSIS.Repositories
         {
             return GetDisbursementByStatus("inprocess");
         }
+        public IEnumerable<DisbursementDetail> GetInProcessDisbursementDetails()
+        {
+            return GetDisbursementDetailsByStatus("inprocess");
+        }
         public IEnumerable<DisbursementDetail> GetUnfullfilledDisDetailList()
         {
             return LUSSISContext.DisbursementDetails.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();
@@ -61,6 +70,7 @@ namespace LUSSIS.Repositories
 
         public void CreateDisbursement(DateTime collectionDate)
         {
+            RequisitionRepository reqRepo = new RequisitionRepository();
             List<Disbursement> disbursements = new List<Disbursement>();
             foreach (Disbursement disbursement in disbursements)
             {
@@ -74,7 +84,7 @@ namespace LUSSIS.Repositories
             foreach (List<Requisition> reqForOneDep in reqGroupByDep)
             {
                 Disbursement d = ConvertReqListForOneDepToDisbursement(reqForOneDep, collectionDate);
-                int disID = d.DisbursementId;
+                
                 disbursements.Add(d);
 
                 //(1)将reqForOneDep中所有req的detail ToList (reqdetofRFOP)
@@ -85,7 +95,7 @@ namespace LUSSIS.Repositories
                 {
                     req.Status = "processed";
                     //插入req的detail到deqdetofRFOP
-                    List<RequisitionDetail> tempReqDList = new RequisitionRepository().GetRequisitionDetail(req.RequisitionId).ToList();
+                    List<RequisitionDetail> tempReqDList = reqRepo.GetRequisitionDetail(req.RequisitionId).ToList();
                     foreach (RequisitionDetail reqD in tempReqDList)
                     {
                         reqDetailListForOneDep.Add(reqD);
@@ -104,20 +114,6 @@ namespace LUSSIS.Repositories
 
             foreach (Disbursement ud in unfullfilledDisList)
             {
-                //is ud.DeptCode exsits in disbursements's deptCode? if not, create new
-                //if (disbursements.First(x => x.DeptCode == ud.DeptCode) == null)
-                //{
-                //    Disbursement newD = new Disbursement()
-                //    {
-                //        DeptCode = ud.DeptCode,
-                //        Department = ud.Department,
-                //        CollectionDate = collectionDate,
-                //        CollectionPoint = ud.Department.CollectionPoint,
-                //        CollectionPointId = ud.Department.CollectionPointId,
-                //    };
-                //    disbursements.Add(newD);
-                //}
-                //取出ud的unfullfilled detail list
                 List<DisbursementDetail> unfDisDList = LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == ud.DisbursementId && (x.RequestedQty - x.ActualQty) > 0).ToList();
                 bool isNew = true;
                 foreach (var d in disbursements)

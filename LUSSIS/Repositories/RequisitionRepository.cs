@@ -111,8 +111,10 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
         }
-       
-        
+
+        /*
+         * helper method
+         */
         private RetrievalItemDTO convertStatoDTO(Stationery s)
         {
             return new RetrievalItemDTO()
@@ -140,12 +142,43 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Requisitions.Where(r => r.RequisitionEmployee.DeptCode == dept && r.Status == "pending");
         }
 
-        public List<RetrievalItemDTO> GetRetrievalInPorcess()
+        public IEnumerable<RetrievalItemDTO> GetRetrievalInPorcess()
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
-            ConsolidateRequisitionQty(itemsToRetrieve, GetRequisitionDetailsByStatus("inprocess"));
-            ConsolidateRemainingQty(itemsToRetrieve, new DisbursementRepository().GetUnfullfilledDisDetailList());
+            //ConsolidateRequisitionQty(itemsToRetrieve, GetRequisitionDetailsByStatus("inprocess"));
+            //ConsolidateRemainingQty(itemsToRetrieve, new DisbursementRepository().GetUnfullfilledDisDetailList());
+            
+            //use disbursement as resource to generate retrieval in process
+            
+            var inProcessDisDetailsGroupedByItem = new DisbursementRepository().GetInProcessDisbursementDetails().GroupBy(x=>x.ItemNum).Select(grp=>grp.ToList()).ToList();
+
+            foreach (List<DisbursementDetail> disDetailForOneItem in inProcessDisDetailsGroupedByItem)
+            {
+                Stationery stat = disDetailForOneItem.First().Stationery;
+                RetrievalItemDTO dto = ConvertStationeryToDto(stat);
+                foreach (DisbursementDetail dd in disDetailForOneItem)
+                {
+                    dto.RequestedQty += dd.RequestedQty;
+                }
+                itemsToRetrieve.Add(dto);
+            }
             return itemsToRetrieve;
+        }
+        /*
+         * helper method
+         */
+        private RetrievalItemDTO ConvertStationeryToDto(Stationery stat)
+        {
+            return new RetrievalItemDTO()
+            {
+                BinNum = stat.BinNum,
+                ItemNum = stat.ItemNum,
+                Description = stat.Description,
+                AvailableQty = stat.AvailableQty,
+                UnitOfMeasure = stat.UnitOfMeasure,
+                RequestedQty = 0,
+                RemainingQty = 0,
+            };
         }
     }
 

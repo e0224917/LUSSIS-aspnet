@@ -1,0 +1,59 @@
+﻿@model IEnumerable<LUSSIS.Models.Disbursement>
+
+@{
+    ViewBag.Title = "Planned Disbursement";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Upcoming Disbursements</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-dismissible alert-info">
+        <strong>Hmmm...</strong> There is no disbursement planned at the moment.
+    </div>
+}
+else
+{
+    <table id="long-table" class="table table-hover">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Department.DeptName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CollectionDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
+            </th>
+            <th>
+                Person in charge
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department.DeptName)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.CollectionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CollectionPoint.CollectionName)
+            </td>
+            <td>
+                Add this Column in DB
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.DisbursementId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.DisbursementId })
+            </td>
+        </tr>
+        }
+
+    </table>
+}

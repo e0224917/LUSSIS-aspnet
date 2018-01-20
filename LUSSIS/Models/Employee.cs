@@ -46,6 +46,7 @@ namespace LUSSIS.Models
         public string LastName { get; set; }
 
         [StringLength(50)]
+        [Display(Name = "Email Address")]
         public string EmailAddress { get; set; }
 
         [StringLength(20)]
