@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LUSSIS.Repositories;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,11 +11,12 @@ namespace LUSSIS.Models.WebDTO
     [NotMapped]
     public class AdjustmentVoucherDTO
     {
-
+        [ItemNumValidator]
+        [Required(ErrorMessage = "This field is required")]
         [StringLength(20)]
         public string ItemNum { get; set; }
 
-        [Range (0,10000, ErrorMessage="Enter number between 0 to 10000")]
+        [Range (1,10000, ErrorMessage="Please enter a valid quantity")]
         public int Quantity { get; set; }
 
 
@@ -27,9 +29,35 @@ namespace LUSSIS.Models.WebDTO
 
         [Display(Name="Adjustment Type")]
         [Required(ErrorMessage = "This field is required")]
-        public int? Sign { get; set; }
+        public bool? Sign { get; set; }
 
         public IList<AdjustmentVoucherDTO> MyList { get; set; }
 
+    }
+
+    public class ItemNumValidator : ValidationAttribute
+    {
+        public ItemNumValidator(): base("Invalid item code")
+        {
+
+        }
+
+
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            StationeryRepository sr = new StationeryRepository();
+            if (value != null)
+            {
+                var valueAsString = value.ToString();
+
+                if (!sr.GetAllItemNum().Contains(valueAsString))
+                {
+                    var errorMessage = FormatErrorMessage(validationContext.DisplayName);
+                    return new ValidationResult(errorMessage);
+                }
+                
+            }
+            return ValidationResult.Success;
+        }
     }
 }
