@@ -3,35 +3,41 @@
 @{
     ViewBag.Title = "CreateAdjustments";
 }
-
 <h2>CreateAdjustments</h2>
 
+<button id="add" type="button">Add</button>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
 
-    <Table id="AdjustmentsDiv">
+    <Table>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.MyList.First().ItemNum)</th>
-            <th>@Html.DisplayNameFor(model => model.MyList.First().Sign)</th>
-            <th>@Html.DisplayNameFor(model => model.MyList.First().Quantity)</th>
-            <th>@Html.DisplayNameFor(model => model.MyList.First().Reason)</th>
+            <th>@Html.LabelFor(model => model.MyList.First().ItemNum, "Item Code")</th>
+            <th>@Html.LabelFor(model => model.MyList.First().Sign)</th>
+            <th>@Html.LabelFor(model => model.MyList.First().Quantity)</th>
+            <th>@Html.LabelFor(model => model.MyList.First().Reason)</th>
             <th>Remove</th>
         </tr>
-        <tbody>
-            @*@Html.Partial("_CreateAdjustments", new LUSSIS.Models.WebDTO.AdjustmentVoucherDTO())*@
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tbody id="AdjustmentsDiv">
             @foreach (var adjustment in Model.MyList)
             {
-                Html.Partial("_CreateAdjustments", adjustment);
+            @Html.Partial("_CreateAdjustments", new LUSSIS.Models.WebDTO.AdjustmentVoucherDTO())
             }
-
+            
         </tbody>
     </Table>
 
-    <button id="add" type="button">Add</button>
-    <input type="submit" value="" />
+
+    <input type="submit" value="Submit" />
 
 
 }
@@ -46,34 +52,17 @@
     </script>
     <script>
 var url = '@Url.Action("_CreateAdjustments")';
-var form = $('form');
+var form = $("form");
 var Adjustments = $('#AdjustmentsDiv');
 $('#add').click(function() {
     $.get(url, function(response) {
         Adjustments.append(response);
         // Reparse the validator for client side validation
-        form.data('validator', null);
+        form.removeData("validator");
+        form.removeData("unobtrusiveValidation");
         $.validator.unobtrusive.parse(form);
     });
     });
-
-
-//$('.delete').click(function () {
-//        var container = $(this).closest('.recipient');
-//        var id = container.find('.id').val();
-//        if (id) {
-//            // make ajax post to delete item
-//            $.post(yourDeleteUrl, { id: id }, function (result) {
-//                container.remove();
-//            }.fail(function (result) {
-//                // Oops, something went wrong (display error message?)
-//            }
-//    } else {
-//            // It never existed, so just remove the container
-//            container.remove();
-//        }
-//    });
-
     </script>
 }
 
