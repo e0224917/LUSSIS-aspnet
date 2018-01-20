@@ -12,7 +12,7 @@ namespace LUSSIS.Controllers.WebAPI
 {
     public class RequisitionsController : ApiController
     {
-        private RequisitionRepository repo = new RequisitionRepository();
+        private readonly RequisitionRepository _repo = new RequisitionRepository();
 
         // GET: api/Requisitions/COMM/?status=pending&empnum=77
         //        [ResponseType(typeof(RequisitionDTO))]
@@ -27,7 +27,7 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Requisitions/{dept}")]
         public IEnumerable<RequisitionDTO> GetPending(string dept)
         {
-            var list = repo.GetPendingListForHead(dept).ToList();
+            var list = _repo.GetPendingListForHead(dept).ToList();
 
             var result = list.Select(item => new RequisitionDTO()
             {
@@ -46,6 +46,21 @@ namespace LUSSIS.Controllers.WebAPI
             });
 
             return result;
+        }
+
+        [HttpPost]
+        [Route("api/Requisitions/Process")]
+        public async Task<IHttpActionResult> Process(int empnum, string status, [FromBody]RequisitionDTO requisition)
+        {
+            var req = await _repo.GetByIdAsync(requisition.RequisitionId);
+            req.ApprovalEmpNum = empnum;
+            req.ApprovalRemarks = requisition.ApprovalRemarks;
+            req.ApprovalDate = DateTime.Today;
+            req.Status = status;
+
+            await _repo.UpdateAsync(req);
+
+            return Ok("Updated");
         }
     }
 }

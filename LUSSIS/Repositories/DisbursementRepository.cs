@@ -11,7 +11,7 @@ namespace LUSSIS.Repositories
 {
     public class DisbursementRepository : Repository<Disbursement, int>
     {
-                public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
+        public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
             try
             {
@@ -39,13 +39,15 @@ namespace LUSSIS.Repositories
 
         public List<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)
         {
-            return LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == disbursement.DisbursementId).ToList();
+            return LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == disbursement.DisbursementId)
+                .ToList();
         }
 
         public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
         {
             return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status).ToList();
         }
+
         public IEnumerable<Disbursement> GetDisbursementByStatus(string status)
         {
             return LUSSISContext.Disbursements.Where(x => x.Status == status).ToList();
@@ -55,6 +57,7 @@ namespace LUSSIS.Repositories
         {
             return GetDisbursementByStatus("inprocess");
         }
+
         public IEnumerable<DisbursementDetail> GetUnfullfilledDisDetailList()
         {
             return LUSSISContext.DisbursementDetails.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();
@@ -63,16 +66,17 @@ namespace LUSSIS.Repositories
         public void CreateDisbursement(DateTime collectionDate)
         {
             List<Disbursement> disbursements = new List<Disbursement>();
-            
+
             //group requisition requests by dept and create disbursement list based on it
             List<Requisition> approvedReq = LUSSISContext.Requisitions.Where(r => r.Status == "approved").ToList();
 
-            List<List<Requisition>> reqGroupByDep = approvedReq.GroupBy(r => r.RequisitionEmployee.DeptCode).Select(grp => grp.ToList()).ToList();
+            List<List<Requisition>> reqGroupByDep = approvedReq.GroupBy(r => r.RequisitionEmployee.DeptCode)
+                .Select(grp => grp.ToList()).ToList();
             foreach (List<Requisition> reqForOneDep in reqGroupByDep)
             {
-               Disbursement d = ConvertReqListForOneDepToDisbursement(reqForOneDep, collectionDate);
+                Disbursement d = ConvertReqListForOneDepToDisbursement(reqForOneDep, collectionDate);
 
-               disbursements.Add(d);
+                disbursements.Add(d);
                 foreach (Requisition req in reqForOneDep)
                 {
                     req.Status = "processed";
@@ -82,8 +86,8 @@ namespace LUSSIS.Repositories
 
             //get unfullfilled disbursement
             List<Disbursement> unfullfilledDisList = GetDisbursementByStatus("unfullfilled").ToList();
-            
-            
+
+
             foreach (Disbursement ud in unfullfilledDisList)
             {
                 //is ud.DeptCode exsits in disbursements's deptCode? if not, create new
@@ -122,6 +126,7 @@ namespace LUSSIS.Repositories
                     };
                     disbursements.Add(newD);
                 }
+
                 //if exist, add to found department's
                 ud.Status = "fullfilled";
             }
@@ -133,10 +138,10 @@ namespace LUSSIS.Repositories
 
             LUSSISContext.SaveChanges();
         }
-        
+
         private DisbursementDetail ConvertReDetailToDisDetail(RequisitionDetail rd)
         {
-            return new DisbursementDetail(rd.ItemNum,rd.Stationery.AverageCost, rd.Quantity, rd.Stationery);
+            return new DisbursementDetail(rd.ItemNum, rd.Stationery.AverageCost, rd.Quantity, rd.Stationery);
         }
 
         private Disbursement ConvertReqListForOneDepToDisbursement(List<Requisition> ReqListForOneDep,
