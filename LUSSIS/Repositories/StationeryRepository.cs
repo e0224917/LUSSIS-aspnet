@@ -51,6 +51,11 @@ namespace LUSSIS.Repositories
             return q.AsEnumerable<StationerySupplier>();
         }
 
+        public List <String> GetAllItemNum()
+        {
+            return LUSSISContext.Stationeries.Select(x => x.ItemNum).ToList();
+        }
+
         private class PendingPOQuantityByItem
         {
             public string ItemNum { get; set; }
