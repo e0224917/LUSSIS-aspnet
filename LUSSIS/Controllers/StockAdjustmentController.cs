@@ -10,8 +10,6 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using LUSSIS.Models;
-using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {

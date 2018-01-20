@@ -50,6 +50,11 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Disbursements.Where(x => x.Status == status).ToList();
         }
+
+        public IEnumerable<Disbursement> GetInProcessDisbursements()
+        {
+            return GetDisbursementByStatus("inprocess");
+        }
         public IEnumerable<DisbursementDetail> GetUnfullfilledDisDetailList()
         {
             return LUSSISContext.DisbursementDetails.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();

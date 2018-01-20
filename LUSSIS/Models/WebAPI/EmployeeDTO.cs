@@ -20,5 +20,10 @@ namespace LUSSIS.Models.WebAPI
         public string JobTitle { get; set; }
 
         public string DeptCode { get; set; }
+
+        public string DeptName { get; set; }
+
+        public bool IsDelegated { get; set; }
+
     }
 }
