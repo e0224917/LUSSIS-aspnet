@@ -10,6 +10,12 @@ namespace LUSSIS.Repositories
 {
     public class EmployeeRepository : Repository<Employee, string>
     {
+        public Employee GetCurrentUser()
+        {
+            string userName = System.Web.HttpContext.Current.User.Identity.GetUserName();
+            return GetEmployeeByEmail(userName);
+        }
+
         public Employee GetEmployeeByEmail(string email)
         {
             return LUSSISContext.Employees.First(x => x.EmailAddress == email);
@@ -20,15 +26,32 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Departments.First(y => y.DeptCode == employee.DeptCode);
         }
 
+        public List<Employee> GetAllByDepartment(Department department)
+        {
+            return LUSSISContext.Employees.Where(k => k.DeptCode == department.DeptCode).ToList();
+        }
+
         public List<Employee> GetStaffRepByDepartment(Department department)
         {
-            return LUSSISContext.Employees.Where(z => z.DeptCode == department.DeptCode 
+            return LUSSISContext.Employees.Where(z => z.DeptCode == department.DeptCode
             && (z.JobTitle == "rep" || z.JobTitle == "staff")).ToList();
+        }
+
+        public List<Employee> GetStaffOnlyByDepartment(Department department)
+        {
+            return LUSSISContext.Employees.Where(y => y.DeptCode == department.DeptCode 
+            && y.JobTitle == "staff").ToList();
         }
 
         public List<Employee> GetSelectionByDepartment(string prefix, Department department)
         {
             List<Employee> employee = GetStaffRepByDepartment(department);
+            return employee.Where(x => x.FullName.Contains(prefix)).ToList();
+        }
+
+        public List<Employee> GetDelSelectionByDepartment(string prefix, Department department)
+        {
+            List<Employee> employee = GetStaffOnlyByDepartment(department);
             return employee.Where(x => x.FullName.Contains(prefix)).ToList();
         }
 
@@ -52,12 +75,18 @@ namespace LUSSIS.Repositories
             department.RepEmployee.JobTitle = "rep";
             Update(department.RepEmployee);
         }
-
-        public Employee GetCurrentUser() {
-            string userName = System.Web.HttpContext.Current.User.Identity.GetUserName();
-            return GetEmployeeByEmail(userName);
-        }
         
+        public List <LUSSIS.Models.Delegate> GetAllDelegates()
+        {
+            return LUSSISContext.Delegates.ToList();
+        }
 
+        public Models.Delegate GetCurrentDelegate(Department department)
+        {
+            List<Employee> empList = GetAllByDepartment(department);
+            List<Models.Delegate> delList = GetAllDelegates();
+            List <Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
+            return allDel.OrderByDescending(m => m.DelegateId).FirstOrDefault();
+        }
     }
 }
