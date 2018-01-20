@@ -17,6 +17,7 @@ namespace LUSSIS.Controllers
     {
         EmployeeRepository employeeRepo = new EmployeeRepository();
         RepAndDelegateDTO raddto = new RepAndDelegateDTO();
+        DelegateRepository delegateRepo = new DelegateRepository();
 
         // GET: RepAndDelegate
         public ActionResult Index()
@@ -47,6 +48,22 @@ namespace LUSSIS.Controllers
             return Json(selectedEmp, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult GetEmpForDelJson(string prefix)
+        {
+            raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+            //raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
+            //var Emplist = raddto.GetAllByDepartment;
+            var selectedlist = employeeRepo.GetDelSelectionByDepartment(prefix, raddto.Department);
+            var selectedEmp = selectedlist.Select(x => new
+            {
+                FullName = x.FullName,
+                EmpNum = x.EmpNum
+            });
+
+            return Json(selectedEmp, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         public ActionResult UpdateRep(string repEmp)
         {
@@ -57,6 +74,28 @@ namespace LUSSIS.Controllers
                 employeeRepo.ChangeRep(department, repEmp);       
             }
             return RedirectToAction("DeptRep");
+        }
+
+        [HttpPost]
+        public ActionResult AddDelegate(string delegateEmp)
+        {
+            if (ModelState.IsValid)
+            {
+                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
+                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+                Models.Delegate del = new Models.Delegate();
+                del.EmpNum = Convert.ToInt32(delegateEmp);
+                delegateRepo.Add(del);
+                
+            }
+            return RedirectToAction("DeptDelegate");
+        }
+
+        public ActionResult DeptDelegate()
+        {
+            raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+            raddto.GetDelegate = employeeRepo.GetCurrentDelegate(raddto.Department);
+            return View(raddto);
         }
 
         // GET: RepAndDelegate/Details/5

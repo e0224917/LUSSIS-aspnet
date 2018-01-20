@@ -1,38 +1,31 @@
 ﻿@model LUSSIS.Models.WebDTO.RepAndDelegateDTO
 @{
-    ViewBag.Title = "Department Rep";
+    ViewBag.Title = "Department Representative";
 }
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<h2>Department Rep</h2>
+<h2>Department Representative</h2>
 
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Department.RepEmployee)
+            @*@Html.DisplayNameFor(model => model.Department.RepEmployee)*@
+            Your Department Representative
         </th>
     </tr>
     <tr>
         <td>
-
-
             @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
         </td>
     </tr>
 </table>
-@*<table>
-        @foreach (var item in Model.GetAllByDepartment)
-        {
-            <tr>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-            </tr>
-        }
-    </table>*@
+<table class="table">
+    <tr>
+        <th>
+            @*@Html.DisplayFor(model => model.Department.RepEmployee.FullName)*@
+            Set New Department Representative
+        </th>
+    </tr>
+</table>   
 
 @using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
 {
@@ -40,7 +33,7 @@
     <input type="submit" value="Set New Department Rep" />
     <input type="hidden" id="Emp2" name="RepEmp" />
     <br />
-    <label id="tagsname" />
+    <label id="tagsname" style="color:red" />
     if (ViewBag.Message != null)
     {
         <span><font color="red" />@ViewBag.Message</span>
@@ -52,7 +45,6 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $(':input[type="submit"]').prop('disabled', true);
-            $('#Department.RepEmpNum').val();
             $('input[type="text"]').keyup(function () {
                 if ($(this).val() == '') {
                     $(':input[type="submit"]').prop('disabled', true);
