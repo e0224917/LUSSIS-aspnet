@@ -1,88 +1,262 @@
-﻿@model LUSSIS.Models.PurchaseOrder
+﻿@model LUSSIS.Models.WebDTO.PurchaseOrderDTO
+@using LUSSIS.Controllers;
 
 @{
     ViewBag.Title = "Create";
 }
+@Scripts.Render("~/bundles/jquery")
 
-<h2>Create</h2>
+<h2>Create New Purchase Order</h2>
 
+@{
+    int lineNo = 0;
+    int supplierId = -1;
+    double GST = 0;
+    if (ViewBag.Supplier.SupplierId > -1)
+    {
+        lineNo = ViewBag.countOfLines;
+        supplierId = Convert.ToInt32(ViewBag.Supplier.SupplierId);
+        GST = ViewBag.GST_RATE;
+    }
+}
 
-@using (Html.BeginForm()) 
+@if (ViewBag.Error !=null)
 {
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>PurchaseOrder</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.SupplierId, "SupplierId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SupplierId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.SupplierId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.CreateDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CreateDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CreateDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.OrderDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.OrderDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Status, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ApprovalDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ApprovalDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ApprovalDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.OrderEmpNum, "OrderEmpNum", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("OrderEmpNum", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.OrderEmpNum, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ApprovalEmpNum, "ApprovalEmpNum", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ApprovalEmpNum", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ApprovalEmpNum, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
+    <div class="alert alert-danger">
+        @ViewBag.Error
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+@using (Html.BeginForm("Create"))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+    <div class="form-horizontal">
+        <hr />
+        <div>
+            <div class="form-group">
+                <label type="text" class="control-label col-md-2">Supplier</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.SupplierId, new SelectList(ViewBag.Suppliers, "SupplierId", "SupplierName", ViewBag.Supplier.SupplierId), htmlAttributes: new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        @if (ViewBag.Supplier.SupplierId > -1)
+        {
+            <div class="form-group">
+                <label class="control-label col-md-2">Contact Name</label>
+                <div class="col-md-10">
+                    <input class="form-control" value="@ViewBag.Supplier.ContactName" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Supplier Address</label>
+                <div class="col-md-10">
+                    <textarea rows="4" class="form-control">@ViewBag.Supplier.Address</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">GST Registration No</label>
+                <div class="col-md-10">
+                    <input class="form-control" value="@ViewBag.Supplier.GstRegistration" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CreateDate, htmlAttributes: new { @class = "control-label col-md-2", @value = Model.CreateDate.Value.ToString("yyyy-MM-dd") })
+                <div class="col-md-10">
+                    <input type="date" name="CreateDate" id="CreateDate" class="form-control" value="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" />
+                    @Html.ValidationMessageFor(model => model.CreateDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label type="text" class="control-label col-md-2">Status</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" disabled="disabled" value="Draft" />
+                </div>
+            </div>
+
+            <div>
+
+            </div>
+            <table id="details" class="table">
+                <tr>
+                    <th>No</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Unit of Measure</th>
+                    <th>Unit Price</th>
+                    <th>Line Price</th>
+                </tr>
+
+                @for (int i = 0; i < Model.PurchaseOrderDetailsDTO.Count; i++)
+                {
+                    <tr id="id@(i)" class="po_line">
+                        @{
+                            string itemNum = Model.PurchaseOrderDetailsDTO[i].ItemNum;
+                        }
+                        <td>@(i + 1)</td>
+                        <td>@Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].ItemNum, new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.Description", itemNum), new { @class = "line_item" })</td>
+                        <td>@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { @class = "line_qty" })</td>
+                        <td>@Html.DropDownList("unit_of_measure", new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.UnitOfMeasure", itemNum), new { @class = "unit_of_measure", @disabled = true })</td>
+                        <td>
+                            @Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new SelectList(ViewBag.Stationery, "Price", "Price"), new { @class = "unit_price", @disabled = true })
+                            @Html.HiddenFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice,new { @class="hide_unit_price"})
+                        </td>
+                        <td><input type="text" class="line_price" value="0.00" disabled></td>
+
+                    </tr>
+                }
+            </table>
+            <div class="text-right">
+                <input type="button" value="Add Line Item" id="btn_add_row" class="btn" />
+            </div>
+            <div>
+                <div class="form-group">
+                    <label type="text" class="control-label col-md-2">Product Cost</label>
+                    <div class="col-md-10">
+                        <input type="text" id="product_cost" class="form-control" disabled />
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="form-group">
+                    <label type="text" class="control-label col-md-2">GST</label>
+                    <div class="col-md-10">
+                        @Html.Editor("GstAmt", "0", new { @disabled = true })
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="form-group">
+                    <label type="text" class="control-label col-md-2">Total Cost</label>
+                    <div class="col-md-10">
+                        @Html.Editor("TotalPoAmt", "0", new { @disabled = true })
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
 }
+
+
+<script>
+    var cindex = @lineNo;
+    var GST = @GST;
+    var supplierId = @supplierId;
+
+    //redirect page if supplier is changed
+    $(document).on('change', '#SupplierId', function () {
+        if (supplierId == -1) {
+            var newLink = "/PurchaseOrders/Create?supplierId=" + $(this).val();
+            window.location.replace(newLink);
+        }
+        else if (confirm('Switch Supplier?')) {
+            var newLink = "/PurchaseOrders/Create?supplierId=" + $(this).val();
+            window.location.replace(newLink);
+        }
+        else { $(this).val(supplierId) }
+    });
+
+    //show hidden row if click 'add new row'
+    $('#btn_add_row').click(function addRow() {
+        var trId = '#id' + cindex;
+        $(trId).removeAttr("hidden");
+        cindex++;
+    });
+
+    //update line if selection is changed
+    $(document).on('change', '.line_item', function () {
+    var $tr = $(this).closest('.po_line');
+    var $lineqty = $tr.find('.line_qty');
+    $tr.find('.unit_of_measure').val(this.value);
+    $tr.find('.unit_price').prop('selectedIndex', $(this)[0].selectedIndex);
+    $tr.find('.hide_unit_price').val($tr.find('.unit_price').val());
+    calculateAll();
+    });
+    $(document).on('change', '.line_qty', function () {
+        var $tr = $(this).closest('.po_line');
+        $tr.find('.hide_unit_price').val($tr.find('.unit_price').val());
+    calculateAll();
+    });
+
+    //initialise class and attributes
+    $(document).ready(function () {
+        for (var i = cindex; i < 100; i++) {
+            var hideId = '#id' + i;
+            $(hideId).attr('hidden', true);
+        }
+        for (var i = 0; i < 100; i++) {
+            var lineQtyId = '#PurchaseOrderDetailsDTO_' + i + '__OrderQty';
+            $(lineQtyId).addClass('line_qty')
+        }
+        calculateAll();
+    });
+
+    //calculate PO amt
+    function calculateAll() {
+        var productCost=0;
+
+        $('tr').each(function (i, obj) {
+            var lineCost = parseFloat(
+                parseFloat($(obj).find('.line_qty').val())
+                * parseFloat($(obj).find('.unit_price').val())
+            );
+            $(obj).find('.line_price').val(
+                lineCost.toFixed(2)
+            );
+            if (!isNaN(lineCost)) { productCost += lineCost; }
+        });
+
+        $('#product_cost').val(productCost.toFixed(2));
+        $('#GstAmt').val((productCost * GST).toFixed(2));
+        $('#TotalPoAmt').val((productCost * (1+GST)).toFixed(2));
+    }
+
+
+    /*
+     *not needed anymore, since i need to calculate the total cost too
+    function calculate(c)
+    {
+    var $tr = c.closest('.po_line');
+    $tr.find('.line_price').val(
+    parseFloat(
+    parseFloat($tr.find('.unit_price :selected').val())
+    * parseFloat($tr.find('.line_qty').val()))
+    ).toFixed(2);
+    }
+    */
+
+        /*
+    //dynamically created controls do not bind... stupid
+    $('#btn_add_role').click(function addRow() {
+        var $tr = $('.po_line.clone');
+        var $clone = $tr.clone(true);
+        $tr.removeAttr("class", "clone");
+        $clone.find('.line_qty').val(0);
+        $tr.last().after($clone);
+        //update row ids
+        cindex++;
+        $clone.find('#lineNo').html(cindex + 1);
+        $clone.attr('id', 'id' + (cindex));
+        $clone.find('.line_item').attr('id', 'Model_PurchaseOrderDetails_' + cindex + '__ItemNum');
+        $clone.find('.line_item').attr('name', 'Model.PurchaseOrderDetails[' + cindex + '].ItemNum');
+        $clone.find('.unit_price').attr('id', 'Model_PurchaseOrderDetails_' + cindex + '__UnitPrice');
+        $clone.find('.unit_price').attr('name', 'Model.PurchaseOrderDetails[' + cindex + '].UnitPrice');
+        $clone.find('.line_qty').attr('id', 'Model_PurchaseOrderDetails_' + cindex + '__OrderQty');
+        $clone.find('.line_qty').attr('name', 'Model.PurchaseOrderDetails[' + cindex + '].OrderQty');
+    });
+    */
+
+</script>

@@ -1,0 +1,141 @@
+﻿@model LUSSIS.Models.WebDTO.PurchaseOrderDTO
+@{
+    ViewBag.Title = "Order";
+}
+
+<h2>Print Purchase Order</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
+
+@if (Model == null)
+{
+    if (ViewBag.ApprovedPO == null)
+    {
+        <span>There are no purchase orders that are recently approved and awaiting printing</span>
+    }
+    else
+    {
+        @Scripts.Render("~/bundles/jquery")
+
+        <h4>Select a Purchase Order to update receipt of stationery </h4>
+        <select id="select_PO">
+            <option value="0">Select a purchase order</option>
+            @foreach (var po in ViewBag.ApprovedPO)
+            {
+                <option value="@po.PoNum">
+                    @po.PoNum - @po.Supplier.SupplierName
+                </option>
+            }
+        </select>
+    }
+}
+else
+{
+
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div>
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.HiddenFor(model => model.PoNum)
+                    @Html.HiddenFor(model => model.TotalPoAmt)
+                    Purchase Order No @Model.PoNum
+                </dt>
+                <dd></dd>
+                <dt>
+                    Created By
+                </dt>
+                <dd>
+                    @Html.HiddenFor(model => model.OrderEmpNum)
+                    <input type="text" value="@Model.OrderEmployee.FullName" disabled />
+                </dd>
+                <dt>
+                    Created On
+                </dt>
+                <dd>
+                    @Html.HiddenFor(model => model.CreateDate)
+                    <input type="date" value="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" disabled />
+                </dd>
+                <dt>
+                    Approved By
+                </dt>
+                <dd>
+                    @Html.HiddenFor(model => model.ApprovalEmpNum)
+                    <input type="text" value="@(Model.ApprovalEmployee == null ? "" : Model.ApprovalEmployee.FullName)" disabled />
+                </dd>
+                <dt>
+                    Approved On
+                </dt>
+                <dd>
+                    <input type="date" value="@(Model.ApprovalDate == null ? "" : Model.ApprovalDate.Value.ToString("yyyy-MM-dd"))" disabled />
+                </dd>
+                <dt>
+                    Order Date
+                </dt>
+                <dd>
+                    <input type="date" id="OrderDate" name="OrderDate" value="@(Model.OrderDate == null ? "" : Model.OrderDate.Value.ToString("yyyy-MM-dd"))" />
+                </dd>
+                <dt>
+                    Supplier Name
+                </dt>
+                <dd>
+                    <input type="text" value="@Model.Supplier.SupplierName" disabled />
+                </dd>
+                <dt>
+                    Supplier Contact Name
+                </dt>
+                <dd>
+                    <input type="text" value="@Model.Supplier.ContactName" disabled />
+                </dd>
+            </dl>
+
+            <table class="table">
+                <tr>
+                    <th>No</th>
+                    <th>Product</th>
+                    <th>Unit of Measure</th>
+                    <th>Unit Price</th>
+                    <th>Ordered Qty</th>
+                    <th>Total Price</th>
+                </tr>
+                @for (int i = 0; i < Model.PurchaseOrderDetails.Count; i++)
+                {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@Model.PurchaseOrderDetails[i].Stationery.Description</td>
+                    <td>@Model.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
+                    <td>@Model.PurchaseOrderDetails[i].UnitPrice</td>
+                    <td>@(Model.PurchaseOrderDetails[i].OrderQty)</td>
+                    <td>@(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
+
+                </tr>
+                }
+            </table>
+        </div>
+        <div class="form-group">
+            <div>
+                <input type="submit" value="Order" class="btn btn-default" />
+            </div>
+            <div>
+                <a href="" class="btn btn-default">Print Purchase Order</a>
+            </div>
+        </div>
+    }
+}
+<script>
+    //redirect page if PO selected from no-PO page
+    $(document).on('change', '#select_PO', function () {
+        if ($(this).val() != 0) {
+            var newLink = "/PurchaseOrders/Order?p=" + $(this).val();
+            window.location.replace(newLink);
+        }
+    });
+</script>

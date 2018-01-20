@@ -295,6 +295,9 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\PurchaseOrderDetailDTO.cs" />
+    <Compile Include="Models\WebDTO\PurchaseOrderDTO.cs" />
+    <Compile Include="Models\WebDTO\ReceiveTransDTO.cs" />
     <Compile Include="Models\WebDTO\RepAndDelegateDTO.cs" />
     <Compile Include="Models\WebDTO\ReqApproveRejectDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemsWithDateDTO.cs" />
@@ -545,9 +548,7 @@
     <Content Include="Views\StockAdjustment\AdjustmentApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\Create.cshtml" />
     <Content Include="Views\PurchaseOrders\Delete.cshtml" />
-    <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\PurchaseOrders\Edit.cshtml" />
-    <Content Include="Views\PurchaseOrders\Index.cshtml" />
     <Content Include="Views\StockAdjustment\Index.cshtml" />
     <Content Include="Views\StockAdjustment\Approve.cshtml" />
     <Content Include="Views\StockAdjustment\ShowDialog.cshtml" />
@@ -561,6 +562,8 @@
     <Content Include="Views\Requisition\EmpReq.cshtml" />
     <Content Include="Views\Requisition\EmpReqDetail.cshtml" />
     <Content Include="Views\Requisition\Index.cshtml" />
+    <Content Include="Views\PurchaseOrders\Receive.cshtml" />
+    <Content Include="Views\PurchaseOrders\Index.cshtml" />
     <Content Include="Views\RepAndDelegate\DepartmentRep.cshtml" />
     <Content Include="Views\Requisition\ApproveReq.cshtml" />
     <Content Include="Views\Shared\_DeptEmployeeLayout.cshtml" />
