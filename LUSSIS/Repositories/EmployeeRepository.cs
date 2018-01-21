@@ -88,5 +88,14 @@ namespace LUSSIS.Repositories
             List <Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
             return allDel.OrderByDescending(m => m.DelegateId).FirstOrDefault();
         }
+
+        public void DeleteDelegate(Department department)
+        {
+            Models.Delegate del = GetCurrentDelegate(department);
+            LUSSISContext.Delegates.Remove(del);
+            LUSSISContext.SaveChanges();
+        }
+
+        
     }
 }
