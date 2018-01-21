@@ -147,6 +147,7 @@ namespace LUSSIS.Repositories
                         tempDisD.ItemNum = unfdd.ItemNum;
                         tempDisD.UnitPrice = unfdd.UnitPrice;
                         tempDisD.RequestedQty = unfdd.RequestedQty - unfdd.ActualQty;
+                        tempDisD.ActualQty = tempDisD.Stationery.AvailableQty > tempDisD.RequestedQty ? tempDisD.RequestedQty : tempDisD.Stationery.AvailableQty;
                         newD.DisbursementDetails.Add(tempDisD);
                     }
                 }
@@ -211,6 +212,7 @@ namespace LUSSIS.Repositories
                     {
                         isNew = false;
                         disD.RequestedQty = disD.RequestedQty + rd.Quantity;
+                        disD.ActualQty = disD.Stationery.AvailableQty > disD.RequestedQty ? disD.RequestedQty : disD.Stationery.AvailableQty;
                         break;
                     }
                 }
@@ -221,7 +223,8 @@ namespace LUSSIS.Repositories
                     {
                         ItemNum = rd.ItemNum,
                         RequestedQty = rd.Quantity,
-                        UnitPrice = rd.Stationery.AverageCost
+                        UnitPrice = rd.Stationery.AverageCost,
+                        ActualQty = rd.Stationery.AvailableQty > rd.Quantity ? rd.Quantity : rd.Stationery.AvailableQty
                     };
                     disDetails.Add(newdisD);
                 }
@@ -281,6 +284,7 @@ namespace LUSSIS.Repositories
                     {
                         isNew = false;
                         disD.RequestedQty = disD.RequestedQty + unfDisD.RequestedQty - unfDisD.ActualQty;
+                        disD.ActualQty = disD.Stationery.AvailableQty > disD.RequestedQty ? disD.RequestedQty : disD.Stationery.AvailableQty;
                         break;
                     }
                 }
@@ -291,11 +295,32 @@ namespace LUSSIS.Repositories
                     {
                         ItemNum = unfDisD.ItemNum,
                         RequestedQty = unfDisD.RequestedQty - unfDisD.ActualQty,
-                        UnitPrice = unfDisD.Stationery.AverageCost
+                        UnitPrice = unfDisD.Stationery.AverageCost,
+                        ActualQty = unfDisD.Stationery.AvailableQty > unfDisD.RequestedQty - unfDisD.ActualQty ? unfDisD.RequestedQty - unfDisD.ActualQty : unfDisD.Stationery.AvailableQty
                     };
                     disDetails.Add(newdisD);
                 }
             }
+        }
+
+        /// <summary>
+        /// /for supervisoer' dashboard
+        /// </summary>
+        /// <returns></returns>
+        public double GetDisbursementTotalAmount()
+        {
+            double result = 0;
+            List<DisbursementDetail> list = new List<DisbursementDetail>();
+            list = GetDisbursementDetailsByStatus("fulfilled").ToList<DisbursementDetail>();
+            foreach (DisbursementDetail d in list)
+            {
+                //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
+                int qty = (int)LUSSISContext.DisbursementDetails.Select(x => x.ActualQty).ToList()[0];
+                double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
+                result += (qty * unit_price);
+
+            }
+            return result;
         }
     }
 }

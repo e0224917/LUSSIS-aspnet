@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Exceptions;
+using System.Globalization;
 
 namespace LUSSIS.Controllers
 {
@@ -19,7 +20,7 @@ namespace LUSSIS.Controllers
         RepAndDelegateDTO raddto = new RepAndDelegateDTO();
         DelegateRepository delegateRepo = new DelegateRepository();
 
-        // GET: RepAndDelegate
+        
         public ActionResult Index()
         {
             return View();
@@ -36,8 +37,6 @@ namespace LUSSIS.Controllers
         public JsonResult GetEmpJson(string prefix)
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            //raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
-            //var Emplist = raddto.GetAllByDepartment;
             var selectedlist = employeeRepo.GetSelectionByDepartment(prefix, raddto.Department);
             var selectedEmp = selectedlist.Select(x => new
             {
@@ -52,15 +51,12 @@ namespace LUSSIS.Controllers
         public JsonResult GetEmpForDelJson(string prefix)
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            //raddto.GetAllByDepartment = employeeRepo.GetAllByDepartment(raddto.Department);
-            //var Emplist = raddto.GetAllByDepartment;
             var selectedlist = employeeRepo.GetDelSelectionByDepartment(prefix, raddto.Department);
             var selectedEmp = selectedlist.Select(x => new
             {
                 FullName = x.FullName,
                 EmpNum = x.EmpNum
             });
-
             return Json(selectedEmp, JsonRequestBehavior.AllowGet);
         }
 
@@ -77,7 +73,7 @@ namespace LUSSIS.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddDelegate(string delegateEmp)
+        public ActionResult AddDelegate(string delegateEmp, string from, string to)
         {
             if (ModelState.IsValid)
             {
@@ -85,8 +81,23 @@ namespace LUSSIS.Controllers
                 Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
                 Models.Delegate del = new Models.Delegate();
                 del.EmpNum = Convert.ToInt32(delegateEmp);
-                delegateRepo.Add(del);
-                
+                var startDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                var endDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                del.StartDate = startDate;
+                del.EndDate = endDate;
+                delegateRepo.Add(del);      
+            }
+            return RedirectToAction("DeptDelegate");
+        }
+
+        [HttpPost]
+        public ActionResult DeleteDelegate()
+        {
+            if(ModelState.IsValid)
+            {
+                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
+                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+                employeeRepo.DeleteDelegate(department);
             }
             return RedirectToAction("DeptDelegate");
         }
