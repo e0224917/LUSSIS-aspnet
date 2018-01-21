@@ -1,0 +1,150 @@
+﻿@model IEnumerable<LUSSIS.Models.WebDTO.PendingPurchaseOrderDTO>
+@{
+    ViewBag.Title = "ViewPendingPOList";
+}
+<style>
+    body.modal-open div.modal-backdrop {
+        z-index: 0;
+    }
+    </style>
+
+<h2>ViewPendingPOList</h2>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+
+    function onClickFunction() {
+        var checkBox = document.getElementById("all");
+
+        if (checkBox.checked == true) {
+
+            $('.chk').attr('checked', true);
+        }
+        else {
+            $('.chk').attr('checked', false);
+        }
+    }
+
+    function getCheckList() {
+        var chkArray = [];
+        $(".chk:checked").each(function () {
+            chkArray.push($(this).val());
+
+        });
+        return chkArray.toString();
+    }
+
+
+</script>
+
+
+
+<table class="table">
+    <tr>
+        <th>
+            <input type="checkbox" id="all" onclick="onClickFunction()" />
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PoNum)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Supplier)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>
+        <th>
+            @Html.DisplayName("Submitted by")
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalCost)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+
+                <input class="chk" id=@item.PoNum value="@item.PoNum" type="checkbox" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PoNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Supplier)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderEmp)
+            </td>
+            <td>
+                $ @Html.DisplayFor(modelItem => item.TotalCost)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "PODetails", new { id = item.PoNum })
+            </td>
+        </tr>
+    }
+
+</table>
+<div>
+
+    <a href="#" class="btn btn-success" onclick="ApproveReject(getCheckList())">Approve</a>
+    <a href="#" class="btn btn-danger" onclick="RejectReject(getCheckList())">Reject</a>
+</div>
+
+<script src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+
+<div class="modal fade" id="myApproveModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="ApprovalTitle"></h3>
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+            </div>
+            <div class="modal-body" id="myApproveModalBodyDiv">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+    var ApproveReject = function (CheckList) {
+        if (CheckList < 1) {
+            swal("Please select one");
+        }
+        else {
+            var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Approve";
+
+            $("#myApproveModalBodyDiv").load(url, function () {
+                $("#myApproveModal").modal("show");
+            })
+        }
+
+    }
+    var RejectReject = function (CheckList) {
+        if (CheckList.length < 1) {
+            swal("Please select one");
+        }
+        else {
+            var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Reject";
+
+            $("#myApproveModalBodyDiv").load(url, function () {
+                $("#myApproveModal").modal("show");
+            })
+        }
+
+    }
+</script>

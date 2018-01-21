@@ -1,0 +1,22 @@
+﻿    <div class="dropdown nav navbar-nav">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span>Requisition</span>
+        </button>
+        <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
+            <li class="dropdown-item"><a href="@Url.Action("Pending", "Requisitions")"><span>Pending Requisition</span></a></li>
+            <li class="dropdown-item"><a href="@Url.Action("History", "Requisitions")"><span>All Requisition???</span></a></li>
+        </ul>
+    </div>
+    <div class="nav navbar-nav">
+            <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptDelegate", "RepAndDelegate")"><span>My Delegate</span></a>
+    </div>
+    <div class="nav navbar-nav">
+            <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")"><span>Department Rep</span></a>
+    </div>
+
+
+    @*<li class="dropdown-item"><a href="@Url.Action("History", "StockAdjustment")"><span>Stock Adjustment</span></a></li>
+        <li class="dropdown-item"><a href="@Url.Action("Index", "Collection")"><span>Collection</span></a></li>
+        <li class="dropdown-item"><a href="@Url.Action("CreateAdjustments", "StockAdjustment")"><span>MultiAdjustment</span></a></li>
+        <li class="dropdown-item"><a href="@Url.Action("Index", "Requisition")"><span>Requisition</span></a></li>
+        <li class="dropdown-item"><a href="@Url.Action("EmpReq", "Requisition")"><span>Requisition</span></a></li>*@

@@ -19,7 +19,7 @@ else
     <hr />
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="navbar-nav mr-auto"></div>
-        @using (Html.BeginForm("Retrieve", "Requisition", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
+        @using (Html.BeginForm("Retrieve", "Requisitions", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
     {
         @Html.AntiForgeryToken()
         @Html.LabelFor(model => model.collectionDate, "Select a collection date", new { @class = "nav-item nav-link" })

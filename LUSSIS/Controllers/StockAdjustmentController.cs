@@ -262,5 +262,38 @@ namespace LUSSIS.Controllers
             }
 
         }
+        public async Task<ActionResult> ViewPendingStockAdj()
+        {
+
+            return View(sar.GetPendingAdjustmentList());
+
+        }
+        [HttpGet]
+        public ActionResult ApproveReject(String List, String Status)
+        {
+            //  List<AdjVoucher> list = sar.GetAdjustmentById(List);
+            ViewBag.checkList = List;
+            ViewBag.status = Status;
+            return PartialView("ApproveReject");
+        }
+        [HttpPost]
+        public ActionResult ApproveReject(String checkList, String comment, String status)
+        {
+            String[] list = checkList.Split(',');
+            int[] idList = new int[list.Length];
+            for (int i = 0; i < idList.Length; i++)
+            {
+                idList[i] = Int32.Parse(list[i]);
+            }
+            foreach (int i in idList)
+            {
+                sar.UpDateAdjustmentStatus(i, status, comment);
+            }
+            return PartialView();
+        }
+
+
+
+
     }
 }
