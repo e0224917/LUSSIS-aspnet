@@ -11,7 +11,7 @@ namespace LUSSIS.Models.WebAPI
 
         public string UnitOfMeasure { get; set; }
 
-        public int? Quantity { get; set; }
+        public int Quantity { get; set; }
 
     }
 }

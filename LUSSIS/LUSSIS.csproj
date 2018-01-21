@@ -239,6 +239,7 @@
     <Compile Include="Controllers\StockAdjustmentController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
+    <Compile Include="Controllers\WebAPI\DelegateController.cs" />
     <Compile Include="Controllers\WebAPI\RequisitionsController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
+    <Compile Include="Models\WebAPI\DelegateDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDetailDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDTO.cs" />
     <Compile Include="Models\WebDTO\AdjVoucherColView.cs" />
@@ -565,7 +567,6 @@
     <Content Include="Views\Requisition\Index.cshtml" />
     <Content Include="Views\PurchaseOrders\Receive.cshtml" />
     <Content Include="Views\PurchaseOrders\Index.cshtml" />
-    <Content Include="Views\RepAndDelegate\DepartmentRep.cshtml" />
     <Content Include="Views\Requisition\ApproveReq.cshtml" />
     <Content Include="Views\Shared\_DeptEmployeeLayout.cshtml" />
     <Content Include="Views\Requisition\Retrieve.cshtml" />
@@ -591,6 +592,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Delegate\" />
     <Folder Include="Views\Requisitions\" />
   </ItemGroup>
   <ItemGroup>
