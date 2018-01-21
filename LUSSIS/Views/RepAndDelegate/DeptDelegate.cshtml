@@ -64,9 +64,9 @@
     using (Html.BeginForm("AddDelegate", "RepAndDelegate", FormMethod.Post))
     {
         <label for="from">From</label>
-        <input type="text" id="from" name="from" readonly="readonly" />
+        <input type="text" id="from" name="from" onkeydown="return false" />
         <label for="to">   To</label>
-        <input type="text" id="to" name="to" />
+        <input type="text" id="to" name="to" onkeydown="return false"  />
         <input type="hidden" id="fromDate" name="fromDate" />
         <input type="hidden" id="toDate" name="fromDate" />
         <br />
@@ -85,17 +85,60 @@
 }
 
 @section scripts {
+    <script>
+        $(document).ready(function () {
+            validate();
+            $('#from, #to, #Emp').change(validate);
+            $('#from, #to, #Emp').select(validate);
+        });
+
+        function validate() {
+            if ($('#from').val().length > 0 &&
+                $('#to').val().length > 0 &&
+                $('#Emp').val().length > 0) {
+                $("input[type=submit]").prop("disabled", false);
+            }
+            else {
+                $("input[type=submit]").prop("disabled", true);
+            }
+        }
+
+        ////$(':text').on('input change', function () {
+
+        //    $(':text').each(function () {
+        //        if ($.trim($(this).val()) == '') {
+        //            $('#Submit1').prop('disabled', true);
+        //            //return false;
+        //        }
+        //        else {
+        //            $('#Submit1').prop('disabled', false);
+        //        }
+        //    });
+
+        //$(':text').change(function () {
+        //    if ($.trim($(this).val()) == '') {
+        //        $('#Submit1').prop('disabled', true);
+        //        //return false;
+        //    }
+        //    else {
+        //        $('#Submit1').prop('disabled', false);
+        //    } 
+        //});
+        ////});
+    </script>
+
+
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('#Submit1').prop('disabled', true);
             $('#Emp').keyup(function () {
-                if ($(this).val() == '') {
+                if ($.trim($(this).val()) == '') {
                     $('#Submit1').prop('disabled', true);
                     $('#tagsname').html('You selected none ');
                 }
                 else {
-                    $('#Submit1').prop('disabled', false);
+                    //$('#Submit1').prop('disabled', false);
                 }
             });
             $("#Emp").autocomplete({
@@ -118,7 +161,7 @@
                     $(this).val(ui.item.label);
                     if (ui.item == null) {
                         $("#Emp").val('');
-                        $('#Submit1').prop('disabled', true);
+                        //$('#Submit1').prop('disabled', true);
                     }
                     else {
                         $('#tagsname').html('You selected: ' + ui.item.label);
@@ -127,26 +170,26 @@
                 change: function (event, ui) {
                     if (ui.item == null) {
                         $("#Emp").val('');
-                        $('#Submit1').prop('disabled', true);
+                        //$('#Submit1').prop('disabled', true);
 
                     }
                     else {
-                        $('#Submit1').prop('disabled', false);
+                        //$('#Submit1').prop('disabled', false);
                     }
                 },
                 focus: function (event, ui) {
                     $(this).val(ui.item.label);
                     if (ui.item == null) {
                         $("#Emp").val('');
-                        $('#Submit1').prop('disabled', true);
+                        //$('#Submit1').prop('disabled', true);
                     }
                     else {
-                        $('#Submit1').prop('disabled', false);
+                        //$('#Submit1').prop('disabled', false);
                     }
                 },
-                messages: {
-                    noResults: "", results: ""
-                }
+                //messages: {
+                //    noResults: "", results: ""
+                //}
             });;
         })
     </script>
@@ -155,33 +198,33 @@
         var dateNow = new Date();
         var dateToday = moment(dateNow).format('DD/MM/YYYY');
         $(function () {
-                from = $("#from")
-                    .datepicker({
-                        dateFormat: 'dd/mm/yy',
-                        minDate: dateToday,
-                        changeMonth: true,
-                        numberOfMonths: 1
-                    })
-                    .on("change", function () {
-                        to.datepicker("option", "minDate", getDate(this));
-                        //$("#fromDate").val() = $(this);
-                    }),
+            from = $("#from")
+                .datepicker({
+                    dateFormat: 'dd/mm/yy',
+                    minDate: dateToday,
+                    changeMonth: true,
+                    numberOfMonths: 1
+                })
+                .on("change", function () {
+                    to.datepicker("option", "minDate", getDate(this));
+                    
+                    //$("#fromDate").val() = $(this);
+                }),
                 to = $("#to").datepicker({
                     dateFormat: 'dd/mm/yy',
-                    minDate: dateToday + "1d",
-                    //defaultDate: "+1w",
                     changeMonth: true,
                     numberOfMonths: 1
                 })
                     .on("change", function () {
                         from.datepicker("option", "maxDate", getDate(this));
                         //$("#toDate").val() = getDate(this);
+                        
                     });
 
             function getDate(element) {
                 var date;
                 try {
-                    date = $.datepicker.parseDate(dateFormat, element.value);
+                    date = $.datepicker.parseDate("dd/mm/yy", element.value);
                 } catch (error) {
                     date = null;
                 }
