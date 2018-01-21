@@ -1,0 +1,148 @@
+﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
+
+@{
+    ViewBag.Title = "ViewPendingStockAdj";
+}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+<script>
+    var chkArray = [];
+    function onClickFunction() {
+        var checkBox = document.getElementById("all");
+
+        if (checkBox.checked == true) {
+
+            $('.chk').attr('checked', true);
+        }
+        else {
+            $('.chk').attr('checked', false);
+        }
+    }
+
+    function getCheckList() {
+
+        $(".chk:checked").each(function () {
+            chkArray.push($(this).val());
+
+        });
+
+        return chkArray.toString();
+    }
+
+
+</script>
+
+
+<h2>ViewPendingStockAdj</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            <input type="checkbox" id="all" onclick="onClickFunction()" />
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Stationery.Description)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Reason)
+        </th>
+        <th></th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+
+                <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stationery.Description)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Reason)
+            </td>
+            <td></td>
+        </tr>
+    }
+
+</table>
+<div>
+
+    <a href="#" class="btn btn-success" onclick="ApproveReject(getCheckList())">Approve</a>
+    <a href="#" class="btn btn-danger" onclick="RejectReject(getCheckList())">Reject</a>
+</div>
+
+
+<script src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+
+<div class="modal fade" id="myApproveModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="ApprovalTitle"></h3>
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+            </div>
+            <div class="modal-body" id="myApproveModalBodyDiv">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+    var ApproveReject = function (CheckList) {
+        if (chkArray.length < 1) {
+
+            swal("Please select one");
+
+        } else {
+            var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=Approve";
+
+            $("#myApproveModalBodyDiv").load(url, function () {
+                $("#myApproveModal").modal("show");
+            })
+        }
+
+
+    }
+    var RejectReject = function (CheckList) {
+        if (chkArray.length < 1) {
+            swal("Please select one");
+        }
+        else {
+            var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=Reject";
+
+            $("#myApproveModalBodyDiv").load(url, function () {
+                $("#myApproveModal").modal("show");
+            })
+        }
+
+    }
+</script>

@@ -546,13 +546,9 @@
     <Content Include="Views\Requisitions\Detail.cshtml" />
     <Content Include="Views\Requisitions\_Detail.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
-    <Content Include="Views\StockAdjustment\AdjustmentApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\Create.cshtml" />
     <Content Include="Views\PurchaseOrders\Delete.cshtml" />
     <Content Include="Views\PurchaseOrders\Edit.cshtml" />
-    <Content Include="Views\StockAdjustment\Index.cshtml" />
-    <Content Include="Views\StockAdjustment\Approve.cshtml" />
-    <Content Include="Views\StockAdjustment\ShowDialog.cshtml" />
     <Content Include="Views\Collection\SetCollection.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
     <Content Include="Views\Requisitions\Pending.cshtml" />
@@ -588,6 +584,8 @@
     <Content Include="Views\PurchaseOrders\Summary.cshtml" />
     <Content Include="Views\PurchaseOrders\Order.cshtml" />
     <Content Include="Views\PurchaseOrders\Details.cshtml" />
+    <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
+    <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
