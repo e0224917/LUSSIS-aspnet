@@ -27,7 +27,7 @@ else
                 @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
             </th>
             <th>
-                Person in charge
+                Person-in-charge
             </th>
             <th></th>
         </tr>
@@ -46,7 +46,7 @@ else
                 @Html.DisplayFor(modelItem => item.CollectionPoint.CollectionName)
             </td>
             <td>
-                Add this Column in DB
+                @Html.DisplayFor(modelItem=>item.CollectionPoint.InChargeEmployee.FullName)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.DisbursementId }) |
