@@ -587,8 +587,9 @@
     <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
     <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
-    <Content Include="Views\PurchaseOrders\ViewPendingPOList.cshtml" />
     <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
+    <Content Include="Views\PurchaseOrders\SupervisorDashboard.cshtml" />
+    <Content Include="Views\PurchaseOrders\ViewPendingPOList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

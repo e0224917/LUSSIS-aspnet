@@ -58,11 +58,15 @@ namespace LUSSIS.Repositories
 
         public void UpDateAdjustmentStatus(int i, String status, String comment)
         {
-            AdjVoucher a = GetById(i);
+            AdjVoucher a = new AdjVoucher();
+            a = GetById(i);
             a.Status = status;
             a.Remark = comment;
             a.ApprovalDate = DateTime.Today;
             Update(a);
+           
+            
+
         }
 
 

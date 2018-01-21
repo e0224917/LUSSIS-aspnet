@@ -302,5 +302,25 @@ namespace LUSSIS.Repositories
                 }
             }
         }
+
+        /// <summary>
+        /// /for supervisoer' dashboard
+        /// </summary>
+        /// <returns></returns>
+        public double GetDisbursementTotalAmount()
+        {
+            double result = 0;
+            List<DisbursementDetail> list = new List<DisbursementDetail>();
+            list = GetDisbursementDetailsByStatus("fulfilled").ToList<DisbursementDetail>();
+            foreach (DisbursementDetail d in list)
+            {
+                //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
+                int qty = (int)LUSSISContext.DisbursementDetails.Select(x => x.ActualQty).ToList()[0];
+                double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
+                result += (qty * unit_price);
+
+            }
+            return result;
+        }
     }
 }

@@ -19,6 +19,6 @@ namespace LUSSIS.Models.WebDTO
 
         public int PendingStockAdjCount { get; set; }
 
-
+        public double TotalDisbursementAmount { get; set; }
     }
 }

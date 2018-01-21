@@ -32,21 +32,8 @@ namespace LUSSIS.Repositories
             IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == status);
             return list.ToList();
         }
-        
-        public SupervisorDashboardDTO GetSupervisorDashboard()
-        {
-            SupervisorDashboardDTO dash = new SupervisorDashboardDTO();
 
-            dash.PendingPOTotalAmount = GetPendingPOTotalAmount();
-            dash.PendingPOCount = GetPendingPOCount();
-            dash.POTotalAmount = GetPOTotalAmount();
-            dash.PendingStockAdjAddQty = 0;
-            dash.PendingStockAdjSubtractQty = 0;
-            dash.PendingStockAdjCount = 0;
-
-            return dash;
-
-        }
+       
 
         public int GetPendingPOCount()
         {
