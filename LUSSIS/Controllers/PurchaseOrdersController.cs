@@ -18,6 +18,8 @@ namespace LUSSIS.Controllers
     public class PurchaseOrdersController : Controller
     {
         private PORepository pr = new PORepository();
+        private DisbursementRepository disRepo = new DisbursementRepository();
+        private StockAdjustmentRepository stockRepo = new StockAdjustmentRepository();
         private StationeryRepository sr = new StationeryRepository();
         private EmployeeRepository er = new EmployeeRepository();
         private SupplierRepository sur = new SupplierRepository();
@@ -354,6 +356,23 @@ namespace LUSSIS.Controllers
             }
             return PartialView();
         }
+        public async Task<ActionResult> SupervisorDashboard()
+        {
+            SupervisorDashboardDTO dash = new SupervisorDashboardDTO();
+
+            dash.PendingPOTotalAmount = pr.GetPendingPOTotalAmount();
+            dash.PendingPOCount = pr.GetPendingPOCount();
+            dash.POTotalAmount = pr.GetPOTotalAmount();
+            dash.PendingStockAdjAddQty = stockRepo.GetPendingStockAddQty();
+            dash.PendingStockAdjSubtractQty = stockRepo.GetPendingStockSubtractQty();
+            dash.PendingStockAdjCount = stockRepo.GetPendingStockCount();
+            dash.TotalDisbursementAmount = disRepo.GetDisbursementTotalAmount();
+            return View(dash);
+        }
+
+
+
+
 
     }
 }

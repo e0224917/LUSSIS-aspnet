@@ -289,8 +289,6 @@ namespace LUSSIS.Controllers
             {
                 sar.UpDateAdjustmentStatus(i, status, comment);
             }
-
-
             return PartialView();
         }
 

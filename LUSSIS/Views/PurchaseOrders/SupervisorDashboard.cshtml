@@ -1,0 +1,53 @@
+﻿@model LUSSIS.Models.WebDTO.SupervisorDashboardDTO
+
+@{
+    ViewBag.Title = "Supervisor Dashboard";
+}
+<script src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+<h3>Supervisor Dashborad</h3>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Pending Adjustment <span style="padding-left:3em">@Model.PendingStockAdjCount</span> </div>
+                <div class="panel-body"> <span style="padding-left:3em">+ @Model.PendingStockAdjAddQty</span><span style="padding-left:6em">- @Model.PendingStockAdjSubtractQty</span></div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Pending Purchase Order <span style="padding-left:3em">@Model.PendingPOCount</span></div>
+                <div class="panel-body"><span style="padding-left:5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span></div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">Total Charge Back </div>
+                <div class="panel-body"><span style="padding-left:5em">$@Model.TotalDisbursementAmount.ToString("#.00")</span></div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">Total PO Expenditure</div>
+                <div class="panel-body"><span style="padding-left:5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+

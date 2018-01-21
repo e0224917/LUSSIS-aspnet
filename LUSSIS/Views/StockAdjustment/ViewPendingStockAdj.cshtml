@@ -5,7 +5,11 @@
 }
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-
+<style>
+    body.modal-open div.modal-backdrop {
+        z-index: 0;
+    }
+</style>
 <script>
     var chkArray = [];
     function onClickFunction() {
@@ -136,7 +140,8 @@
         if (CheckList.length < 1) {
             swal("Please select one");
         }
-        else {
+        else
+        {
             var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=Reject";
 
             $("#myApproveModalBodyDiv").load(url, function () {
