@@ -24,6 +24,7 @@ namespace LUSSIS.Models
             Requisitions1 = new HashSet<Requisition>();
         }
 
+        [Display(Name = "Full Name")]
         public string FullName
         {
             get

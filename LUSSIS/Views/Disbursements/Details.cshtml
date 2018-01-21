@@ -12,28 +12,28 @@
     <div class="card col-lg-3">
         <div class="card-body">
             <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionDate)</h6>
-            <h3 class="card-title">@Html.DisplayFor(model => model.CollectionDate)</h3>
-
+            <h4 class="card-title">@Html.DisplayFor(model => model.CollectionDate) @Html.DisplayFor(model => model.CollectionPoint.Time)</h4>
+            <p class="card-text"></p>
         </div>
     </div>
     <div class="card col-lg-3">
         <div class="card-body">
             <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)</h6>
-            <h3 class="card-title">@Html.DisplayFor(model => model.CollectionPoint.CollectionName)</h3>
+            <h4 class="card-title">@Html.DisplayFor(model => model.CollectionPoint.CollectionName)</h4>
 
         </div>
     </div>
     <div class="card col-lg-3">
         <div class="card-body">
             <h6 class="card-subtitle mb-2 text-muted">Representative Name</h6>
-            <h3 class="card-title">@Model.Department.RepEmployee.FullName</h3>
+            <h4 class="card-title">@Model.Department.RepEmployee.FullName</h4>
 
         </div>
     </div>
     <div class="card col-lg-3">
         <div class="card-body">
             <h6 class="card-subtitle mb-2 text-muted">Contact Number</h6>
-            <h3 class="card-title">@Model.Department.TelephoneNum</h3>
+            <h4 class="card-title">@Model.Department.TelephoneNum</h4>
 
         </div>
     </div>
