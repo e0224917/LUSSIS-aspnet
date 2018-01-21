@@ -296,6 +296,7 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\PendingPurchaseOrderDTO.cs" />
     <Compile Include="Models\WebDTO\PurchaseOrderDetailDTO.cs" />
     <Compile Include="Models\WebDTO\PurchaseOrderDTO.cs" />
     <Compile Include="Models\WebDTO\ReceiveTransDTO.cs" />
@@ -586,6 +587,8 @@
     <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
     <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
+    <Content Include="Views\PurchaseOrders\ViewPendingPOList.cshtml" />
+    <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

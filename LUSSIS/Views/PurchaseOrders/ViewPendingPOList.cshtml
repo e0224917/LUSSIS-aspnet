@@ -1,13 +1,12 @@
-﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
-
+﻿@model IEnumerable<LUSSIS.Models.WebDTO.PendingPurchaseOrderDTO>
 @{
-    ViewBag.Title = "ViewPendingStockAdj";
+    ViewBag.Title = "ViewPendingPOList";
 }
+
+<h2>ViewPendingPOList</h2>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-
 <script>
-    var chkArray = [];
+
     function onClickFunction() {
         var checkBox = document.getElementById("all");
 
@@ -21,12 +20,11 @@
     }
 
     function getCheckList() {
-
+        var chkArray = [];
         $(".chk:checked").each(function () {
             chkArray.push($(this).val());
 
         });
-
         return chkArray.toString();
     }
 
@@ -34,30 +32,29 @@
 </script>
 
 
-<h2>ViewPendingStockAdj</h2>
 
 <table class="table">
     <tr>
         <th>
             <input type="checkbox" id="all" onclick="onClickFunction()" />
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PoNum)
+        </th>
 
+        <th>
+            @Html.DisplayNameFor(model => model.Supplier)
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.CreateDate)
         </th>
-
         <th>
-            @Html.DisplayNameFor(model => model.Stationery.Description)
-        </th>
-
-        <th>
-            @Html.DisplayNameFor(model => model.Quantity)
+            @Html.DisplayName("Submitted by")
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Reason)
+            @Html.DisplayNameFor(model => model.TotalCost)
         </th>
         <th></th>
-
     </tr>
 
     @foreach (var item in Model)
@@ -66,23 +63,26 @@
 
             <td>
 
-                <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" />
+                <input class="chk" id=@item.PoNum value="@item.PoNum" type="checkbox" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PoNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Supplier)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreateDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Stationery.Description)
+                @Html.DisplayFor(modelItem => item.OrderEmp)
             </td>
-
             <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
+                $ @Html.DisplayFor(modelItem => item.TotalCost)
             </td>
-
             <td>
-                @Html.DisplayFor(modelItem => item.Reason)
+                @Html.ActionLink("Details", "PODetails", new { id = item.PoNum })
             </td>
-            <td></td>
         </tr>
     }
 
@@ -92,7 +92,6 @@
     <a href="#" class="btn btn-success" onclick="ApproveReject(getCheckList())">Approve</a>
     <a href="#" class="btn btn-danger" onclick="RejectReject(getCheckList())">Reject</a>
 </div>
-
 
 <script src="~/Scripts/bootstrap.min.js"></script>
 <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
@@ -118,18 +117,16 @@
 <script>
 
     var ApproveReject = function (CheckList) {
-        if (CheckList.length < 1) {
-
+        if (CheckList < 1) {
             swal("Please select one");
-
-        } else {
-            var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=Approve";
+        }
+        else {
+            var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Approve";
 
             $("#myApproveModalBodyDiv").load(url, function () {
                 $("#myApproveModal").modal("show");
             })
         }
-
 
     }
     var RejectReject = function (CheckList) {
@@ -137,7 +134,7 @@
             swal("Please select one");
         }
         else {
-            var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=Reject";
+            var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Reject";
 
             $("#myApproveModalBodyDiv").load(url, function () {
                 $("#myApproveModal").modal("show");
