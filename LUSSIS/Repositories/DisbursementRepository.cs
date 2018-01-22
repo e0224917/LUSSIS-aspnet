@@ -281,7 +281,7 @@ namespace LUSSIS.Repositories
         }
 
         //签收disbursement
-        public void SignDisbursement(Disbursement disbursement)
+        public void Acknowledge(Disbursement disbursement)
         {
             bool isFull = true;
             foreach(var disD in disbursement.DisbursementDetails)
