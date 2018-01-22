@@ -27,11 +27,6 @@ namespace LUSSIS.Repositories
             }
         }
 
-        public CollectionPoint GetCollectionPointByDisbursement(Disbursement disbursement)
-        {
-            return LUSSISContext.CollectionPoints.First(y => y.CollectionPointId == disbursement.CollectionPointId);
-        }
-        
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
             Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
@@ -40,11 +35,6 @@ namespace LUSSIS.Repositories
         public IEnumerable<CollectionPoint> GetAllCollectionPoint()
         {
             return LUSSISContext.CollectionPoints;
-        }
-
-        public List<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)
-        {
-            return LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == disbursement.DisbursementId).ToList();
         }
 
         public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
@@ -307,7 +297,7 @@ namespace LUSSIS.Repositories
                     break;
                 }
             }
-            if(isFull == true)
+            if(isFull)
             {
                 disbursement.Status = "fulfilled";
             }
@@ -336,6 +326,17 @@ namespace LUSSIS.Repositories
             }
             return result;
 
+        }
+
+        public DisbursementDetail GetDisbursementDetailByIdAndItem(string id, string itemNum)
+        {
+            return LUSSISContext.DisbursementDetails.FirstOrDefault(dd => (dd.DisbursementId == Convert.ToInt32(id)) && dd.ItemNum == itemNum);
+        }
+
+        public Disbursement GetUpcomingDisbursement(string deptCode)
+        {
+            return LUSSISContext.Disbursements
+                .FirstOrDefault(d => d.Status == "inprocess" && d.DeptCode == deptCode);
         }
     }
 }
