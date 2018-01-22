@@ -29,7 +29,7 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier supplier = await repo.GetByIdAsync((int) id);
+            Supplier supplier = await repo.GetByIdAsync((int)id);
             if (supplier == null)
             {
                 return HttpNotFound();
@@ -66,7 +66,7 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier supplier = await repo.GetByIdAsync((int) id);
+            Supplier supplier = await repo.GetByIdAsync((int)id);
             if (supplier == null)
             {
                 return HttpNotFound();
@@ -96,7 +96,7 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier supplier = await repo.GetByIdAsync((int) id);
+            Supplier supplier = await repo.GetByIdAsync((int)id);
             if (supplier == null)
             {
                 return HttpNotFound();
@@ -117,7 +117,7 @@ namespace LUSSIS.Controllers
             }
             catch (System.Exception e)
             {
-                ModelState.AddModelError("","This supplier has existed stationeries.");
+                ModelState.AddModelError("", "This supplier has existed stationeries.");
                 return View(supplier);
             }
         }

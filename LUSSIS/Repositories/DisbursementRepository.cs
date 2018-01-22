@@ -158,7 +158,7 @@ namespace LUSSIS.Repositories
                 ud.Status = "fullfilled";
             }
 
-
+            
 
             foreach (var d in disbursements)
             {
@@ -268,6 +268,11 @@ namespace LUSSIS.Repositories
 
             }
             return result;
+        }
+
+        public bool hasInprocessDisbursements()
+        {
+            return LUSSISContext.Disbursements.Any(d => d.Status == "inprocess");
         }
     }
 }
