@@ -149,6 +149,9 @@ namespace LUSSIS.Controllers
         {
             try
             {
+                if (file1 == null)
+                    throw new Exception("No file was uploaded");
+
                 //convert excel to list
                 List<StationerySupplier> list = StationerySupplierQuote.ConvertToList(file1.InputStream);
 
@@ -223,19 +226,24 @@ namespace LUSSIS.Controllers
             public static List<StationerySupplier> ConvertToList(Stream stream)
             {
                 List<StationerySupplier> list = new List<StationerySupplier>();
-                var excel = new ExcelPackage(stream);
-                var ws = excel.Workbook.Worksheets.First();
-                int currentRow = 2;
-                while (ws.Cells[currentRow, 1].Value != null)
+                try
                 {
-                    StationerySupplier ss = new StationerySupplier();
-                    ss.ItemNum = (string)ws.Cells[currentRow, 1].Value;
-                    ss.Rank = Convert.ToInt32(ws.Cells[currentRow, 4].Value);
-                    ss.Price = Convert.ToDouble(ws.Cells[currentRow, 3].Value);
-                    ss.SupplierId = Convert.ToInt32(ws.Cells[currentRow, 5].Value);
-                    list.Add(ss);
-                    currentRow++;
+                    var excel = new ExcelPackage(stream);
+                    var ws = excel.Workbook.Worksheets.First();
+                    int currentRow = 2;
+                    while (ws.Cells[currentRow, 1].Value != null)
+                    {
+                        StationerySupplier ss = new StationerySupplier();
+                        ss.ItemNum = (string)ws.Cells[currentRow, 1].Value;
+                        ss.Rank = Convert.ToInt32(ws.Cells[currentRow, 4].Value);
+                        ss.Price = Convert.ToDouble(ws.Cells[currentRow, 3].Value);
+                        ss.SupplierId = Convert.ToInt32(ws.Cells[currentRow, 5].Value);
+                        list.Add(ss);
+                        currentRow++;
+                    }
                 }
+                catch (Exception e)
+                { throw new Exception("Problems reading uploaded file, please follow template provided"); }
                 return list;
             }
 

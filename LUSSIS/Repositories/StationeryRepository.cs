@@ -108,18 +108,5 @@ namespace LUSSIS.Repositories
             }
             return dic;
         }
-        public IEnumerable<StationerySupplier> GetStationerySupplier()
-        {
-            return LUSSISContext.StationerySuppliers;
-        }
-
-        public void UpdateAllStationerySupplier(IEnumerable<StationerySupplier> newList)
-        {
-            IEnumerable<StationerySupplier> oldList = GetStationerySupplier();
-            LUSSISContext.StationerySuppliers.RemoveRange(oldList);
-            LUSSISContext.StationerySuppliers.AddRange(newList);
-            LUSSISContext.SaveChanges();
-
-        }
     }
 }
