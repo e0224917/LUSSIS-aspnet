@@ -66,14 +66,14 @@ namespace LUSSIS.Repositories
 
         public double GetPOAmountByPoNum(int poNum)
         {
-            List<PurchaseOrderDetail> pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.PoNum.Equals(poNum)).ToList<PurchaseOrderDetail>();
+            List<PurchaseOrderDetail> pd_list =GetPODetailsByPoNum(poNum);
             double total = 0;
             foreach (PurchaseOrderDetail pod in pd_list)
             {
-                //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
+               
 
-                int qty = (int)LUSSISContext.PurchaseOrderDetails.Select(x => x.OrderQty).ToList()[0];
-                double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
+                int qty = (int)pod.OrderQty;
+                double unit_price = (double)pod.UnitPrice;
                 total += qty * unit_price;
 
 
@@ -105,15 +105,11 @@ namespace LUSSIS.Repositories
 
             foreach (PurchaseOrder po in list)
             {
-                List<PurchaseOrderDetail> pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.PoNum.Equals(po.PoNum)).ToList<PurchaseOrderDetail>();
+                List<PurchaseOrderDetail> pd_list = GetPODetailsByPoNum(po.PoNum);
 
                 foreach (PurchaseOrderDetail pod in pd_list)
                 {
-                    //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
-                    int qty = (int)LUSSISContext.PurchaseOrderDetails.Select(x => x.OrderQty).ToList()[0];
-                    double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
-                    result += (qty * unit_price);
-
+                    result += GetPOAmountByPoNum(pod.PoNum);
                 }
 
             }
@@ -133,21 +129,19 @@ namespace LUSSIS.Repositories
             Update(p);
         }
        
-       public double GetPOAmountByCategory(int CategoryId)
+       public double GetPOAmountByCategory(int Category)
              {
             double total = 0;
             List<String> ItemList = new List<String>();
-            ItemList = sr.GetItembyCategory(CategoryId);
+            ItemList = sr.GetItembyCategory(Category);
             List<PurchaseOrderDetail> pd_list = new List<PurchaseOrderDetail>();
             foreach (String e in ItemList)
             {
               pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList<PurchaseOrderDetail>();
                 foreach (PurchaseOrderDetail pod in pd_list)
                 {
-                    //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
-
-                    int qty = (int)LUSSISContext.PurchaseOrderDetails.Select(x => x.OrderQty).ToList()[0];
-                    double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
+                    int qty =(int)pod.OrderQty;
+                    double unit_price =(double)pod.UnitPrice;
                     total += qty * unit_price;
 
 
@@ -157,6 +151,18 @@ namespace LUSSIS.Repositories
             return total;
 
 
+        }
+        public List<double> GetPOByCategory()
+        {
+            List<double> list = new List<double>();
+            List<int> Cat =LUSSISContext.Categories.Select(x=>x.CategoryId).ToList() ;
+
+            foreach(int i in Cat)
+            {
+                list.Add(GetPOAmountByCategory(i));
+            }
+            return list;
+           
         }
 
 

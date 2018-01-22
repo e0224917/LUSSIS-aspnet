@@ -2,14 +2,15 @@
 @{
     ViewBag.Title = "ViewPendingPOList";
 }
+@Scripts.Render("")
 <style>
     body.modal-open div.modal-backdrop {
         z-index: 0;
     }
-    </style>
+</style>
 
 <h2>ViewPendingPOList</h2>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <script>
 
     function onClickFunction() {
@@ -86,7 +87,7 @@
                 $ @Html.DisplayFor(modelItem => item.TotalCost)
             </td>
             <td>
-                @Html.ActionLink("Details", "PODetails", new { id = item.PoNum })
+                @Html.ActionLink("Details", "Details", new { id = item.PoNum })
             </td>
         </tr>
     }
@@ -98,23 +99,21 @@
     <a href="#" class="btn btn-danger" onclick="RejectReject(getCheckList())">Reject</a>
 </div>
 
-
-
-
-<div class="modal fade" id="myApproveModal">
-    <div class="modal-dialog">
+<div class="modal" id="myApproveModal">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="ApprovalTitle"></h3>
-                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h5 class="modal-title" id="ApprovalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body" id="myApproveModalBodyDiv">
+                <p></p>
             </div>
         </div>
     </div>
 </div>
-
-
 
 
 <script>

@@ -387,10 +387,7 @@ namespace LUSSIS.Controllers
             dash.PendingStockAdjSubtractQty = stockRepo.GetPendingStockSubtractQty();
             dash.PendingStockAdjCount = stockRepo.GetPendingStockCount();
             dash.TotalDisbursementAmount = disRepo.GetDisbursementTotalAmount();
-            dash.CharterName = er.GetDepartmentNames();
-            dash.CharterValue =er.GetDepartmentValue();
-            dash.PieName = sr.GetCategoryList();
-            dash.PieValue = sr.GetCategoryPO();
+           
             return View(dash);
         }
       /*  public ActionResult CharterColumn()
@@ -437,8 +434,8 @@ namespace LUSSIS.Controllers
         }*/
         public JsonResult GetPiechartJSON()
         {
-            List<String> pileName = sr.GetCategoryList();
-            List<double> pileValue = sr.GetCategoryPO();
+            List<String> pileName = sr.GetAllCategory().ToList();
+            List<double> pileValue = pr.GetPOByCategory();
 
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }

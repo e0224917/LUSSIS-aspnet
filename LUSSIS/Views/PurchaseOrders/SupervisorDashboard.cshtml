@@ -1,14 +1,9 @@
 ﻿@model LUSSIS.Models.WebDTO.SupervisorDashboardDTO
 
-@{
-    ViewBag.Title = "Supervisor Dashboard";
-}
-<script src="~/Scripts/bootstrap.min.js"></script>
-<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
 
-<h3>Supervisor Dashborad</h3>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+@Scripts.Render("https://www.gstatic.com/charts/loader.js")
+
+
 <script type="text/javascript">
     google.charts.load('current', { 'packages': ['corechart'] });
 
@@ -22,18 +17,17 @@
             $.ajax({
                 type: 'GET',
                 url: '/PurchaseOrders/GetPiechartJSON',
-                success: function (chartsdata)
-                {
+                success: function (chartsdata) {
                     // Callback that creates and populates a data table,
                     // instantiates the pie chart, passes in the data and
                     // draws it
 
                     //get JSONList from Object
 
-                   
-                       // alert(result.FirstList[x].Name);
-                        //alert(result.SecondList[x].Name);
-                   
+
+                    // alert(result.FirstList[x].Name);
+                    //alert(result.SecondList[x].Name);
+
                     var first = chartsdata.ListOne;
                     var second = chartsdata.ListTwo;
 
@@ -44,14 +38,13 @@
 
                     //Loop through each list data
 
-                    for (var i = 0; i < first.length; i++)
-                    {
+                    for (var i = 0; i < first.length; i++) {
                         if (second[i] != 0) {
                             data.addRow([first[i], second[i]]);
                         }
-                      
+
                     }
-                   
+
                     // Instantiate and draw our chart, passing in some options
                     var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
 
@@ -62,7 +55,7 @@
                             position: "top",
                             fontsize: "25px",
                             width: "600",
-                            height:"600",
+                            height: "600",
                         });
 
                 },
@@ -91,17 +84,13 @@
                     //Loop through each list data
 
                     for (var i = 0; i < first.length; i++) {
-                        if (second[i] != 0)
-                        {
-                           
-                            alert(second[i]);
-
+                        if (second[i] != 0) {
                             data.addRow([first[i], second[i]]);
                         }
                     }
                     var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
 
-                    
+
                     chart.draw(data,
                         {
                             title: "Department Trend Analysis",
@@ -118,57 +107,83 @@
         })
 
     }
-</script> 
-
-<div class="container">
+</script>
+<h2> Supervisor Dashboard</h2>
     <div class="row">
-        <div class="col-md-3">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Pending Adjustment <span style="padding-left:3em">@Model.PendingStockAdjCount</span> </div>
-                <div class="panel-body"> <span style="padding-left:3em">+ @Model.PendingStockAdjAddQty</span><span style="padding-left:6em">- @Model.PendingStockAdjSubtractQty</span></div>
+        <div class="class="col-4">
+            <div class="bs-component">
+                <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                    <div class="col-xs-12 text-center">
+                        <div class="card bg-info text-white">
+                            <div class="card-header">Pending Adjustment <span style="padding-left:3em">@Model.PendingStockAdjCount</span> </div>
+                            <div class="card-body"><span style="padding-left:2em">+ @Model.PendingStockAdjAddQty</span><span style="padding-left:3em">- @Model.PendingStockAdjSubtractQty</span> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="class=" col-3">
+            <div class="bs-component">
+                <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                    <div class="col-xs-12 text-center">
+
+                        <div class="card bg-info text-white">
+                            <div class="card-header">Pending Purchase Order <span style="padding-left:3em">@Model.PendingPOCount</span></div>
+                            <div class="card-body"><span style="padding-left:5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Pending Purchase Order <span style="padding-left:3em">@Model.PendingPOCount</span></div>
-                <div class="panel-body"><span style="padding-left:5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span></div>
+        <div class="class=" col-lg-8">
+            <div class="bs-component">
+                <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                    <div class="col-xs-12 text-center">
+                       
+                            <div class="card bg-info text-white">
+                                <div class="card-header">Total ChargeBack</div>
+                                <div class="card-body"><span style="padding-left:5em">$@Model.TotalDisbursementAmount.ToString("#.00")</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       
+        <div class="class=" col-lg-8">
+            <div class="bs-component">
+                <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                    <div class="col-xs-12 text-center">
+                        
+                            <div class="card bg-info text-white">
+                                <div class="card-header">Total PO Expenditure</div>
+                                <div class="card-body"><span style="padding-left:5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3">
 
-            <div class="panel panel-primary">
-                <div class="panel-heading">Total Charge Back </div>
-                <div class="panel-body"><span style="padding-left:5em">$@Model.TotalDisbursementAmount.ToString("#.00")</span></div>
+
+        <div class="row">
+            @*<img src="@Url.Action("CharterColumn")" alt="chart" />*@
+
+        </div>
+        <div class="row">
+            @**<img src="@Url.Action("PieChartColumn")" alt="chart" />*@
+
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="chart_div"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="bar_div"></div>
             </div>
         </div>
-
-        <div class="col-md-3">
-
-            <div class="panel panel-primary">
-                <div class="panel-heading">Total PO Expenditure</div>
-                <div class="panel-body"><span style="padding-left:5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span></div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        @*<img src="@Url.Action("CharterColumn")" alt="chart" />*@
-
-    </div>
-    <div class="row">
-        @**<img src="@Url.Action("PieChartColumn")" alt="chart" />*@
-
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div id="chart_div"></div>
-        </div>
-        <div class="col-md-6">
-            <div id="bar_div"></div>
-        </div>
-    </div>
-</div>
+   
 
 
 

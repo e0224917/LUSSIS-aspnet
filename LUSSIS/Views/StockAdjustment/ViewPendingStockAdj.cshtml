@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "ViewPendingStockAdj";
 }
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 
 <style>
     body.modal-open div.modal-backdrop {
@@ -98,24 +98,23 @@
 </div>
 
 
-<script src="~/Scripts/bootstrap.min.js"></script>
-<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
 
 
-<div class="modal fade" id="myApproveModal">
-    <div class="modal-dialog">
+<div class="modal" id="myApproveModal">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="ApprovalTitle"></h3>
-                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h5 class="modal-title" id="ApprovalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body" id="myApproveModalBodyDiv">
+                <p></p>
             </div>
         </div>
     </div>
 </div>
-
 
 
 
@@ -140,8 +139,7 @@
         if (CheckList.length < 1) {
             swal("Please select one");
         }
-        else
-        {
+        else {
             var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=Reject";
 
             $("#myApproveModalBodyDiv").load(url, function () {
