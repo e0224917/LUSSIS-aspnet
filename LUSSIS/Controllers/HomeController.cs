@@ -5,17 +5,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Repositories;
+using LUSSIS.Models;
 
 namespace LUSSIS.Controllers
 {
     [RequireHttps]
     public class HomeController : Controller
     {
+        EmployeeRepository employeeRepo = new EmployeeRepository();
+
         public ActionResult Index()
         {
-            //var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            //ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
-            //I m placing this here first just to show the roles of the user
+            var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
+            
+            switch(ViewBag.Message)
+            {
+                case "head":
+                    return RedirectToAction("Index", "RepAndDelegate");
+                case "rep":
+                    return RedirectToAction("Index", "Collection");
+                case "staff":
+                    return RedirectToAction("Index", "Home");
+                case "manager":
+                    return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
+                case "supervisor":
+                    return RedirectToAction("SupervisorDashboard", "PurchaseOrders");                    
+                case "clerk":
+                    return RedirectToAction("Consolidated", "Requisitions");
+            }
             return View();
         }
 

@@ -1,0 +1,85 @@
+﻿@model LUSSIS.Models.WebDTO.DeptHeadDashBoardDTO
+@{
+    ViewBag.Title = "Your DashBoard";
+}
+
+<h2>Your DashBoard</h2>
+<div class="row">
+    <div class="col-sm-4">
+    <table class="table">
+        <tr>
+            <th>
+                Pending Requisitions
+            </th>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(Model => Model.GetRequisitionListCount)
+            </td>
+        </tr>
+    </table>   
+    </div>
+ <div class="col-sm-4">
+        <table class="table">
+            <tr>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.GetDelegate.Employee)*@
+                    Your Delegate
+                </th>
+                <th>
+                    From
+                </th>
+                <th>
+                    To
+                </th>
+            </tr>
+            <tr>
+                @if (Model.GetDelegate != null)
+                    {
+            <td>
+                @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.GetDelegate.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.GetDelegate.EndDate)
+            </td>
+                    }
+            </tr>
+        </table>
+
+        @if (Model.GetDelegateByDate != null)
+    {
+        <h5>Your delegate is activated today!</h5>
+}
+else
+{
+        <h5>Your delegate is not activated today!</h5>
+}
+
+        @if (Model.GetDelegate == null)
+    {
+        <h5>
+            No delegate at the moment :)
+        </h5>
+} 
+    </div>
+    <div class="col-sm-4">
+        <table class="table">
+            <tr>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.Department.RepEmployee)*@
+                    Your Department Representative
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
