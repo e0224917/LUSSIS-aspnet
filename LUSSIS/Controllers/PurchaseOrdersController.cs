@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
@@ -385,8 +387,70 @@ namespace LUSSIS.Controllers
             dash.PendingStockAdjSubtractQty = stockRepo.GetPendingStockSubtractQty();
             dash.PendingStockAdjCount = stockRepo.GetPendingStockCount();
             dash.TotalDisbursementAmount = disRepo.GetDisbursementTotalAmount();
+            dash.CharterName = er.GetDepartmentNames();
+            dash.CharterValue =er.GetDepartmentValue();
+            dash.PieName = sr.GetCategoryList();
+            dash.PieValue = sr.GetCategoryPO();
             return View(dash);
         }
+      /*  public ActionResult CharterColumn()
+        {
+            ArrayList xValue = new ArrayList();
+            ArrayList yValue = new ArrayList();
+
+            List<double> list = new List<double>();
+                List<Department> depList = er.GetDepartmentAll();
+              
+                foreach (Department e in depList)
+                {
+                xValue.Add(e.DeptCode);
+                yValue.Add(disRepo.GetDisbursementByDepCode(e.DeptCode));
+
+                }
+            new System.Web.Helpers.Chart(width: 600, height: 330, theme: ChartTheme.Blue)
+                .AddTitle("Chart for ")
+                .AddSeries("Default", chartType: "Column", xValue: xValue, yValues: yValue)
+                .Write("bmp");
+
+            return null;
+        }
+        public ActionResult PieChartColumn()
+        {
+            ArrayList xValue = new ArrayList();
+            ArrayList yValue = new ArrayList();
+
+            List<double> list = new List<double>();
+           // List<Category> cateList = sr.GetCategoryList();
+
+           /* foreach (Category e in cateList)
+            {
+                xValue.Add(e.CategoryName);
+                yValue.Add(pr.GetPOAmountByCategory(e.CategoryId));
+
+            }
+            new System.Web.Helpers.Chart(width: 600, height: 600, theme: ChartTheme.Blue)
+                .AddTitle("Chart for ")
+                .AddSeries("Default", chartType: "Pie", xValue: xValue, yValues: yValue)
+                .Write("bmp");
+
+            return null;
+        }*/
+        public JsonResult GetPiechartJSON()
+        {
+            List<String> pileName = sr.GetCategoryList();
+            List<double> pileValue = sr.GetCategoryPO();
+
+            return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetBarchartJSON()
+        {
+            List<String> Name =er.GetDepartmentNames();
+            List<double> Value = er.GetDepartmentValue();
+
+            return Json(new { firstList = Name, secondList = Value }, JsonRequestBehavior.AllowGet);
+        }
+       
+
 
 
 

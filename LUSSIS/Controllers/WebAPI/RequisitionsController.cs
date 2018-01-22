@@ -15,15 +15,6 @@ namespace LUSSIS.Controllers.WebAPI
     {
         private readonly RequisitionRepository _repo = new RequisitionRepository();
 
-        // GET: api/Requisitions/COMM/?status=pending&empnum=77
-        //        [ResponseType(typeof(RequisitionDTO))]
-        //        public async Task<IHttpActionResult> GetRequisition(string dept, [FromUri]string status, [FromUri]int empnum)
-        //        {
-        //            var reqList = repo.GetRequisitionsByReferences(dept, status, empnum);
-        //            var list = repo.GetRequisitionsByStatus(status);
-        //            
-        //        }
-
         //GET: api/Requisitions/
         [Route("api/Requisitions/Pending/{dept}")]
         public IEnumerable<RequisitionDTO> GetPending(string dept)
