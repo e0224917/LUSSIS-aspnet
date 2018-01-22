@@ -20,5 +20,14 @@ namespace LUSSIS.Models.WebDTO
         public int PendingStockAdjCount { get; set; }
 
         public double TotalDisbursementAmount { get; set; }
+
+        public List<String> CharterName { get; set; }
+
+        public List<double> CharterValue { get; set; }
+
+        public List<String> PieName { get; set; }
+
+        public List<double> PieValue { get; set; }
+
     }
 }

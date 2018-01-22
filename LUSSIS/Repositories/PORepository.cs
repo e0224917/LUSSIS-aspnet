@@ -1,4 +1,5 @@
 ﻿using System;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,8 +14,8 @@ namespace LUSSIS.Repositories
     public class PORepository : Repository<PurchaseOrder, int>, IPORepository
     {
         public PORepository() { }
-
-
+        StationeryRepository sr = new StationeryRepository();
+       
         public List<PurchaseOrder> GetPendingApprovalPO()
         {
             IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == "pending");
@@ -131,6 +132,33 @@ namespace LUSSIS.Repositories
             p.ApprovalDate = DateTime.Today;
             Update(p);
         }
+       
+       public double GetPOAmountByCategory(int CategoryId)
+             {
+            double total = 0;
+            List<String> ItemList = new List<String>();
+            ItemList = sr.GetItembyCategory(CategoryId);
+            List<PurchaseOrderDetail> pd_list = new List<PurchaseOrderDetail>();
+            foreach (String e in ItemList)
+            {
+              pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList<PurchaseOrderDetail>();
+                foreach (PurchaseOrderDetail pod in pd_list)
+                {
+                    //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
+
+                    int qty = (int)LUSSISContext.PurchaseOrderDetails.Select(x => x.OrderQty).ToList()[0];
+                    double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
+                    total += qty * unit_price;
+
+
+                }
+            }
+           
+            return total;
+
+
+        }
+
 
 
     }
