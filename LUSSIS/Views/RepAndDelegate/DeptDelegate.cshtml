@@ -66,7 +66,7 @@
         <label for="from">From</label>
         <input type="text" id="from" name="from" onkeydown="return false" />
         <label for="to">   To</label>
-        <input type="text" id="to" name="to" onkeydown="return false"  />
+        <input type="text" id="to" name="to" onkeydown="return false" />
         <input type="hidden" id="fromDate" name="fromDate" />
         <input type="hidden" id="toDate" name="fromDate" />
         <br />
@@ -85,23 +85,23 @@
 }
 
 @section scripts {
-    <script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript">
         $(document).ready(function () {
             validate();
             $('#from, #to, #Emp').change(validate);
-            $('#from, #to, #Emp').select(validate);
+            function validate() {
+                if ($('#from').val().length > 0 &&
+                    $('#to').val().length > 0 &&
+                    $('#Emp').val().length > 0) {
+                    $("input[type=submit]").prop("disabled", false);
+                }
+                else {
+                    $("input[type=submit]").prop("disabled", true);
+                }
+            };
         });
-
-        function validate() {
-            if ($('#from').val().length > 0 &&
-                $('#to').val().length > 0 &&
-                $('#Emp').val().length > 0) {
-                $("input[type=submit]").prop("disabled", false);
-            }
-            else {
-                $("input[type=submit]").prop("disabled", true);
-            }
-        }
 
         ////$(':text').on('input change', function () {
 
@@ -122,25 +122,56 @@
         //    }
         //    else {
         //        $('#Submit1').prop('disabled', false);
-        //    } 
+        //    }
         //});
         ////});
-    </script>
+        var dateNow = new Date();
+        var dateToday = moment(dateNow).format('DD/MM/YYYY');
+        $(function () {
+            from = $("#from")
+                .datepicker({
+                    dateFormat: 'dd/mm/yy',
+                    minDate: dateToday,
+                    changeMonth: true,
+                    numberOfMonths: 1
+                })
+                .on("change", function () {
+                    to.datepicker("option", "minDate", getDate(this));
 
+                    //$("#fromDate").val() = $(this);
+                }),
+                to = $("#to").datepicker({
+                    dateFormat: 'dd/mm/yy',
+                    changeMonth: true,
+                    numberOfMonths: 1
+                })
+                    .on("change", function () {
+                        from.datepicker("option", "maxDate", getDate(this));
+                        //$("#toDate").val() = getDate(this);
 
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#Submit1').prop('disabled', true);
+                    });
+
+            function getDate(element) {
+                var date;
+                try {
+                    date = $.datepicker.parseDate("dd/mm/yy", element.value);
+                } catch (error) {
+                    date = null;
+                }
+
+                return date;
+            }
+        });
+
             $('#Emp').keyup(function () {
                 if ($.trim($(this).val()) == '') {
                     $('#Submit1').prop('disabled', true);
                     $('#tagsname').html('You selected none ');
                 }
                 else {
-                    //$('#Submit1').prop('disabled', false);
+                    $('#Submit1').prop('disabled', false);
                 }
-            });
+            
             $("#Emp").autocomplete({
                 source: function (request, response) {
                     $.ajax({
@@ -181,60 +212,16 @@
                     $(this).val(ui.item.label);
                     if (ui.item == null) {
                         $("#Emp").val('');
-                        //$('#Submit1').prop('disabled', true);
-                    }
-                    else {
-                        //$('#Submit1').prop('disabled', false);
+                        $('#Submit1').prop('disabled', true);
                     }
                 },
-                //messages: {
-                //    noResults: "", results: ""
-                //}
-            });;
-        })
-    </script>
-
-    <script>
-        var dateNow = new Date();
-        var dateToday = moment(dateNow).format('DD/MM/YYYY');
-        $(function () {
-            from = $("#from")
-                .datepicker({
-                    dateFormat: 'dd/mm/yy',
-                    minDate: dateToday,
-                    changeMonth: true,
-                    numberOfMonths: 1
-                })
-                .on("change", function () {
-                    to.datepicker("option", "minDate", getDate(this));
-                    
-                    //$("#fromDate").val() = $(this);
-                }),
-                to = $("#to").datepicker({
-                    dateFormat: 'dd/mm/yy',
-                    changeMonth: true,
-                    numberOfMonths: 1
-                })
-                    .on("change", function () {
-                        from.datepicker("option", "maxDate", getDate(this));
-                        //$("#toDate").val() = getDate(this);
-                        
-                    });
-
-            function getDate(element) {
-                var date;
-                try {
-                    date = $.datepicker.parseDate("dd/mm/yy", element.value);
-                } catch (error) {
-                    date = null;
+                close: function (event, ui) {
+                    $(this).data().term = null;
                 }
-
-                return date;
-            }
-        });
+                }); 
+            });
     </script>
 }
-
 
 <style type="text/css">
     td {

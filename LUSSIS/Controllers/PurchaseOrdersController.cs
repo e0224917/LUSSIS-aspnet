@@ -89,20 +89,30 @@ namespace LUSSIS.Controllers
             po.SupplierId = supplier.SupplierId;
             po.CreateDate = DateTime.Today;
 
-            //create list of purchase details for outstanding items
-            stationeries = sr.GetStationeryBySupplierId(supplierId).ToList();
-            foreach (Stationery stationery in stationeries)
+            //set empty Stationery template
+            Stationery emptyStationery = new Stationery();
+            emptyStationery.ItemNum = "select a stationery";
+            emptyStationery.Description = "select a stationery";
+            emptyStationery.UnitOfMeasure = " ";
+            emptyStationery.AverageCost = 0.00;
+
+            //get list of recommended for purchase stationery
+            bool hasRecommended = sr.GetOutstandingStationeryByAllSupplier().TryGetValue(supplier, out stationeries);
+            if (hasRecommended)
             {
-                if (stationery.CurrentQty < stationery.ReorderLevel)
+                foreach (Stationery stationery in stationeries)
                 {
-                    PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
-                    pdetails.OrderQty = stationery.ReorderLevel - stationery.CurrentQty;
-                    pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
-                    pdetails.ItemNum = stationery.ItemNum;
-                    po.PurchaseOrderDetailsDTO.Add(pdetails);
+                    if (stationery.CurrentQty < stationery.ReorderLevel && stationery.PrimarySupplier().SupplierId == supplierId)
+                    {
+                        PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
+                        pdetails.OrderQty = Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty), Convert.ToInt32(stationery.ReorderQty));
+                        pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
+                        pdetails.ItemNum = stationery.ItemNum;
+                        po.PurchaseOrderDetailsDTO.Add(pdetails);
+                    }
                 }
             }
-            countOfLines = po.PurchaseOrderDetailsDTO.Count;
+            countOfLines = Math.Max(po.PurchaseOrderDetailsDTO.Count, 1);
 
 
             //create empty puchase details so user can add up to 100 line items per PO
@@ -110,13 +120,19 @@ namespace LUSSIS.Controllers
             {
                 PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
                 pdetails.OrderQty = 0;
-                pdetails.UnitPrice = stationeries.First().UnitPrice(Convert.ToInt32(supplierId));
-                pdetails.ItemNum = stationeries.First().ItemNum;
+                pdetails.UnitPrice = emptyStationery.AverageCost;
+                pdetails.ItemNum = emptyStationery.ItemNum;
                 po.PurchaseOrderDetailsDTO.Add(pdetails);
             }
 
             //fill ViewBag to populate stationery dropdown lists
-            ViewBag.Stationery = sr.GetStationerySupplierBySupplierId(supplierId).ToList();
+            StationerySupplier ss = new StationerySupplier();
+            ss.ItemNum = emptyStationery.ItemNum;
+            ss.Price = emptyStationery.AverageCost;
+            ss.Stationery=emptyStationery;
+            List<StationerySupplier> sslist = new List<StationerySupplier>() { ss };
+            sslist.AddRange(sr.GetStationerySupplierBySupplierId(supplierId).ToList());
+            ViewBag.Stationery = sslist;
             ViewBag.Suppliers = sur.GetAll();
             ViewBag.Supplier = supplier;
             ViewBag.countOfLines = countOfLines;
@@ -311,7 +327,7 @@ namespace LUSSIS.Controllers
         {
             try
             {
-                if(!ModelState.IsValid)
+                if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
                 PurchaseOrder purchaseorder = pr.GetById(po.PoNum);
                 purchaseorder.Status = "ordered";

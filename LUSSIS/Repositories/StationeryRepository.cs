@@ -33,7 +33,7 @@ namespace LUSSIS.Repositories
 
         public IEnumerable<String> GetAllItemNum()
         {
-            return LUSSISContext.Stationeries.Select(x => x.ItemNum);
+            return LUSSISContext.Stationeries.Select(x => x.ItemNum).ToList();
         }
 
         public IEnumerable<Stationery> GetStationeryBySupplierId(int? id)
