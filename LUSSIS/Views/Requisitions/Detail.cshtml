@@ -47,13 +47,19 @@
     <table>
         <tr>
             <td>@Html.LabelFor(model => model.ApprovalRemarks, "Your comments", htmlAttributes: new { @class = "control-label col-md-2" })</td>
-            <td></td>
-            <td></td>
+            @if (ViewBag.Message == "NoDelegate")
+            {
+        <td></td>
+        <td></td>
+            }
         </tr>
         <tr>
             <td>@Html.EditorFor(model => model.ApprovalRemarks)</td>
+            @if (ViewBag.Message == "NoDelegate")
+            {
             <td><button type="submit" name="SubmitButton" value="Approve">Approve</button></td>
             <td><button type="submit" name="SubmitButton" value="Reject">Reject</button></td>
+            }
         </tr>
     </table>
     <br />

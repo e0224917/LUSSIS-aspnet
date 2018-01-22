@@ -16,6 +16,7 @@ namespace LUSSIS.Repositories
 
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
+        EmployeeRepository er = new EmployeeRepository();
         public IEnumerable<RetrievalItemDTO> GetConsolidatedRequisition()
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
@@ -108,9 +109,32 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Requisitions.Where(r => r.Status == status).ToList();
         }
 
+        public List<Requisition> GetPendingRequisitions()
+        {
+            string deptCode = er.GetCurrentUser().DeptCode;
+            int userEmpNum = er.GetCurrentUser().EmpNum;
+            List<Employee> elist = LUSSISContext.Employees.Where(e => e.DeptCode == deptCode && e.EmpNum != userEmpNum).ToList();
+            List<Requisition> req = new List<Requisition>();
+            foreach (Employee ee in elist)
+            {
+                int EmpNum = ee.EmpNum;
+                List<Requisition> req1 = LUSSISContext.Requisitions.Where(r => r.Status == "pending" && r.RequisitionEmpNum == EmpNum).ToList();
+                if (req1 != null)
+                {
+                    foreach(Requisition ree in req1)
+                    {
+                        req.Add(ree);
+                    }
+                }
+            }
+            return req;
+        }
+
+
+
         public IEnumerable<RequisitionDetail> GetRequisitionDetailsByStatus(string status)
         {
-            return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
+            return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status ).ToList();
         }
 
         /*
