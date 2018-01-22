@@ -6,6 +6,7 @@
 <h2>CreateAdjustments</h2>
 
 <button id="add" type="button">Add</button>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
 @using (Html.BeginForm())
 {
@@ -30,9 +31,9 @@
         <tbody id="AdjustmentsDiv">
             @foreach (var adjustment in Model.MyList)
             {
-            @Html.Partial("_CreateAdjustments", new LUSSIS.Models.WebDTO.AdjustmentVoucherDTO())
+                @Html.Partial("_CreateAdjustments", new LUSSIS.Models.WebDTO.AdjustmentVoucherDTO())
             }
-            
+
         </tbody>
     </Table>
 
@@ -43,29 +44,65 @@
 }
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script type="text/javascript">
         $(document).on("click", ".deleteContact", function () {
             $(this).closest("tr").remove();
         });
-    </script>
-    <script>
-var url = '@Url.Action("_CreateAdjustments")';
-var form = $("form");
-var Adjustments = $('#AdjustmentsDiv');
-$('#add').click(function() {
-    $.get(url, function(response) {
-        Adjustments.append(response);
-        // Reparse the validator for client side validation
-        form.removeData("validator");
-        form.removeData("unobtrusiveValidation");
-        $.validator.unobtrusive.parse(form);
-    });
-    });
-    </script>
-}
+        $(document).ready(function () {
+            loadAutoComplete();
+        });
 
+    var url = '@Url.Action("_CreateAdjustments")';
+    var form = $("form");
+    var itemSearch = $(".itemSearch");
+    var Adjustments = $('#AdjustmentsDiv');
+        $('#add').click(function () {
+            $.get(url, function (response) {
+                Adjustments.append(response);
+                form.removeData("validator");
+                form.removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+                loadAutoComplete();
+            });
+
+        })
+
+        function loadAutoComplete(){
+            $('.itemSearch').each(function () {
+                $(this).autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            url: '/StockAdjustment/GetItemNum',
+                            data: { term: request.term },
+                            dataType: 'json',
+                            type: 'GET',
+                            success: function (data) {
+                                response($.map(data, function (item) {
+                                    return {
+                                        label: item
+                                    };
+                                }));
+                            }
+                        })
+                    },
+                    select: function (event, ui) {
+                        // Get the associated hidden input
+                        var input = $(this).closest('.item').find('input');
+                        // Set the value of the id property
+                        input.val(ui.item.id);
+                    },
+                    minLength: 1
+                });
+            });
+
+        };
+    </script>
+
+    }
 
 
 
