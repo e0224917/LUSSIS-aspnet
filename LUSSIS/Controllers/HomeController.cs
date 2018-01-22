@@ -27,7 +27,7 @@ namespace LUSSIS.Controllers
                 case "rep":
                     return RedirectToAction("Index", "Collection");
                 case "staff":
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Requisitions");
                 case "manager":
                     return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
                 case "supervisor":
