@@ -34,7 +34,7 @@ namespace LUSSIS.Controllers.WebAPI
             {
                 RequisitionId = item.RequisitionId,
                 RequisitionEmp = item.RequisitionEmployee.FirstName + " " + item.RequisitionEmployee.LastName,
-                RequisitionDate = (DateTime) item.RequisitionDate,
+                RequisitionDate = (DateTime)item.RequisitionDate,
                 ApprovalEmp = item.ApprovalEmpNum != null ? item.ApprovalEmployee.FirstName + " " + item.ApprovalEmployee.LastName : "",
                 ApprovalRemarks = item.ApprovalRemarks != null ? item.ApprovalRemarks : "",
                 RequestRemarks = item.RequestRemarks != null ? item.RequestRemarks : "",
@@ -69,12 +69,28 @@ namespace LUSSIS.Controllers.WebAPI
                 req.Status = status;
 
                 await _repo.UpdateAsync(req);
-                return Ok(new { Message = "Updated"});
+                return Ok(new { Message = "Updated" });
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet]
+        public List<RetrievalItemDTO> GetConsolidatedRequisition()
+        {
+            var list = _repo.GetConsolidatedRequisition().Select(x => new RetrievalItemDTO
+            {
+                ItemNum = x.ItemNum,
+                AvailableQty = x.AvailableQty,
+                BinNum = x.BinNum,
+                RequestedQty = x.RequestedQty,
+                Description = x.Description,
+                UnitOfMeasure = x.UnitOfMeasure
+            });
+            return list.ToList();
+        }
+
     }
 }

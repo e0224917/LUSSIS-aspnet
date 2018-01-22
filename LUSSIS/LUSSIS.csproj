@@ -283,6 +283,7 @@
     <Compile Include="Models\WebAPI\DelegateDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDetailDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDTO.cs" />
+    <Compile Include="Models\WebAPI\RetrievalItemDTO.cs" />
     <Compile Include="Models\WebDTO\AdjVoucherColView.cs" />
     <Compile Include="Models\WebDTO\Cart.cs" />
     <Compile Include="Models\Category.cs" />
