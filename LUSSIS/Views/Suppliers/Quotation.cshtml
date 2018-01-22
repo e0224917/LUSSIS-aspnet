@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewBag.Title = "Quotation";
+}
+
+<h2>Upload Quotations</h2>
+
+@if (ViewBag.Success != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.Success
+    </div>
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
+
+@using (Html.BeginForm("Quotation", "Suppliers", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    <input type="file" name="file1" id="file1" value="Browse Folder" />
+    <span>Click @Html.ActionLink("here", "QuotationTemplate") to download the latest template which will be used to upload the final suppliers for each stationery</span>
+    <br />
+    <br />
+    <input type="submit" value="Upload Quotation" />
+
+}
+
+

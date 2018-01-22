@@ -10,7 +10,7 @@ using System.Web.Mvc;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
-
+using PagedList;
 
 namespace LUSSIS.Controllers
 {
@@ -26,10 +26,12 @@ namespace LUSSIS.Controllers
         public const double GST_RATE = 0.07;
 
         // GET: PurchaseOrders
-        public ActionResult Index()
+        public ActionResult Index(int? page=1)
         {
             var purchaseOrders = pr.GetAll();
-            return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate));
+            int pageSize = 20;
+            ViewBag.page = page;
+            return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate).ToPagedList(Convert.ToInt32(page), pageSize));
         }
 
         // GET: PurchaseOrders/Details/10005
