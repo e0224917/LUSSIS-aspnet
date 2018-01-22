@@ -4,82 +4,130 @@
 }
 
 <h2>Your DashBoard</h2>
+@*<div class="row">
+    <div class="col-sm-4">*@
 <div class="row">
-    <div class="col-sm-4">
+    <div class="class=" col-lg-4">
+        <div class="bs-component">
+            <div class="card bg-light mb-3" style="min-height: 20rem; max-width: 22rem; margin-right: 1rem">
+                <div class="col-xs-12 text-center">
+                    <div class="card-header"><h4 class="card-title">Pending Requisitions</h4></div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tr>
+                                <th>
+                                    No. of Pending Requisitions:
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <font class="">@Html.DisplayFor(Model => Model.GetRequisitionListCount)</font>
+                                    <br /><br />
+                                    @if (Model.GetRequisitionListCount != 0)
+                                    {
+                                        using (Html.BeginForm("Pending", "Requisitions", FormMethod.Post))
+                                        {
+                                            <input type="submit" class="btn btn-success my-2 my-sm-0" value="View Pending Requisitions" />
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="class=" col-lg-4">
+        <div class="bs-component">
+            <div class="card bg-light mb-3" style="min-height: 20rem; max-width: 35rem; margin-right: 1rem">
+                <div class="col-xs-12 text-center">
+                    <div class="card-header"><h4 class="card-title">Your Delegate</h4></div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tr>
+                                <th>
+                                    @*@Html.DisplayNameFor(model => model.GetDelegate.Employee)*@
+                                    Your Delegate
+                                </th>
+                                <th>
+                                    From
+                                </th>
+                                <th>
+                                    To
+                                </th>
+                            </tr>
+                            @if (Model.GetDelegate != null)
+        {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.GetDelegate.StartDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.GetDelegate.EndDate)
+                        </td>
+                    </tr>
+}
+                        </table>
+                        @if (Model.GetDelegate == null)
+    {
+                    <text> You have no delegate at the moment.</text>
+                    using (Html.BeginForm("DeptDelegate", "RepAndDelegate", FormMethod.Post))
+                    {
+                         <br />
+                         <input type="submit" class="btn btn-success my-2 my-sm-0" value="Set Your Delegate" />
+                    }
+
+}
+else if (Model.GetDelegateByDate != null)
+{
+                    <h6>Your delegate is activated today!</h6>
+                    <br />
+                    <br />using (Html.BeginForm("DeleteDelegate", "RepAndDelegate", FormMethod.Post))
+{
+                    <input type="submit" class="btn btn-success my-2 my-sm-0" value="Revoke Delegate" />
+}
+}
+else
+{
+                    <h6>Your delegate will be activated on </h6>@Html.DisplayFor(mode => Model.GetDelegate.StartDate)
+                    <br />
+                    <br />
+using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
+{
+                    <input type="submit" class="btn btn-success my-2 my-sm-0" value="Revoke Delegate" />
+}
+}
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="col-sm-4">
     <table class="table">
         <tr>
             <th>
-                Pending Requisitions
+                @*@Html.DisplayNameFor(model => model.Department.RepEmployee)*@
+                Your Department Representative
             </th>
         </tr>
         <tr>
             <td>
-                @Html.DisplayFor(Model => Model.GetRequisitionListCount)
+                @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
             </td>
         </tr>
-    </table>   
-    </div>
- <div class="col-sm-4">
-        <table class="table">
-            <tr>
-                <th>
-                    @*@Html.DisplayNameFor(model => model.GetDelegate.Employee)*@
-                    Your Delegate
-                </th>
-                <th>
-                    From
-                </th>
-                <th>
-                    To
-                </th>
-            </tr>
-            <tr>
-                @if (Model.GetDelegate != null)
-                    {
-            <td>
-                @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.GetDelegate.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.GetDelegate.EndDate)
-            </td>
-                    }
-            </tr>
-        </table>
-
-        @if (Model.GetDelegateByDate != null)
-    {
-        <h6>Your delegate is activated today!</h6>
-}
-else
-{
-        <h6>Your delegate is not activated today!</h6>
-}
-
-        @if (Model.GetDelegate == null)
-    {
-        <h5>
-            No delegate at the moment :)
-        </h5>
-} 
-    </div>
-    <div class="col-sm-4">
-        <table class="table">
-            <tr>
-                <th>
-                    @*@Html.DisplayNameFor(model => model.Department.RepEmployee)*@
-                    Your Department Representative
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
-                </td>
-            </tr>
-        </table>
-    </div>
+    </table>
 </div>
+            </div>
 
 

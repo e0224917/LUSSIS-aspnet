@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <h2>Department Delegate</h2>
 
-<table class="table">
+<table class="table table-hover">
     <tr>
         <th>
             @*@Html.DisplayNameFor(model => model.GetDelegate.Employee)*@
@@ -35,7 +35,7 @@
 </table>
 @if (Model.GetDelegate == null)
 {
-    <h5>No delegate at the moment :)</h5>
+    <text>You have no delegate at the moment.</text>
 }
 
 @if (Model.GetDelegate != null)
@@ -46,34 +46,39 @@
     }
 }
 
+
 @if (Model.GetDelegate == null)
-{   <br />
-    <table class="table">
-        <tr>
-            <th>
-                Set New Department Delegate
-            </th>
-        </tr>
-    </table>
+{
+    <hr />
+    <nav class="navbar navbar-light bg-light">
+        <div class="navbar-nav mr-auto">
+            <table class="table">
+                <tr>
+                    <th>
+                        Set New Department Delegate
+                    </th>
+                </tr>
+            </table>
 
-
-    using (Html.BeginForm("AddDelegate", "RepAndDelegate", FormMethod.Post))
-    {
-        <label>Select Date:</label>
-        <br />
-        <label for="from">From</label>
-        <input type="text" id="from" name="from" onkeydown="return false" />
-        <label for="to">&nbsp;&nbsp;To</label>
-        <input type="text" id="to" name="to" onkeydown="return false" />
-        <br />
-        <label>Search Employee:</label>
-        <br />
-        <input id="Emp" type="text" placeholder="Search for Employee" name="FullName" />
-        <input id="Submit1"  type="submit" value="Set Your New Delegate" class="btn btn-success my-2 my-sm-0"/>
-        <input type="hidden" id="Emp2" name="DelegateEmp" />
-        <br />
-        <label id="tagsname" style="color:red" />
-    }
+            @using (Html.BeginForm("AddDelegate", "RepAndDelegate", FormMethod.Post))
+            {
+                <label>Select Date:</label>
+                <br />
+                <label for="from">From</label>
+                <input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" />
+                <label for="to">&nbsp;&nbsp;To</label>
+                <input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" />
+                <br /><br />
+                <label>Search Employee:</label>
+                <br />
+                <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" />
+                <input id="Submit1" type="submit" value="Set Your New Delegate" class="btn btn-success my-2 my-sm-0" />
+                <input type="hidden" id="Emp2" name="DelegateEmp" />
+                <br />
+                <label id="tagsname" style="color:red" />
+            }
+        </div>
+    </nav>
 }
 
 @section scripts {
@@ -183,7 +188,7 @@
     </script>
 }
 
-<style type="text/css">
+@*<style type="text/css">
     td {
         width: 2%;
     }
@@ -191,4 +196,4 @@
     th {
         width: 2%;
     }
-</style>
+</style>*@
