@@ -10,6 +10,7 @@ namespace LUSSIS.Repositories
 {
     public class EmployeeRepository : Repository<Employee, string>
     {
+        DisbursementRepository disRepo = new DisbursementRepository();
         public Employee GetCurrentUser()
         {
             string userName = System.Web.HttpContext.Current.User.Identity.GetUserName();
@@ -103,7 +104,31 @@ namespace LUSSIS.Repositories
             LUSSISContext.Delegates.Remove(del);
             LUSSISContext.SaveChanges();
         }
+       
+        public List<Department> GetDepartmentAll()
+        {
+            List<Department> depList = LUSSISContext.Departments.ToList();
 
-        
+            return depList;
+
+        }
+        public List<String> GetDepartmentNames()
+        {
+            return LUSSISContext.Departments.Select(x => x.DeptName).ToList();
+        }
+        public List<double> GetDepartmentValue()
+        {
+            List<Department> depList = GetDepartmentAll();
+            List<double> valueList = new List<double>();
+            foreach (Department e in depList)
+            {
+               
+                valueList.Add(disRepo.GetDisbursementByDepCode(e.DeptCode));
+
+            }
+            return valueList;
+        }
+
+
     }
 }
