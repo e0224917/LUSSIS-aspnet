@@ -10,7 +10,6 @@ using System.Web.Mvc;
 using LUSSIS.Exceptions;
 using LUSSIS.Models.WebDTO;
 using PagedList;
-using LUSSIS.Models.WebDTO;
 
 namespace LUSSIS.Controllers
 {
@@ -159,7 +158,7 @@ namespace LUSSIS.Controllers
             else { stationerys = strepo.GetAll().ToList(); }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(stationeries.ToPagedList(pageNumber, pageSize));
+            return View(stationerys.ToPagedList(pageNumber, pageSize));
         }
 
         // /Requisition/AddToCart
@@ -185,7 +184,7 @@ namespace LUSSIS.Controllers
             int pageNumber = (page ?? 1);
             return View(reqlist.ToPagedList(pageNumber,pageSize));
         }
-        // GET: Requisitions/Details/
+        // GET: Requisitions/EmpReqDetail/5
         [HttpGet]
         public ActionResult EmpReqDetail(int id)
         {
@@ -201,25 +200,33 @@ namespace LUSSIS.Controllers
             DateTime reqDate = System.DateTime.Now.Date;
             string status = "pending";
             string remarks = Request["remarks"];
-            Requisition requisition = new Requisition();
-            requisition.RequestRemarks = remarks;
-            requisition.RequisitionDate = reqDate;
-            requisition.RequisitionEmpNum = reqEmp;
-            requisition.Status = status;
-            reqrepo.Add(requisition);
-            for (int i=0;i<itemNum.Count;i++)
+            if (itemNum != null)
             {
-                RequisitionDetail requisitionDetail = new RequisitionDetail();
-                requisitionDetail.RequisitionId = requisition.RequisitionId;
-                requisitionDetail.ItemNum =itemNum[i] ;
-                requisitionDetail.Quantity = itemQty[i];
-                reqrepo.AddRequisitionDetail(requisitionDetail);
+                Requisition requisition = new Requisition();
+                requisition.RequestRemarks = remarks;
+                requisition.RequisitionDate = reqDate;
+                requisition.RequisitionEmpNum = reqEmp;
+                requisition.Status = status;
+                reqrepo.Add(requisition);
+                for (int i = 0; i < itemNum.Count; i++)
+                {
+                    RequisitionDetail requisitionDetail = new RequisitionDetail();
+                    requisitionDetail.RequisitionId = requisition.RequisitionId;
+                    requisitionDetail.ItemNum = itemNum[i];
+                    requisitionDetail.Quantity = itemQty[i];
+                    reqrepo.AddRequisitionDetail(requisitionDetail);
+                }
+                Session["itemNub"] = null;
+                Session["itemQty"] = null;
+                Session["MyCart"] = new ShoppingCart();
+                //return View();
+                return RedirectToAction("EmpReq");
             }
-            Session["itemNub"] = null;
-            Session["itemQty"] = null;
-            Session["MyCart"]=new ShoppingCart();           
-            //return View();
-            return RedirectToAction("EmpReq");
+            else
+            {
+                Response.Write("<script>alert('Your cart is empty')</script>");
+                return RedirectToAction("EmpCart");
+            }
         }
         public ActionResult EmpCart()
         {
