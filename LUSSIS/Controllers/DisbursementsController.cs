@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Models;
@@ -11,8 +12,6 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {
-    //TODO: THIS CLASS IS NOT COMPLETED
-
     public class DisbursementsController : Controller
     {
         private LUSSISContext db = new LUSSISContext();
@@ -36,9 +35,13 @@ namespace LUSSIS.Controllers
         }
 
         // GET: Disbursement/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int? id)
         {
-            Disbursement disbursement = disRepo.GetById(id);
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Disbursement disbursement = await disRepo.GetByIdAsync((int)id);
             if (disbursement == null)
             {
                 return HttpNotFound();
@@ -47,25 +50,21 @@ namespace LUSSIS.Controllers
             
             return View(disbursement);
         }
-
-        // POST: Disbursement/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        
+        //POST: Disbursement/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CollectionDate, CollectionPointId")] Disbursement disbursement)
+        public async Task<ActionResult> Edit([Bind(Include = "DisbursementId, CollectionDate, CollectionPointId, AcknowledgeEmpNum, DeptCode, Status")] Disbursement disbursement)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(disbursement).State = EntityState.Modified;
-                db.SaveChanges();
+                await disRepo.UpdateAsync(disbursement);
                 return RedirectToAction("Index");
             }
             ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
-
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -71,6 +71,7 @@ namespace LUSSIS.Repositories
 
                 foreach (DisbursementDetail dd in disListForOneItem)
                 {
+
                     dto.RequestedQty += (dd.RequestedQty - dd.ActualQty);
                 }
             }
@@ -145,8 +146,6 @@ namespace LUSSIS.Repositories
         public IEnumerable<RetrievalItemDTO> GetRetrievalInPorcess()
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
-            //ConsolidateRequisitionQty(itemsToRetrieve, GetRequisitionDetailsByStatus("inprocess"));
-            //ConsolidateRemainingQty(itemsToRetrieve, new DisbursementRepository().GetUnfullfilledDisDetailList());
             
             //use disbursement as resource to generate retrieval in process
             
@@ -162,6 +161,7 @@ namespace LUSSIS.Repositories
                 }
                 itemsToRetrieve.Add(dto);
             }
+
             return itemsToRetrieve;
         }
         /*
