@@ -11,6 +11,8 @@ namespace LUSSIS.Repositories
 {
     public class DisbursementRepository : Repository<Disbursement, int>
     {
+
+        StationeryRepository statRepo = new StationeryRepository();
         public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
             try
@@ -29,8 +31,7 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.CollectionPoints.First(y => y.CollectionPointId == disbursement.CollectionPointId);
         }
-       
-
+        
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
             Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
@@ -59,13 +60,17 @@ namespace LUSSIS.Repositories
         {
             return GetDisbursementByStatus("inprocess");
         }
+        public IEnumerable<Disbursement> GetUnfullfilledDisbursements()
+        {
+            return GetDisbursementByStatus("unfullfilled");
+        }
         public IEnumerable<DisbursementDetail> GetInProcessDisbursementDetails()
         {
             return GetDisbursementDetailsByStatus("inprocess");
         }
         public IEnumerable<DisbursementDetail> GetUnfullfilledDisDetailList()
         {
-            return LUSSISContext.DisbursementDetails.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();
+            return LUSSISContext.DisbursementDetails.Where(d => d.Disbursement.Status == "unfullfilled" && (d.RequestedQty - d.ActualQty) > 0).ToList();
         }
 
         public void CreateDisbursement(DateTime collectionDate)
@@ -76,7 +81,7 @@ namespace LUSSIS.Repositories
             {
                 disbursement.DisbursementDetails = new List<DisbursementDetail>();
             }
-            
+
             //group requisition requests by dept and create disbursement list based on it
             List<Requisition> approvedReq = LUSSISContext.Requisitions.Where(r => r.Status == "approved").ToList();
 
@@ -84,7 +89,7 @@ namespace LUSSIS.Repositories
             foreach (List<Requisition> reqForOneDep in reqGroupByDep)
             {
                 Disbursement d = ConvertReqListForOneDepToDisbursement(reqForOneDep, collectionDate);
-                
+
                 disbursements.Add(d);
 
                 //(1)将reqForOneDep中所有req的detail ToList (reqdetofRFOP)
@@ -107,8 +112,6 @@ namespace LUSSIS.Repositories
                 //(2)完成
             }
 
-
-            //get unfullfilled disbursement
             List<Disbursement> unfullfilledDisList = GetDisbursementByStatus("unfullfilled").ToList();
 
 
@@ -140,8 +143,8 @@ namespace LUSSIS.Repositories
                     };
                     disbursements.Add(newD);
                     //ud detail直接迁移
-                    
-                    foreach(DisbursementDetail unfdd in unfDisDList)
+
+                    foreach (DisbursementDetail unfdd in unfDisDList)
                     {
                         DisbursementDetail tempDisD = new DisbursementDetail();
                         tempDisD.ItemNum = unfdd.ItemNum;
@@ -151,31 +154,16 @@ namespace LUSSIS.Repositories
                         newD.DisbursementDetails.Add(tempDisD);
                     }
                 }
-                //if exist, add to found department's
 
-                //取出unfullfilled disDetail List
-                //List<DisbursementDetail> unfDisDList = GetUnfullfilledDisDetailList().ToList();
-                //整合disbursement detail list
-                //AddUnfDisDtoDisD(unfDisDList, disDetails, disbursements);
                 ud.Status = "fullfilled";
             }
+
+
 
             foreach (var d in disbursements)
             {
                 Add(d);
-                //foreach (var dd in d.DisbursementDetails)
-                //{
-                //    //Debug.WriteLine("Disbursement Detail: " + dd.ItemNum);
-                //    LUSSISContext.DisbursementDetails.Add(dd);
-                //}
             }
-            //Debug.WriteLine("Disbursement generated, count: " + disbursements.Count);
-            
-            //foreach (var dd in disDetails)
-            //{
-            //    Debug.WriteLine("Disbursement Detail: " + dd.ItemNum);
-            //    LUSSISContext.DisbursementDetails.Add(dd);
-            //}
 
             LUSSISContext.SaveChanges();
         }
@@ -203,6 +191,7 @@ namespace LUSSIS.Repositories
         //将reqD整理转入disD
         public void AddReqDtoDisD(List<RequisitionDetail> reqDetailListOfOneDept, ICollection<DisbursementDetail> disDetails)
         {
+
             foreach (RequisitionDetail rd in reqDetailListOfOneDept)
             {
                 bool isNew = true;
@@ -211,8 +200,8 @@ namespace LUSSIS.Repositories
                     if (rd.ItemNum == disD.ItemNum)
                     {
                         isNew = false;
-                        disD.RequestedQty = disD.RequestedQty + rd.Quantity;
-                        disD.ActualQty = disD.Stationery.AvailableQty > disD.RequestedQty ? disD.RequestedQty : disD.Stationery.AvailableQty;
+                        disD.RequestedQty += rd.Quantity;
+                        disD.ActualQty = rd.Stationery.AvailableQty > disD.RequestedQty ? disD.RequestedQty : rd.Stationery.AvailableQty;
                         break;
                     }
                 }
@@ -224,54 +213,12 @@ namespace LUSSIS.Repositories
                         ItemNum = rd.ItemNum,
                         RequestedQty = rd.Quantity,
                         UnitPrice = rd.Stationery.AverageCost,
-                        ActualQty = rd.Stationery.AvailableQty > rd.Quantity ? rd.Quantity : rd.Stationery.AvailableQty
+                        ActualQty = rd.Stationery.AvailableQty > rd.Quantity ? rd.Quantity : rd.Stationery.AvailableQty,
                     };
                     disDetails.Add(newdisD);
                 }
             }
         }
-
-        //将没有fullfill的disdetail整理插入至新disbursement
-        /*
-        public void AddUnfDisDtoDisD(List<DisbursementDetail> unfDisDList, List<DisbursementDetail> disDetails, List<Disbursement> disbursements)
-        {
-            foreach(DisbursementDetail unfDisD in unfDisDList)
-            {
-                bool isNew = true;
-                foreach (var disD in disDetails)
-                {
-                    if (unfDisD.Disbursement.DeptCode == disD.Disbursement.DeptCode && unfDisD.ItemNum == disD.ItemNum)
-                    {
-                        isNew = false;
-                        disD.RequestedQty = disD.RequestedQty + unfDisD.RequestedQty - unfDisD.ActualQty;
-                        break;
-                    }
-                }
-
-                if (isNew)
-                {
-                    string s = unfDisD.Disbursement.DeptCode;
-                    Disbursement tempDis = new Disbursement();
-                    foreach (var d in disbursements)
-                    {
-                        if (d.DeptCode == s)
-                        {
-                            tempDis = d;
-                            break;
-                        }
-                    }
-                        DisbursementDetail newdisD = new DisbursementDetail()
-                    {
-                        DisbursementId = tempDis.DisbursementId,
-                        ItemNum = unfDisD.ItemNum,
-                        RequestedQty = unfDisD.RequestedQty - unfDisD.ActualQty,
-                        UnitPrice = unfDisD.Stationery.AverageCost
-                        };
-                    disDetails.Add(newdisD);
-                }
-            }
-        }
-        */
 
         public void AddUnfDisDtoDisD(List<DisbursementDetail> unfDisDList, ICollection<DisbursementDetail> disDetails)
         {
@@ -283,8 +230,8 @@ namespace LUSSIS.Repositories
                     if (unfDisD.ItemNum == disD.ItemNum)
                     {
                         isNew = false;
-                        disD.RequestedQty = disD.RequestedQty + unfDisD.RequestedQty - unfDisD.ActualQty;
-                        disD.ActualQty = disD.Stationery.AvailableQty > disD.RequestedQty ? disD.RequestedQty : disD.Stationery.AvailableQty;
+                        disD.RequestedQty += unfDisD.RequestedQty - unfDisD.ActualQty;
+                        disD.ActualQty = unfDisD.Stationery.AvailableQty > disD.RequestedQty ? disD.RequestedQty : unfDisD.Stationery.AvailableQty;
                         break;
                     }
                 }
@@ -296,7 +243,7 @@ namespace LUSSIS.Repositories
                         ItemNum = unfDisD.ItemNum,
                         RequestedQty = unfDisD.RequestedQty - unfDisD.ActualQty,
                         UnitPrice = unfDisD.Stationery.AverageCost,
-                        ActualQty = unfDisD.Stationery.AvailableQty > unfDisD.RequestedQty - unfDisD.ActualQty ? unfDisD.RequestedQty - unfDisD.ActualQty : unfDisD.Stationery.AvailableQty
+                        ActualQty = unfDisD.Stationery.AvailableQty > unfDisD.RequestedQty - unfDisD.ActualQty ? unfDisD.RequestedQty - unfDisD.ActualQty : unfDisD.Stationery.AvailableQty,
                     };
                     disDetails.Add(newdisD);
                 }
