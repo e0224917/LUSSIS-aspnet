@@ -321,7 +321,7 @@ namespace LUSSIS.Repositories
                     break;
                 }
             }
-            if(isFull == true)
+            if(isFull)
             {
                 disbursement.Status = "fulfilled";
             }
@@ -336,6 +336,11 @@ namespace LUSSIS.Repositories
         public bool hasInprocessDisbursements()
         {
             return LUSSISContext.Disbursements.Any(d => d.Status == "inprocess");
+        }
+
+        public DisbursementDetail GetDisbursementDetailByIdAndItem(string id, string itemNum)
+        {
+            return LUSSISContext.DisbursementDetails.FirstOrDefault(dd => (dd.DisbursementId == Convert.ToInt32(id)) && dd.ItemNum == itemNum);
         }
     }
 }
