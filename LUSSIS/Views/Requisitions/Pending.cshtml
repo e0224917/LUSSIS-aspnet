@@ -5,9 +5,7 @@
 }
 
 <h2>Pending Requisition</h2>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+
 <table class="table">
     <tr>
         <th>
@@ -32,14 +30,14 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.RequisitionDate)
+                @Html.DisplayFor(modelItem => item.RequisitionDate, "Requisition Date")
                 @Html.HiddenFor(modelItem => item.RequisitionId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName)
+                @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName, "Employee")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RequestRemarks)
+                @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
             </td>
             <td>
                 @Html.ActionLink("Details", "Detail", "Requisitions ", new { reqId = item.RequisitionId }, null)

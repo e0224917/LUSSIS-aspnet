@@ -225,6 +225,7 @@ namespace LUSSIS.Controllers
 
         }
 
+
         [HttpGet]
         public ActionResult CreateAdjustment(string id)
         {
@@ -269,7 +270,7 @@ namespace LUSSIS.Controllers
         [HttpGet]
         public JsonResult GetItemNum(string term)
         {
-            List<string> itemList;
+            List<String> itemList;
             if (string.IsNullOrEmpty(term))
             {
                 itemList = sr.GetAllItemNum().ToList();
@@ -279,11 +280,12 @@ namespace LUSSIS.Controllers
 
                 itemList = sr.GetAllItemNum().ToList().FindAll(x => x.StartsWith(term, StringComparison.OrdinalIgnoreCase));
             }
-           
-
             return Json(itemList, JsonRequestBehavior.AllowGet);
         }
-        public async Task<ActionResult> ViewPendingStockAdj()
+
+
+
+        public ActionResult ViewPendingStockAdj()
         {
 
             return View(sar.GetPendingAdjustmentList());
@@ -312,6 +314,8 @@ namespace LUSSIS.Controllers
             }
             return PartialView();
         }
+
+
 
 
 

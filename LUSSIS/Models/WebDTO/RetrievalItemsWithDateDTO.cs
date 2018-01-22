@@ -12,7 +12,8 @@ namespace LUSSIS.Models.WebDTO
 
 
         [DataType(DataType.Date)]
-
         public DateTime collectionDate { get; set; }    
+
+        public bool hasInprocessDisbursement { get; set; }
     }
 }

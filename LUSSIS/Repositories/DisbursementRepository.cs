@@ -160,7 +160,7 @@ namespace LUSSIS.Repositories
                 ud.Status = "fulfilled";
             }
 
-
+            
 
             foreach (var d in disbursements)
             {
@@ -267,21 +267,50 @@ namespace LUSSIS.Repositories
         public double GetDisbursementTotalAmount()
         {
             double result = 0;
-            List<DisbursementDetail> list = new List<DisbursementDetail>();
-            list = GetDisbursementDetailsByStatus("fulfilled").ToList<DisbursementDetail>();
-            foreach (DisbursementDetail d in list)
+            List<Disbursement> list = new List<Disbursement>();
+            List<DisbursementDetail> detailList = new List<DisbursementDetail>();
+            list = GetAll().Where(x => x.Status != "unprocessed").ToList();
+            foreach (Disbursement d in list)
             {
-                //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
-                int qty = (int)LUSSISContext.DisbursementDetails.Select(x => x.ActualQty).ToList()[0];
-                double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
-                result += (qty * unit_price);
+                detailList = LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == d.DisbursementId).ToList();
+                foreach (DisbursementDetail f in detailList)
+                {
 
+                    int qty = (int)f.ActualQty;
+                    double unit_price = (double)f.UnitPrice;
+                    result += (qty * unit_price);
+
+                }
             }
+
+
+            return result;
+        }
+        public double GetDisbursementByDepCode(String depcode)
+        {
+            double result = 0;
+            List<Disbursement> list = new List<Disbursement>();
+            List<DisbursementDetail> detailList=new List<DisbursementDetail>();
+            list =GetAll().Where(x => x.Status !="unprocessed" && x.DeptCode.Equals(depcode)).ToList(); 
+            foreach(Disbursement d in list)
+            {
+                detailList=LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == d.DisbursementId).ToList();
+                foreach (DisbursementDetail f in detailList)
+                {
+                    
+                    int qty = (int)f.ActualQty;
+                    double unit_price =(double)f.UnitPrice;
+                    result += (qty * unit_price);
+
+                }
+            }
+         
+           
             return result;
         }
 
         //签收disbursement
-        public void SignDisbursement(Disbursement disbursement)
+        public void Acknowledge(Disbursement disbursement)
         {
             bool isFull = true;
             foreach(var disD in disbursement.DisbursementDetails)
@@ -302,6 +331,11 @@ namespace LUSSIS.Repositories
             }
             Update(disbursement);
             LUSSISContext.SaveChanges();
+        }
+
+        public bool hasInprocessDisbursements()
+        {
+            return LUSSISContext.Disbursements.Any(d => d.Status == "inprocess");
         }
     }
 }
