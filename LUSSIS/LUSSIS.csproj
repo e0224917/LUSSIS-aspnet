@@ -326,6 +326,7 @@
     <Compile Include="Repositories\CollectionRepository.cs" />
     <Compile Include="Repositories\DelegateRepository.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
+    <Compile Include="Repositories\EmailHelper.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\ICollectionRepository.cs" />
     <Compile Include="Repositories\Interface\IDelegateRepository.cs" />
