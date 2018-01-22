@@ -298,6 +298,7 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\DeptHeadDashBoardDTO.cs" />
     <Compile Include="Models\WebDTO\PendingPurchaseOrderDTO.cs" />
     <Compile Include="Models\WebDTO\PurchaseOrderDetailDTO.cs" />
     <Compile Include="Models\WebDTO\PurchaseOrderDTO.cs" />
@@ -595,6 +596,11 @@
     <Content Include="Views\Shared\__DeptHeadMenu.cshtml" />
     <Content Include="Views\Shared\__StoreSupMenu.cshtml" />
     <Content Include="Views\Shared\__RepMenu.cshtml" />
+    <Content Include="Views\RepAndDelegate\Index.cshtml" />
+    <Content Include="Views\Requisitions\EmpCart.cshtml" />
+    <Content Include="Views\Requisitions\EmpReq.cshtml" />
+    <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
+    <Content Include="Views\Requisitions\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

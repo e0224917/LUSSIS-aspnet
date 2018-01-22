@@ -62,7 +62,7 @@ namespace LUSSIS.Repositories
         }
         public IEnumerable<Disbursement> GetUnfullfilledDisbursements()
         {
-            return GetDisbursementByStatus("unfullfilled");
+            return GetDisbursementByStatus("unfulfilled");
         }
         public IEnumerable<DisbursementDetail> GetInProcessDisbursementDetails()
         {
@@ -70,7 +70,7 @@ namespace LUSSIS.Repositories
         }
         public IEnumerable<DisbursementDetail> GetUnfullfilledDisDetailList()
         {
-            return LUSSISContext.DisbursementDetails.Where(d => d.Disbursement.Status == "unfullfilled" && (d.RequestedQty - d.ActualQty) > 0).ToList();
+            return LUSSISContext.DisbursementDetails.Where(d => (d.Disbursement.Status == "unfulfilled") && ((d.RequestedQty - d.ActualQty) > 0)).ToList();
         }
 
         public void CreateDisbursement(DateTime collectionDate)
@@ -112,7 +112,7 @@ namespace LUSSIS.Repositories
                 //(2)完成
             }
 
-            List<Disbursement> unfullfilledDisList = GetDisbursementByStatus("unfullfilled").ToList();
+            List<Disbursement> unfullfilledDisList = GetDisbursementByStatus("unfulfilled").ToList();
 
 
             foreach (Disbursement ud in unfullfilledDisList)
@@ -142,20 +142,22 @@ namespace LUSSIS.Repositories
                         CollectionPointId = ud.Department.CollectionPointId,
                     };
                     disbursements.Add(newD);
-                    //ud detail直接迁移
 
+                    //ud detail直接迁移
                     foreach (DisbursementDetail unfdd in unfDisDList)
                     {
                         DisbursementDetail tempDisD = new DisbursementDetail();
                         tempDisD.ItemNum = unfdd.ItemNum;
                         tempDisD.UnitPrice = unfdd.UnitPrice;
                         tempDisD.RequestedQty = unfdd.RequestedQty - unfdd.ActualQty;
-                        tempDisD.ActualQty = tempDisD.Stationery.AvailableQty > tempDisD.RequestedQty ? tempDisD.RequestedQty : tempDisD.Stationery.AvailableQty;
+                        tempDisD.ActualQty = unfdd.Stationery.AvailableQty > tempDisD.RequestedQty ? tempDisD.RequestedQty : unfdd.Stationery.AvailableQty;
                         newD.DisbursementDetails.Add(tempDisD);
+                        //更改unfdd request qty 
+                        unfdd.RequestedQty = unfdd.ActualQty;
                     }
                 }
 
-                ud.Status = "fullfilled";
+                ud.Status = "fulfilled";
             }
 
             
@@ -163,6 +165,12 @@ namespace LUSSIS.Repositories
             foreach (var d in disbursements)
             {
                 Add(d);
+            }
+
+            foreach (var unfd in unfullfilledDisList)
+            {
+                unfd.Status = "fulfilled";
+                Update(unfd);
             }
 
             LUSSISContext.SaveChanges();
@@ -247,6 +255,8 @@ namespace LUSSIS.Repositories
                     };
                     disDetails.Add(newdisD);
                 }
+                //更改unfDisD RequestedQty
+                unfDisD.RequestedQty = unfDisD.ActualQty;
             }
         }
 
@@ -268,6 +278,30 @@ namespace LUSSIS.Repositories
 
             }
             return result;
+        }
+
+        //签收disbursement
+        public void SignDisbursement(Disbursement disbursement)
+        {
+            bool isFull = true;
+            foreach(var disD in disbursement.DisbursementDetails)
+            {
+                if(disD.RequestedQty > disD.ActualQty)
+                {
+                    isFull = false;
+                    break;
+                }
+            }
+            if(isFull == true)
+            {
+                disbursement.Status = "fulfilled";
+            }
+            else
+            {
+                disbursement.Status = "unfulfilled";
+            }
+            Update(disbursement);
+            LUSSISContext.SaveChanges();
         }
 
         public bool hasInprocessDisbursements()
