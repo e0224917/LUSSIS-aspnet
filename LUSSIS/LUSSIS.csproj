@@ -240,6 +240,7 @@
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Controllers\WebAPI\DelegateController.cs" />
+    <Compile Include="Controllers\WebAPI\DisbursementController.cs" />
     <Compile Include="Controllers\WebAPI\RequisitionsController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
     <Compile Include="Models\WebAPI\DelegateDTO.cs" />
+    <Compile Include="Models\WebAPI\DisbursementDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDetailDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDTO.cs" />
     <Compile Include="Models\WebDTO\AdjVoucherColView.cs" />
