@@ -10,13 +10,12 @@ using System.Web.Mvc;
 using LUSSIS.Exceptions;
 using LUSSIS.Models.WebDTO;
 using PagedList;
-using LUSSIS.Models.WebDTO;
 
 namespace LUSSIS.Controllers
 {
-    public class RequisitionController : Controller
+    public class RequisitionsController : Controller
     {
-       
+
         private RequisitionRepository reqRepo = new RequisitionRepository();
         private EmployeeRepository empRepo = new EmployeeRepository();
         private StationeryRepository statRepo = new StationeryRepository();
@@ -87,8 +86,6 @@ namespace LUSSIS.Controllers
         {
             try
             {
-                
-
                 return RedirectToAction("Index");
             }
             catch
@@ -111,7 +108,7 @@ namespace LUSSIS.Controllers
         {
             try
             {
-               return RedirectToAction("Index");
+                return RedirectToAction("Index");
             }
             catch
             {
@@ -119,7 +116,7 @@ namespace LUSSIS.Controllers
             }
         }
 
-        
+
         // GET: DeptEmpReqs
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
@@ -154,13 +151,13 @@ namespace LUSSIS.Controllers
             List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
-        
-        
+
+
         //TODO: Add authorization - Stock Clerk only
         public ActionResult Consolidated()
         {
 
-            return View(new RetrievalItemsWithDateDTO{retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(), collectionDate = DateTime.Today});
+            return View(new RetrievalItemsWithDateDTO { retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(), collectionDate = DateTime.Today });
         }
 
         //TODO: Add authorization - Stock Clerk only 
@@ -169,21 +166,23 @@ namespace LUSSIS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Retrieve([Bind(Include = "collectionDate")] RetrievalItemsWithDateDTO listWithDate)
         {
-            try
+
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    return View(reqRepo.ArrangeRetrievalAndDisbursement(listWithDate.collectionDate));
-                }
-
-                throw new InvalidDateException();
+                reqRepo.ArrangeRetrievalAndDisbursement(listWithDate.collectionDate);
+                //call arrange disbursement
+                //pass the view to another action: RetrievalInProcess, and display
+                //that action needs to have a button to confirm retrieval is done
+                //during this processs, not disbursement can be arranged
+                return RedirectToAction("RetrievalInProcess");
             }
-            catch (InvalidDateException /* dex */)
-            {
+            return View("Consolidated");
+        }
 
-            }
-
-            return View("Retrieve");
+        //TODO: A method to display in process Retrieval
+        public ActionResult RetrievalInProcess()
+        {
+           return View(reqRepo.GetRetrievalInPorcess());
         }
 
         [HttpGet]
@@ -209,8 +208,6 @@ namespace LUSSIS.Controllers
                 return PartialView();
             }
             return PartialView(RADTO);
-
-
         }
     }
 }

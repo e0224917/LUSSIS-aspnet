@@ -17,7 +17,7 @@ namespace LUSSIS.Repositories
             {
                 DateTime updatedDate = nowDate.Subtract(new TimeSpan(1, 0, 0, 0));
                 List<Disbursement> disbList = LUSSISContext.Disbursements.Where(x => x.DeptCode == deptCode).ToList();
-                return disbList.First(x => x.CollectionDate > updatedDate && x.Status == "in process");
+                return disbList.First(x => x.CollectionDate > updatedDate && x.Status == "inprocess");
             }
             catch
             {
@@ -29,12 +29,16 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.CollectionPoints.First(y => y.CollectionPointId == disbursement.CollectionPointId);
         }
+       
 
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
-            Department d = new Department();
-            d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
+            Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
             return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == d.CollectionPointId);
+        }
+        public IEnumerable<CollectionPoint> GetAllCollectionPoint()
+        {
+            return LUSSISContext.CollectionPoints;
         }
 
         public List<DisbursementDetail> GetDisbursementDetails(Disbursement disbursement)
@@ -55,6 +59,10 @@ namespace LUSSIS.Repositories
         {
             return GetDisbursementByStatus("inprocess");
         }
+        public IEnumerable<DisbursementDetail> GetInProcessDisbursementDetails()
+        {
+            return GetDisbursementDetailsByStatus("inprocess");
+        }
         public IEnumerable<DisbursementDetail> GetUnfullfilledDisDetailList()
         {
             return LUSSISContext.DisbursementDetails.Where(d => (d.RequestedQty - d.ActualQty) > 0).ToList();
@@ -62,6 +70,7 @@ namespace LUSSIS.Repositories
 
         public void CreateDisbursement(DateTime collectionDate)
         {
+            RequisitionRepository reqRepo = new RequisitionRepository();
             List<Disbursement> disbursements = new List<Disbursement>();
             foreach (Disbursement disbursement in disbursements)
             {
@@ -75,7 +84,7 @@ namespace LUSSIS.Repositories
             foreach (List<Requisition> reqForOneDep in reqGroupByDep)
             {
                 Disbursement d = ConvertReqListForOneDepToDisbursement(reqForOneDep, collectionDate);
-                int disID = d.DisbursementId;
+                
                 disbursements.Add(d);
 
                 //(1)将reqForOneDep中所有req的detail ToList (reqdetofRFOP)
@@ -86,7 +95,7 @@ namespace LUSSIS.Repositories
                 {
                     req.Status = "processed";
                     //插入req的detail到deqdetofRFOP
-                    List<RequisitionDetail> tempReqDList = new RequisitionRepository().GetRequisitionDetail(req.RequisitionId).ToList();
+                    List<RequisitionDetail> tempReqDList = reqRepo.GetRequisitionDetail(req.RequisitionId).ToList();
                     foreach (RequisitionDetail reqD in tempReqDList)
                     {
                         reqDetailListForOneDep.Add(reqD);
@@ -105,20 +114,6 @@ namespace LUSSIS.Repositories
 
             foreach (Disbursement ud in unfullfilledDisList)
             {
-                //is ud.DeptCode exsits in disbursements's deptCode? if not, create new
-                //if (disbursements.First(x => x.DeptCode == ud.DeptCode) == null)
-                //{
-                //    Disbursement newD = new Disbursement()
-                //    {
-                //        DeptCode = ud.DeptCode,
-                //        Department = ud.Department,
-                //        CollectionDate = collectionDate,
-                //        CollectionPoint = ud.Department.CollectionPoint,
-                //        CollectionPointId = ud.Department.CollectionPointId,
-                //    };
-                //    disbursements.Add(newD);
-                //}
-                //取出ud的unfullfilled detail list
                 List<DisbursementDetail> unfDisDList = LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == ud.DisbursementId && (x.RequestedQty - x.ActualQty) > 0).ToList();
                 bool isNew = true;
                 foreach (var d in disbursements)
@@ -152,6 +147,7 @@ namespace LUSSIS.Repositories
                         tempDisD.ItemNum = unfdd.ItemNum;
                         tempDisD.UnitPrice = unfdd.UnitPrice;
                         tempDisD.RequestedQty = unfdd.RequestedQty - unfdd.ActualQty;
+                        tempDisD.ActualQty = tempDisD.Stationery.AvailableQty > tempDisD.RequestedQty ? tempDisD.RequestedQty : tempDisD.Stationery.AvailableQty;
                         newD.DisbursementDetails.Add(tempDisD);
                     }
                 }
@@ -216,6 +212,7 @@ namespace LUSSIS.Repositories
                     {
                         isNew = false;
                         disD.RequestedQty = disD.RequestedQty + rd.Quantity;
+                        disD.ActualQty = disD.Stationery.AvailableQty > disD.RequestedQty ? disD.RequestedQty : disD.Stationery.AvailableQty;
                         break;
                     }
                 }
@@ -226,7 +223,8 @@ namespace LUSSIS.Repositories
                     {
                         ItemNum = rd.ItemNum,
                         RequestedQty = rd.Quantity,
-                        UnitPrice = rd.Stationery.AverageCost
+                        UnitPrice = rd.Stationery.AverageCost,
+                        ActualQty = rd.Stationery.AvailableQty > rd.Quantity ? rd.Quantity : rd.Stationery.AvailableQty
                     };
                     disDetails.Add(newdisD);
                 }
@@ -286,6 +284,7 @@ namespace LUSSIS.Repositories
                     {
                         isNew = false;
                         disD.RequestedQty = disD.RequestedQty + unfDisD.RequestedQty - unfDisD.ActualQty;
+                        disD.ActualQty = disD.Stationery.AvailableQty > disD.RequestedQty ? disD.RequestedQty : disD.Stationery.AvailableQty;
                         break;
                     }
                 }
@@ -296,11 +295,32 @@ namespace LUSSIS.Repositories
                     {
                         ItemNum = unfDisD.ItemNum,
                         RequestedQty = unfDisD.RequestedQty - unfDisD.ActualQty,
-                        UnitPrice = unfDisD.Stationery.AverageCost
+                        UnitPrice = unfDisD.Stationery.AverageCost,
+                        ActualQty = unfDisD.Stationery.AvailableQty > unfDisD.RequestedQty - unfDisD.ActualQty ? unfDisD.RequestedQty - unfDisD.ActualQty : unfDisD.Stationery.AvailableQty
                     };
                     disDetails.Add(newdisD);
                 }
             }
+        }
+
+        /// <summary>
+        /// /for supervisoer' dashboard
+        /// </summary>
+        /// <returns></returns>
+        public double GetDisbursementTotalAmount()
+        {
+            double result = 0;
+            List<DisbursementDetail> list = new List<DisbursementDetail>();
+            list = GetDisbursementDetailsByStatus("fulfilled").ToList<DisbursementDetail>();
+            foreach (DisbursementDetail d in list)
+            {
+                //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
+                int qty = (int)LUSSISContext.DisbursementDetails.Select(x => x.ActualQty).ToList()[0];
+                double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
+                result += (qty * unit_price);
+
+            }
+            return result;
         }
     }
 }

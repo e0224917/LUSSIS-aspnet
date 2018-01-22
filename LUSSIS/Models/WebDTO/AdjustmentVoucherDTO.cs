@@ -50,7 +50,7 @@ namespace LUSSIS.Models.WebDTO
             {
                 var valueAsString = value.ToString();
 
-                if (!sr.GetAllItemNum().Contains(valueAsString))
+                if (!sr.GetAllItemNum().ToList().Contains(valueAsString))
                 {
                     var errorMessage = FormatErrorMessage(validationContext.DisplayName);
                     return new ValidationResult(errorMessage);

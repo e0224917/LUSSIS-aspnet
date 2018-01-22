@@ -18,6 +18,8 @@ namespace LUSSIS.Controllers
     public class PurchaseOrdersController : Controller
     {
         private PORepository pr = new PORepository();
+        private DisbursementRepository disRepo = new DisbursementRepository();
+        private StockAdjustmentRepository stockRepo = new StockAdjustmentRepository();
         private StationeryRepository sr = new StationeryRepository();
         private EmployeeRepository er = new EmployeeRepository();
         private SupplierRepository sur = new SupplierRepository();
@@ -340,6 +342,54 @@ namespace LUSSIS.Controllers
                 return RedirectToAction("Order", new { p = po.PoNum.ToString(), error = e.Message });
             }
         }
+
+        public async Task<ActionResult> ViewPendingPOList()
+        {
+
+            return View(pr.GetPendingApprovalPODTO());
+
+        }
+        [HttpGet]
+        public ActionResult ApproveRejectPO(String List, String Status)
+        {
+
+            ViewBag.checkList = List;
+            ViewBag.status = Status;
+            return PartialView("ApproveRejectPO");
+        }
+        [HttpPost]
+        public ActionResult ApproveRejectPO(String checkList, String status, String a)
+        {
+            String[] list = checkList.Split(',');
+            int[] idList = new int[list.Length];
+            for (int i = 0; i < idList.Length; i++)
+            {
+                idList[i] = Int32.Parse(list[i]);
+            }
+            foreach (int i in idList)
+            {
+                pr.UpDatePOStatus(i, status);
+            }
+            return PartialView();
+        }
+        public async Task<ActionResult> SupervisorDashboard()
+        {
+            SupervisorDashboardDTO dash = new SupervisorDashboardDTO();
+
+            dash.PendingPOTotalAmount = pr.GetPendingPOTotalAmount();
+            dash.PendingPOCount = pr.GetPendingPOCount();
+            dash.POTotalAmount = pr.GetPOTotalAmount();
+            dash.PendingStockAdjAddQty = stockRepo.GetPendingStockAddQty();
+            dash.PendingStockAdjSubtractQty = stockRepo.GetPendingStockSubtractQty();
+            dash.PendingStockAdjCount = stockRepo.GetPendingStockCount();
+            dash.TotalDisbursementAmount = disRepo.GetDisbursementTotalAmount();
+            return View(dash);
+        }
+
+
+
+
+
     }
 }
 
@@ -373,5 +423,6 @@ public static class StationeryExtension
         }
         return null;
     }
+
 }
 

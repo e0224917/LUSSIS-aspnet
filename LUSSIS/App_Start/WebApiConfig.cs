@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web.Http;
-using LUSSIS.Controllers.WebAPI;
+using Newtonsoft.Json.Converters;
+
 
 namespace LUSSIS
 {
@@ -10,6 +11,13 @@ namespace LUSSIS
     {
         public static void Register(HttpConfiguration config)
         {
+            IsoDateTimeConverter converter = new IsoDateTimeConverter
+            {
+                DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'",
+                Culture = CultureInfo.InvariantCulture
+            };
+            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(converter);
+
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
@@ -31,7 +39,7 @@ namespace LUSSIS
                     id = RouteParameter.Optional
                 }
             );
-            
+
         }
     }
 }

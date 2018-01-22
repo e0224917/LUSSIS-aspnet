@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Department Delegate";
 }
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <h2>Department Delegate</h2>
 
 <table class="table">
@@ -19,54 +19,159 @@
         </th>
     </tr>
     <tr>
-        <td>
-            @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
-        </td>
-        <td>
-            @Html.DisplayFor(model => model.GetDelegate.StartDate)
-        </td>
-        <td>
-            @Html.DisplayFor(model => model.GetDelegate.EndDate)
-        </td>
+        @if (Model.GetDelegate != null)
+        {
+            <td>
+                @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.GetDelegate.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.GetDelegate.EndDate)
+            </td>
+        }
     </tr>
 </table>
-<input type="submit" value="Revoke Delegate" />
-<table class="table">
-    <tr>
-        <th>
-            Set New Department Representative
-        </th>
-    </tr>
-</table>
-<input type="date" />
-
-@using (Html.BeginForm("AddDelegate", "RepAndDelegate", FormMethod.Post))
+@if (Model.GetDelegate == null)
 {
-    <input id="Emp" type="text" placeholder="Search for Employee" name="FullName" />
-    <input id="Submit1" type="submit" value="Set Your New Delegate" />
-    <input type="hidden" id="Emp2" name="DelegateEmp" />
-    <br />
-    <label id="tagsname" style="color:red" />
-    if (ViewBag.Message != null)
+    <table class="table">
+        <tr>
+            No delegate at the moment :)
+        </tr>
+    </table>
+}
+
+@if (Model.GetDelegate != null)
+{
+    using (Html.BeginForm("DeleteDelegate", "RepAndDelegate", FormMethod.Post))
     {
-        <span><font color="red" />@ViewBag.Message</span>
+        <input type="submit" value="Revoke Delegate" />
+    }
+}
+
+@if (Model.GetDelegate == null)
+{
+    <table class="table">
+        <tr>
+            <th>
+                Set New Department Delegate
+            </th>
+        </tr>
+    </table>
+
+
+    using (Html.BeginForm("AddDelegate", "RepAndDelegate", FormMethod.Post))
+    {
+        <label for="from">From</label>
+        <input type="text" id="from" name="from" onkeydown="return false" />
+        <label for="to">   To</label>
+        <input type="text" id="to" name="to" onkeydown="return false" />
+        <input type="hidden" id="fromDate" name="fromDate" />
+        <input type="hidden" id="toDate" name="fromDate" />
+        <br />
+        <input id="Emp" type="text" placeholder="Search for Employee" name="FullName" />
+        <input id="Submit1" type="submit" value="Set Your New Delegate" />
+        <input type="hidden" id="Emp2" name="DelegateEmp" />
+        <br />
+        <label id="tagsname" style="color:red" />
+
+
+        if (ViewBag.Message != null)
+        {
+            <span><font color="red" />@ViewBag.Message</span>
+        }
     }
 }
 
 @section scripts {
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#Submit1').prop('disabled', true);
-            $('input[type="text"]').keyup(function () {
-                if ($(this).val() == '') {
+            validate();
+            $('#from, #to, #Emp').change(validate);
+            function validate() {
+                if ($('#from').val().length > 0 &&
+                    $('#to').val().length > 0 &&
+                    $('#Emp').val().length > 0) {
+                    $("input[type=submit]").prop("disabled", false);
+                }
+                else {
+                    $("input[type=submit]").prop("disabled", true);
+                }
+            };
+        });
+
+        ////$(':text').on('input change', function () {
+
+        //    $(':text').each(function () {
+        //        if ($.trim($(this).val()) == '') {
+        //            $('#Submit1').prop('disabled', true);
+        //            //return false;
+        //        }
+        //        else {
+        //            $('#Submit1').prop('disabled', false);
+        //        }
+        //    });
+
+        //$(':text').change(function () {
+        //    if ($.trim($(this).val()) == '') {
+        //        $('#Submit1').prop('disabled', true);
+        //        //return false;
+        //    }
+        //    else {
+        //        $('#Submit1').prop('disabled', false);
+        //    }
+        //});
+        ////});
+        var dateNow = new Date();
+        var dateToday = moment(dateNow).format('DD/MM/YYYY');
+        $(function () {
+            from = $("#from")
+                .datepicker({
+                    dateFormat: 'dd/mm/yy',
+                    minDate: dateToday,
+                    changeMonth: true,
+                    numberOfMonths: 1
+                })
+                .on("change", function () {
+                    to.datepicker("option", "minDate", getDate(this));
+
+                    //$("#fromDate").val() = $(this);
+                }),
+                to = $("#to").datepicker({
+                    dateFormat: 'dd/mm/yy',
+                    changeMonth: true,
+                    numberOfMonths: 1
+                })
+                    .on("change", function () {
+                        from.datepicker("option", "maxDate", getDate(this));
+                        //$("#toDate").val() = getDate(this);
+
+                    });
+
+            function getDate(element) {
+                var date;
+                try {
+                    date = $.datepicker.parseDate("dd/mm/yy", element.value);
+                } catch (error) {
+                    date = null;
+                }
+
+                return date;
+            }
+        });
+
+            $('#Emp').keyup(function () {
+                if ($.trim($(this).val()) == '') {
                     $('#Submit1').prop('disabled', true);
                     $('#tagsname').html('You selected none ');
                 }
                 else {
                     $('#Submit1').prop('disabled', false);
                 }
-            });
+            
             $("#Emp").autocomplete({
                 source: function (request, response) {
                     $.ajax({
@@ -82,12 +187,12 @@
                     })
                 },
                 select: function (event, ui) {
-                    event.preventDefault();
+                    event.preventDefault(); //default gives the value instead of label.
                     $('#Emp2').val(ui.item.value);
                     $(this).val(ui.item.label);
                     if (ui.item == null) {
                         $("#Emp").val('');
-                        $('#Submit1').prop('disabled', true);
+                        //$('#Submit1').prop('disabled', true);
                     }
                     else {
                         $('#tagsname').html('You selected: ' + ui.item.label);
@@ -96,10 +201,11 @@
                 change: function (event, ui) {
                     if (ui.item == null) {
                         $("#Emp").val('');
-                        $('#Submit1').prop('disabled', true);
+                        //$('#Submit1').prop('disabled', true);
+
                     }
                     else {
-                        $('#Submit1').prop('disabled', false);
+                        //$('#Submit1').prop('disabled', false);
                     }
                 },
                 focus: function (event, ui) {
@@ -108,15 +214,12 @@
                         $("#Emp").val('');
                         $('#Submit1').prop('disabled', true);
                     }
-                    else {
-                        $('#Submit1').prop('disabled', false);
-                    }
                 },
-                messages: {
-                    noResults: "", results: ""
+                close: function (event, ui) {
+                    $(this).data().term = null;
                 }
-            });;
-        })
+                }); 
+            });
     </script>
 }
 

@@ -12,8 +12,6 @@ namespace LUSSIS.Models.WebDTO
 
     public class RetrievalItemDTO
     {
-        static public DateTime collectionDate { get; set; }
-
         public string ItemNum { get; set; }
         public string BinNum { get; set; }
         public string Description { get; set; }

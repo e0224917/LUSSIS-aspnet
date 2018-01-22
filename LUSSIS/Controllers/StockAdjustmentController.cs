@@ -182,6 +182,8 @@ namespace LUSSIS.Controllers
             AdjVoucherColView aVCV = new AdjVoucherColView();
             List<AdjustmentVoucherDTO> aVlist = new List<AdjustmentVoucherDTO>();
             AdjustmentVoucherDTO aV = new AdjustmentVoucherDTO();
+            //aV.ItemNum = "C001";
+            //aV.Quantity = 3;
             aVlist.Add(aV);
             aVCV.MyList = aVlist;
             return View("CreateAdjustments", aVCV);
@@ -262,5 +264,57 @@ namespace LUSSIS.Controllers
             }
 
         }
+
+
+        [HttpGet]
+        public JsonResult GetItemNum(string term)
+        {
+            List<string> itemList;
+            if (string.IsNullOrEmpty(term))
+            {
+                itemList = sr.GetAllItemNum();
+            }
+            else
+            {
+
+                itemList = sr.GetAllItemNum().FindAll(x => x.StartsWith(term, StringComparison.OrdinalIgnoreCase));
+            }
+           
+
+            return Json(itemList, JsonRequestBehavior.AllowGet);
+        }
+        public async Task<ActionResult> ViewPendingStockAdj()
+        {
+
+            return View(sar.GetPendingAdjustmentList());
+
+        }
+        [HttpGet]
+        public ActionResult ApproveReject(String List, String Status)
+        {
+            //  List<AdjVoucher> list = sar.GetAdjustmentById(List);
+            ViewBag.checkList = List;
+            ViewBag.status = Status;
+            return PartialView("ApproveReject");
+        }
+        [HttpPost]
+        public ActionResult ApproveReject(String checkList, String comment, String status)
+        {
+            String[] list = checkList.Split(',');
+            int[] idList = new int[list.Length];
+            for (int i = 0; i < idList.Length; i++)
+            {
+                idList[i] = Int32.Parse(list[i]);
+            }
+            foreach (int i in idList)
+            {
+                sar.UpDateAdjustmentStatus(i, status, comment);
+            }
+            return PartialView();
+        }
+
+
+
+
     }
-}
+    }
