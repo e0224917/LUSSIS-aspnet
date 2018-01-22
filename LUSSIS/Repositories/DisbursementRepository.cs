@@ -50,7 +50,7 @@ namespace LUSSIS.Repositories
         {
             return GetDisbursementByStatus("inprocess");
         }
-        public IEnumerable<Disbursement> GetUnfullfilledDisbursements()
+        public IEnumerable<Disbursement> GetUnfulfilledDisbursements()
         {
             return GetDisbursementByStatus("unfulfilled");
         }
@@ -58,7 +58,7 @@ namespace LUSSIS.Repositories
         {
             return GetDisbursementDetailsByStatus("inprocess");
         }
-        public IEnumerable<DisbursementDetail> GetUnfullfilledDisDetailList()
+        public IEnumerable<DisbursementDetail> GetUnfulfilledDisDetailList()
         {
             return LUSSISContext.DisbursementDetails.Where(d => (d.Disbursement.Status == "unfulfilled") && ((d.RequestedQty - d.ActualQty) > 0)).ToList();
         }
@@ -102,10 +102,10 @@ namespace LUSSIS.Repositories
                 //(2)完成
             }
 
-            List<Disbursement> unfullfilledDisList = GetDisbursementByStatus("unfulfilled").ToList();
+            List<Disbursement> unfulfilledDisList = GetDisbursementByStatus("unfulfilled").ToList();
 
 
-            foreach (Disbursement ud in unfullfilledDisList)
+            foreach (Disbursement ud in unfulfilledDisList)
             {
                 List<DisbursementDetail> unfDisDList = LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == ud.DisbursementId && (x.RequestedQty - x.ActualQty) > 0).ToList();
                 bool isNew = true;
@@ -157,7 +157,7 @@ namespace LUSSIS.Repositories
                 Add(d);
             }
 
-            foreach (var unfd in unfullfilledDisList)
+            foreach (var unfd in unfulfilledDisList)
             {
                 unfd.Status = "fulfilled";
                 Update(unfd);
@@ -288,16 +288,16 @@ namespace LUSSIS.Repositories
         //签收disbursement
         public void Acknowledge(Disbursement disbursement)
         {
-            bool isFull = true;
+            bool fulFilled = true;
             foreach(var disD in disbursement.DisbursementDetails)
             {
                 if(disD.RequestedQty > disD.ActualQty)
                 {
-                    isFull = false;
+                    fulFilled = false;
                     break;
                 }
             }
-            if(isFull)
+            if(fulFilled)
             {
                 disbursement.Status = "fulfilled";
             }
@@ -305,6 +305,8 @@ namespace LUSSIS.Repositories
             {
                 disbursement.Status = "unfulfilled";
             }
+
+            disbursement.AcknowledgeEmpNum = disbursement.Department.RepEmpNum;
             Update(disbursement);
             LUSSISContext.SaveChanges();
         }

@@ -21,7 +21,7 @@ namespace LUSSIS.Repositories
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
             ConsolidateRequisitionQty(itemsToRetrieve, GetRequisitionDetailsByStatus("approved"));
-            ConsolidateRemainingQty(itemsToRetrieve, new DisbursementRepository().GetUnfullfilledDisDetailList());
+            ConsolidateRemainingQty(itemsToRetrieve, new DisbursementRepository().GetUnfulfilledDisDetailList());
             return itemsToRetrieve;
         }
 
