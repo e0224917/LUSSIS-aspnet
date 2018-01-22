@@ -24,8 +24,7 @@ namespace LUSSIS.Controllers
 
 
         public ActionResult Index()
-        {
-             
+        {      
             dbdto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
             dbdto.GetDelegate = employeeRepo.GetDelegate(dbdto.Department);
             dbdto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(dbdto.Department);
@@ -111,11 +110,29 @@ namespace LUSSIS.Controllers
             return RedirectToAction("DeptDelegate");
         }
 
+        [HttpPost]
+        public ActionResult DeleteDelegateFromDB()
+        {
+            if (ModelState.IsValid)
+            {
+                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
+                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+                employeeRepo.DeleteDelegate(department);
+            }
+            return RedirectToAction("Index");
+        }
+
         public ActionResult DeptDelegate()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
             raddto.GetDelegate = employeeRepo.GetDelegate(raddto.Department);
             return View(raddto);
+        }
+
+        [HttpPost]
+        public ActionResult DirectToRequisitons()
+        {
+            return RedirectToAction("ApproveReq", "Requisitions");
         }
 
         // GET: RepAndDelegate/Details/5
