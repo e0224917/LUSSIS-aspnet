@@ -32,9 +32,9 @@
 {
     if (Model.First().Requisition.Status == "approved")
     {
-        <div class="panel panel-success">
+        <div class="panel panel-info">
             <div class="panel-heading"><h4>Comments from @Model.First().Requisition.ApprovalEmployee.FullName</h4></div>
-            <div class="panel-body">@Model.First().Requisition.ApprovalRemarks </div>
+            <div class="alert alert-success"><strong>@Model.First().Requisition.ApprovalRemarks</strong> </div>
         </div>
     }
 }

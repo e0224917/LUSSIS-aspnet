@@ -21,6 +21,7 @@
                     function (data) {
                         // Successful requests get here
                         // Update the page elements
+                        alert("Delete from cart successfully");
                         location.reload();
                         //if (data.ItemCount == 0) {
                         //    $('#row-' + data.DeleteId).fadeOut('slow');
@@ -76,10 +77,7 @@
                     @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
                 </td>
                 <td>
-                    <input type="number" name="qty" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
-                    <script>
-                        var c = document.getElementById("qty").innerText;
-                    </script>
+                    <input type="number" readonly name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">                   
                 </td>
                 <td>
                     <input type="submit" value="Delete" class="RemoveLink" data-id="@item.stationery.ItemNum" />
@@ -94,6 +92,7 @@
         }
     </table>
 }
+
 else
 {
     <div class="alert alert-dismissible alert-danger">

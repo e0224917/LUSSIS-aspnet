@@ -560,7 +560,6 @@
     <Content Include="Views\Requisitions\Pending.cshtml" />
     <Content Include="Views\Requisitions\Consolidated.cshtml" />
     <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
-    <Content Include="Views\Shared\_LayoutEmpReq.cshtml" />
     <Content Include="Views\PurchaseOrders\Receive.cshtml" />
     <Content Include="Views\PurchaseOrders\Index.cshtml" />
     <Content Include="Views\Requisitions\ApproveReq.cshtml" />

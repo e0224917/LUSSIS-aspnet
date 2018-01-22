@@ -159,7 +159,7 @@ namespace LUSSIS.Controllers
             return View(stationerys.ToPagedList(pageNumber, pageSize));
         }
 
-        // /Requisition/AddToCart
+        // /Requisitions/AddToCart
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
@@ -177,7 +177,7 @@ namespace LUSSIS.Controllers
         public ActionResult EmpReq(string currentFilter, int? page)
         {           
             int id=erepo.GetCurrentUser().EmpNum;
-            List<Requisition> reqlist = reqrepo.GetRequisitionByEmpNum(id).OrderByDescending(s=>s.RequisitionDate).ToList();
+            List<Requisition> reqlist = reqrepo.GetRequisitionByEmpNum(id).OrderByDescending(s=>s.RequisitionDate).OrderByDescending(s=>s.RequisitionId).ToList();
             int pageSize = 15;
             int pageNumber = (page ?? 1);
             return View(reqlist.ToPagedList(pageNumber,pageSize));
@@ -205,12 +205,12 @@ namespace LUSSIS.Controllers
                 requisition.RequisitionDate = reqDate;
                 requisition.RequisitionEmpNum = reqEmp;
                 requisition.Status = status;
-                reqrepo.Add(requisition);
+                reqrepo.Add(requisition);               
                 for (int i = 0; i < itemNum.Count; i++)
                 {
                     RequisitionDetail requisitionDetail = new RequisitionDetail();
                     requisitionDetail.RequisitionId = requisition.RequisitionId;
-                    requisitionDetail.ItemNum = itemNum[i];
+                    requisitionDetail.ItemNum = itemNum[i];                  
                     requisitionDetail.Quantity = itemQty[i];
                     reqrepo.AddRequisitionDetail(requisitionDetail);
                 }
@@ -222,7 +222,6 @@ namespace LUSSIS.Controllers
             }
             else
             {
-                Response.Write("<script>alert('Your cart is empty')</script>");
                 return RedirectToAction("EmpCart");
             }
         }
