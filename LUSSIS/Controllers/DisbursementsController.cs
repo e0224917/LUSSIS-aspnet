@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Models;
+using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
@@ -24,28 +25,23 @@ namespace LUSSIS.Controllers
         }
 
         // GET: Disbursement/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
-            Disbursement disbursement = disRepo.GetById(id);
-            if (disbursement == null)
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            DisbursementDetailDTO disDetailDTO = new DisbursementDetailDTO();
+            disDetailDTO.CurrentDisbursement = disRepo.GetById((int)id);
+            if (disDetailDTO.CurrentDisbursement == null)
             {
                 return HttpNotFound();
             }
-            return View(disbursement);
+            disDetailDTO.DisDetailList = disDetailDTO.CurrentDisbursement.DisbursementDetails.ToList();
+            return View(disDetailDTO);
         }
 
-        // GET: Disbursement/EditDetailList/5&ItemNum=F021
-        public async Task<ActionResult> Acknowledge(Disbursement disbursement)
-        {
-            if (disbursement == null)
-            {
-                return HttpNotFound();
-            }
-
-            disRepo.Acknowledge(disbursement);
-            return RedirectToAction("Index");
-        }
-
+        
         // GET: Disbursement/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
@@ -76,6 +72,25 @@ namespace LUSSIS.Controllers
             ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Acknowledge([Bind(Include = "DisDetailList")] DisbursementDetailDTO disbursementDTO)
+        {
+            if (disbursementDTO == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                disRepo.Acknowledge(disbursementDTO.CurrentDisbursement);
+                return RedirectToAction("Index");
+            }
+            return View("Details", disbursementDTO);
+
+        }
+
 
         protected override void Dispose(bool disposing)
         {

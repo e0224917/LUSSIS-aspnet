@@ -1,59 +1,58 @@
-﻿@model LUSSIS.Models.Disbursement
+﻿@model LUSSIS.Models.WebDTO.DisbursementDetailDTO
 
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Disbursement for @Model.Department.DeptName</h2>
-@using (Html.BeginForm())
+<h2>Disbursement for @Model.CurrentDisbursement.Department.DeptName</h2>
+<hr />
+@using (Html.BeginForm("Acknowledge", "Disbursements", FormMethod.Post, new {@class = "form-inline my-2 my-lg-0"}))
 {
     @Html.AntiForgeryToken()
-    <button type="button" class="btn btn-success" >Generate QR Code</button>
+    <button type="submit" class="btn btn-success">Generate QR Code</button>
+    <br/>
+
     <hr/>
     <div class="row">
         <div class="card col-lg-3">
             <div class="card-body">
-                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionDate)</h6>
-                <h4 class="card-title">@Html.DisplayFor(model => model.CollectionDate) @Html.DisplayFor(model => model.CollectionPoint.Time)</h4>
+                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => Model.CurrentDisbursement.CollectionDate)</h6>
+                <h4 class="card-title">@Html.DisplayFor(model => Model.CurrentDisbursement.CollectionDate) @Html.DisplayFor(model => Model.CurrentDisbursement.CollectionPoint.Time)</h4>
                 <p class="card-text"></p>
             </div>
         </div>
         <div class="card col-lg-3">
             <div class="card-body">
-                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)</h6>
-                <h4 class="card-title">@Html.DisplayFor(model => model.CollectionPoint.CollectionName)</h4>
+                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => Model.CurrentDisbursement.CollectionPoint.CollectionName)</h6>
+                <h4 class="card-title">@Html.DisplayFor(model => Model.CurrentDisbursement.CollectionPoint.CollectionName)</h4>
 
             </div>
         </div>
         <div class="card col-lg-3">
             <div class="card-body">
                 <h6 class="card-subtitle mb-2 text-muted">Representative Name</h6>
-                <h4 class="card-title">@Model.Department.RepEmployee.FullName</h4>
+                <h4 class="card-title">@Model.CurrentDisbursement.Department.RepEmployee.FullName</h4>
 
             </div>
         </div>
         <div class="card col-lg-3">
             <div class="card-body">
                 <h6 class="card-subtitle mb-2 text-muted">Contact Number</h6>
-                <h4 class="card-title">@Model.Department.TelephoneNum</h4>
+                <h4 class="card-title">@Model.CurrentDisbursement.Department.TelephoneNum</h4>
 
             </div>
         </div>
 
     </div>
     <p style="padding: 1rem; width: 100%">
-        @Html.ActionLink("Edit", "Edit", new {id = Model.DisbursementId}) |
+        @Html.ActionLink("Edit", "Edit", new {id = Model.CurrentDisbursement.DisbursementId}) |
         @Html.ActionLink("Back to List", "Index")
 
     </p>
 
-
-
     <h4>Disbursement Details</h4>
     <hr/>
-    <div id="partial">
-        @Html.Partial("_DetailsList", Model.DisbursementDetails)
-    </div>
-}
+    @Html.Partial("_DetailsList", Model.CurrentDisbursement.DisbursementDetails)
 
+}

@@ -292,7 +292,7 @@ namespace LUSSIS.Repositories
                     break;
                 }
             }
-            if(isFull == true)
+            if(isFull)
             {
                 disbursement.Status = "fulfilled";
             }
