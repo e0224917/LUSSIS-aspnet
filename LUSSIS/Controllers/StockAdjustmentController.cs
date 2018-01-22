@@ -272,12 +272,12 @@ namespace LUSSIS.Controllers
             List<string> itemList;
             if (string.IsNullOrEmpty(term))
             {
-                itemList = sr.GetAllItemNum();
+                itemList = sr.GetAllItemNum().ToList();
             }
             else
             {
 
-                itemList = sr.GetAllItemNum().FindAll(x => x.StartsWith(term, StringComparison.OrdinalIgnoreCase));
+                itemList = sr.GetAllItemNum().ToList().FindAll(x => x.StartsWith(term, StringComparison.OrdinalIgnoreCase));
             }
            
 
