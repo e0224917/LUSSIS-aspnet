@@ -11,7 +11,7 @@ namespace LUSSIS.Models.WebAPI
 
         public string RequisitionEmp { get; set; }
 
-        public DateTime? RequisitionDate { get; set; }
+        public DateTime RequisitionDate { get; set; }
 
         public string RequestRemarks { get; set; }
 

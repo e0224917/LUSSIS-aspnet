@@ -35,6 +35,7 @@
   --light: #e9ecef;
   --dark: #772953;
   --breakpoint-xs: 0;
+
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
@@ -382,14 +383,19 @@ template {
   display: none !important;
 }
 
-h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6 {
-  margin-top: 3rem;
+h1, h2, 
+.h1, .h2 {
+  margin-top: 2rem;
   margin-bottom: 1rem;
   font-family: inherit;
   font-weight: 500;
   line-height: 1.2;
   color: inherit;
+}
+
+h3, h4, h5, h6,
+.h3, .h4, .h5, .h6 {
+    margin-top: 1rem;
 }
 
 h1, .h1 {
@@ -4408,11 +4414,11 @@ tbody.collapse.show {
   -webkit-box-flex: 1;
       -ms-flex: 1 1 auto;
           flex: 1 1 auto;
-  padding: 1.25rem;
+  padding: 1rem;
 }
 
 .card-title {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .card-subtitle {

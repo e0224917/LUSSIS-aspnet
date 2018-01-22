@@ -20,6 +20,7 @@ namespace LUSSIS.Models
         public int CollectionPointId { get; set; }
 
         [StringLength(30)]
+        [Display(Name = "Collection Point")]
         public string CollectionName { get; set; }
 
         [StringLength(20)]
@@ -27,6 +28,7 @@ namespace LUSSIS.Models
 
         public int? InChargeEmpNum { get; set; }
 
+        [Display(Name = "Person In Charge")]
         public virtual Employee InChargeEmployee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

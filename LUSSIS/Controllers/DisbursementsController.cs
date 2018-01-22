@@ -9,20 +9,22 @@ using System.Web.Mvc;
 using LUSSIS.Models;
 using LUSSIS.Repositories;
 
-namespace LUSSIS.Views
+namespace LUSSIS.Controllers
 {
+    //TODO: THIS CLASS IS NOT COMPLETED
+
     public class DisbursementsController : Controller
     {
         private LUSSISContext db = new LUSSISContext();
-        private DisbursementRepository disRepo;
-
-        // GET: Disbursements
+        private DisbursementRepository disRepo = new DisbursementRepository();
+        // GET: Disbursement
         public ActionResult Index()
         {
-            return View(disRepo.GetInProcessDisbursements());
+            var disbursements = disRepo.GetInProcessDisbursements();
+            return View(disbursements.ToList());
         }
 
-        // GET: Disbursements/Details/5
+        // GET: Disbursement/Details/5
         public ActionResult Details(int id)
         {
             Disbursement disbursement = disRepo.GetById(id);
@@ -33,7 +35,7 @@ namespace LUSSIS.Views
             return View(disbursement);
         }
 
-       // GET: Disbursements/Edit/5
+        // GET: Disbursement/Edit/5
         public ActionResult Edit(int id)
         {
             Disbursement disbursement = disRepo.GetById(id);
@@ -41,32 +43,29 @@ namespace LUSSIS.Views
             {
                 return HttpNotFound();
             }
-            //TODO: activate edit on the same page
-            ViewBag.AcknowledgeEmpNum = new SelectList(db.Employees, "EmpNum", "Title", disbursement.AcknowledgeEmpNum);
-            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
-            ViewBag.DeptCode = new SelectList(db.Departments, "DeptCode", "DeptName", disbursement.DeptCode);
+            ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
+            
             return View(disbursement);
         }
 
-        // POST: Disbursements/Edit/5
-        // TODO: update the specific properties we want to bind to
+        // POST: Disbursement/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DisbursementId,CollectionDate,CollectionPointId,DeptCode,AcknowledgeEmpNum,Status")] Disbursement disbursement)
+        public ActionResult Edit([Bind(Include = "CollectionDate, CollectionPointId")] Disbursement disbursement)
         {
-            
             if (ModelState.IsValid)
             {
                 db.Entry(disbursement).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.AcknowledgeEmpNum = new SelectList(db.Employees, "EmpNum", "Title", disbursement.AcknowledgeEmpNum);
-            ViewBag.CollectionPointId = new SelectList(db.CollectionPoints, "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
-            ViewBag.DeptCode = new SelectList(db.Departments, "DeptCode", "DeptName", disbursement.DeptCode);
+            ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
-        
+
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

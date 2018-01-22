@@ -16,16 +16,6 @@ namespace LUSSIS.Repositories
 
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
-        //use the date to create new disbursement, and return list of retrieval items based 
-        public IEnumerable<RetrievalItemDTO> ArrangeRetrievalAndDisbursement(DateTime collectionDate)
-        {
-            Debug.WriteLine(collectionDate.ToShortDateString());
-            IEnumerable<RetrievalItemDTO> itemsToRetrieve = GetConsolidatedRequisition();
-            new DisbursementRepository().CreateDisbursement(collectionDate);
-            return itemsToRetrieve;
-        }
-
-        //consolidate requisition details(group by item) + disbursement table status = disbursement details(group by item)
         public IEnumerable<RetrievalItemDTO> GetConsolidatedRequisition()
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
@@ -34,21 +24,31 @@ namespace LUSSIS.Repositories
             return itemsToRetrieve;
         }
 
+        public IEnumerable<RetrievalItemDTO> ArrangeRetrievalAndDisbursement(DateTime collectionDate)
+        {
+            IEnumerable<RetrievalItemDTO> itemsToRetrieve = GetConsolidatedRequisition();
+
+            new DisbursementRepository().CreateDisbursement(collectionDate);
+            return itemsToRetrieve;
+        }
+
         /*
-         * helper method to consolidate requisitions for one item into one RetrievalItemDTO
+         * helper method to consolidate each [approved requisitions for one item] into [one RetrievalItemDTO]
         */
-        private void ConsolidateRequisitionQty(List<RetrievalItemDTO> targetRetreivalList, IEnumerable<RequisitionDetail> requisitionDetailList)
+        private void ConsolidateRequisitionQty(List<RetrievalItemDTO> itemsToRetrieve, IEnumerable<RequisitionDetail> requisitionDetailList)
         {
             //group RequisitionDetail list by item: e.g.: List<ReqDetail>-for-pen, List<ReqDetail>-for-Paper, and store these lists in List:
-            List<List<RequisitionDetail>> groupedReqList = requisitionDetailList.GroupBy(rd=>rd.ItemNum).Select(grp=>grp.ToList()).ToList();
+            List<List<RequisitionDetail>> groupedReqListByItem = requisitionDetailList.GroupBy(rd=>rd.ItemNum).Select(grp=>grp.ToList()).ToList();
 
             //each list merge into ONE RetrievalItemDTO. e.g.: List<ReqDetail>-for-pen to be converted into ONE RetrievalItemDTO. 
-            foreach (List<RequisitionDetail> perItemReqList in groupedReqList)
+            foreach (List<RequisitionDetail> reqListForOneItem in groupedReqListByItem)
             {
-                Stationery stat = perItemReqList.First().Stationery;
-                RetrievalItemDTO dto = GetSameStatOrAddNewDTO(targetRetreivalList, stat);
+                Stationery statItem = reqListForOneItem.First().Stationery;
 
-                foreach (RequisitionDetail rd in perItemReqList)
+                //get the DTO for this stationery
+                RetrievalItemDTO dto = GetDtoIfSameStatOrAddAndGetNewDto(itemsToRetrieve, statItem);
+
+                foreach (RequisitionDetail rd in reqListForOneItem)
                 {
                    dto.RequestedQty += rd.Quantity;
                 }
@@ -56,21 +56,22 @@ namespace LUSSIS.Repositories
         }
        
         /*
-         * helper method to consolidate unfullfilled Disbursements for one item into one RetrievalItemDTO
+         * helper method to consolidate each [unfullfilled Disbursements for one item] add to / into [one RetrievalItemDTO]
         */
-        private void ConsolidateRemainingQty(List<RetrievalItemDTO> targetRetreivalList, IEnumerable<DisbursementDetail> unfullfilledDisDetailList)
+        private void ConsolidateRemainingQty(List<RetrievalItemDTO> itemsToRetrieve, IEnumerable<DisbursementDetail> unfullfilledDisDetailList)
         {
-            List<List<DisbursementDetail>> groupedDisList = unfullfilledDisDetailList.GroupBy(rd => rd.ItemNum).Select(grp => grp.ToList()).ToList();
+            //group DisbursementDetail list by item: e.g.: List<DisDetail>-for-pen, List<DisDetail>-for-Paper, and store these lists in List:
+            List<List<DisbursementDetail>> groupedDisListByItem = unfullfilledDisDetailList.GroupBy(rd => rd.ItemNum).Select(grp => grp.ToList()).ToList();
 
             //each list merge into ONE RetrievalItemDTO. e.g.: List<DisDetail>-for-pen to be converted into ONE RetrievalItemDTO. 
-            foreach (List<DisbursementDetail> perItemDisList in groupedDisList)
+            foreach (List<DisbursementDetail> disListForOneItem in groupedDisListByItem)
             {
-                Stationery stat = perItemDisList.First().Stationery;
-                RetrievalItemDTO dto = GetSameStatOrAddNewDTO(targetRetreivalList, stat);
+                Stationery statItem = disListForOneItem.First().Stationery;
+                RetrievalItemDTO dto = GetDtoIfSameStatOrAddAndGetNewDto(itemsToRetrieve, statItem);
 
-                foreach (DisbursementDetail dd in perItemDisList)
+                foreach (DisbursementDetail dd in disListForOneItem)
                 {
-                    dto.RequestedQty += dd.RequestedQty - dd.ActualQty;
+                    dto.RequestedQty += (dd.RequestedQty - dd.ActualQty);
                 }
             }
         }
@@ -79,14 +80,14 @@ namespace LUSSIS.Repositories
         /*
          * helper method
          * check if a stat's equivlent DTO exist in the target DTO list
-         * exist? return that DTO : create new DTO and add it to list
+         * exist? return that DTO : create new DTO and add it to list then return it
          */
-        private RetrievalItemDTO GetSameStatOrAddNewDTO(List<RetrievalItemDTO> targetRetreivalList, Stationery stat)
+        private RetrievalItemDTO GetDtoIfSameStatOrAddAndGetNewDto(List<RetrievalItemDTO> itemsToRetrieve, Stationery stat)
         {
-            //if yes, take the DTO out and use it
-            if (targetRetreivalList.Count > 0)
+            //if yes, take the DTO out and return it
+            if (itemsToRetrieve.Count > 0)
             {
-                foreach (RetrievalItemDTO dto in targetRetreivalList)
+                foreach (RetrievalItemDTO dto in itemsToRetrieve)
                 {
                     if (dto.ItemNum == stat.ItemNum)
                     {
@@ -94,9 +95,9 @@ namespace LUSSIS.Repositories
                     }
                 }
             }
-            //if not, instantiate a new DTO, add to the list and use it instead
+            //if not, instantiate a new DTO, add to the list and return it instead
             RetrievalItemDTO newDto = convertStatoDTO(stat);
-            targetRetreivalList.Add(newDto);
+            itemsToRetrieve.Add(newDto);
             return newDto;
         }
 
@@ -110,8 +111,10 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
         }
-       
-        
+
+        /*
+         * helper method
+         */
         private RetrievalItemDTO convertStatoDTO(Stationery s)
         {
             return new RetrievalItemDTO()
@@ -139,6 +142,44 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Requisitions.Where(r => r.RequisitionEmployee.DeptCode == dept && r.Status == "pending");
         }
 
+        public IEnumerable<RetrievalItemDTO> GetRetrievalInPorcess()
+        {
+            List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
+            //ConsolidateRequisitionQty(itemsToRetrieve, GetRequisitionDetailsByStatus("inprocess"));
+            //ConsolidateRemainingQty(itemsToRetrieve, new DisbursementRepository().GetUnfullfilledDisDetailList());
+            
+            //use disbursement as resource to generate retrieval in process
+            
+            var inProcessDisDetailsGroupedByItem = new DisbursementRepository().GetInProcessDisbursementDetails().GroupBy(x=>x.ItemNum).Select(grp=>grp.ToList()).ToList();
+
+            foreach (List<DisbursementDetail> disDetailForOneItem in inProcessDisDetailsGroupedByItem)
+            {
+                Stationery stat = disDetailForOneItem.First().Stationery;
+                RetrievalItemDTO dto = ConvertStationeryToDto(stat);
+                foreach (DisbursementDetail dd in disDetailForOneItem)
+                {
+                    dto.RequestedQty += dd.RequestedQty;
+                }
+                itemsToRetrieve.Add(dto);
+            }
+            return itemsToRetrieve;
+        }
+        /*
+         * helper method
+         */
+        private RetrievalItemDTO ConvertStationeryToDto(Stationery stat)
+        {
+            return new RetrievalItemDTO()
+            {
+                BinNum = stat.BinNum,
+                ItemNum = stat.ItemNum,
+                Description = stat.Description,
+                AvailableQty = stat.AvailableQty,
+                UnitOfMeasure = stat.UnitOfMeasure,
+                RequestedQty = 0,
+                RemainingQty = 0,
+            };
+        }
     }
 
     
