@@ -88,7 +88,8 @@
         $(document).ready(function () {
             validate();
             $('#from, #to, #Emp').change(validate);
-            $('#from, #to, #Emp').select(validate);
+            //$('#from, #to, #Emp').select(validate);
+            $('#Emp').keyup(validate);
             function validate() {
                 if ($('#from').val().length > 0 &&
                     $('#to').val().length > 0 &&

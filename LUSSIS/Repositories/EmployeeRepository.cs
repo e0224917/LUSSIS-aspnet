@@ -16,6 +16,11 @@ namespace LUSSIS.Repositories
             return GetEmployeeByEmail(userName);
         }
 
+        public string GetJobTitleByEmail(string email)
+        {
+            return GetEmployeeByEmail(email).JobTitle;
+        }
+
         public Employee GetEmployeeByEmail(string email)
         {
             return LUSSISContext.Employees.First(x => x.EmailAddress == email);

@@ -22,7 +22,7 @@ namespace LUSSIS.Controllers
         DeptHeadDashBoardDTO dbdto = new DeptHeadDashBoardDTO();
         RequisitionRepository reqRepo = new RequisitionRepository();
 
-
+        
         public ActionResult Index()
         {      
             dbdto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
