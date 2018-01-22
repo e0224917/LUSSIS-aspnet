@@ -9,8 +9,6 @@
     <title>@ViewBag.Title - LUSSIS</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    @*I am having issues with bootstrap-united style sheet and dropdown box, implemented similarly to united page but doesnt work, maybe jquery/bootstrap versioning issue*@
 </head>
 <body>
     <div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
@@ -40,15 +38,14 @@
                 {
                     @Html.Partial("__DeptEmpMenu")
                 }
-                <div>
-                    <span>The buttons are blue as there is issue with bootstrap-united.css and dropdown list. You can disable seeing so many menu by accessing _Layout.cshtml and commenting out this section to see only your logged in role menu</span>
-                    <div>Dept Head Menu @Html.Partial("__DeptHeadMenu")</div>
-                    <div>Clerk Menu @Html.Partial("__ClerkMenu")</div>
-                    <div>Store Sup and Manager Menu @Html.Partial("__StoreSupMenu")</div>
-                    <div>Rep Menu  @Html.Partial("__RepMenu")</div>
-                    <div>Plebs Menu @Html.Partial("__DeptEmpMenu")</div>
-                </div>
-
+                @*<div>
+                        <span>The buttons are blue as there is issue with bootstrap-united.css and dropdown list. You can disable seeing so many menu by accessing _Layout.cshtml and commenting out this section to see only your logged in role menu</span>
+                        <div>Dept Head Menu @Html.Partial("__DeptHeadMenu")</div>
+                        <div>Clerk Menu @Html.Partial("__ClerkMenu")</div>
+                        <div>Store Sup and Manager Menu @Html.Partial("__StoreSupMenu")</div>
+                        <div>Rep Menu  @Html.Partial("__RepMenu")</div>
+                        <div>Plebs Menu @Html.Partial("__DeptEmpMenu")</div>
+                    </div>*@
                 @Html.Partial("_LoginPartial")
             </div>
 
