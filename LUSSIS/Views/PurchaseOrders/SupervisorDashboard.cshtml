@@ -8,6 +8,117 @@
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 
 <h3>Supervisor Dashborad</h3>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['corechart'] });
+
+    //Call function after Google Chart is loaded, it is required, otherwise you may get error
+    google.charts.setOnLoadCallback(DrawPieChartLoad);
+
+    google.charts.setOnLoadCallback(DrawBarChartLoad);
+
+    function DrawPieChartLoad() {
+        $(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/PurchaseOrders/GetPiechartJSON',
+                success: function (chartsdata)
+                {
+                    // Callback that creates and populates a data table,
+                    // instantiates the pie chart, passes in the data and
+                    // draws it
+
+                    //get JSONList from Object
+
+                   
+                       // alert(result.FirstList[x].Name);
+                        //alert(result.SecondList[x].Name);
+                   
+                    var first = chartsdata.ListOne;
+                    var second = chartsdata.ListTwo;
+
+                    var data = new google.visualization.DataTable();
+
+                    data.addColumn('string', 'CategoryName');
+                    data.addColumn('number', 'PostCount');
+
+                    //Loop through each list data
+
+                    for (var i = 0; i < first.length; i++)
+                    {
+                        if (second[i] != 0) {
+                            data.addRow([first[i], second[i]]);
+                        }
+                      
+                    }
+                   
+                    // Instantiate and draw our chart, passing in some options
+                    var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+
+                    //Draw pie chart command with data and chart options
+                    chart.draw(data,
+                        {
+                            title: "Stationery Trend Analysis",
+                            position: "top",
+                            fontsize: "25px",
+                            width: "600",
+                            height:"600",
+                        });
+
+                },
+                error: function () {
+                    alert("Error loading data! Please try again.");
+                }
+            });
+        })
+
+    }
+
+    /////this one is for department
+    function DrawBarChartLoad() {
+        $(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/PurchaseOrders/GetBarchartJSON',
+                success: function (chartsdata) {
+                    var first = chartsdata.firstList;
+                    var second = chartsdata.secondList;
+
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('string', 'Department');
+                    data.addColumn('number', 'Amount');
+
+                    //Loop through each list data
+
+                    for (var i = 0; i < first.length; i++) {
+                        if (second[i] != 0)
+                        {
+                           
+                            alert(second[i]);
+
+                            data.addRow([first[i], second[i]]);
+                        }
+                    }
+                    var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
+
+                    
+                    chart.draw(data,
+                        {
+                            title: "Department Trend Analysis",
+                            position: "top",
+                            fontsize: "25px",
+                            width: "400",
+                            height: "600",
+                        });
+                },
+                error: function () {
+                    alert("Error loading data! Please try again.");
+                }
+            });
+        })
+
+    }
+</script> 
 
 <div class="container">
     <div class="row">
@@ -41,7 +152,22 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        @*<img src="@Url.Action("CharterColumn")" alt="chart" />*@
 
+    </div>
+    <div class="row">
+        @**<img src="@Url.Action("PieChartColumn")" alt="chart" />*@
+
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="chart_div"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="bar_div"></div>
+        </div>
+    </div>
 </div>
 
 

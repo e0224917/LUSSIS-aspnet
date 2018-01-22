@@ -19,6 +19,7 @@ namespace LUSSIS.Controllers
         private RequisitionRepository reqRepo = new RequisitionRepository();
         private EmployeeRepository empRepo = new EmployeeRepository();
         private StationeryRepository statRepo = new StationeryRepository();
+        private DisbursementRepository disRepo = new DisbursementRepository();
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
@@ -157,7 +158,12 @@ namespace LUSSIS.Controllers
         public ActionResult Consolidated()
         {
 
-            return View(new RetrievalItemsWithDateDTO { retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(), collectionDate = DateTime.Today });
+            return View(new RetrievalItemsWithDateDTO
+            {
+                retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
+                collectionDate = DateTime.Today,
+                hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
+            });
         }
 
         //TODO: Add authorization - Stock Clerk only 
@@ -176,7 +182,13 @@ namespace LUSSIS.Controllers
                 //during this processs, not disbursement can be arranged
                 return RedirectToAction("RetrievalInProcess");
             }
-            return View("Consolidated");
+
+            return View("Consolidated", new RetrievalItemsWithDateDTO
+            {
+                retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
+                collectionDate = DateTime.Today,
+                hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
+            });
         }
 
         //TODO: A method to display in process Retrieval

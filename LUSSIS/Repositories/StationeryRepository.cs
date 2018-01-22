@@ -31,7 +31,7 @@ namespace LUSSIS.Repositories
             return slist;
         }
 
-        public List<String> GetAllItemNum()
+        public IEnumerable<String> GetAllItemNum()
         {
             return LUSSISContext.Stationeries.Select(x => x.ItemNum).ToList();
         }
@@ -107,6 +107,49 @@ namespace LUSSIS.Repositories
                 }
             }
             return dic;
+        }
+
+        public List<String> GetCategoryList()
+        {
+            return LUSSISContext.Categories.Select(x=>x.CategoryName).ToList<String>();
+        }
+        public List<String> GetItembyCategory(int catId)
+        {
+            List<Stationery> list = LUSSISContext.Stationeries.Where(x=>x.CategoryId== catId).ToList();
+            List<String> itemList = new List<string>();
+
+            foreach(Stationery s in list)
+            {
+                itemList.Add(s.ItemNum);
+            }
+            return itemList;
+
+        }
+        public List<double> GetCategoryPO()
+        {
+            PORepository pr = new PORepository();
+            List<double> valueList = new List<double>();
+            List<int> cateList = LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
+            foreach (int e in cateList)
+            {
+                
+                valueList.Add(pr.GetPOAmountByCategory(e));
+
+            }
+            return valueList;
+        }
+        public IEnumerable<StationerySupplier> GetStationerySupplier()
+        {
+            return LUSSISContext.StationerySuppliers;
+        }
+
+        public void UpdateAllStationerySupplier(IEnumerable<StationerySupplier> newList)
+        {
+            IEnumerable<StationerySupplier> oldList = GetStationerySupplier();
+            LUSSISContext.StationerySuppliers.RemoveRange(oldList);
+            LUSSISContext.StationerySuppliers.AddRange(newList);
+            LUSSISContext.SaveChanges();
+
         }
     }
 }
