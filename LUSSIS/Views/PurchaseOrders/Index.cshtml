@@ -4,32 +4,6 @@
     ViewBag.Title = "Index";
 }
 
-<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
-@section Scripts{
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
-    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script>
-
-        $(document).ready(function () {
-            var table = $('#table_with_pages').DataTable({
-                "filter": false,                     //show-hide search box
-                "paginate": true,                    //show-hide pagination control
-                "pagingType": "simple_numbers",      //Pagination type; currently there are multiple styles [numbers, simple, simple_numbers, ]
-                "pageLength": 10,                     //The page size to specify the length for pagination
-                "lengthChange": false,               // show hide dropdown
-                //"lengthMenu": [[2, 5, 10, 15, -1], [2, 5, 10, 15, "All"]],
-                "info": true,                        //hide showing entries
-                "drawCallback": function () {
-                    //var row = this.api().row('#contactTable tbody tr td .contactCard[isprimary = "Y"]').index();
-                    //alert(row);
-                }
-            });
-        });
-    </script>
-}
-
-
 
 <h2>Purchase Order List</h2>
 
@@ -76,4 +50,13 @@
     }
 
 </table>
-
+<ul class="pagination">
+    @if (ViewBag.page > 1)
+    {
+        <li>@Html.ActionLink("<", "Index", new { page = ViewBag.page - 1 })</li>
+    }
+    @if (Model.Count() == 20)
+    {
+    <li>@Html.ActionLink(">", "Index", new { page = ViewBag.page + 1 })</li>
+    }
+</ul>

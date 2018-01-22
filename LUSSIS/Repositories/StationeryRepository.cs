@@ -31,7 +31,7 @@ namespace LUSSIS.Repositories
             return slist;
         }
 
-        public List<String> GetAllItemNum()
+        public IEnumerable<String> GetAllItemNum()
         {
             return LUSSISContext.Stationeries.Select(x => x.ItemNum).ToList();
         }
@@ -137,6 +137,19 @@ namespace LUSSIS.Repositories
 
             }
             return valueList;
+        }
+        public IEnumerable<StationerySupplier> GetStationerySupplier()
+        {
+            return LUSSISContext.StationerySuppliers;
+        }
+
+        public void UpdateAllStationerySupplier(IEnumerable<StationerySupplier> newList)
+        {
+            IEnumerable<StationerySupplier> oldList = GetStationerySupplier();
+            LUSSISContext.StationerySuppliers.RemoveRange(oldList);
+            LUSSISContext.StationerySuppliers.AddRange(newList);
+            LUSSISContext.SaveChanges();
+
         }
     }
 }
