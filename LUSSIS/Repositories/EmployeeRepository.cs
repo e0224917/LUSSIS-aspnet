@@ -10,6 +10,7 @@ namespace LUSSIS.Repositories
 {
     public class EmployeeRepository : Repository<Employee, string>
     {
+        DisbursementRepository disRepo = new DisbursementRepository();
         public Employee GetCurrentUser()
         {
             string userName = System.Web.HttpContext.Current.User.Identity.GetUserName();
@@ -87,21 +88,53 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Delegates.ToList();
         }
 
-        public Models.Delegate GetCurrentDelegate(Department department)
+        public Models.Delegate GetDelegate(Department department)
         {
             List<Employee> empList = GetAllByDepartment(department);
             List<Models.Delegate> delList = GetAllDelegates();
             List <Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.OrderByDescending(m => m.DelegateId).FirstOrDefault();
+            return allDel.FirstOrDefault();
+        }
+
+        public Models.Delegate GetDelegateByDate(Department department, DateTime dateTime)
+        {
+            List<Employee> empList = GetAllByDepartment(department);
+            List<Models.Delegate> delList = GetAllDelegates();
+            List<Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
+            return allDel.Where(k => k.StartDate <= dateTime && k.EndDate >= dateTime).FirstOrDefault();
         }
 
         public void DeleteDelegate(Department department)
         {
-            Models.Delegate del = GetCurrentDelegate(department);
+            Models.Delegate del = GetDelegate(department);
             LUSSISContext.Delegates.Remove(del);
             LUSSISContext.SaveChanges();
         }
+       
+        public List<Department> GetDepartmentAll()
+        {
+            List<Department> depList = LUSSISContext.Departments.ToList();
 
-        
+            return depList;
+
+        }
+        public List<String> GetDepartmentNames()
+        {
+            return LUSSISContext.Departments.Select(x => x.DeptName).ToList();
+        }
+        public List<double> GetDepartmentValue()
+        {
+            List<Department> depList = GetDepartmentAll();
+            List<double> valueList = new List<double>();
+            foreach (Department e in depList)
+            {
+               
+                valueList.Add(disRepo.GetDisbursementByDepCode(e.DeptCode));
+
+            }
+            return valueList;
+        }
+
+
     }
 }

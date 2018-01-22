@@ -182,6 +182,8 @@ namespace LUSSIS.Controllers
             AdjVoucherColView aVCV = new AdjVoucherColView();
             List<AdjustmentVoucherDTO> aVlist = new List<AdjustmentVoucherDTO>();
             AdjustmentVoucherDTO aV = new AdjustmentVoucherDTO();
+            //aV.ItemNum = "C001";
+            //aV.Quantity = 3;
             aVlist.Add(aV);
             aVCV.MyList = aVlist;
             return View("CreateAdjustments", aVCV);
@@ -223,6 +225,7 @@ namespace LUSSIS.Controllers
 
         }
 
+
         [HttpGet]
         public ActionResult CreateAdjustment(string id)
         {
@@ -262,7 +265,27 @@ namespace LUSSIS.Controllers
             }
 
         }
-        public async Task<ActionResult> ViewPendingStockAdj()
+
+
+        [HttpGet]
+        public JsonResult GetItemNum(string term)
+        {
+            List<String> itemList;
+            if (string.IsNullOrEmpty(term))
+            {
+                itemList = sr.GetAllItemNum().ToList();
+            }
+            else
+            {
+
+                itemList = sr.GetAllItemNum().ToList().FindAll(x => x.StartsWith(term, StringComparison.OrdinalIgnoreCase));
+            }
+            return Json(itemList, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+        public ActionResult ViewPendingStockAdj()
         {
 
             return View(sar.GetPendingAdjustmentList());
@@ -295,5 +318,7 @@ namespace LUSSIS.Controllers
 
 
 
+
+
     }
-}
+    }

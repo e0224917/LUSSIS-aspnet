@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -6,11 +7,12 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
-
+using PagedList;
 
 namespace LUSSIS.Controllers
 {
@@ -26,10 +28,12 @@ namespace LUSSIS.Controllers
         public const double GST_RATE = 0.07;
 
         // GET: PurchaseOrders
-        public ActionResult Index()
+        public ActionResult Index(int? page=1)
         {
             var purchaseOrders = pr.GetAll();
-            return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate));
+            int pageSize = 20;
+            ViewBag.page = page;
+            return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate).ToPagedList(Convert.ToInt32(page), pageSize));
         }
 
         // GET: PurchaseOrders/Details/10005
@@ -89,20 +93,30 @@ namespace LUSSIS.Controllers
             po.SupplierId = supplier.SupplierId;
             po.CreateDate = DateTime.Today;
 
-            //create list of purchase details for outstanding items
-            stationeries = sr.GetStationeryBySupplierId(supplierId).ToList();
-            foreach (Stationery stationery in stationeries)
+            //set empty Stationery template
+            Stationery emptyStationery = new Stationery();
+            emptyStationery.ItemNum = "select a stationery";
+            emptyStationery.Description = "select a stationery";
+            emptyStationery.UnitOfMeasure = " ";
+            emptyStationery.AverageCost = 0.00;
+
+            //get list of recommended for purchase stationery
+            bool hasRecommended = sr.GetOutstandingStationeryByAllSupplier().TryGetValue(supplier, out stationeries);
+            if (hasRecommended)
             {
-                if (stationery.CurrentQty < stationery.ReorderLevel)
+                foreach (Stationery stationery in stationeries)
                 {
-                    PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
-                    pdetails.OrderQty = stationery.ReorderLevel - stationery.CurrentQty;
-                    pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
-                    pdetails.ItemNum = stationery.ItemNum;
-                    po.PurchaseOrderDetailsDTO.Add(pdetails);
+                    if (stationery.CurrentQty < stationery.ReorderLevel && stationery.PrimarySupplier().SupplierId == supplierId)
+                    {
+                        PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
+                        pdetails.OrderQty = Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty), Convert.ToInt32(stationery.ReorderQty));
+                        pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
+                        pdetails.ItemNum = stationery.ItemNum;
+                        po.PurchaseOrderDetailsDTO.Add(pdetails);
+                    }
                 }
             }
-            countOfLines = po.PurchaseOrderDetailsDTO.Count;
+            countOfLines = Math.Max(po.PurchaseOrderDetailsDTO.Count, 1);
 
 
             //create empty puchase details so user can add up to 100 line items per PO
@@ -110,13 +124,19 @@ namespace LUSSIS.Controllers
             {
                 PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
                 pdetails.OrderQty = 0;
-                pdetails.UnitPrice = stationeries.First().UnitPrice(Convert.ToInt32(supplierId));
-                pdetails.ItemNum = stationeries.First().ItemNum;
+                pdetails.UnitPrice = emptyStationery.AverageCost;
+                pdetails.ItemNum = emptyStationery.ItemNum;
                 po.PurchaseOrderDetailsDTO.Add(pdetails);
             }
 
             //fill ViewBag to populate stationery dropdown lists
-            ViewBag.Stationery = sr.GetStationerySupplierBySupplierId(supplierId).ToList();
+            StationerySupplier ss = new StationerySupplier();
+            ss.ItemNum = emptyStationery.ItemNum;
+            ss.Price = emptyStationery.AverageCost;
+            ss.Stationery=emptyStationery;
+            List<StationerySupplier> sslist = new List<StationerySupplier>() { ss };
+            sslist.AddRange(sr.GetStationerySupplierBySupplierId(supplierId).ToList());
+            ViewBag.Stationery = sslist;
             ViewBag.Suppliers = sur.GetAll();
             ViewBag.Supplier = supplier;
             ViewBag.countOfLines = countOfLines;
@@ -311,7 +331,7 @@ namespace LUSSIS.Controllers
         {
             try
             {
-                if(!ModelState.IsValid)
+                if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
                 PurchaseOrder purchaseorder = pr.GetById(po.PoNum);
                 purchaseorder.Status = "ordered";
@@ -367,8 +387,70 @@ namespace LUSSIS.Controllers
             dash.PendingStockAdjSubtractQty = stockRepo.GetPendingStockSubtractQty();
             dash.PendingStockAdjCount = stockRepo.GetPendingStockCount();
             dash.TotalDisbursementAmount = disRepo.GetDisbursementTotalAmount();
+            dash.CharterName = er.GetDepartmentNames();
+            dash.CharterValue =er.GetDepartmentValue();
+            dash.PieName = sr.GetCategoryList();
+            dash.PieValue = sr.GetCategoryPO();
             return View(dash);
         }
+      /*  public ActionResult CharterColumn()
+        {
+            ArrayList xValue = new ArrayList();
+            ArrayList yValue = new ArrayList();
+
+            List<double> list = new List<double>();
+                List<Department> depList = er.GetDepartmentAll();
+              
+                foreach (Department e in depList)
+                {
+                xValue.Add(e.DeptCode);
+                yValue.Add(disRepo.GetDisbursementByDepCode(e.DeptCode));
+
+                }
+            new System.Web.Helpers.Chart(width: 600, height: 330, theme: ChartTheme.Blue)
+                .AddTitle("Chart for ")
+                .AddSeries("Default", chartType: "Column", xValue: xValue, yValues: yValue)
+                .Write("bmp");
+
+            return null;
+        }
+        public ActionResult PieChartColumn()
+        {
+            ArrayList xValue = new ArrayList();
+            ArrayList yValue = new ArrayList();
+
+            List<double> list = new List<double>();
+           // List<Category> cateList = sr.GetCategoryList();
+
+           /* foreach (Category e in cateList)
+            {
+                xValue.Add(e.CategoryName);
+                yValue.Add(pr.GetPOAmountByCategory(e.CategoryId));
+
+            }
+            new System.Web.Helpers.Chart(width: 600, height: 600, theme: ChartTheme.Blue)
+                .AddTitle("Chart for ")
+                .AddSeries("Default", chartType: "Pie", xValue: xValue, yValues: yValue)
+                .Write("bmp");
+
+            return null;
+        }*/
+        public JsonResult GetPiechartJSON()
+        {
+            List<String> pileName = sr.GetCategoryList();
+            List<double> pileValue = sr.GetCategoryPO();
+
+            return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetBarchartJSON()
+        {
+            List<String> Name =er.GetDepartmentNames();
+            List<double> Value = er.GetDepartmentValue();
+
+            return Json(new { firstList = Name, secondList = Value }, JsonRequestBehavior.AllowGet);
+        }
+       
+
 
 
 

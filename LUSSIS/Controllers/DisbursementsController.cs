@@ -4,15 +4,15 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Models;
+using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {
-    //TODO: THIS CLASS IS NOT COMPLETED
-
     public class DisbursementsController : Controller
     {
         private LUSSISContext db = new LUSSISContext();
@@ -25,44 +25,70 @@ namespace LUSSIS.Controllers
         }
 
         // GET: Disbursement/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
-            Disbursement disbursement = disRepo.GetById(id);
-            if (disbursement == null)
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            DisbursementDetailDTO disDetailDTO = new DisbursementDetailDTO();
+            disDetailDTO.CurrentDisbursement = disRepo.GetById((int)id);
+            if (disDetailDTO.CurrentDisbursement == null)
             {
                 return HttpNotFound();
             }
-            return View(disbursement);
+            disDetailDTO.DisDetailList = disDetailDTO.CurrentDisbursement.DisbursementDetails.ToList();
+            return View(disDetailDTO);
         }
 
+        
         // GET: Disbursement/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int? id)
         {
-            Disbursement disbursement = disRepo.GetById(id);
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Disbursement disbursement = await disRepo.GetByIdAsync((int)id);
             if (disbursement == null)
             {
                 return HttpNotFound();
             }
             ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
-            
+
             return View(disbursement);
         }
 
-        // POST: Disbursement/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        //POST: Disbursement/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CollectionDate, CollectionPointId")] Disbursement disbursement)
+        public async Task<ActionResult> Edit([Bind(Include = "DisbursementId, CollectionDate, CollectionPointId, AcknowledgeEmpNum, DeptCode, Status")] Disbursement disbursement)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(disbursement).State = EntityState.Modified;
-                db.SaveChanges();
+                await disRepo.UpdateAsync(disbursement);
                 return RedirectToAction("Index");
             }
             ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Acknowledge([Bind(Include = "DisDetailList")] DisbursementDetailDTO disbursementDTO)
+        {
+            if (disbursementDTO == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                disRepo.Acknowledge(disbursementDTO.CurrentDisbursement);
+                return RedirectToAction("Index");
+            }
+            return View("Details", disbursementDTO);
+
         }
 
 
@@ -74,5 +100,7 @@ namespace LUSSIS.Controllers
             }
             base.Dispose(disposing);
         }
+
+        
     }
 }

@@ -52,6 +52,9 @@
     <Reference Include="BeginCollectionItem, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BeginCollectionItem.1.2.1.0\lib\net35\BeginCollectionItem.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus, Version=4.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.1.1\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="Glimpse.Ado, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Glimpse.Ado.1.7.3\lib\net45\Glimpse.Ado.dll</HintPath>
     </Reference>
@@ -300,6 +303,8 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\DeptHeadDashBoardDTO.cs" />
+    <Compile Include="Models\WebDTO\DisbursementDetailDTO.cs" />
     <Compile Include="Models\WebDTO\PendingPurchaseOrderDTO.cs" />
     <Compile Include="Models\WebDTO\PurchaseOrderDetailDTO.cs" />
     <Compile Include="Models\WebDTO\PurchaseOrderDTO.cs" />
@@ -597,6 +602,12 @@
     <Content Include="Views\Shared\__DeptHeadMenu.cshtml" />
     <Content Include="Views\Shared\__StoreSupMenu.cshtml" />
     <Content Include="Views\Shared\__RepMenu.cshtml" />
+    <Content Include="Views\RepAndDelegate\Index.cshtml" />
+    <Content Include="Views\Requisitions\EmpCart.cshtml" />
+    <Content Include="Views\Requisitions\EmpReq.cshtml" />
+    <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
+    <Content Include="Views\Requisitions\Index.cshtml" />
+    <Content Include="Views\Suppliers\Quotation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

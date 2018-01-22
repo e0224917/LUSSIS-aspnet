@@ -8,28 +8,40 @@
     ViewBag.Title = "Consolidated";
 }
 <h2>Consolidated Stationery Requisitions</h2>
-@if (Model.retrievalItems == null || !Model.retrievalItems.Any())
+
+@if (Model.retrievalItems == null || !Model.retrievalItems.Any() )
 {
     <div class="alert alert-dismissible alert-info">
-        <strong>Interesting...</strong> There is no requisition and remaining items to be viewed.
+        <strong>Interesting...</strong> <br/>There is no requisition and remaining items to be viewed.
     </div>
 }
 else
 {
+    @*We are able to generate multiple batches of disbursements, however retrieval in process list will combine all disbursement that are inprocess.
+        Since generating multiple batches of retrieval is not a business requirement, we will omit this funtion *@
+    if(Model.hasInprocessDisbursement)
+     {
+         <div class="alert alert-dismissible alert-info">
+             <strong>There are already disbursements in process . <br/>
+                 </strong> You can arrange for new disbursements once the current ones are completed.
+         </div>
+    }
+    else
+    {
     <hr />
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="navbar-nav mr-auto"></div>
         @using (Html.BeginForm("Retrieve", "Requisitions", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
-    {
-        @Html.AntiForgeryToken()
-        @Html.LabelFor(model => model.collectionDate, "Select a collection date", new { @class = "nav-item nav-link" })
-        @Html.EditorFor(model => model.collectionDate, new { @class = "form-control mr-sm-2", id = "collectionDate", @Value = Model.collectionDate.Date})
-        @Html.ValidationMessageFor(model => model.collectionDate, "must be later than today", new { @class = "invalid-feedback" })
-        <div class="nav-item nav-link"><button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button></div>
-    }
+        {
+            @Html.AntiForgeryToken()
+            @Html.LabelFor(model => model.collectionDate, "Select a collection date", new { @class = "nav-item nav-link" })
+            @Html.EditorFor(model => model.collectionDate, new { @class = "form-control mr-sm-2", id = "collectionDate", @Value = Model.collectionDate.Date })
+            @Html.ValidationMessageFor(model => model.collectionDate, "must be later than today", new { @class = "invalid-feedback" })
+            <div class="nav-item nav-link"><button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button></div>
+        }
     </nav>
     <hr />
-
+    }
     <table id="long-table" class="table table-hover">
         <thead>
             <tr>
@@ -72,7 +84,6 @@ else
 }
 
 
-
 @section scripts{
     <script type="text/javascript">
         $(function () {
@@ -86,6 +97,6 @@ else
                 toolbarPlacement: 'top'
             });
          });
-        
+
     </script>
 }

@@ -5,9 +5,7 @@
 }
 
 <h2>Pending Requisition</h2>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+
 <table class="table">
     <tr>
         <th>
@@ -23,7 +21,9 @@
             @Html.DisplayName("View")
         </th>
         <th>
-            @Html.DisplayName("Manage")
+            @if (ViewBag.Message == "NoDelegate")
+            {
+                @Html.DisplayName("Manage")}
         </th>
         <th></th>
     </tr>
@@ -32,42 +32,41 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.RequisitionDate)
+                @Html.DisplayFor(modelItem => item.RequisitionDate, "Requisition Date")
                 @Html.HiddenFor(modelItem => item.RequisitionId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName)
+                @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName, "Employee")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RequestRemarks)
+                @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
             </td>
             <td>
-                @Html.ActionLink("Details", "Detail", "Requisition", new { reqId = item.RequisitionId }, null)
+                @Html.ActionLink("Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, null)
             </td>
             <td>
-                <a href="#" class="btn btn-success" onclick="ApproveReq(@item.RequisitionId)">Approve</a>
-                <a href="#" class="btn btn-danger" onclick="RejectReq(@item.RequisitionId)">Reject</a>
+                @if (ViewBag.Message == "NoDelegate")
+                {
+                    <a href="#" class="btn btn-success" onclick="ApproveReq(@item.RequisitionId)">Approve</a>
+                    <a href="#" class="btn btn-danger" onclick="RejectReq(@item.RequisitionId)">Reject</a>
+                }
             </td>
         </tr>
     }
 
 </table>
 
-
-<script src="~/Scripts/bootstrap.min.js"></script>
-<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
-
-
-
-<div class="modal fade" id="myApproveModal">
-    <div class="modal-dialog">
+<div class="modal" id="myApproveModal">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="ApprovalTitle"></h3>
-                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h5 class="modal-title" id="ApprovalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body" id="myApproveModalBodyDiv">
+                <p></p>
             </div>
         </div>
     </div>
@@ -77,7 +76,7 @@
 <script>
     var ApproveReq = function (RequisitionId) {
         document.getElementById("ApprovalTitle").textContent = "Approve"
-        var url = "/Requisition/ApproveReq?Id=" + RequisitionId + "&Status=approved";
+        var url = "/Requisitions/ApproveReq?Id=" + RequisitionId + "&Status=approved";
 
         $("#myApproveModalBodyDiv").load(url, function () {
             $("#myApproveModal").modal("show");
@@ -85,10 +84,10 @@
     }
     var RejectReq = function (RequisitionId) {
         document.getElementById("ApprovalTitle").textContent = "Reject"
-        var url = "/Requisition/ApproveReq?Id=" + RequisitionId + "&Status=rejected";
+        var url = "/Requisitions/ApproveReq?Id=" + RequisitionId + "&Status=rejected";
 
         $("#myApproveModalBodyDiv").load(url, function () {
             $("#myApproveModal").modal("show");
         })
-    }      
+    }
 </script>

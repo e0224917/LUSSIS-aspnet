@@ -10,6 +10,8 @@ using System.Web.Mvc;
 using LUSSIS.Exceptions;
 using LUSSIS.Models.WebDTO;
 using PagedList;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 
 namespace LUSSIS.Controllers
 {
@@ -19,18 +21,40 @@ namespace LUSSIS.Controllers
         private RequisitionRepository reqRepo = new RequisitionRepository();
         private EmployeeRepository empRepo = new EmployeeRepository();
         private StationeryRepository statRepo = new StationeryRepository();
+        private DisbursementRepository disRepo = new DisbursementRepository();
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
         public ActionResult Pending()
         {
-            return View(reqRepo.GetRequisitionsByStatus("pending"));
+            List<Requisition> req = reqRepo.GetPendingRequisitions();
+            Department meDept = empRepo.GetCurrentUser().Department;
+            Models.Delegate meDeptDelegate = empRepo.GetDelegateByDate(meDept, DateTime.Today);
+            if (meDeptDelegate != null)
+            {
+                ViewBag.Message = "Delegate";
+            }
+            else
+            {
+                ViewBag.Message = "NoDelegate";
+            }
+            return View(req);
         }
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         [HttpGet]
         public async Task<ActionResult> Detail(int reqId)
         {
+            Department meDept = empRepo.GetCurrentUser().Department;
+            Models.Delegate meDeptDelegate = empRepo.GetDelegateByDate(meDept, DateTime.Today);
+            if (meDeptDelegate != null)
+            {
+                ViewBag.Message = "Delegate";
+            }
+            else
+            {
+                ViewBag.Message = "NoDelegate";
+            }
             var req = await reqRepo.GetByIdAsync(reqId);
             if (req != null)
             {
@@ -157,7 +181,12 @@ namespace LUSSIS.Controllers
         public ActionResult Consolidated()
         {
 
-            return View(new RetrievalItemsWithDateDTO { retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(), collectionDate = DateTime.Today });
+            return View(new RetrievalItemsWithDateDTO
+            {
+                retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
+                collectionDate = DateTime.Today,
+                hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
+            });
         }
 
         //TODO: Add authorization - Stock Clerk only 
@@ -176,7 +205,13 @@ namespace LUSSIS.Controllers
                 //during this processs, not disbursement can be arranged
                 return RedirectToAction("RetrievalInProcess");
             }
-            return View("Consolidated");
+
+            return View("Consolidated", new RetrievalItemsWithDateDTO
+            {
+                retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
+                collectionDate = DateTime.Today,
+                hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
+            });
         }
 
         //TODO: A method to display in process Retrieval

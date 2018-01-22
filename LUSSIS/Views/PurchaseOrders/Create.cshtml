@@ -127,7 +127,7 @@
                 <div class="form-group">
                     <label type="text" class="control-label col-md-2">GST</label>
                     <div class="col-md-10">
-                        @Html.Editor("GstAmt", "0", new { disabled = "disabled" })
+                        @Html.Editor("GstAmt", "0")
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                 <div class="form-group">
                     <label type="text" class="control-label col-md-2">Total Cost</label>
                     <div class="col-md-10">
-                        @Html.Editor("TotalPoAmt", "0", new { disabled = "disabled" })
+                        @Html.Editor("TotalPoAmt", "0")
                     </div>
                 </div>
             </div>
@@ -201,6 +201,8 @@
             var lineQtyId = '#PurchaseOrderDetailsDTO_' + i + '__OrderQty';
             $(lineQtyId).addClass('line_qty')
         }
+        $('#GstAmt').prop('disabled','disabled');
+        $('#TotalPoAmt').prop('disabled','disabled');
         calculateAll();
     });
 
