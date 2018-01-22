@@ -8,30 +8,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - LUSSIS</title>
     @Styles.Render("~/Content/css")
-    @*@Scripts.Render("~/bundles/modernizr")*@
-
+    @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
     <div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
         <div class="container">
             @Html.ActionLink("LUSSIS", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav">
-                    <li class="nav-item">@Html.ActionLink("Supplier", "Index", "Suppliers", null, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("Stock Adjustment", "History", "StockAdjustment", null, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("Collection", "Index", "Collection", null, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("Stock Adjustment", "CreateAdjustments", "StockAdjustment", null, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("Stationery", "Index", "Requisition", null, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("Requisition", "EmpReq", "Requisition", null, new { @class = "nav-link" })</li>
-                </ul>
+                @if (User.IsInRole("head"))
+                {
+                    @Html.Partial("__DeptHeadMenu")
+                }
+                @if (User.IsInRole("clerk"))
+                {
+                    @Html.Partial("__ClerkMenu")
+                }
+                @if (User.IsInRole("manager") || User.IsInRole("supervisor"))
+                {
+                    @Html.Partial("__StoreSupMenu")
+                }
+                @if (User.IsInRole("rep"))
+                {
+                    @Html.Partial("__RepMenu")
+                }
+                @if (User.IsInRole("staff"))
+                {
+                    @Html.Partial("__DeptEmpMenu")
+                }
+                @*<div>
+                        <span>The buttons are blue as there is issue with bootstrap-united.css and dropdown list. You can disable seeing so many menu by accessing _Layout.cshtml and commenting out this section to see only your logged in role menu</span>
+                        <div>Dept Head Menu @Html.Partial("__DeptHeadMenu")</div>
+                        <div>Clerk Menu @Html.Partial("__ClerkMenu")</div>
+                        <div>Store Sup and Manager Menu @Html.Partial("__StoreSupMenu")</div>
+                        <div>Rep Menu  @Html.Partial("__RepMenu")</div>
+                        <div>Plebs Menu @Html.Partial("__DeptEmpMenu")</div>
+                    </div>*@
                 @Html.Partial("_LoginPartial")
             </div>
+
         </div>
     </div>
+
     <div class="container">
         @RenderBody()
         <hr />
@@ -46,5 +66,11 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/datetime")
     @RenderSection("scripts", required: false)
+
+    <script>
+        $(document).ready(function () {
+            $('.dropdown-toggle').dropdown();
+        });</script>
+
 </body>
 </html>

@@ -21,8 +21,10 @@ namespace LUSSIS.Models
 
         public double? UnitPrice { get; set; }
 
+        [Display(Name = "Requested Qty")]
         public int? RequestedQty { get; set; }
 
+        [Display(Name = "Actual Qty")]
         public int? ActualQty { get; set; }
 
         public virtual Disbursement Disbursement { get; set; }

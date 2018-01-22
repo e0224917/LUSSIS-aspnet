@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <IncludeIisSettings>false</IncludeIisSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -70,6 +71,9 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
     </Reference>
@@ -150,9 +154,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -229,15 +230,16 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CollectionController.cs" />
-    <Compile Include="Controllers\DisbursementController.cs" />
+    <Compile Include="Controllers\DisbursementsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PurchaseOrdersController.cs" />
     <Compile Include="Controllers\RepAndDelegateController.cs" />
-    <Compile Include="Controllers\RequisitionController.cs" />
+    <Compile Include="Controllers\RequisitionsController.cs" />
     <Compile Include="Controllers\StockAdjustmentController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
+    <Compile Include="Controllers\WebAPI\DelegateController.cs" />
     <Compile Include="Controllers\WebAPI\RequisitionsController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
@@ -275,6 +277,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
+    <Compile Include="Models\WebAPI\DelegateDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDetailDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDTO.cs" />
     <Compile Include="Models\WebDTO\AdjVoucherColView.cs" />
@@ -295,6 +298,11 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\DeptHeadDashBoardDTO.cs" />
+    <Compile Include="Models\WebDTO\PendingPurchaseOrderDTO.cs" />
+    <Compile Include="Models\WebDTO\PurchaseOrderDetailDTO.cs" />
+    <Compile Include="Models\WebDTO\PurchaseOrderDTO.cs" />
+    <Compile Include="Models\WebDTO\ReceiveTransDTO.cs" />
     <Compile Include="Models\WebDTO\RepAndDelegateDTO.cs" />
     <Compile Include="Models\WebDTO\ReqApproveRejectDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemsWithDateDTO.cs" />
@@ -310,9 +318,11 @@
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CollectionRepository.cs" />
+    <Compile Include="Repositories\DelegateRepository.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\ICollectionRepository.cs" />
+    <Compile Include="Repositories\Interface\IDelegateRepository.cs" />
     <Compile Include="Repositories\Interface\IEmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\IDisbursementRepository.cs" />
     <Compile Include="Repositories\Interface\IPORepository.cs" />
@@ -328,7 +338,7 @@
     <Compile Include="Repositories\StockAdjustmentRepository.cs" />
     <Compile Include="Repositories\SupplierRepository.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Views\DisbursementsController.cs" />
+    <Compile Include="Validations\CollectionDateAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-datetimepicker.css" />
@@ -494,7 +504,9 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -537,37 +549,27 @@
     <Content Include="Views\StockAdjustment\CreateAdjustments.cshtml" />
     <Content Include="Views\StockAdjustment\_CreateAdjustments.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
-    <Content Include="Views\Requisition\Detail.cshtml" />
-    <Content Include="Views\Requisition\_Detail.cshtml" />
+    <Content Include="Views\Requisitions\Detail.cshtml" />
+    <Content Include="Views\Requisitions\_Detail.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
-    <Content Include="Views\StockAdjustment\AdjustmentApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\Create.cshtml" />
     <Content Include="Views\PurchaseOrders\Delete.cshtml" />
-    <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\PurchaseOrders\Edit.cshtml" />
-    <Content Include="Views\PurchaseOrders\Index.cshtml" />
-    <Content Include="Views\StockAdjustment\Index.cshtml" />
-    <Content Include="Views\StockAdjustment\Approve.cshtml" />
-    <Content Include="Views\StockAdjustment\ShowDialog.cshtml" />
     <Content Include="Views\Collection\SetCollection.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
-    <Content Include="Views\Requisition\Pending.cshtml" />
-    <Content Include="Views\Requisition\Consolidated.cshtml" />
+    <Content Include="Views\Requisitions\Pending.cshtml" />
+    <Content Include="Views\Requisitions\Consolidated.cshtml" />
     <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
     <Content Include="Views\Shared\_LayoutEmpReq.cshtml" />
-    <Content Include="Views\Requisition\EmpCart.cshtml" />
-    <Content Include="Views\Requisition\EmpReq.cshtml" />
-    <Content Include="Views\Requisition\EmpReqDetail.cshtml" />
-    <Content Include="Views\Requisition\Index.cshtml" />
-    <Content Include="Views\RepAndDelegate\DepartmentRep.cshtml" />
-    <Content Include="Views\Requisition\ApproveReq.cshtml" />
+    <Content Include="Views\PurchaseOrders\Receive.cshtml" />
+    <Content Include="Views\PurchaseOrders\Index.cshtml" />
+    <Content Include="Views\Requisitions\ApproveReq.cshtml" />
     <Content Include="Views\Shared\_DeptEmployeeLayout.cshtml" />
-    <Content Include="Views\Requisition\Retrieve.cshtml" />
-    <Content Include="Views\Disbursement\Create.cshtml" />
-    <Content Include="Views\Disbursement\Delete.cshtml" />
-    <Content Include="Views\Disbursement\Details.cshtml" />
-    <Content Include="Views\Disbursement\Edit.cshtml" />
-    <Content Include="Views\Disbursement\Index.cshtml" />
+    <Content Include="Views\Requisitions\RetrievalInProcess.cshtml" />
+    <Content Include="Views\Disbursements\Delete.cshtml" />
+    <Content Include="Views\Disbursements\Details.cshtml" />
+    <Content Include="Views\Disbursements\Edit.cshtml" />
+    <Content Include="Views\Disbursements\Index.cshtml" />
     <Content Include="Scripts\umd\popper-utils.js.map" />
     <Content Include="Scripts\umd\popper-utils.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />
@@ -578,14 +580,32 @@
     <Content Include="Scripts\popper.min.js.map" />
     <Content Include="Scripts\README.md" />
     <Content Include="Views\RepAndDelegate\DeptRep.cshtml" />
+    <Content Include="Views\Disbursements\_DetailsList.cshtml" />
     <Content Include="Views\RepAndDelegate\DeptDelegate.cshtml" />
+    <Content Include="Views\PurchaseOrders\Summary.cshtml" />
+    <Content Include="Views\PurchaseOrders\Order.cshtml" />
+    <Content Include="Views\PurchaseOrders\Details.cshtml" />
+    <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
+    <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
+    <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
+    <Content Include="Views\PurchaseOrders\SupervisorDashboard.cshtml" />
+    <Content Include="Views\PurchaseOrders\ViewPendingPOList.cshtml" />
+    <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
+    <Content Include="Views\Shared\__ClerkMenu.cshtml" />
+    <Content Include="Views\Shared\__DeptEmpMenu.cshtml" />
+    <Content Include="Views\Shared\__DeptHeadMenu.cshtml" />
+    <Content Include="Views\Shared\__StoreSupMenu.cshtml" />
+    <Content Include="Views\Shared\__RepMenu.cshtml" />
+    <Content Include="Views\RepAndDelegate\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Requisitions\" />
+    <Folder Include="Views\Delegate\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201801180213580_InitialCreate.resx">

@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using LUSSIS.Validations;
+
 namespace LUSSIS.Models
 {
     using System;
@@ -20,12 +23,16 @@ namespace LUSSIS.Models
 
         [Column(TypeName = "date")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
+        [Display(Name="Collection Date")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        //[CollectionDate] //validation
         public DateTime? CollectionDate { get; set; }
 
+        [Display(Name = "Collection Point Id")]
         public int? CollectionPointId { get; set; }
 
         [StringLength(20)]
+        [Display(Name = "Department Code")]
         public string DeptCode { get; set; }
 
         public int? AcknowledgeEmpNum { get; set; }
@@ -33,6 +40,7 @@ namespace LUSSIS.Models
         [StringLength(20)]
         public string Status { get; set; }
 
+        [Display(Name = "Collection Point")]
         public virtual CollectionPoint CollectionPoint { get; set; }
 
         public virtual Department Department { get; set; }

@@ -18,9 +18,11 @@ namespace LUSSIS.Models
 
         [Key]
         [StringLength(20)]
+        [Display(Name = "Department Code")]
         public string DeptCode { get; set; }
 
         [StringLength(50)]
+        [Display(Name = "Department Name")]
         public string DeptName { get; set; }
 
         public int? DeptHeadNum { get; set; }

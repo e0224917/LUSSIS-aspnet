@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "Confirm";
+}
+
+
+
+<div class="container">
+    <form id="confirmForm">
+        <h4> Are you sure to @ViewBag.status</h4>
+        <div class="form-group">
+
+
+            <input type="hidden" name="status" value="@ViewBag.status" />
+            <input type="hidden" name="checkList" value="@ViewBag.checkList" />
+            <input type="hidden" name="a" />
+        </div>
+    </form>
+</div>
+
+<div>
+    <a href="#" class="btn btn-success" id="ok">
+        OK
+    </a>
+    <a href="#" class="btn btn-danger" data-dismiss="modal"> Cancel</a>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#ok").click(function () {
+            var formdata = $("#confirmForm").serialize();
+
+            $.ajax({
+                type: "POST",
+                url: "/PurchaseOrders/ApproveRejectPO",
+                data: formdata,
+                success: function () {
+                    $("#myApproveModal").modal("hide");
+
+                }
+            })
+            location.reload()
+        })
+    })
+</script>
+
+
+
