@@ -597,6 +597,10 @@
     <Content Include="Views\Shared\__StoreSupMenu.cshtml" />
     <Content Include="Views\Shared\__RepMenu.cshtml" />
     <Content Include="Views\RepAndDelegate\Index.cshtml" />
+    <Content Include="Views\Requisitions\EmpCart.cshtml" />
+    <Content Include="Views\Requisitions\EmpReq.cshtml" />
+    <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
+    <Content Include="Views\Requisitions\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

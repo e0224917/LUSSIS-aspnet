@@ -17,7 +17,7 @@
             var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
             if (stationeryToDelete != '') {
                 // Perform the ajax post
-                $.post("/Requisition/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
+                $.post("/Requisitions/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
                     function (data) {
                         // Successful requests get here
                         // Update the page elements
@@ -39,7 +39,7 @@
 <h2>Requisition Cart</h2>
 @if (Model.Count() != 0)
 {
-    using (Html.BeginForm("SubmitReq", "Requisition"))
+    using (Html.BeginForm("SubmitReq", "Requisitions"))
     {
         <div class="form-group">
             Remarks:<textarea class="form-control" rows="3" id="remarks" name="remarks"></textarea>

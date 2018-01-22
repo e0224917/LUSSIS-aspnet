@@ -15,7 +15,7 @@
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
                 if (stationeryToAdd != '') {
                     // Perform the ajax post
-                    $.post("/Requisition/AddToCart", { "id": stationeryToAdd, "qty": qty },
+                    $.post("/Requisitions/AddToCart", { "id": stationeryToAdd, "qty": qty },
                         function (data) {
                             location.reload();
                             // Successful requests get here
