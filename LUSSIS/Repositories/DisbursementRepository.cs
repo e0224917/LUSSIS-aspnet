@@ -262,15 +262,9 @@ namespace LUSSIS.Repositories
             list = GetAll().Where(x => x.Status != "unprocessed").ToList();
             foreach (Disbursement d in list)
             {
-                detailList = LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == d.DisbursementId).ToList();
-                foreach (DisbursementDetail f in detailList)
-                {
 
-                    int qty = (int)f.ActualQty;
-                    double unit_price = (double)f.UnitPrice;
-                    result += (qty * unit_price);
-
-                }
+                result += GetAmountByDisbursement(d);
+                
             }
 
 
@@ -284,15 +278,7 @@ namespace LUSSIS.Repositories
             list =GetAll().Where(x => x.Status !="unprocessed" && x.DeptCode.Equals(depcode)).ToList(); 
             foreach(Disbursement d in list)
             {
-                detailList=LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == d.DisbursementId).ToList();
-                foreach (DisbursementDetail f in detailList)
-                {
-                    
-                    int qty = (int)f.ActualQty;
-                    double unit_price =(double)f.UnitPrice;
-                    result += (qty * unit_price);
-
-                }
+                result += GetAmountByDisbursement(d);
             }
          
            
@@ -327,6 +313,20 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Disbursements.Any(d => d.Status == "inprocess");
         }
+        public double GetAmountByDisbursement(Disbursement d)
+        {
+            double result = 0;
+            List<DisbursementDetail>detailList = d.DisbursementDetails.ToList();
+            foreach (DisbursementDetail f in detailList)
+            {
+
+                int qty = (int)f.ActualQty;
+                double unit_price = (double)f.UnitPrice;
+                result += (qty * unit_price);
+            }
+            return result;
+
+        }
 
         public DisbursementDetail GetDisbursementDetailByIdAndItem(string id, string itemNum)
         {
@@ -338,5 +338,6 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements
                 .FirstOrDefault(d => d.Status == "inprocess" && d.DeptCode == deptCode);
         }
+
     }
 }

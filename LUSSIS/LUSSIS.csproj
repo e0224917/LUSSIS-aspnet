@@ -240,6 +240,7 @@
     <Compile Include="Controllers\RepAndDelegateController.cs" />
     <Compile Include="Controllers\RequisitionsController.cs" />
     <Compile Include="Controllers\StockAdjustmentController.cs" />
+    <Compile Include="Controllers\SupervisorDashboardController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Controllers\WebAPI\DelegateController.cs" />
@@ -493,6 +494,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\loader.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\moment-with-locales.js" />
@@ -596,7 +598,6 @@
     <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
     <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
-    <Content Include="Views\PurchaseOrders\SupervisorDashboard.cshtml" />
     <Content Include="Views\PurchaseOrders\ViewPendingPOList.cshtml" />
     <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
     <Content Include="Views\Shared\__ClerkMenu.cshtml" />
@@ -610,6 +611,7 @@
     <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
     <Content Include="Views\Requisitions\Index.cshtml" />
     <Content Include="Views\Suppliers\Quotation.cshtml" />
+    <Content Include="Views\SupervisorDashboard\SupervisorDashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

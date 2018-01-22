@@ -46,6 +46,7 @@ namespace LUSSIS.Repositories
             return q.AsEnumerable<Stationery>();
         }
 
+
         public IEnumerable<StationerySupplier> GetStationerySupplierBySupplierId(int? id)
         {
             var q = from t1 in LUSSISContext.Stationeries
@@ -108,5 +109,21 @@ namespace LUSSIS.Repositories
             }
             return dic;
         }
+        public List<String> GetItembyCategory(int c)
+        {  
+           
+            List<String> stList = new List<String>();
+            List<Stationery>l = LUSSISContext.Stationeries.Where(x => x.CategoryId == c).ToList();
+            foreach(Stationery a in l)
+            {
+                stList.Add(a.ItemNum);
+            }
+            return stList;
+        }
+
+
+
+
+
     }
 }

@@ -159,7 +159,7 @@ namespace LUSSIS.Controllers
                 StationerySupplierQuote.ValidateData(list);
 
                 //upload data
-                srepo.UpdateAllStationerySupplier(list);
+              //  srepo.UpdateAllStationerySupplier(list);
 
 
                 ViewBag.Success = "No error detected";
@@ -174,7 +174,7 @@ namespace LUSSIS.Controllers
         }
 
         //GET: Suppliers/QuotationTemplate (will download Excel file directly)
-        public ActionResult QuotationTemplate()
+      /*  public ActionResult QuotationTemplate()
         {
             List<StationerySupplierQuote> slist =
                 srepo.GetStationerySupplier().Select(x => new StationerySupplierQuote
@@ -189,7 +189,7 @@ namespace LUSSIS.Controllers
 
             byte[] filecontent = StationerySupplierQuote.ConvertListToByte(slist);
             return File(filecontent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "quotations.xlsx");
-        }
+        }*/
 
 
         //helper class to import/export from/to Excel
@@ -252,7 +252,7 @@ namespace LUSSIS.Controllers
                 StationeryRepository srepo = new StationeryRepository();
                 SupplierRepository repo = new SupplierRepository();
 
-                IEnumerable<StationerySupplier> originalList = srepo.GetStationerySupplier();
+               // IEnumerable<StationerySupplier> originalList = srepo.GetStationerySupplier();
                 //check that all supplier id is valid
                 if (list.Select(x => x.SupplierId).Distinct().Except(repo.GetAll().Select(x => x.SupplierId)).Count() > 0)
                     throw new Exception("Supplier Code is not valid");
