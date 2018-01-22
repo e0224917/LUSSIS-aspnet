@@ -266,7 +266,7 @@ namespace LUSSIS.Controllers
         }
 
 
-
+        [HttpGet]
         public JsonResult GetItemNum(string term)
         {
             List<string> itemList;
