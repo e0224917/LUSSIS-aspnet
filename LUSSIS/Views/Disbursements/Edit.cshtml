@@ -8,7 +8,7 @@
 <h2>Edit Disbursement</h2>
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("", "Disbursements", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
 {
     @Html.AntiForgeryToken()
     

@@ -34,6 +34,18 @@ namespace LUSSIS.Controllers
             return View(disbursement);
         }
 
+        // GET: Disbursement/EditDetailList/5&ItemNum=F021
+        public async Task<ActionResult> Acknowledge(Disbursement disbursement)
+        {
+            if (disbursement == null)
+            {
+                return HttpNotFound();
+            }
+
+            disRepo.Acknowledge(disbursement);
+            return RedirectToAction("Index");
+        }
+
         // GET: Disbursement/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
@@ -47,10 +59,10 @@ namespace LUSSIS.Controllers
                 return HttpNotFound();
             }
             ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
-            
+
             return View(disbursement);
         }
-        
+
         //POST: Disbursement/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -64,7 +76,7 @@ namespace LUSSIS.Controllers
             ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
-        
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -73,5 +85,7 @@ namespace LUSSIS.Controllers
             }
             base.Dispose(disposing);
         }
+
+        
     }
 }

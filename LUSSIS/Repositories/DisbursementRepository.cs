@@ -308,5 +308,10 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Disbursements.Any(d => d.Status == "inprocess");
         }
+
+        public DisbursementDetail GetDisbursementDetailByIdAndItem(string id, string itemNum)
+        {
+            return LUSSISContext.DisbursementDetails.FirstOrDefault(dd => (dd.DisbursementId == Convert.ToInt32(id)) && dd.ItemNum == itemNum);
+        }
     }
 }

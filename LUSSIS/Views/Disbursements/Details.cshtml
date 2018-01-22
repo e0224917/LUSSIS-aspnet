@@ -6,48 +6,54 @@
 }
 
 <h2>Disbursement for @Model.Department.DeptName</h2>
-<button type="button" class="btn btn-success">Generate QR Code</button>
-<hr />
-<div class="row">
-    <div class="card col-lg-3">
-        <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionDate)</h6>
-            <h4 class="card-title">@Html.DisplayFor(model => model.CollectionDate) @Html.DisplayFor(model => model.CollectionPoint.Time)</h4>
-            <p class="card-text"></p>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <button type="button" class="btn btn-success" >Generate QR Code</button>
+    <hr/>
+    <div class="row">
+        <div class="card col-lg-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionDate)</h6>
+                <h4 class="card-title">@Html.DisplayFor(model => model.CollectionDate) @Html.DisplayFor(model => model.CollectionPoint.Time)</h4>
+                <p class="card-text"></p>
+            </div>
         </div>
-    </div>
-    <div class="card col-lg-3">
-        <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)</h6>
-            <h4 class="card-title">@Html.DisplayFor(model => model.CollectionPoint.CollectionName)</h4>
+        <div class="card col-lg-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)</h6>
+                <h4 class="card-title">@Html.DisplayFor(model => model.CollectionPoint.CollectionName)</h4>
 
+            </div>
         </div>
-    </div>
-    <div class="card col-lg-3">
-        <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted">Representative Name</h6>
-            <h4 class="card-title">@Model.Department.RepEmployee.FullName</h4>
+        <div class="card col-lg-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Representative Name</h6>
+                <h4 class="card-title">@Model.Department.RepEmployee.FullName</h4>
 
+            </div>
         </div>
-    </div>
-    <div class="card col-lg-3">
-        <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted">Contact Number</h6>
-            <h4 class="card-title">@Model.Department.TelephoneNum</h4>
+        <div class="card col-lg-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Contact Number</h6>
+                <h4 class="card-title">@Model.Department.TelephoneNum</h4>
 
+            </div>
         </div>
+
     </div>
+    <p style="padding: 1rem; width: 100%">
+        @Html.ActionLink("Edit", "Edit", new {id = Model.DisbursementId}) |
+        @Html.ActionLink("Back to List", "Index")
 
-</div>
-<p style="padding: 1rem; width: 100%">
-@Html.ActionLink("Edit", "Edit", new { id = Model.DisbursementId }) |
-    @Html.ActionLink("Back to List", "Index")
-
-</p>
+    </p>
 
 
 
-<h4>Disbursement Details</h4>
-<hr />
-@Html.Partial("_DetailsList", Model.DisbursementDetails)
+    <h4>Disbursement Details</h4>
+    <hr/>
+    <div id="partial">
+        @Html.Partial("_DetailsList", Model.DisbursementDetails)
+    </div>
+}
 
