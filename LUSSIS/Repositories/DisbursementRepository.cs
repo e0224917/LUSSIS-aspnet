@@ -316,7 +316,7 @@ namespace LUSSIS.Repositories
         public double GetAmountByDisbursement(Disbursement d)
         {
             double result = 0;
-            List<DisbursementDetail>detailList = GetDisbursementDetails(d);
+            List<DisbursementDetail>detailList = d.DisbursementDetails.ToList();
             foreach (DisbursementDetail f in detailList)
             {
 
@@ -338,5 +338,6 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements
                 .FirstOrDefault(d => d.Status == "inprocess" && d.DeptCode == deptCode);
         }
+
     }
 }
