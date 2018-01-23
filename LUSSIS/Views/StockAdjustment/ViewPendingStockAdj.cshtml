@@ -1,151 +1,154 @@
 ﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
 
-@{
-    ViewBag.Title = "ViewPendingStockAdj";
-}
+<br />
+<h4>View Pending Stock Adjustment for @ViewBag.Message</h4>
 
-
-<style>
-    body.modal-open div.modal-backdrop {
-        z-index: 0;
+    <style>
+        body.modal-open div.modal-backdrop {
+            z-index: 0;
     }
 </style>
-<script>
-    var chkArray = [];
-    function onClickFunction() {
-        var checkBox = document.getElementById("all");
+        <script>
 
-        if (checkBox.checked == true) {
+          
+            function onClickFunction() {
+                var checkBox = document.getElementById("all");
 
-            $('.chk').attr('checked', true);
-        }
-        else {
-            $('.chk').attr('checked', false);
-        }
-    }
+                if (checkBox.checked == true) {
 
+                    $('.chk').attr('checked', true);
+                }
+                else {
+                    $('.chk').attr('checked',false);
+                }
+            }
+           
+   
+            
     function getCheckList() {
+        var chkArray = [];
+                $(".chk:checked").each(function () {
+                    chkArray.push($(this).val());
 
-        $(".chk:checked").each(function () {
-            chkArray.push($(this).val());
+                });
 
-        });
-
-        return chkArray.toString();
+            return chkArray.toString();
     }
 
 
 </script>
 
 
-<h2>ViewPendingStockAdj</h2>
+   <div class="alert alert-danger alert-dismissable fade show" id="showError" style="display:none;">Please select one checkbox</div>
+            
+            <table class="table">
+                <tr>
+                    <th>
+                        <input type="checkbox" id="all" onclick="onClickFunction()" />
+                    </th>
 
-<table class="table">
-    <tr>
-        <th>
-            <input type="checkbox" id="all" onclick="onClickFunction()" />
-        </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CreateDate)
+                    </th>
 
-        <th>
-            @Html.DisplayNameFor(model => model.CreateDate)
-        </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Stationery.Description)
+                    </th>
 
-        <th>
-            @Html.DisplayNameFor(model => model.Stationery.Description)
-        </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Quantity)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Reason)
+                    </th>
+                    <th></th>
 
-        <th>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Reason)
-        </th>
-        <th></th>
+                </tr>
 
-    </tr>
+                @foreach (var item in Model)
+        {
+            <tr>
 
-    @foreach (var item in Model)
-    {
-        <tr>
+                <td>
 
-            <td>
+                    <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" onclick="onClickFunction()" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stationery.Description)
+                </td>
 
-                <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stationery.Description)
-            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Reason)
+                </td>
+                <td></td>
+            </tr>
+}
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Reason)
-            </td>
-            <td></td>
-        </tr>
-    }
+            </table>
+            <div>
 
-</table>
-<div>
-
-    <a href="#" class="btn btn-success" onclick="ApproveReject(getCheckList())">Approve</a>
-    <a href="#" class="btn btn-danger" onclick="RejectReject(getCheckList())">Reject</a>
-</div>
-
-
-
-
-<div class="modal" id="myApproveModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="ApprovalTitle"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <a href="#" class="btn btn-success" onclick="ApproveReject(getCheckList())">Approve</a>
+                <a href="#" class="btn btn-danger" onclick="RejectReject(getCheckList())">Reject</a>
             </div>
-            <div class="modal-body" id="myApproveModalBodyDiv">
-                <p></p>
+
+
+
+
+            <div class="modal" id="myApproveModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="ApprovalTitle">Remarks for Approval</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="myApproveModalBodyDiv">
+
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
 
+          
+            <script>
 
-<script>
+                var ApproveReject = function (CheckList) {
+                    if (CheckList.length < 1) {
+                        $("#showError").show();
+                    } else {
+                        $("#showError").hide();
+                       
+                        var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=approved";
 
-    var ApproveReject = function (CheckList) {
-        if (CheckList.length < 1) {
-
-            swal("Please select one");
-
-        } else {
-            var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=Approve";
-
-            $("#myApproveModalBodyDiv").load(url, function () {
-                $("#myApproveModal").modal("show");
-            })
-        }
+                        $("#myApproveModalBodyDiv").load(url, function () {
+                            $("#myApproveModal").modal("show");
+                        })
+                    }
 
 
-    }
-    var RejectReject = function (CheckList) {
-        if (CheckList.length < 1) {
-            swal("Please select one");
-        }
-        else {
-            var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=Reject";
+                }
+                var RejectReject = function (CheckList) {
+                    if (CheckList.length < 1) {
+                        $("#showError").show();
 
-            $("#myApproveModalBodyDiv").load(url, function () {
-                $("#myApproveModal").modal("show");
-            })
-        }
+                    }
+                    else {
+                        $("#showError").hide();
+                        var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=reject";
 
-    }
-</script>
+                        $("#myApproveModalBodyDiv").load(url, function () {
+                            $("#myApproveModal").modal("show");
+                        })
+                    }
+
+                }
+            </script>

@@ -11,12 +11,46 @@ namespace LUSSIS.Repositories
     {
         public StockAdjustmentRepository() { }
 
-        public List<AdjVoucher> GetPendingAdjustmentList()
+        public List<AdjVoucher>GetPendingAdjustmentList()
         {
-            IEnumerable<AdjVoucher> list = LUSSISContext.AdjVouchers.Where(x => x.Status=="Pending").ToList<AdjVoucher>();
-            return list.ToList();
+            return GetAll().Where(x => x.Status == "pending").ToList<AdjVoucher>();
+        }
+       
+        public List<AdjVoucher> ViewPendingStockAdj(String role)
+        {
+            List<AdjVoucher> resultList = new List<AdjVoucher>();
+            List<AdjVoucher> list = GetPendingAdjustmentList();
+            List<double> priceList = new List<double>();
+            if (role.Equals("supervisor"))
+            {
+                foreach (AdjVoucher ad in list)
+                {
+                    double s = ((double)(ad.Stationery.AverageCost));
+                    int qty = (int)ad.Quantity;
+                    if ((s * qty)<=250)
+                    {
+                        resultList.Add(ad);
+                    }
 
-            
+                }
+            }
+            else if(role.Equals("manager"))
+            {
+                foreach (AdjVoucher ad in list)
+                {
+                    double s = ((double)(ad.Stationery.AverageCost));
+                    int qty = (int)ad.Quantity;
+                    if ((s * qty)>250)
+                    {
+                        resultList.Add(ad);
+                    }
+
+                }
+
+            }
+
+           
+            return resultList;
         }
 
         public int GetPendingStockAddQty()

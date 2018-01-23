@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using System.Web.Mvc;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
+using QRCoder;
 
 namespace LUSSIS.Controllers
 {
@@ -104,6 +106,16 @@ namespace LUSSIS.Controllers
             }
             return View("Details", disbursementDTO);
 
+        }
+
+        public PartialViewResult _QR(String id)
+        {
+            QRCodeGenerator qrGen = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGen.CreateQrCode(id, QRCodeGenerator.ECCLevel.Q);
+            Base64QRCode qrCode = new Base64QRCode(qrCodeData);
+            string QR = qrCode.GetGraphic(20);
+            ViewBag.generatedQrCode = QR;
+            return PartialView();
         }
 
         // GET: All Disbursements
