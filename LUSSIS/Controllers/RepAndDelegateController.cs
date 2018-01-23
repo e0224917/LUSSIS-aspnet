@@ -18,7 +18,8 @@ using LUSSIS.DAL;
 namespace LUSSIS.Controllers
 {
 
-    [Authorize(Roles = "head, staff")]
+    [CustomAuthorize("head", "staff")]
+
     public class RepAndDelegateController : Controller
     {
         EmployeeRepository employeeRepo = new EmployeeRepository();
