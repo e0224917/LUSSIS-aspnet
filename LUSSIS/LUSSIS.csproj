@@ -484,6 +484,7 @@
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
     <Content Include="Scripts\bootstrap.min.js.map" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\ISSHostDemo.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <None Include="Scripts\jquery-1.12.4.intellisense.js" />
@@ -610,7 +611,6 @@
     <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
     <Content Include="Views\PurchaseOrders\ViewPendingPOList.cshtml" />
-    <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
     <Content Include="Views\Shared\__ClerkMenu.cshtml" />
     <Content Include="Views\Shared\__DeptEmpMenu.cshtml" />
     <Content Include="Views\Shared\__DeptHeadMenu.cshtml" />
@@ -629,7 +629,6 @@
     <Content Include="Views\Requisitions\_unauthoriseAccess.cshtml" />
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
-    <Content Include="Views\Requisitions\PDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -254,10 +254,10 @@ namespace LUSSIS.Controllers
 
                // IEnumerable<StationerySupplier> originalList = srepo.GetStationerySupplier();
                 //check that all supplier id is valid
-                if (list.Select(x => x.SupplierId).Distinct().Except(repo.GetAll().Select(x => x.SupplierId)).Count() > 0)
+                if (list.Select(x => x.SupplierId).Distinct().Except(repo.GetAll().Select(x => x.SupplierId)).Any())
                     throw new Exception("Supplier Code is not valid");
                 List<string> itemlist = srepo.GetAll().Select(x => x.ItemNum).ToList();
-                if (list.Select(x => x.ItemNum).Distinct().Except(itemlist).Count() > 0 || itemlist.Except(list.Select(x => x.ItemNum).Distinct()).Count() > 0)
+                if (list.Select(x => x.ItemNum).Distinct().Except(itemlist).Any() || itemlist.Except(list.Select(x => x.ItemNum).Distinct()).Any())
                     throw new Exception("Stationery in the file does not match database");
                 List<string> itemlist2 = list.Where(x => x.Rank == 1).Select(x => x.ItemNum).Distinct().ToList();
                 if (list.Where(x => x.Rank == 1).Select(x => x.ItemNum).Distinct().Count() != (srepo.GetAll().Select(x => x.ItemNum).Count()))

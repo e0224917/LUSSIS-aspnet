@@ -97,23 +97,28 @@ namespace LUSSIS.Controllers
             Stationery emptyStationery = new Stationery();
             emptyStationery.ItemNum = "select a stationery";
             emptyStationery.Description = "select a stationery";
-            emptyStationery.UnitOfMeasure = " ";
+            emptyStationery.UnitOfMeasure = "-";
             emptyStationery.AverageCost = 0.00;
 
-            //get list of recommended for purchase stationery
-            bool hasRecommended = sr.GetOutstandingStationeryByAllSupplier().TryGetValue(supplier, out stationeries);
-            if (hasRecommended)
+
+            //get list of recommended for purchase stationery and put in purchase order details
+            var a = sr.GetOutstandingStationeryByAllSupplier();
+            foreach(KeyValuePair<Supplier,List<Stationery>> kvp in a)
             {
-                foreach (Stationery stationery in stationeries)
+                if (kvp.Key.SupplierId == supplier.SupplierId)
                 {
-                    if (stationery.CurrentQty < stationery.ReorderLevel && stationery.PrimarySupplier().SupplierId == supplierId)
+                    foreach (Stationery stationery in kvp.Value)
                     {
-                        PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
-                        pdetails.OrderQty = Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty), Convert.ToInt32(stationery.ReorderQty));
-                        pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
-                        pdetails.ItemNum = stationery.ItemNum;
-                        po.PurchaseOrderDetailsDTO.Add(pdetails);
+                        if (stationery.CurrentQty < stationery.ReorderLevel && stationery.PrimarySupplier().SupplierId == supplierId)
+                        {
+                            PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
+                            pdetails.OrderQty = Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty), Convert.ToInt32(stationery.ReorderQty));
+                            pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
+                            pdetails.ItemNum = stationery.ItemNum;
+                            po.PurchaseOrderDetailsDTO.Add(pdetails);
+                        }
                     }
+                    break;
                 }
             }
             countOfLines = Math.Max(po.PurchaseOrderDetailsDTO.Count, 1);
@@ -155,7 +160,7 @@ namespace LUSSIS.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
 
                 //create PO
@@ -183,7 +188,7 @@ namespace LUSSIS.Controllers
                         newPdetail.ReceiveQty = 0;
                         purchaseOrder.PurchaseOrderDetails.Add(newPdetail);
                     }
-                    else
+                    else if(pdetail.OrderQty < 0)
                         throw new Exception("Purchase Order was not created, ordered quantity cannot be negative");
                 }
                 if (purchaseOrder.PurchaseOrderDetails.Count == 0)
@@ -312,7 +317,7 @@ namespace LUSSIS.Controllers
             }
         }
         [Authorize(Roles = "supervisor")]
-        public async Task<ActionResult> ViewPendingPOList()
+        public ActionResult ViewPendingPOList()
         {
 
             return View(pr.GetPendingApprovalPODTO());

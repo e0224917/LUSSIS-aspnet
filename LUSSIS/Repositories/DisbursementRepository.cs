@@ -17,6 +17,7 @@ namespace LUSSIS.Repositories
     {
 
         StationeryRepository statRepo = new StationeryRepository();
+
         public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
             try
@@ -35,11 +36,13 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Disbursements.Where(d => d.Department.DeptName.Contains(deptName));
         }
+
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
             Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
             return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == d.CollectionPointId);
         }
+
         public IEnumerable<CollectionPoint> GetAllCollectionPoint()
         {
             return LUSSISContext.CollectionPoints.Include(c => c.InChargeEmployee);
@@ -49,6 +52,7 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status).ToList();
         }
+
         public IEnumerable<Disbursement> GetDisbursementByStatus(string status)
         {
             return LUSSISContext.Disbursements.Where(x => x.Status == status).ToList();
@@ -58,17 +62,21 @@ namespace LUSSIS.Repositories
         {
             return GetDisbursementByStatus("inprocess");
         }
+
         public IEnumerable<Disbursement> GetUnfulfilledDisbursements()
         {
             return GetDisbursementByStatus("unfulfilled");
         }
+
         public IEnumerable<DisbursementDetail> GetInProcessDisbursementDetails()
         {
             return GetDisbursementDetailsByStatus("inprocess");
         }
+
         public IEnumerable<DisbursementDetail> GetUnfulfilledDisDetailList()
         {
-            return LUSSISContext.DisbursementDetails.Where(d => (d.Disbursement.Status == "unfulfilled") && ((d.RequestedQty - d.ActualQty) > 0)).ToList();
+            return LUSSISContext.DisbursementDetails.Where(d =>
+                (d.Disbursement.Status == "unfulfilled") && ((d.RequestedQty - d.ActualQty) > 0)).ToList();
         }
 
         public void CreateDisbursement(DateTime collectionDate)
@@ -83,7 +91,8 @@ namespace LUSSIS.Repositories
             //group requisition requests by dept and create disbursement list based on it
             List<Requisition> approvedReq = LUSSISContext.Requisitions.Where(r => r.Status == "approved").ToList();
 
-            List<List<Requisition>> reqGroupByDep = approvedReq.GroupBy(r => r.RequisitionEmployee.DeptCode).Select(grp => grp.ToList()).ToList();
+            List<List<Requisition>> reqGroupByDep = approvedReq.GroupBy(r => r.RequisitionEmployee.DeptCode)
+                .Select(grp => grp.ToList()).ToList();
             foreach (List<Requisition> reqForOneDep in reqGroupByDep)
             {
                 Disbursement d = ConvertReqListForOneDepToDisbursement(reqForOneDep, collectionDate);
@@ -104,6 +113,7 @@ namespace LUSSIS.Repositories
                         reqDetailListForOneDep.Add(reqD);
                     }
                 }
+
                 //(1)完成
                 //(2)将reqdetofRFOP迁移整理到disdetails
                 AddReqDtoDisD(reqDetailListForOneDep, d.DisbursementDetails);
@@ -115,7 +125,8 @@ namespace LUSSIS.Repositories
 
             foreach (Disbursement ud in unfulfilledDisList)
             {
-                List<DisbursementDetail> unfDisDList = LUSSISContext.DisbursementDetails.Where(x => x.DisbursementId == ud.DisbursementId && (x.RequestedQty - x.ActualQty) > 0).ToList();
+                List<DisbursementDetail> unfDisDList = LUSSISContext.DisbursementDetails
+                    .Where(x => x.DisbursementId == ud.DisbursementId && (x.RequestedQty - x.ActualQty) > 0).ToList();
                 bool isNew = true;
                 foreach (var d in disbursements)
                 {
@@ -148,7 +159,9 @@ namespace LUSSIS.Repositories
                         tempDisD.ItemNum = unfdd.ItemNum;
                         tempDisD.UnitPrice = unfdd.UnitPrice;
                         tempDisD.RequestedQty = unfdd.RequestedQty - unfdd.ActualQty;
-                        tempDisD.ActualQty = unfdd.Stationery.AvailableQty > tempDisD.RequestedQty ? tempDisD.RequestedQty : unfdd.Stationery.AvailableQty;
+                        tempDisD.ActualQty = unfdd.Stationery.AvailableQty > tempDisD.RequestedQty
+                            ? tempDisD.RequestedQty
+                            : unfdd.Stationery.AvailableQty;
                         newD.DisbursementDetails.Add(tempDisD);
                         //更改unfdd request qty 
                         unfdd.RequestedQty = unfdd.ActualQty;
@@ -170,32 +183,57 @@ namespace LUSSIS.Repositories
                 unfd.Status = "fulfilled";
                 Update(unfd);
             }
+
             LUSSISContext.SaveChanges();
 
-            SendEmailNotificationForCollection(disbursements);
+            SendEmailNotifyCollection(disbursements);
         }
 
 
         public Disbursement UpdateAndNotify(Disbursement disbursement)
         {
             UpdateAsync(disbursement);
-            SendEmailNotificationForCollection(new List<Disbursement>{disbursement});
+            SendEmailNotifyCollection(new List<Disbursement> { disbursement });
             return disbursement;
         }
 
-        private void SendEmailNotificationForCollection(List<Disbursement> disbursements)
+        private void SendEmailNotifyCollection(List<Disbursement> disbursements)
         {
             string subject, body, destinationEmail;
-            EmailHelper helper = new EmailHelper();
+            
             foreach (var dis in disbursements)
             {
-                subject = String.Format("Stationery Collection for " + dis.Department.DeptName + " on " + ((DateTime)dis.CollectionDate).ToShortDateString() +
+                subject = String.Format("Stationery Collection for " + dis.Department.DeptName + " on " +
+                                        ((DateTime)dis.CollectionDate).ToShortDateString() +
                                         " at " + dis.CollectionPoint.CollectionName);
-                body = String.Format("We have an upcoming collection for " + dis.Department.DeptName + "\nDate: \t\t\t" + dis.CollectionDate + " " + dis.CollectionPoint.Time + "\nPickup Location: \t" + dis.CollectionPoint.CollectionName + "\nFor more details, please log in and view via LUSSIS: https://localhost:44303/Collection/Index");
+                body = String.Format("We have an upcoming collection for " + dis.Department.DeptName
+                                                                           + "\n\nDate: \t\t\t" + dis.CollectionDate +
+                                                                           " " + dis.CollectionPoint.Time
+                                                                           + "\nLocation: \t" +
+                                                                           dis.CollectionPoint.CollectionName
+                                                                           + "\n\nFor more details, please log in LUSSIS to view: https://localhost:44303/Collection/Index");
+
                 destinationEmail = "sa45team7@gmail.com";
-                helper.SendEmail(destinationEmail, subject, body);
+                EmailHelper.SendEmail(destinationEmail, subject, body);
             }
         }
+
+        private void SendEmailNotifyCollectionUpdate(Disbursement dis)
+        {
+            string subject, body, destinationEmail;
+           
+            subject = String.Format("Stationery Collection for " + dis.Department.DeptName + " on " +
+                                    ((DateTime)dis.CollectionDate).ToShortDateString() +
+                                    " has been updated");
+            body = String.Format("The upcoming collection for " + dis.Department.DeptName + " has been updated as follow: "
+                                 + "\n\nDate: \t\t\t" + dis.CollectionDate + " " + dis.CollectionPoint.Time
+                                 + "\nLocation: \t" + dis.CollectionPoint.CollectionName
+                                 + "\n\nFor more details, please log in LUSSIS to view: https://localhost:44303/Collection/Index");
+
+            destinationEmail = "sa45team7@gmail.com";
+            EmailHelper.SendEmail(destinationEmail, subject, body);
+        }
+
 
         private DisbursementDetail ConvertReDetailToDisDetail(RequisitionDetail rd)
         {
@@ -371,6 +409,5 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements
                 .FirstOrDefault(d => d.Status == "inprocess" && d.DeptCode == deptCode);
         }
-
     }
 }

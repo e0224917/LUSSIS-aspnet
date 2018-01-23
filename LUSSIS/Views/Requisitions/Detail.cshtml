@@ -46,8 +46,13 @@
 
     <table>
         <tr>
+            @if (ViewBag.Pending == "Pending")
+            {
             <td>@Html.LabelFor(model => model.ApprovalRemarks, "Your comments", htmlAttributes: new { @class = "control-label col-md-2" })</td>
-            @if (ViewBag.Message == "IsDelegateOrNoDelegate")
+            }
+            else { <td>@Html.DisplayFor(model => model.RequestRemarks)</td>  }
+
+            @if (ViewBag.Message != "Delegate" && ViewBag.Pending == "Pending")
             {
         <td></td>
         <td></td>
@@ -55,7 +60,7 @@
         </tr>
         <tr>
             <td>@Html.EditorFor(model => model.ApprovalRemarks)</td>
-            @if (ViewBag.Message == "IsDelegateOrNoDelegate")
+            @if (ViewBag.Message != "Delegate")
             {
             <td><button type="submit" name="SubmitButton" value="Approve">Approve</button></td>
             <td><button type="submit" name="SubmitButton" value="Reject">Reject</button></td>
