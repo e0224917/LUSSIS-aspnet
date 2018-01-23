@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using LUSSIS.Emails;
 using LUSSIS.Models;
@@ -40,7 +42,7 @@ namespace LUSSIS.Repositories
         }
         public IEnumerable<CollectionPoint> GetAllCollectionPoint()
         {
-            return LUSSISContext.CollectionPoints.Include(c=>c.InChargeEmployee);
+            return LUSSISContext.CollectionPoints.Include(c => c.InChargeEmployee);
         }
 
         public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
@@ -156,7 +158,7 @@ namespace LUSSIS.Repositories
                 ud.Status = "fulfilled";
             }
 
-            
+
 
             foreach (var d in disbursements)
             {
@@ -168,16 +170,31 @@ namespace LUSSIS.Repositories
                 unfd.Status = "fulfilled";
                 Update(unfd);
             }
-
             LUSSISContext.SaveChanges();
 
-            
+            SendEmailNotificationForCollection(disbursements);
+        }
+
+
+        public Disbursement UpdateAndNotify(Disbursement disbursement)
+        {
+            UpdateAsync(disbursement);
+            SendEmailNotificationForCollection(new List<Disbursement>{disbursement});
+            return disbursement;
+        }
+
+        private void SendEmailNotificationForCollection(List<Disbursement> disbursements)
+        {
+            string subject, body, destinationEmail;
+            EmailHelper helper = new EmailHelper();
             foreach (var dis in disbursements)
             {
-                //send email
-
+                subject = String.Format("Stationery Collection for " + dis.Department.DeptName + " on " + ((DateTime)dis.CollectionDate).ToShortDateString() +
+                                        " at " + dis.CollectionPoint.CollectionName);
+                body = String.Format("We have an upcoming collection for " + dis.Department.DeptName + "\nDate: \t\t\t" + dis.CollectionDate + " " + dis.CollectionPoint.Time + "\nPickup Location: \t" + dis.CollectionPoint.CollectionName + "\nFor more details, please log in and view via LUSSIS: https://localhost:44303/Collection/Index");
+                destinationEmail = "sa45team7@gmail.com";
+                helper.SendEmail(destinationEmail, subject, body);
             }
-
         }
 
         private DisbursementDetail ConvertReDetailToDisDetail(RequisitionDetail rd)
@@ -278,7 +295,7 @@ namespace LUSSIS.Repositories
             {
 
                 result += GetAmountByDisbursement(d);
-                
+
             }
 
 
@@ -288,14 +305,14 @@ namespace LUSSIS.Repositories
         {
             double result = 0;
             List<Disbursement> list = new List<Disbursement>();
-            List<DisbursementDetail> detailList=new List<DisbursementDetail>();
-            list =GetAll().Where(x => x.Status !="unprocessed" && x.DeptCode.Equals(depcode)).ToList(); 
-            foreach(Disbursement d in list)
+            List<DisbursementDetail> detailList = new List<DisbursementDetail>();
+            list = GetAll().Where(x => x.Status != "unprocessed" && x.DeptCode.Equals(depcode)).ToList();
+            foreach (Disbursement d in list)
             {
                 result += GetAmountByDisbursement(d);
             }
-         
-           
+
+
             return result;
         }
 
@@ -303,15 +320,15 @@ namespace LUSSIS.Repositories
         public void Acknowledge(Disbursement disbursement)
         {
             bool fulFilled = true;
-            foreach(var disD in disbursement.DisbursementDetails)
+            foreach (var disD in disbursement.DisbursementDetails)
             {
-                if(disD.RequestedQty > disD.ActualQty)
+                if (disD.RequestedQty > disD.ActualQty)
                 {
                     fulFilled = false;
                     break;
                 }
             }
-            if(fulFilled)
+            if (fulFilled)
             {
                 disbursement.Status = "fulfilled";
             }
@@ -332,7 +349,7 @@ namespace LUSSIS.Repositories
         public double GetAmountByDisbursement(Disbursement d)
         {
             double result = 0;
-            List<DisbursementDetail>detailList = d.DisbursementDetails.ToList();
+            List<DisbursementDetail> detailList = d.DisbursementDetails.ToList();
             foreach (DisbursementDetail f in detailList)
             {
 

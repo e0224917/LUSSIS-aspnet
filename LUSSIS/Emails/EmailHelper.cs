@@ -9,22 +9,23 @@ namespace LUSSIS.Emails
 {
     public class EmailHelper
     {
-        public string destinationEmail { get; set; }
-        public string subject { get; set; }
-        public string body { get; set; }
+        public string DestinationEmail { get; set; }
+        public string Subject { get; set; }
+        public string Body { get; set; }
 
         public EmailHelper()
         {
+            DestinationEmail = "sa45team7@gmail.com";
         }
 
         public EmailHelper(string destinationEmail, string subject, string body)
         {
-            this.destinationEmail = destinationEmail;
-            this.subject = subject;
-            this.body = body;
+            this.DestinationEmail = destinationEmail;
+            this.Subject = subject;
+            this.Body = body;
         }
 
-        public void SendEmail()
+        public void SendEmail(string destinationEmail, string subject, string body)
         {
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
             client.Credentials = new System.Net.NetworkCredential(@"sa45team7@gmail.com", "Password!123");
@@ -33,6 +34,8 @@ namespace LUSSIS.Emails
             mm.Subject = subject;
             mm.Body = body;
             client.Send(mm);
+
         }
+
     }
 }
