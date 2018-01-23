@@ -178,7 +178,11 @@ namespace LUSSIS.Controllers
             }
             if (!String.IsNullOrEmpty(searchString))
             { stationerys = strepo.GetByDescription(searchString).ToList(); }
-            else { stationerys = strepo.GetAll().ToList(); }
+            else
+            {
+                stationerys = strepo.GetAll().ToList();
+                //Response.Write("<script> alert('Not found')</script>");
+            }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
             return View(stationerys.ToPagedList(pageNumber, pageSize));
@@ -220,7 +224,7 @@ namespace LUSSIS.Controllers
             var itemNum = (List<string>)Session["itemNub"];
             var itemQty = (List<int>)Session["itemQty"];
             int reqEmp = erepo.GetCurrentUser().EmpNum;
-            string body = "Description".PadRight(20,' ')+"\t\t"+"UOM".PadRight(20, ' ') + "\t\t"+"Quantity".PadRight(20, ' ') + "\n";
+            string body = "Description".PadRight(30, ' ') + "\t\t" + "UOM".PadRight(30, ' ') + "\t\t" + "Quantity".PadRight(30, ' ') + "\n";
             DateTime reqDate = System.DateTime.Now.Date;
             string status = "pending";
             string remarks = Request["remarks"];
@@ -237,19 +241,19 @@ namespace LUSSIS.Controllers
                     RequisitionDetail requisitionDetail = new RequisitionDetail();
                     requisitionDetail.RequisitionId = requisition.RequisitionId;
                     requisitionDetail.ItemNum = itemNum[i];
-                    requisitionDetail.Quantity = itemQty[i];                   
+                    requisitionDetail.Quantity = itemQty[i];
                     reqrepo.AddRequisitionDetail(requisitionDetail);
-                    body += strepo.GetById(requisitionDetail.ItemNum).Description.PadRight(20,' ') + "\t\t" + strepo.GetById(requisitionDetail.ItemNum).UnitOfMeasure.PadRight(20,' ') + "\t\t" + requisitionDetail.Quantity.ToString().PadRight(20,' ') + "\n";
+                    body += strepo.GetById(requisitionDetail.ItemNum).Description.PadRight(30, ' ') + "\t\t" + strepo.GetById(requisitionDetail.ItemNum).UnitOfMeasure.PadRight(30, ' ') + "\t\t" + requisitionDetail.Quantity.ToString().PadRight(30, ' ') + "\n";
                 }
                 Session["itemNub"] = null;
                 Session["itemQty"] = null;
                 Session["MyCart"] = new ShoppingCart();
                 //return View();
                 //send email
-                //string destinationEmail=erepo.GetById(erepo.GetDepartmentByUser(erepo.GetCurrentUser()).DeptHeadNum.ToString()).EmailAddress;
-                string destinationEmail = "cuirunzesg@gmail.com";
-                string subject = erepo.GetCurrentUser().FullName+" requested stationeries";
-                EmailHelper emailHelper = new EmailHelper(destinationEmail, subject, body);               
+                string destinationEmail = erepo.GetById(erepo.GetDepartmentByUser(erepo.GetCurrentUser()).DeptHeadNum.ToString().ToString()).EmailAddress;
+                //string destinationEmail = "cuirunzesg@gmail.com";
+                string subject = erepo.GetCurrentUser().FullName + " requested stationeries";
+                EmailHelper emailHelper = new EmailHelper(destinationEmail, subject, body);
                 return RedirectToAction("EmpReq");
             }
             else
@@ -268,6 +272,20 @@ namespace LUSSIS.Controllers
 
             ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
             mycart.deleteCart(id);
+            return RedirectToAction("EmpCart");
+        }
+        [HttpPost]
+        public ActionResult UpdateCartItem(string id, int qty)
+        {
+
+            ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
+            foreach(Cart cart in mycart.shoppingCart)
+            {
+                if (cart.stationery.ItemNum==id)
+                {
+                    cart.quantity = qty;
+                }
+            }
             return RedirectToAction("EmpCart");
         }
         //Stock Clerk's page
