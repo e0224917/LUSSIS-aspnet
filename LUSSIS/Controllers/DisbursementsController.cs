@@ -17,12 +17,15 @@ namespace LUSSIS.Controllers
     {
         private LUSSISContext db = new LUSSISContext();
         private DisbursementRepository disRepo = new DisbursementRepository();
-        // GET: Disbursement
+
+
+        // GET: Upcoming Disbursement
         public ActionResult Index()
         {
             var disbursements = disRepo.GetInProcessDisbursements();
             return View(disbursements.ToList());
         }
+
 
         // GET: Disbursement/Details/5
         public ActionResult Details(int? id)
@@ -103,7 +106,26 @@ namespace LUSSIS.Controllers
 
         }
 
+        // GET: All Disbursements
+        public ActionResult History()
+        {
+            return View(disRepo.GetAll());
+        }
 
+        public ActionResult ViewDetails(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Disbursement d = disRepo.GetById((int) id);
+            if (d == null)
+            {
+                return HttpNotFound();
+            }
+            return View(d.DisbursementDetails);
+        }
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -113,6 +135,6 @@ namespace LUSSIS.Controllers
             base.Dispose(disposing);
         }
 
-        
+
     }
 }

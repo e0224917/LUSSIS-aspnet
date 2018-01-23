@@ -56,11 +56,17 @@ namespace LUSSIS.Repositories
                                                       && y.JobTitle == "staff").ToList();
         }
 
+        public List<Employee> GetAllStoreClerk()
+        {
+            return GetStaffByDepartmentCode("STNR").Where(x => x.JobTitle == "clerk").ToList();
+        }
+
         public List<Employee> GetSelectionByDepartment(string prefix, Department department)
         {
             List<Employee> employee = GetStaffRepByDepartment(department);
             return employee.Where(x => x.FullName.Contains(prefix)).ToList();
         }
+
 
         public List<Employee> GetDelSelectionByDepartment(string prefix, Department department)
         {
@@ -124,6 +130,8 @@ namespace LUSSIS.Repositories
             return depList;
 
         }
+
+        
         public List<String> GetDepartmentNames()
         {
             return LUSSISContext.Departments.Select(x => x.DeptName).ToList();

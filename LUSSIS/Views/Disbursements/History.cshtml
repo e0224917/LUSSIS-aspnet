@@ -1,0 +1,52 @@
+﻿@model IEnumerable<LUSSIS.Models.Disbursement>
+
+    @{
+        ViewBag.Title = "Disbursement History";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <h2>Disbursement History</h2>
+
+    <table class="table table-hover">
+        <tr>
+            <th>
+                Collection Point
+            </th>
+            <th>
+                Collection Date
+            </th>
+            <th>
+                Department
+            </th>
+
+            <th>
+                Status
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.HiddenFor(modelItem => item.AcknowledgeEmployee.Title)
+                @Html.DisplayFor(modelItem => item.CollectionPoint.CollectionName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CollectionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department.DeptName)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("View Details", "ViewDetails", new { id = item.DisbursementId })
+            </td>
+        </tr>
+        }
+
+    </table>
+  

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
@@ -34,7 +35,7 @@ namespace LUSSIS.Repositories
         }
         public IEnumerable<CollectionPoint> GetAllCollectionPoint()
         {
-            return LUSSISContext.CollectionPoints;
+            return LUSSISContext.CollectionPoints.Include(c=>c.InChargeEmployee);
         }
 
         public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)

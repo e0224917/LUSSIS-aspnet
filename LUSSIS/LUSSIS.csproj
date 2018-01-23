@@ -612,6 +612,8 @@
     <Content Include="Views\Requisitions\Index.cshtml" />
     <Content Include="Views\Suppliers\Quotation.cshtml" />
     <Content Include="Views\SupervisorDashboard\SupervisorDashboard.cshtml" />
+    <Content Include="Views\Disbursements\History.cshtml" />
+    <Content Include="Views\Disbursements\ViewDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
