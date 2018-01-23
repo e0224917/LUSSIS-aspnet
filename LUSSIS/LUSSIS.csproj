@@ -337,7 +337,7 @@
     <Compile Include="Repositories\CollectionRepository.cs" />
     <Compile Include="Repositories\DelegateRepository.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
-    <Compile Include="Repositories\EmailHelper.cs" />
+    <Compile Include="Emails\EmailHelper.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\ICollectionRepository.cs" />
     <Compile Include="Repositories\Interface\IDelegateRepository.cs" />
@@ -481,6 +481,7 @@
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
     <Content Include="Scripts\bootstrap.min.js.map" />
+    <None Include="Properties\PublishProfiles\ISSHostDemo.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <None Include="Scripts\jquery-1.12.4.intellisense.js" />
     <Content Include="Scripts\esm\popper-utils.js" />
@@ -578,7 +579,6 @@
     <Content Include="Views\Requisitions\Pending.cshtml" />
     <Content Include="Views\Requisitions\Consolidated.cshtml" />
     <Content Include="Views\StockAdjustment\CreateAdjustment.cshtml" />
-    <Content Include="Views\Shared\_LayoutEmpReq.cshtml" />
     <Content Include="Views\PurchaseOrders\Receive.cshtml" />
     <Content Include="Views\PurchaseOrders\Index.cshtml" />
     <Content Include="Views\Requisitions\_ApproveReq.cshtml" />
