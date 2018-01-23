@@ -74,10 +74,27 @@ namespace LUSSIS.Controllers
         }
 
         [CustomAuthorize("head", "staff")]
-        [HttpGet]
-        public ActionResult All()
+        public ActionResult All(string searchString, string currentFilter, int? page)
         {
-            return View(reqRepo.GetAll());
+            List<Requisition> requistions = new List<Requisition>();
+            if (searchString != null)
+            { page = 1; }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                requistions = reqRepo.GetAllRequisitionsSearch(searchString);
+            }
+            else
+            {
+                requistions = reqRepo.GetAllRequisitionsForCurrentUser();
+            }
+            int pageSize = 15;
+            int pageNumber = (page ?? 1);
+            return View(requistions.ToPagedList(pageNumber, pageSize));
         }
 
 
