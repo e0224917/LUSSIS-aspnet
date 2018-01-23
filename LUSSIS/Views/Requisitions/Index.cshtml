@@ -4,37 +4,6 @@
     ViewBag.Title = "Index";
 
 }
-<script src="~/Scripts/jquery-1.10.2.min.js"
-        type="text/javascript"></script>
-<script type="text/javascript">
-    $(function () {
-        // Document.ready -> link up remove event handler
-        $(".AddLink").click(function () {
-            // Get the id from the link
-            var stationeryToAdd = $(this).attr("data-id");
-            var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-            if (stationeryToAdd != '') {
-                // Perform the ajax post
-                $.post("/Requisitions/AddToCart", { "id": stationeryToAdd, "qty": qty },
-                    function (data) {
-                        alert("Add to cart successfully");
-                        location.reload();
-                        // Successful requests get here
-                        // Update the page elements
-                        //alert("success");
-                        //if (data.ItemCount == 0) {
-                        //    $('#row-' + data.DeleteId).fadeOut('slow');
-                        //} else {
-                        //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
-                        //}
-                        //$('#cart-total').text(data.CartTotal);
-                        //$('#update-message').text(data.Message);
-                        //$('#cart-status').text('Cart (' + data.CartCount + ')');
-                    });
-            }
-        });
-    });
-</script>
 
 <h2>Stationery</h2>
 <hr />
@@ -46,49 +15,86 @@
             <span class="d-inline nav-item nav-link">Find By Description: </span>
             @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
             <span class="d-inline nav-item nav-link"><input type="submit" placeholder="Search" class="btn btn-secondary my-2 my-sm-0" /></span>
-            
+
         }
     </div>
 </nav>
 <hr />
-<table class="table table-striped">
-    <tr>
-        <th>
-            Description
-        </th>
-        <th>
-            UOM
-        </th>
-        <th>
-            Order Quantity
-        <th>
-            Manage
-        </th>
-    </tr>
+<form action="/Requisitions/Index" method="get">
+<p>
+    <input type="submit" value="Show All Stationeries" />
+</p>
+</form>
 
-
-        @foreach (var item in Model)
-        {
+<form action="/Requisitions/Index" method="post">   
+        <table class="table table-striped">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UnitOfMeasure)
-                </td>
+                <th>
+                    Description
+                </th>
+                <th>
+                    UOM
+                </th>
+                <th>
+                    Order Quantity
+                <th>
+                    Manage
+                </th>
+            </tr>
+
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnitOfMeasure)
+                    </td>
 
                 <td>
                     <input type="number" name="qty" min="1" max="1000" step="1" value="1" id="qty-@item.ItemNum">
                 </td>
                 <td>
-                    <input type="submit" value="Add To Cart" class="AddLink" data-id="@item.ItemNum" />
+                    <input type="submit" value="Add To Cart" class="AddLink btn btn-outline-success" data-id="@item.ItemNum" />
 
-                </td>
+                    </td>
 
-            </tr>
-        }
-    </table>
+                </tr>
+            }
+        </table>
 </form>
         Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
         @Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }))
-
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            // Document.ready -> link up remove event handler
+            $(".AddLink").click(function () {
+                // Get the id from the link
+                var stationeryToAdd = $(this).attr("data-id");
+                var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
+                if (stationeryToAdd != '') {
+                    // Perform the ajax post
+                    $.post("/Requisitions/AddToCart", { "id": stationeryToAdd, "qty": qty },
+                        function (data) {
+                            alert("Add to cart successfully");
+                            location.reload();
+                            // Successful requests get here
+                            // Update the page elements
+                            //alert("success");
+                            //if (data.ItemCount == 0) {
+                            //    $('#row-' + data.DeleteId).fadeOut('slow');
+                            //} else {
+                            //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
+                            //}
+                            //$('#cart-total').text(data.CartTotal);
+                            //$('#update-message').text(data.Message);
+                            //$('#cart-status').text('Cart (' + data.CartCount + ')');
+                        });
+                }
+            });
+        });
+    </script>
+}
