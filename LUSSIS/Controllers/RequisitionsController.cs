@@ -17,6 +17,7 @@ using Microsoft.AspNet.Identity;
 
 namespace LUSSIS.Controllers
 {
+    [Authorize(Roles = "staff")]
     public class RequisitionsController : Controller
     {
 

@@ -1,4 +1,7 @@
-﻿    <div class="dropdown nav navbar-nav">
+﻿@using LUSSIS.Models.WebDTO
+@using LUSSIS.Repositories
+
+    <div class="dropdown nav navbar-nav">
         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <span>Requisition</span>
         </button>
@@ -8,10 +11,12 @@
         </ul>
     </div>
     <div class="nav navbar-nav">
-            <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptDelegate", "RepAndDelegate")"><span>My Delegate</span></a>
+        <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptDelegate", "RepAndDelegate")"><span>My Delegate</span></a>
     </div>
     <div class="nav navbar-nav">
-            <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")"><span>Department Rep</span></a>
+        <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")"><span>Department Rep</span></a>
     </div>
+
+
 
 
