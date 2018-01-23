@@ -94,12 +94,12 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Delegates.ToList();
         }
 
-        public Models.Delegate GetDelegate(Department department)
+        public Models.Delegate GetFutureDelegate(Department department, DateTime dateTime)
         {
             List<Employee> empList = GetAllByDepartment(department);
             List<Models.Delegate> delList = GetAllDelegates();
             List <Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.FirstOrDefault();
+            return allDel.Where(y => y.EndDate >= dateTime).FirstOrDefault();
         }
 
         public Models.Delegate GetDelegateByDate(Department department, DateTime dateTime)
@@ -112,7 +112,7 @@ namespace LUSSIS.Repositories
 
         public void DeleteDelegate(Department department)
         {
-            Models.Delegate del = GetDelegate(department);
+            Models.Delegate del = GetFutureDelegate(department, DateTime.Now.Date);
             LUSSISContext.Delegates.Remove(del);
             LUSSISContext.SaveChanges();
         }

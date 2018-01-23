@@ -30,7 +30,7 @@ namespace LUSSIS.Controllers
         public ActionResult Index()
         {      
             dbdto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            dbdto.GetDelegate = employeeRepo.GetDelegate(dbdto.Department);
+            dbdto.GetDelegate = employeeRepo.GetFutureDelegate(dbdto.Department, DateTime.Now.Date);
             dbdto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(dbdto.Department);
             dbdto.GetRequisitionListCount = reqRepo.GetPendingListForHead(dbdto.Department.DeptCode).Count();
             dbdto.GetDelegateByDate = employeeRepo.GetDelegateByDate(dbdto.Department, DateTime.Now.Date);
@@ -139,7 +139,7 @@ namespace LUSSIS.Controllers
         public ActionResult DeptDelegate()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            raddto.GetDelegate = employeeRepo.GetDelegate(raddto.Department);
+            raddto.GetDelegate = employeeRepo.GetFutureDelegate(raddto.Department, DateTime.Now.Date);
             return View(raddto);
         }
 
