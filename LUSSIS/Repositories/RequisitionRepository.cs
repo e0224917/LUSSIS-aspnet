@@ -130,6 +130,47 @@ namespace LUSSIS.Repositories
             return req;
         }
 
+        public List<Requisition> GetAllRequisitionsForCurrentUser()
+        {
+            string deptCode = er.GetCurrentUser().DeptCode;
+            List<Employee> elist = LUSSISContext.Employees.Where(e => e.DeptCode == deptCode).ToList();
+            List<Requisition> req = new List<Requisition>();
+            foreach (Employee ee in elist)
+            {
+                int EmpNum = ee.EmpNum;
+                List<Requisition> req1 = LUSSISContext.Requisitions.Where(r =>r.RequisitionEmpNum == EmpNum).ToList();
+                if (req1 != null)
+                {
+                    foreach (Requisition ree in req1)
+                    {
+                        req.Add(ree);
+                    }
+                }
+            }
+            return req;
+        }
+
+        public List<Requisition> GetAllRequisitionsSearch(string term)
+        {
+            string deptCode = er.GetCurrentUser().DeptCode;
+            List<Employee> elist = LUSSISContext.Employees.Where(e => e.DeptCode == deptCode).ToList();
+            List<Requisition> req = new List<Requisition>();
+            term = term.ToLower();
+            foreach (Employee ee in elist)
+            {
+                int EmpNum = ee.EmpNum;
+                List<Requisition> req1 = LUSSISContext.Requisitions.Where(r => r.RequisitionEmpNum == EmpNum && (r.Status.ToLower().Contains(term) || r.RequisitionEmployee.FirstName.ToLower().Contains(term)|| r.RequisitionEmployee.LastName.ToLower().Contains(term) || r.RequestRemarks.ToLower().Contains(term))).ToList();
+                if (req1 != null)
+                {
+                    foreach (Requisition ree in req1)
+                    {
+                        req.Add(ree);
+                    }
+                }
+            }
+            return req;
+        }
+
 
 
         public IEnumerable<RequisitionDetail> GetRequisitionDetailsByStatus(string status)
