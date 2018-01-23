@@ -261,11 +261,17 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
             if (!String.IsNullOrEmpty(searchString))
-            { stationerys = strepo.GetByDescription(searchString).ToList(); }
+            {
+                stationerys = strepo.GetByDescription(searchString).ToList();
+                if (stationerys.Count == 0)
+                {                   
+                    stationerys = strepo.GetAll().ToList();                    
+                }
+            }
             else
             {
                 stationerys = strepo.GetAll().ToList();
-                //Response.Write("<script> alert('Not found')</script>");
+               
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
@@ -334,8 +340,9 @@ namespace LUSSIS.Controllers
                 Session["MyCart"] = new ShoppingCart();
                 //return View();
                 //send email
-                string destinationEmail = erepo.GetById(erepo.GetDepartmentByUser(erepo.GetCurrentUser()).DeptHeadNum.ToString().ToString()).EmailAddress;
-                //string destinationEmail = "cuirunzesg@gmail.com";
+                //invalid email address
+                //string destinationEmail = erepo.GetById(erepo.GetDepartmentByUser(erepo.GetCurrentUser()).DeptHeadNum.ToString().ToString()).EmailAddress;
+                string destinationEmail = "cuirunzesg@gmail.com";
                 string subject = erepo.GetCurrentUser().FullName + " requested stationeries";
                 EmailHelper emailHelper = new EmailHelper(destinationEmail, subject, body);
                 return RedirectToAction("EmpReq");
@@ -363,9 +370,9 @@ namespace LUSSIS.Controllers
         {
 
             ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
-            foreach(Cart cart in mycart.shoppingCart)
+            foreach (Cart cart in mycart.shoppingCart)
             {
-                if (cart.stationery.ItemNum==id)
+                if (cart.stationery.ItemNum == id)
                 {
                     cart.quantity = qty;
                 }
