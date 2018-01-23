@@ -161,7 +161,54 @@ namespace LUSSIS.Repositories
            
         }
 
+        public void ValidateReceiveTrans(ReceiveTran receive)
+        {
+            int? totalQty = 0;
+            foreach (ReceiveTransDetail rdetail in receive.ReceiveTransDetails)
+            {
+                totalQty += rdetail.Quantity;
+                if (rdetail.Quantity < 0)
+                    throw new Exception("Record not saved, received quantity cannot be negative");
+            }
+            if (totalQty == 0)
+                throw new Exception("Record not saved, not receipt of goods found");
+        }
 
+        public void CreateReceiveTrans(ReceiveTran receive)
+        {
+            PurchaseOrder po = GetById(Convert.ToInt32(receive.PoNum));
+            bool fulfilled = true;
+            for (int i = po.PurchaseOrderDetails.Count - 1; i >= 0; i--)
+            {
+                int receiveQty = Convert.ToInt32(receive.ReceiveTransDetails.ElementAt(i).Quantity);
+                if (receiveQty > 0)
+                {
+                    //update po received qty
+                    po.PurchaseOrderDetails.ElementAt(i).ReceiveQty += receiveQty;
+                    if (po.PurchaseOrderDetails.ElementAt(i).ReceiveQty < po.PurchaseOrderDetails.ElementAt(i).OrderQty)
+                        fulfilled = false;
 
+                    //get GST rate
+                    double GST_RATE = 0.07; //=po.Gst/po.totalAmt 
+
+                    //update stationery
+                    Stationery s = sr.GetById(po.PurchaseOrderDetails.ElementAt(i).Stationery.ItemNum);
+                    s.AverageCost = ((s.AverageCost * s.CurrentQty)
+                                    + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1+GST_RATE))
+                                    / (s.CurrentQty + receiveQty);
+                    s.CurrentQty += receiveQty;
+                    s.AvailableQty += receiveQty;
+                    sr.Update(s);   //persist stationery data here
+                }
+                else if (receiveQty == 0)
+                    //keep only the receive transactions details with non-zero quantity
+                    receive.ReceiveTransDetails.Remove(receive.ReceiveTransDetails.ElementAt(i));
+            }
+
+            //update purchase order and create receive trans
+            if (fulfilled) po.Status = "fulfilled";
+            po.ReceiveTrans.Add(receive);
+            Update(po);
+        }
     }
 }

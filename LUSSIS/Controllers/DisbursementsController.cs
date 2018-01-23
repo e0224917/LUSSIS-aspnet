@@ -75,7 +75,7 @@ namespace LUSSIS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Acknowledge([Bind(Include = "DisDetailList")] DisbursementDetailDTO disbursementDTO)
+        public ActionResult Acknowledge(DisbursementDetailDTO disbursementDTO)
         {
             if (disbursementDTO == null)
             {
@@ -84,7 +84,10 @@ namespace LUSSIS.Controllers
 
             if (ModelState.IsValid)
             {
-                disRepo.Acknowledge(disbursementDTO.CurrentDisbursement);
+                //Disbursement d = disbursementDTO.CurrentDisbursement;
+                Disbursement d = disRepo.GetById(disbursementDTO.DisDetailList.First().DisbursementId);
+                d.DisbursementDetails = disbursementDTO.DisDetailList;
+                disRepo.Acknowledge(d);
                 return RedirectToAction("Index");
             }
             return View("Details", disbursementDTO);

@@ -7,34 +7,46 @@ using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Repositories;
 using LUSSIS.Models;
+using LUSSIS.Controllers;
 
 namespace LUSSIS.Controllers
 {
     [RequireHttps]
     public class HomeController : Controller
     {
+
         EmployeeRepository employeeRepo = new EmployeeRepository();
 
         public ActionResult Index()
         {
             var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
-            
-            switch(ViewBag.Message)
+            //ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
+            string justARole = employeeRepo.GetCurrentUser().JobTitle;
+            switch (justARole)
             {
+                //when staff changes job title to rep due to assignment, 
+                //need to reassign role again in aspnetdb
+                case "rep":
+                    //user.RemoveFromRole(System.Web.HttpContext.Current.User.Identity.GetUserId(), "staff");
+                    //user.AddToRole(System.Web.HttpContext.Current.User.Identity.GetUserId(), "rep");
+                    //var signInManager = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+                    return RedirectToAction("Index", "Collection");
                 case "head":
                     return RedirectToAction("Index", "RepAndDelegate");
-                case "rep":
-                    return RedirectToAction("Index", "Collection");
+                //when rep changes job title to staff because of assignment, 
+                //need to reassign role again in aspnetdb    
                 case "staff":
+                    //user.RemoveFromRole(System.Web.HttpContext.Current.User.Identity.GetUserId(), "rep");
+                    //user.AddToRole(System.Web.HttpContext.Current.User.Identity.GetUserId(), "staff");
                     return RedirectToAction("Index", "Requisitions");
                 case "manager":
-                    return RedirectToAction("SupervisorDashboard", "SupervisorDashboard");
+                    return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
                 case "supervisor":
-                    return RedirectToAction("SupervisorDashboard", "SupervisorDashboard");                    
+                    return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
                 case "clerk":
                     return RedirectToAction("Consolidated", "Requisitions");
             }
+
             return View();
         }
 

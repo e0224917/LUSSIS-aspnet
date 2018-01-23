@@ -28,7 +28,7 @@ namespace LUSSIS.Controllers
         public const double GST_RATE = 0.07;
 
         // GET: PurchaseOrders
-        public ActionResult Index(int? page=1)
+        public ActionResult Index(int? page = 1)
         {
             var purchaseOrders = pr.GetAll();
             int pageSize = 20;
@@ -133,7 +133,7 @@ namespace LUSSIS.Controllers
             StationerySupplier ss = new StationerySupplier();
             ss.ItemNum = emptyStationery.ItemNum;
             ss.Price = emptyStationery.AverageCost;
-            ss.Stationery=emptyStationery;
+            ss.Stationery = emptyStationery;
             List<StationerySupplier> sslist = new List<StationerySupplier>() { ss };
             sslist.AddRange(sr.GetStationerySupplierBySupplierId(supplierId).ToList());
             ViewBag.Stationery = sslist;
@@ -188,6 +188,8 @@ namespace LUSSIS.Controllers
                 }
                 if (purchaseOrder.PurchaseOrderDetails.Count == 0)
                     throw new Exception("Purchase Order was not created, no items found");
+                if (purchaseOrder.PurchaseOrderDetails.Count > purchaseOrder.PurchaseOrderDetails.Select(x => x.ItemNum).Distinct().Count())
+                    throw new Exception("the same stationery cannot appear in multiple lines of the PO");
 
                 //save to database
                 pr.Add(purchaseOrder);
@@ -243,52 +245,15 @@ namespace LUSSIS.Controllers
                 if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
 
-                PurchaseOrder po = pr.GetById(Convert.ToInt32(receiveModel.PoNum));
+                //set date if null
                 ReceiveTran receive = receiveModel.ConvertToReceiveTran();
                 if (receive.ReceiveDate == null) receive.ReceiveDate = DateTime.Today;
-                bool fulfilled = true;
 
-                //check for validity
-                int? totalQty = 0;
-                foreach (ReceiveTransDetail rdetail in receive.ReceiveTransDetails)
-                {
-                    totalQty += rdetail.Quantity;
-                    if (rdetail.Quantity < 0)
-                        throw new Exception("Record not saved, received quantity cannot be negative");
-                }
-                if (totalQty == 0)
-                    throw new Exception("Record not saved, not receipt of goods found");
+                //check validity
+                pr.ValidateReceiveTrans(receive);
 
-
-                //update received quantity in purchase order
-                for (int i = po.PurchaseOrderDetails.Count - 1; i >= 0; i--)
-                {
-                    int receiveQty = Convert.ToInt32(receive.ReceiveTransDetails.ElementAt(i).Quantity);
-                    if (receiveQty > 0)
-                    {
-                        //update po received qty
-                        po.PurchaseOrderDetails.ElementAt(i).ReceiveQty += receiveQty;
-                        if (po.PurchaseOrderDetails.ElementAt(i).ReceiveQty < po.PurchaseOrderDetails.ElementAt(i).OrderQty)
-                            fulfilled = false;
-
-                        //update stationery
-                        Stationery s = sr.GetById(po.PurchaseOrderDetails.ElementAt(i).Stationery.ItemNum);
-                        s.AverageCost = ((s.AverageCost * s.CurrentQty)
-                                        + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + GST_RATE))
-                                        / (s.CurrentQty + receiveQty);
-                        s.CurrentQty += receiveQty;
-                        s.AvailableQty += receiveQty;
-                        sr.Update(s);   //persist stationery data here
-                    }
-                    else if (receiveQty == 0)
-                        //keep only the receive transactions details with non-zero quantity
-                        receive.ReceiveTransDetails.Remove(receive.ReceiveTransDetails.ElementAt(i));
-                }
-
-                //update purchase order and create receive trans
-                if (fulfilled) po.Status = "fulfilled";
-                po.ReceiveTrans.Add(receive);
-                pr.Update(po);
+                //create receive trans, update PO and stationery
+                pr.CreateReceiveTrans(receive);
 
                 return RedirectToAction("Summary");
             }
@@ -378,7 +343,7 @@ namespace LUSSIS.Controllers
             }
             return PartialView();
         }
-       
+
 
 
 

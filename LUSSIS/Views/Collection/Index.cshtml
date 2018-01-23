@@ -6,7 +6,7 @@
 
 <h2>Upcoming Collection</h2>
 
-<table class="table">
+<table class="table table-hover">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.CollectionDate)
@@ -31,14 +31,14 @@
 </table>
 @if (Model == null)
 {
-    <table class="table">
-        <tr>
-            No disbursement to be collected at the moment :)
-        </tr>
-    </table>
+<table class="table table-hover">
+    <tr>
+        No disbursement to be collected at the moment.
+    </tr>
+</table>
 }
 
-<table class="table">
+<table class="table table-hover">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.DisbursementDetails.First().Stationery.Description)
@@ -80,7 +80,7 @@
 {
     <table class="table">
         <tr>
-            No records found :)
+            No records found.
         </tr>
     </table>
 }

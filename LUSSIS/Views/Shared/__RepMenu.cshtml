@@ -1,4 +1,11 @@
 ﻿@Html.Partial("__DeptEmpMenu")
-<div class="nav navbar-nav">
-    <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("SetCollection", "Collection")"><span>Collection</span></a>
+<div class="dropdown nav navbar-nav">
+    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <span>Collection</span>
+    </button>
+    <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
+        <li class="d"><a href="@Url.Action("Index", "Collection")"><span>Upcoming Collection</span></a></li>
+        <li class="dropdown-item"><a href="@Url.Action("SetCollection", "Collection")"><span>Collection Point</span></a></li>
+    </ul>
 </div>
+

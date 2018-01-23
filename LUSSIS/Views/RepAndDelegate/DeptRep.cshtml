@@ -5,11 +5,10 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <h2>Department Representative</h2>
 
-<table class="table">
+<table class="table table-hover">
     <tr>
         <th>
-            @*@Html.DisplayNameFor(model => model.Department.RepEmployee)*@
-            Your Department Representative
+            Current Department Representative
         </th>
     </tr>
     <tr>
@@ -18,27 +17,26 @@
         </td>
     </tr>
 </table>
-<table class="table">
-    <tr>
-        <th>
-            @*@Html.DisplayFor(model => model.Department.RepEmployee.FullName)*@
-            Set New Department Representative
-        </th>
-    </tr>
-</table>   
+<nav class="navbar navbar-light bg-light">
+    <div class="navbar-nav mr-auto">
+        <table class="table table-hover">
+            <tr>
+                <th>
+                    Set New Representative
+                </th>
+            </tr>
+        </table>
 
-@using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
-{
-    <input id="Emp" type="text" placeholder="Search for Employee" name="FullName" />
-    <input type="submit" value="Set New Department Rep" />
-    <input type="hidden" id="Emp2" name="RepEmp" />
-    <br />
-    <label id="tagsname" style="color:red" />
-    if (ViewBag.Message != null)
-    {
-        <span><font color="red" />@ViewBag.Message</span>
-    }
-}
+        @using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
+        {
+            <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" />
+            <input type="submit" value="Set New Department Rep" class="btn btn-success my-2 my-sm-0" />
+            <input type="hidden" id="Emp2" name="RepEmp" />
+            <br />
+            <label id="tagsname" style="color:red" />
+        }
+    </div>
+</nav>
 
 @section scripts {
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -71,13 +69,12 @@
                 select: function (event, ui) {
                     event.preventDefault();
                     $('#Emp2').val(ui.item.value);
-                    $(this).val(ui.item.label); 
+                    $(this).val(ui.item.label);
                     if (ui.item == null) {
                         $("#Emp").val('');
                         $(':input[type="submit"]').prop('disabled', true);
                     }
-                    else
-                    {
+                    else {
                         $('#tagsname').html('You selected: ' + ui.item.label);
                     }
                 },
