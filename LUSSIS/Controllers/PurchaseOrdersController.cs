@@ -312,7 +312,7 @@ namespace LUSSIS.Controllers
             }
         }
         [Authorize(Roles = "supervisor")]
-        public async Task<ActionResult> ViewPendingPOList()
+        public ActionResult ViewPendingPOList()
         {
 
             return View(pr.GetPendingApprovalPODTO());
