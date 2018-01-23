@@ -3338,13 +3338,15 @@ tbody.collapse.in {
 }
 @media (min-width: 768px) {
   .navbar-right .dropdown-menu {
+    float: right;
     right: 0;
     left: auto;
   }
-  .navbar-right .dropdown-menu-left {
-    right: auto;
-    left: 0;
-  }
+    .navbar-right .dropdown-menu-left {
+        right: auto;
+        float: right;
+        left: 0;
+    }
 }
 .btn-group,
 .btn-group-vertical {
@@ -4189,9 +4191,10 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     float: right !important;
     margin-right: -15px;
   }
-  .navbar-right ~ .navbar-right {
-    margin-right: 0;
-  }
+    .navbar-right ~ .navbar-right {
+        margin-right: 0;
+        float: right;
+    }
 }
 .navbar-default {
   background-color: #f8f8f8;
