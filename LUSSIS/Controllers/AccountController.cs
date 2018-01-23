@@ -133,6 +133,7 @@ namespace LUSSIS.Controllers
                 {
                     EmployeeRepository empRepo = new EmployeeRepository();
                     UserManager.AddToRole(user.Id, empRepo.GetJobTitleByEmail(model.Email));
+                    
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771

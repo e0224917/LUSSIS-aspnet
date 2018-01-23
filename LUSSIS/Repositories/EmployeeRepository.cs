@@ -11,6 +11,7 @@ namespace LUSSIS.Repositories
     public class EmployeeRepository : Repository<Employee, string>
     {
         DisbursementRepository disRepo = new DisbursementRepository();
+
         public Employee GetCurrentUser()
         {
             string userName = System.Web.HttpContext.Current.User.Identity.GetUserName();
@@ -79,7 +80,7 @@ namespace LUSSIS.Repositories
             department.RepEmpNum = Convert.ToInt32(repEmp);
             UpdateDepartment(department);
             department.RepEmployee.JobTitle = "rep";
-            Update(department.RepEmployee);
+            UpdateDepartment(department);
         }
         
         public List <LUSSIS.Models.Delegate> GetAllDelegates()
@@ -129,7 +130,7 @@ namespace LUSSIS.Repositories
             {
                
                 valueList.Add(disRepo.GetDisbursementByDepCode(e.DeptCode));
-
+                
             }
             return valueList;
         }

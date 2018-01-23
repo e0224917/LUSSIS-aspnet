@@ -3,13 +3,12 @@
     ViewBag.Title = "Department Delegate";
 }
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-<h2>Department Delegate</h2>
+<h2>My Delegate</h2>
 
 <table class="table table-hover">
     <tr>
         <th>
-            @*@Html.DisplayNameFor(model => model.GetDelegate.Employee)*@
-            Your Delegate
+            My Delegate
         </th>
         <th>
             From
@@ -40,7 +39,7 @@
 
 @if (Model.GetDelegate != null)
 {
-    using (Html.BeginForm("DeleteDelegate", "RepAndDelegate", FormMethod.Post))
+    using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
     {
         <input type="submit" class="btn btn-success my-2 my-sm-0" value="Revoke Delegate" />
     }
@@ -52,10 +51,10 @@
     <hr />
     <nav class="navbar navbar-light bg-light">
         <div class="navbar-nav mr-auto">
-            <table class="table">
+            <table class="table table-hover">
                 <tr>
                     <th>
-                        Set New Department Delegate
+                        Set New Delegate
                     </th>
                 </tr>
             </table>
@@ -72,7 +71,7 @@
                 <label>Search Employee:</label>
                 <br />
                 <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" />
-                <input id="Submit1" type="submit" value="Set Your New Delegate" class="btn btn-success my-2 my-sm-0" />
+                <input id="Submit1" type="submit" value="Set New Delegate" class="btn btn-success my-2 my-sm-0" />
                 <input type="hidden" id="Emp2" name="DelegateEmp" />
                 <br />
                 <label id="tagsname" style="color:red" />
@@ -188,13 +187,3 @@
         });
     </script>
 }
-
-@*<style type="text/css">
-    td {
-        width: 2%;
-    }
-
-    th {
-        width: 2%;
-    }
-</style>*@

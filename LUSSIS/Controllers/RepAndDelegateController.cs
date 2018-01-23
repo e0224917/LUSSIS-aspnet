@@ -9,6 +9,11 @@ using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Exceptions;
 using System.Globalization;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
+using System.Web.Security;
+using LUSSIS.DAL;
+
 
 namespace LUSSIS.Controllers
 {
@@ -22,7 +27,6 @@ namespace LUSSIS.Controllers
         DeptHeadDashBoardDTO dbdto = new DeptHeadDashBoardDTO();
         RequisitionRepository reqRepo = new RequisitionRepository();
 
-        
         public ActionResult Index()
         {      
             dbdto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
@@ -75,7 +79,17 @@ namespace LUSSIS.Controllers
             {
                 string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
                 Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                employeeRepo.ChangeRep(department, repEmp);       
+                string emailRepOld = department.RepEmployee.EmailAddress;
+                var context = new ApplicationDbContext();
+                var user = context.Users.FirstOrDefault(u => u.Email == emailRepOld);
+                var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                userManager.RemoveFromRole(user.Id, "rep");
+                userManager.AddToRole(user.Id, "staff");
+                employeeRepo.ChangeRep(department, repEmp);
+                string emailRepNew = department.RepEmployee.EmailAddress;
+                var user2 = context.Users.FirstOrDefault(u => u.Email == emailRepNew);
+                userManager.RemoveFromRole(user2.Id, "staff");
+                userManager.AddToRole(user2.Id, "rep");
             }
             return RedirectToAction("DeptRep");
         }
