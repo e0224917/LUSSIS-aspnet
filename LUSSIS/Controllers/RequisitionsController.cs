@@ -56,58 +56,130 @@ namespace LUSSIS.Controllers
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         [HttpGet]
-        public async Task<ActionResult> Detail(int reqId)
+        public ActionResult Detail(int reqId)
         {
-            Department meDept = empRepo.GetCurrentUser().Department;
-            Models.Delegate meDeptDelegate = empRepo.GetDelegateByDate(meDept, DateTime.Today);
-            if (meDeptDelegate != null)
+
+            if (empRepo.GetCurrentUser().JobTitle == "head")
             {
-                ViewBag.Message = "Delegate";
+                if (empRepo.CheckIfUserDepartmentHasDelegate())
+                {
+                    //If user is head and there is delegate
+                    ViewBag.Message = "Delegate";
+                }
+                else
+                {
+                    //If user is head and there is not delegate
+                    ViewBag.Message = "IsDelegateOrNoDelegate";
+                }
+            }
+            else if (empRepo.CheckIfLoggedInUserIsDelegate())
+            {
+                ViewBag.Message = "IsDelegateOrNoDelegate";
+            }
+            else
+            {//if user is staff but not delegate
+                return new HttpUnauthorizedResult();
+            }
+            //other scenario will load the req to check if it is pending or not, non pending cases will be redirected to PDetail (pastDetails)
+            var req = reqRepo.GetById(reqId);
+            if (req != null)
+            {
+                if (req.Status == "pending")
+                {
+                    return View(req);
+                }
+                else
+                {
+                    return RedirectToAction("PDetails", "Requisitions", new { id = reqId });
+                }
             }
             else
             {
-                ViewBag.Message = "NoDelegate";
+                return new HttpNotFoundResult();
             }
-            var req = await reqRepo.GetByIdAsync(reqId);
-            if (req != null)
-            {
-                return View(req);
-            }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest); ;
+
         }
+
+
+
+        //TODO: View requisition details (without approve and reject button)
+        // [employee page] GET: Requisition/Details/5
+        public ActionResult PDetail(int id)
+        {
+            if (empRepo.GetCurrentUser().JobTitle == "head")
+            {
+                if (empRepo.CheckIfUserDepartmentHasDelegate())
+                {
+                    //If user is head and there is delegate
+                    ViewBag.Message = "Delegate";
+                }
+                else
+                {
+                    //If user is head and there is no delegate
+                    ViewBag.Message = "IsDelegateOrNoDelegate";
+                }
+            }
+            else if (empRepo.CheckIfLoggedInUserIsDelegate())
+            {
+                ViewBag.Message = "IsDelegateOrNoDelegate";
+            }
+            else
+            {//if user is staff but not delegate
+                return new HttpUnauthorizedResult();
+            }
+            var req = reqRepo.GetById(id);
+            return View(req);
+        }
+
+        [HttpGet]
+        public ActionResult All()
+        {
+            return View(reqRepo.GetAll());
+        }
+
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         [HttpPost]
         public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks")] Requisition requisition, string SubmitButton)
         {
-            if (ModelState.IsValid)
+            if (requisition.Status == "pending")
             {
-
-                requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
-                requisition.ApprovalDate = DateTime.Today;
-                if (SubmitButton == "Approve")
+                if (empRepo.GetCurrentUser().JobTitle == "head" || empRepo.CheckIfLoggedInUserIsDelegate())
                 {
-                    requisition.Status = "approved";
-                    await reqRepo.UpdateAsync(requisition);
-                    return RedirectToAction("index");
-                }
+                    if (ModelState.IsValid)
+                    {
+                        requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                        requisition.ApprovalDate = DateTime.Today;
+                        if (SubmitButton == "Approve")
+                        {
+                            requisition.Status = "approved";
+                            await reqRepo.UpdateAsync(requisition);
+                            return RedirectToAction("index");
+                        }
 
-                if (SubmitButton == "Reject")
-                {
-                    requisition.Status = "reject";
-                    await reqRepo.UpdateAsync(requisition);
-                    return RedirectToAction("index");
+                        if (SubmitButton == "Reject")
+                        {
+                            requisition.Status = "reject";
+                            await reqRepo.UpdateAsync(requisition);
+                            return RedirectToAction("index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("index");
+                    }
+
                 }
             }
-            return RedirectToAction("index");
+            return new HttpUnauthorizedResult();
         }
 
-        //TODO: View requisition details (without approve and reject button)
-        // [employee page] GET: Requisition/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+
+
+
+
+
+
 
         //TODO: return create page, only showing necessary fields
         // GET: Requisition/Create

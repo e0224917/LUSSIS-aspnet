@@ -16,7 +16,7 @@
             Remarks:<textarea class="form-control" rows="3" id="remarks" name="remarks"></textarea>
         </div>
         <p>
-            <input type="submit" name="button" value="Submit Requisition" />
+            <input type="submit" name="button" class="btn btn-success" value="Submit Requisition" />
         </p>
 
     }
@@ -47,11 +47,11 @@
                     @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
                 </td>
                 <td>
-                    <input type="number" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
-                    <input type="submit" value="Update" class="UpdateLink" data-id="@item.stationery.ItemNum" />
+                    <input type="number" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum"> 
+                    <input type="submit" value="Update" class="UpdateLink btn btn-outline-warning" data-id="@item.stationery.ItemNum" />
                 </td>
                 <td>
-                    <input type="submit" value="Delete" class="RemoveLink" data-id="@item.stationery.ItemNum" />
+                    <input type="submit" value="Delete" class="RemoveLink btn btn-outline-danger" data-id="@item.stationery.ItemNum" />
                 </td>
             </tr>
             {

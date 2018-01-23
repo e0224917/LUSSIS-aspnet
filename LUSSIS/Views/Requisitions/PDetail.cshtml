@@ -1,10 +1,8 @@
 ﻿@model LUSSIS.Models.Requisition
-
-
-
 @{
-    ViewBag.Title = "Detail";
+    ViewBag.Title = "PDetails";
 }
+
 
 <h2>Requisition Detail</h2>
 
@@ -46,20 +44,8 @@
 
     <table>
         <tr>
-            <td>@Html.LabelFor(model => model.ApprovalRemarks, "Your comments", htmlAttributes: new { @class = "control-label col-md-2" })</td>
-            @if (ViewBag.Message == "IsDelegateOrNoDelegate")
-            {
-        <td></td>
-        <td></td>
-            }
-        </tr>
-        <tr>
-            <td>@Html.EditorFor(model => model.ApprovalRemarks)</td>
-            @if (ViewBag.Message == "IsDelegateOrNoDelegate")
-            {
-            <td><button type="submit" name="SubmitButton" value="Approve">Approve</button></td>
-            <td><button type="submit" name="SubmitButton" value="Reject">Reject</button></td>
-            }
+            <td> @Html.DisplayNameFor(model => model.Status)</td>
+            <td> @Html.DisplayFor(model => model.Status)</td>
         </tr>
     </table>
     <br />
@@ -75,6 +61,3 @@
 <p>
 
 </p>
-
-
-

@@ -53,11 +53,11 @@
                         @Html.DisplayFor(modelItem => item.UnitOfMeasure)
                     </td>
 
-                    <td>
-                        <input type="number" name="qty" min="1" max="1000" step="1" value="1" id="qty-@item.ItemNum">
-                    </td>
-                    <td>
-                        <input type="submit" value="Add To Cart" class="AddLink" data-id="@item.ItemNum" />
+                <td>
+                    <input type="number" name="qty" min="1" max="1000" step="1" value="1" id="qty-@item.ItemNum">
+                </td>
+                <td>
+                    <input type="submit" value="Add To Cart" class="AddLink btn btn-outline-success" data-id="@item.ItemNum" />
 
                     </td>
 

@@ -7,7 +7,7 @@
 <div class="row">
     <div class="class=" col-lg-4">
         <div class="bs-component">
-            <div class="card bg-light mb-3" style="min-height: 22em; max-width: 20rem; margin-right: 1rem">
+            <div class="card text-black border-info mb-3" style="min-height: 22em; max-width: 20rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
                     <div class="card-header"><h4 class="card-title">Pending Requisitions</h4></div>
                     <div class="card-body">
@@ -36,10 +36,11 @@
             </div>
         </div>
     </div>
-
+    @if ((Session["Roles"] as List<String>).Contains("head"))
+    {
     <div class="class=" col-lg-4">
         <div class="bs-component">
-            <div class="card bg-light mb-3" style="min-height: 22em; max-width: 35rem; margin-right: 1rem">
+            <div class="card text-black border-info mb-3" style="min-height: 22em; max-width: 35rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
                     <div class="card-header"><h4 class="card-title">My Delegate</h4></div>
                     <div class="card-body">
@@ -106,10 +107,11 @@
             </div>
         </div>
     </div>
+    }
 
     <div class="class=" col-lg-4">
         <div class="bs-component">
-            <div class="card bg-light mb-3" style="min-height: 22em; min-width: 20rem; max-width: 20rem; margin-right: 1rem">
+            <div class="card text-black border-info mb-3" style="min-height: 22em; min-width: 20rem; max-width: 20rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
                     <div class="card-header"><h4 class="card-title">Department Rep</h4></div>
                     <div class="card-body">
