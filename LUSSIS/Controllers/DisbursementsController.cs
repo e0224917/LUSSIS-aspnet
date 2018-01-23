@@ -72,7 +72,7 @@ namespace LUSSIS.Controllers
         {
             if (ModelState.IsValid)
             {
-                await disRepo.UpdateAsync(disbursement);
+                disRepo.UpdateAndNotify(disbursement);
                 return RedirectToAction("Index");
             }
             ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);

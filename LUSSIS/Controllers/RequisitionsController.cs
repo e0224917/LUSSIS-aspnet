@@ -288,6 +288,7 @@ namespace LUSSIS.Controllers
                 string destinationEmail = "cuirunzesg@gmail.com";
                 string subject = erepo.GetCurrentUser().FullName + " requested stationeries";
                 EmailHelper emailHelper = new EmailHelper(destinationEmail, subject, body);
+                emailHelper.SendEmail(destinationEmail, subject, body);
                 return RedirectToAction("EmpReq");
             }
             else
