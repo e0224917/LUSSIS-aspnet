@@ -11,10 +11,16 @@ namespace LUSSIS.Repositories
     public class EmployeeRepository : Repository<Employee, string>
     {
         DisbursementRepository disRepo = new DisbursementRepository();
+
         public Employee GetCurrentUser()
         {
             string userName = System.Web.HttpContext.Current.User.Identity.GetUserName();
             return GetEmployeeByEmail(userName);
+        }
+
+        public string GetJobTitleByEmail(string email)
+        {
+            return GetEmployeeByEmail(email).JobTitle;
         }
 
         public Employee GetEmployeeByEmail(string email)
@@ -80,7 +86,7 @@ namespace LUSSIS.Repositories
             department.RepEmpNum = Convert.ToInt32(repEmp);
             UpdateDepartment(department);
             department.RepEmployee.JobTitle = "rep";
-            Update(department.RepEmployee);
+            UpdateDepartment(department);
         }
         
         public List <LUSSIS.Models.Delegate> GetAllDelegates()
@@ -88,12 +94,12 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Delegates.ToList();
         }
 
-        public Models.Delegate GetDelegate(Department department)
+        public Models.Delegate GetFutureDelegate(Department department, DateTime dateTime)
         {
             List<Employee> empList = GetAllByDepartment(department);
             List<Models.Delegate> delList = GetAllDelegates();
             List <Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.FirstOrDefault();
+            return allDel.Where(y => y.EndDate >= dateTime).FirstOrDefault();
         }
 
         public Models.Delegate GetDelegateByDate(Department department, DateTime dateTime)
@@ -130,7 +136,7 @@ namespace LUSSIS.Repositories
 
         public void DeleteDelegate(Department department)
         {
-            Models.Delegate del = GetDelegate(department);
+            Models.Delegate del = GetFutureDelegate(department, DateTime.Now.Date);
             LUSSISContext.Delegates.Remove(del);
             LUSSISContext.SaveChanges();
         }
@@ -154,7 +160,7 @@ namespace LUSSIS.Repositories
             {
                
                 valueList.Add(disRepo.GetDisbursementByDepCode(e.DeptCode));
-
+                
             }
             return valueList;
         }
