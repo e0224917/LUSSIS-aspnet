@@ -42,7 +42,7 @@ namespace LUSSIS.Controllers
                 }
             }
             else if (empRepo.CheckIfLoggedInUserIsDelegate())
-            {                
+            {
                 ViewBag.Message = "IsDelegateOrNoDelegate";
             }
             else
@@ -91,7 +91,8 @@ namespace LUSSIS.Controllers
                     return RedirectToAction("PDetails", "Requisitions", new { id = reqId });
                 }
             }
-            else { 
+            else
+            {
                 return new HttpNotFoundResult();
             }
 
@@ -139,31 +140,42 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks")] Requisition requisition, string SubmitButton)
         {
-            if (ModelState.IsValid)
+            if (requisition.Status == "pending")
             {
-
-                requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
-                requisition.ApprovalDate = DateTime.Today;
-                if (SubmitButton == "Approve")
+                if (empRepo.GetCurrentUser().JobTitle == "head" || empRepo.CheckIfLoggedInUserIsDelegate())
                 {
-                    requisition.Status = "approved";
-                    await reqRepo.UpdateAsync(requisition);
-                    return RedirectToAction("index");
-                }
+                    if (ModelState.IsValid)
+                    {
+                        requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                        requisition.ApprovalDate = DateTime.Today;
+                        if (SubmitButton == "Approve")
+                        {
+                            requisition.Status = "approved";
+                            await reqRepo.UpdateAsync(requisition);
+                            return RedirectToAction("index");
+                        }
 
-                if (SubmitButton == "Reject")
-                {
-                    requisition.Status = "reject";
-                    await reqRepo.UpdateAsync(requisition);
-                    return RedirectToAction("index");
+                        if (SubmitButton == "Reject")
+                        {
+                            requisition.Status = "reject";
+                            await reqRepo.UpdateAsync(requisition);
+                            return RedirectToAction("index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("index");
+                    }
+
                 }
             }
-            return RedirectToAction("index");
+            return new HttpUnauthorizedResult();
         }
 
 
 
- 
+
+
 
 
 
@@ -288,27 +300,30 @@ namespace LUSSIS.Controllers
         //TODO: A method to display in process Retrieval
         public ActionResult RetrievalInProcess()
         {
-           return View(reqRepo.GetRetrievalInPorcess());
+            return View(reqRepo.GetRetrievalInPorcess());
         }
 
         [HttpGet]
         public PartialViewResult _ApproveReq(int Id, String Status)
-        {        
+        {
             ReqApproveRejectDTO reqDTO = new ReqApproveRejectDTO
             {
                 RequisitionId = Id,
                 Status = Status
             };
-            if (empRepo.GetCurrentUser().JobTitle == "head") {
+            if (empRepo.GetCurrentUser().JobTitle == "head")
+            {
                 if (empRepo.CheckIfUserDepartmentHasDelegate())
                 {
                     return PartialView("_hasDelegate");
-                }else return PartialView("_ApproveReq", reqDTO);
+                }
+                else return PartialView("_ApproveReq", reqDTO);
             }
-            else if(empRepo.CheckIfLoggedInUserIsDelegate())
+            else if (empRepo.CheckIfLoggedInUserIsDelegate())
             {
-                return PartialView("_ApproveReq", reqDTO); 
-            }else return PartialView("_unauthoriseAccess");
+                return PartialView("_ApproveReq", reqDTO);
+            }
+            else return PartialView("_unauthoriseAccess");
         }
 
         [HttpPost]
