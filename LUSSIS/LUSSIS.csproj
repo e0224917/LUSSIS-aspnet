@@ -625,6 +625,8 @@
     <Content Include="Views\Requisitions\_hasDelegate.cshtml" />
     <Content Include="Views\Requisitions\_unauthoriseAccess.cshtml" />
     <Content Include="Views\Disbursements\_QR.cshtml" />
+    <Content Include="Views\Requisitions\All.cshtml" />
+    <Content Include="Views\Requisitions\PDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
