@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using Microsoft.ApplicationInsights.WindowsServer;
@@ -169,6 +170,14 @@ namespace LUSSIS.Repositories
             }
 
             LUSSISContext.SaveChanges();
+
+            
+            foreach (var dis in disbursements)
+            {
+                //send email
+
+            }
+
         }
 
         private DisbursementDetail ConvertReDetailToDisDetail(RequisitionDetail rd)
