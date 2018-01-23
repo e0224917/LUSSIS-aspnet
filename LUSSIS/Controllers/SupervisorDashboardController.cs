@@ -15,6 +15,7 @@ using Microsoft.AspNet.Identity;
 
 namespace LUSSIS.Controllers
 {
+    [Authorize(Roles = "manager,supervisor")]
     public class SupervisorDashboardController : Controller
     {
         private PORepository pr = new PORepository();
@@ -26,7 +27,7 @@ namespace LUSSIS.Controllers
 
 
 
-        [Authorize(Roles = "manager,supervisor")]
+        
         public async Task<ActionResult> SupervisorDashboard()
         {
             var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();

@@ -15,6 +15,7 @@ using Microsoft.AspNet.Identity;
 
 namespace LUSSIS.Controllers
 {
+    [Authorize(Roles = "clerk, supervisor, manager")]
     public class StockAdjustmentController : Controller
     {
         private LUSSISContext db = new LUSSISContext();
@@ -36,6 +37,8 @@ namespace LUSSIS.Controllers
         {
             return View();
         }
+
+        [Authorize(Roles = "supervisor, manager")]
         public ActionResult Approve(int? id)
         {
             if (id == null)
@@ -54,6 +57,8 @@ namespace LUSSIS.Controllers
             ViewBag.ItemNum = new SelectList(db.Stationeries, "ItemNum", "Description", adjVoucher.ItemNum);
             return View(adjVoucher);
         }
+
+        [Authorize(Roles = "supervisor, manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Approve([Bind(Include = "AdjVoucherId,ItemNum,ApprovalEmpNum,Quantity,Reason,CreateDate,ApprovalDate,RequestEmpNum,Status,Remark")] AdjVoucher adjVoucher)
@@ -70,7 +75,7 @@ namespace LUSSIS.Controllers
             return View(adjVoucher);
         }
 
-
+        [Authorize(Roles = "supervisor, manager")]
         public ActionResult AdjustmentApproveReject()
         {
             return View(sar.GetPendingAdjustmentList());
@@ -78,6 +83,7 @@ namespace LUSSIS.Controllers
 
 
         // GET: StockAdjustment/Create
+        [Authorize(Roles = "clerk")]
         public ActionResult Create()
         {
             ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title");
@@ -89,6 +95,7 @@ namespace LUSSIS.Controllers
         // POST: StockAdjustment/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "clerk")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "AdjVoucherId,ItemNum,ApprovalEmpNum,Quantity,Reason,CreateDate,ApprovalDate,RequestEmpNum,Status,Remark")] AdjVoucher adjVoucher)
@@ -107,6 +114,7 @@ namespace LUSSIS.Controllers
         }
 
         // GET: StockAdjustment/Edit/5
+        //???? think this is autogene
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -127,6 +135,7 @@ namespace LUSSIS.Controllers
         // POST: StockAdjustment/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        //autogen?
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "AdjVoucherId,ItemNum,ApprovalEmpNum,Quantity,Reason,CreateDate,ApprovalDate,RequestEmpNum,Status,Remark")] AdjVoucher adjVoucher)
@@ -144,6 +153,7 @@ namespace LUSSIS.Controllers
         }
 
         // GET: StockAdjustment/Delete/5
+        //autogen?
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -159,6 +169,7 @@ namespace LUSSIS.Controllers
         }
 
         // POST: StockAdjustment/Delete/5
+        //???
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
@@ -177,7 +188,7 @@ namespace LUSSIS.Controllers
             }
             base.Dispose(disposing);
         }
-
+        [Authorize(Roles = "clerk")]
         [HttpGet]
         public ActionResult CreateAdjustments()
         {
@@ -190,7 +201,7 @@ namespace LUSSIS.Controllers
             aVCV.MyList = aVlist;
             return View("CreateAdjustments", aVCV);
         }
-
+        [Authorize(Roles = "clerk")]
         [HttpPost]
         public ActionResult CreateAdjustments(AdjVoucherColView kk)
         {
@@ -220,14 +231,14 @@ namespace LUSSIS.Controllers
             return View(kk);
         }
 
-
+        [Authorize(Roles = "clerk")]
         public PartialViewResult _CreateAdjustments()
         {
             return PartialView("_CreateAdjustments", new AdjustmentVoucherDTO());
 
         }
 
-
+        [Authorize(Roles = "clerk")]
         [HttpGet]
         public ActionResult CreateAdjustment(string id)
         {
@@ -243,7 +254,7 @@ namespace LUSSIS.Controllers
                 return View(adj);
             }
         }
-
+        [Authorize(Roles = "clerk")]
         [HttpPost]
         public ActionResult CreateAdjustment([Bind(Include = "Quantity,Reason,ItemNum,Sign")]AdjustmentVoucherDTO adjVoucher)
         {
@@ -268,7 +279,7 @@ namespace LUSSIS.Controllers
 
         }
 
-
+        [Authorize(Roles = "clerk")]
         [HttpGet]
         public JsonResult GetItemNum(string term)
         {
