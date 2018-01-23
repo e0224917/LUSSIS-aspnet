@@ -8,14 +8,14 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.CustomAuthority
 {
-    public class DelegateStaffCustomAuth : AuthorizeAttribute
+    public class DelegateStaffCustomAuthAttribute : AuthorizeAttribute
     {
         
         EmployeeRepository empRepo = new EmployeeRepository();
 
         private readonly string[] allowedRoles;
 
-        public DelegateStaffCustomAuth(params string[] roles)
+        public DelegateStaffCustomAuthAttribute(params string[] roles)
         {
             this.allowedRoles = roles;
         }
