@@ -10,6 +10,8 @@ using System.Web.Mvc;
 using LUSSIS.Exceptions;
 using LUSSIS.Models.WebDTO;
 using PagedList;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 
 namespace LUSSIS.Controllers
 {
@@ -25,13 +27,34 @@ namespace LUSSIS.Controllers
         // GET: Requisition
         public ActionResult Pending()
         {
-            return View(reqRepo.GetRequisitionsByStatus("pending"));
+            List<Requisition> req = reqRepo.GetPendingRequisitions();
+            Department meDept = empRepo.GetCurrentUser().Department;
+            Models.Delegate meDeptDelegate = empRepo.GetDelegateByDate(meDept, DateTime.Today);
+            if (meDeptDelegate != null)
+            {
+                ViewBag.Message = "Delegate";
+            }
+            else
+            {
+                ViewBag.Message = "NoDelegate";
+            }
+            return View(req);
         }
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         [HttpGet]
         public async Task<ActionResult> Detail(int reqId)
         {
+            Department meDept = empRepo.GetCurrentUser().Department;
+            Models.Delegate meDeptDelegate = empRepo.GetDelegateByDate(meDept, DateTime.Today);
+            if (meDeptDelegate != null)
+            {
+                ViewBag.Message = "Delegate";
+            }
+            else
+            {
+                ViewBag.Message = "NoDelegate";
+            }
             var req = await reqRepo.GetByIdAsync(reqId);
             if (req != null)
             {

@@ -66,14 +66,14 @@ namespace LUSSIS.Repositories
 
         public double GetPOAmountByPoNum(int poNum)
         {
-            List<PurchaseOrderDetail> pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.PoNum.Equals(poNum)).ToList<PurchaseOrderDetail>();
+            List<PurchaseOrderDetail> pd_list =GetPODetailsByPoNum(poNum);
             double total = 0;
             foreach (PurchaseOrderDetail pod in pd_list)
             {
-                //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
+               
 
-                int qty = (int)LUSSISContext.PurchaseOrderDetails.Select(x => x.OrderQty).ToList()[0];
-                double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
+                int qty = (int)pod.OrderQty;
+                double unit_price = (double)pod.UnitPrice;
                 total += qty * unit_price;
 
 
@@ -105,15 +105,11 @@ namespace LUSSIS.Repositories
 
             foreach (PurchaseOrder po in list)
             {
-                List<PurchaseOrderDetail> pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.PoNum.Equals(po.PoNum)).ToList<PurchaseOrderDetail>();
+                List<PurchaseOrderDetail> pd_list = GetPODetailsByPoNum(po.PoNum);
 
                 foreach (PurchaseOrderDetail pod in pd_list)
                 {
-                    //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
-                    int qty = (int)LUSSISContext.PurchaseOrderDetails.Select(x => x.OrderQty).ToList()[0];
-                    double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
-                    result += (qty * unit_price);
-
+                    result += GetPOAmountByPoNum(pod.PoNum);
                 }
 
             }
@@ -133,21 +129,19 @@ namespace LUSSIS.Repositories
             Update(p);
         }
        
-       public double GetPOAmountByCategory(int CategoryId)
+       public double GetPOAmountByCategory(int Category)
              {
             double total = 0;
             List<String> ItemList = new List<String>();
-            ItemList = sr.GetItembyCategory(CategoryId);
+            ItemList = sr.GetItembyCategory(Category);
             List<PurchaseOrderDetail> pd_list = new List<PurchaseOrderDetail>();
             foreach (String e in ItemList)
             {
               pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList<PurchaseOrderDetail>();
                 foreach (PurchaseOrderDetail pod in pd_list)
                 {
-                    //int qty = from t in LUSSISContext.PurchaseOrderDetails select t.OrderQty;
-
-                    int qty = (int)LUSSISContext.PurchaseOrderDetails.Select(x => x.OrderQty).ToList()[0];
-                    double unit_price = (double)LUSSISContext.PurchaseOrderDetails.Select(x => x.UnitPrice).ToList()[0];
+                    int qty =(int)pod.OrderQty;
+                    double unit_price =(double)pod.UnitPrice;
                     total += qty * unit_price;
 
 
@@ -158,8 +152,67 @@ namespace LUSSIS.Repositories
 
 
         }
+        public List<double> GetPOByCategory()
+        {
+            List<double> list = new List<double>();
+            List<int> Cat =LUSSISContext.Categories.Select(x=>x.CategoryId).ToList() ;
 
+            foreach(int i in Cat)
+            {
+                list.Add(GetPOAmountByCategory(i));
+            }
+            return list;
+           
+        }
 
+        public void ValidateReceiveTrans(ReceiveTran receive)
+        {
+            int? totalQty = 0;
+            foreach (ReceiveTransDetail rdetail in receive.ReceiveTransDetails)
+            {
+                totalQty += rdetail.Quantity;
+                if (rdetail.Quantity < 0)
+                    throw new Exception("Record not saved, received quantity cannot be negative");
+            }
+            if (totalQty == 0)
+                throw new Exception("Record not saved, not receipt of goods found");
+        }
 
+        public void CreateReceiveTrans(ReceiveTran receive)
+        {
+            PurchaseOrder po = GetById(Convert.ToInt32(receive.PoNum));
+            bool fulfilled = true;
+            for (int i = po.PurchaseOrderDetails.Count - 1; i >= 0; i--)
+            {
+                int receiveQty = Convert.ToInt32(receive.ReceiveTransDetails.ElementAt(i).Quantity);
+                if (receiveQty > 0)
+                {
+                    //update po received qty
+                    po.PurchaseOrderDetails.ElementAt(i).ReceiveQty += receiveQty;
+                    if (po.PurchaseOrderDetails.ElementAt(i).ReceiveQty < po.PurchaseOrderDetails.ElementAt(i).OrderQty)
+                        fulfilled = false;
+
+                    //get GST rate
+                    double GST_RATE = 0.07; //=po.Gst/po.totalAmt 
+
+                    //update stationery
+                    Stationery s = sr.GetById(po.PurchaseOrderDetails.ElementAt(i).Stationery.ItemNum);
+                    s.AverageCost = ((s.AverageCost * s.CurrentQty)
+                                    + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1+GST_RATE))
+                                    / (s.CurrentQty + receiveQty);
+                    s.CurrentQty += receiveQty;
+                    s.AvailableQty += receiveQty;
+                    sr.Update(s);   //persist stationery data here
+                }
+                else if (receiveQty == 0)
+                    //keep only the receive transactions details with non-zero quantity
+                    receive.ReceiveTransDetails.Remove(receive.ReceiveTransDetails.ElementAt(i));
+            }
+
+            //update purchase order and create receive trans
+            if (fulfilled) po.Status = "fulfilled";
+            po.ReceiveTrans.Add(receive);
+            Update(po);
+        }
     }
 }

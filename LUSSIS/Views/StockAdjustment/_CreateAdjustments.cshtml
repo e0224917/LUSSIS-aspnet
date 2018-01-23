@@ -3,12 +3,15 @@
 @{
     ViewBag.Title = "_CreateAdjustments";
 }
+
+@*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+
 <tr>
     @using (Html.BeginCollectionItem("MyList"))
     {
         <td>
             @*@Html.DropDownList("ItemNum", null, htmlAttributes: new { @class = "form-control" })*@
-            @Html.TextBoxFor(model => model.ItemNum, new { @class = "itemSearch" }) <br /><span style="font-size:0">a </span>
+            @Html.EditorFor(model => model.ItemNum, new { htmlAttributes = new { @class = "itemSearch" } }) <br /><span style="font-size:0">a </span>
             @Html.ValidationMessageFor(model => model.ItemNum, "", new { @class = "text-danger" })
         </td>
         <td>
@@ -32,50 +35,9 @@
 </tr>
 
 
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
-<script src="~/Scripts/jquery.validate.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script type="text/javascript">
     $(document).on("click", ".deleteEntry", function () {
         $(this).closest("tr").remove();
     });
 </script>
-
-<script type="text/javascript">
-    $(function () {
-        $("itemSearch").autocomplete({
-            source: '@Url.Action("GetItemNum")' 
-        })
-    })
-</script>
-
-
-
-@*<script type="text/javascript">
-    // Attach the script to all textboxes
-    $('.itemSearch').autocomplete({
-        source: function (request, response) {
-            $.ajax({
-                url: '/StockAdjustment/GetItemNum',
-                data: { term: request.term },
-                dataType: 'json',
-                type: 'GET',
-                success: function (data) {
-                    response($.map(data, function (item) {
-                        return {
-                            value
-                        }
-                    }));
-                }
-            })
-        },
-        select: function (event, ui) {
-            // Get the associated hidden input
-            var input = $(this).closest('.item').find('input');
-            // Set the value of the id property
-            input.val(ui.item.id);
-        },
-        minLength: 1
-    });
-</script>*@
 
