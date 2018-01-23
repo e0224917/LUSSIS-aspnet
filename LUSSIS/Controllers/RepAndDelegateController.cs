@@ -18,7 +18,8 @@ using LUSSIS.DAL;
 namespace LUSSIS.Controllers
 {
 
-    [Authorize(Roles = "head")]
+    [CustomAuthorize("head", "staff")]
+
     public class RepAndDelegateController : Controller
     {
         EmployeeRepository employeeRepo = new EmployeeRepository();
@@ -146,7 +147,7 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult DirectToRequisitons()
         {
-            return RedirectToAction("ApproveReq", "Requisitions");
+            return RedirectToAction("_ApproveReq", "Requisitions");
         }
 
         // GET: RepAndDelegate/Details/5

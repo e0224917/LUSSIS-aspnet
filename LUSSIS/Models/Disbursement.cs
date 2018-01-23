@@ -22,7 +22,6 @@ namespace LUSSIS.Models
         public int DisbursementId { get; set; }
 
         [Column(TypeName = "date")]
-        [DataType(DataType.Date)]
         [Display(Name="Collection Date")]
         [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
         //[CollectionDate] //validation

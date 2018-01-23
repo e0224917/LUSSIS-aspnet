@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 
 namespace LUSSIS.Controllers
 {
@@ -284,13 +286,18 @@ namespace LUSSIS.Controllers
         }
 
 
-
+        [Authorize(Roles = "manager,supervisor")]
         public ActionResult ViewPendingStockAdj()
         {
-
-            return View(sar.GetPendingAdjustmentList());
+            var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
+           
+                return View(sar.ViewPendingStockAdj(ViewBag.Message));
+            
+          
 
         }
+        [Authorize(Roles = "manager,supervisor")]
         [HttpGet]
         public ActionResult ApproveReject(String List, String Status)
         {
@@ -299,6 +306,7 @@ namespace LUSSIS.Controllers
             ViewBag.status = Status;
             return PartialView("ApproveReject");
         }
+        [Authorize(Roles = "manager,supervisor")]
         [HttpPost]
         public ActionResult ApproveReject(String checkList, String comment, String status)
         {

@@ -19,26 +19,31 @@ namespace LUSSIS.Controllers
 
         public ActionResult Index()
         {
-            var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            //var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             //ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
             string justARole = employeeRepo.GetCurrentUser().JobTitle;
             switch (justARole)
             {
-                //when staff changes job title to rep due to assignment, 
-                //need to reassign role again in aspnetdb
                 case "rep":
-                    //user.RemoveFromRole(System.Web.HttpContext.Current.User.Identity.GetUserId(), "staff");
-                    //user.AddToRole(System.Web.HttpContext.Current.User.Identity.GetUserId(), "rep");
-                    //var signInManager = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
                     return RedirectToAction("Index", "Collection");
                 case "head":
-                    return RedirectToAction("Index", "RepAndDelegate");
-                //when rep changes job title to staff because of assignment, 
-                //need to reassign role again in aspnetdb    
+                    return RedirectToAction("Index", "RepAndDelegate");   
                 case "staff":
-                    //user.RemoveFromRole(System.Web.HttpContext.Current.User.Identity.GetUserId(), "rep");
-                    //user.AddToRole(System.Web.HttpContext.Current.User.Identity.GetUserId(), "staff");
-                    return RedirectToAction("Index", "Requisitions");
+                    //if (employeeRepo.GetDelegateByDate(employeeRepo.GetCurrentUser().Department, DateTime.Now.Date) != null)
+                    //{
+                    //    if (employeeRepo.GetCurrentUser().EmpNum == employeeRepo.GetDelegateByDate(employeeRepo.GetCurrentUser().Department, DateTime.Now.Date).EmpNum)
+                    //    {
+                    //        return RedirectToAction("Index", "RepAndDelegate");
+                    //    }
+                    //    else
+                    //    {
+                    //        return RedirectToAction("Index", "Requisitions");
+                    //    }
+                    //}
+                    //else
+                    //{
+                        return RedirectToAction("Index", "Requisitions");
+                    //}
                 case "manager":
                     return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
                 case "supervisor":

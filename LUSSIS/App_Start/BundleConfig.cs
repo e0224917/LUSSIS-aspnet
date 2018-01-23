@@ -29,7 +29,9 @@ namespace LUSSIS
 
             bundles.Add(new ScriptBundle("~/bundles/datetime").Include(
                 "~/Scripts/moment*",
-                "~/Scripts/bootstrap-datetimepicker*"));
+            "~/Scripts/bootstrap-datetimepicker*"
+                
+                ));
         }
     }
 }

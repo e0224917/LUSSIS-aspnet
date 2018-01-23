@@ -161,6 +161,11 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.RequisitionDetails.Where(s => s.RequisitionId == RequisitionId);
         }
+        public void AddRequisitionDetail(RequisitionDetail requisitionDetail)
+        {
+             LUSSISContext.RequisitionDetails.Add(requisitionDetail);
+            LUSSISContext.SaveChanges();
+        }
 
         public IEnumerable<Requisition> GetPendingListForHead(string dept)
         {

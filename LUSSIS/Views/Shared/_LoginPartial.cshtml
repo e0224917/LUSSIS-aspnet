@@ -8,10 +8,10 @@
 
         <ul class="nav navbar-nav navbar-right">
 
-            @if ((Session["Roles"] as List<String>).Contains("staff") || (Session["Roles"] as List<String>).Contains("head"))
+            @if (((Session["Roles"] as List<String>).Contains("staff") || (Session["Roles"] as List<String>).Contains("rep")))
             {
                 <li class="nav-item">
-                    @Html.ActionLink("My Cart (" + (Session["MyCart"] as ShoppingCart).GetCartItemCount() + ")", "EmpCart", "Requisition", null, new { title = "Current Request", @class = "nav-link" })
+                    @Html.ActionLink("My Cart (" + (Session["MyCart"] as ShoppingCart).GetCartItemCount() + ")", "EmpCart", "Requisitions", null, new { title = "Current Request", @class = "nav-link" })
                 </li>
             }
             <li class="nav-item">

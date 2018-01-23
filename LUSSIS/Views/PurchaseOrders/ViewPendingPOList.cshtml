@@ -1,15 +1,13 @@
 ﻿@model IEnumerable<LUSSIS.Models.WebDTO.PendingPurchaseOrderDTO>
-@{
-    ViewBag.Title = "ViewPendingPOList";
-}
-@Scripts.Render("")
+
+
 <style>
     body.modal-open div.modal-backdrop {
         z-index: 0;
     }
 </style>
-
-<h2>ViewPendingPOList</h2>
+<br />
+<h4>View Pending PO List</h4>
 
 <script>
 
@@ -38,7 +36,7 @@
 </script>
 
 
-
+<div class="alert alert-danger alert-dismissable fade show" id="showError" style="display:none;">Please select one checkbox</div>
 <table class="table">
     <tr>
         <th>
@@ -120,9 +118,10 @@
 
     var ApproveReject = function (CheckList) {
         if (CheckList < 1) {
-            swal("Please select one");
+            $("#showError").show();
         }
         else {
+            $("#showError").hide();
             var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Approve";
 
             $("#myApproveModalBodyDiv").load(url, function () {
@@ -133,9 +132,10 @@
     }
     var RejectReject = function (CheckList) {
         if (CheckList.length < 1) {
-            swal("Please select one");
+            $("#showError").show();
         }
         else {
+            $("#showError").hide();
             var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Reject";
 
             $("#myApproveModalBodyDiv").load(url, function () {
