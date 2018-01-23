@@ -86,7 +86,16 @@ namespace LUSSIS.Controllers
             {
                 //Disbursement d = disbursementDTO.CurrentDisbursement;
                 Disbursement d = disRepo.GetById(disbursementDTO.DisDetailList.First().DisbursementId);
-                d.DisbursementDetails = disbursementDTO.DisDetailList;
+                foreach (var dd in d.DisbursementDetails)
+                {
+                    foreach (var ddEdited in disbursementDTO.DisDetailList)
+                    {
+                        if (dd.ItemNum == ddEdited.ItemNum)
+                        {
+                            dd.ActualQty = ddEdited.ActualQty;
+                        }
+                    }
+                }
                 disRepo.Acknowledge(d);
                 return RedirectToAction("Index");
             }

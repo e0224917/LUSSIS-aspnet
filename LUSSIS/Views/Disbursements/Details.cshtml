@@ -74,8 +74,6 @@
         @for(int i = 0; i < Model.DisDetailList.Count; i++)
         {
 
-            //using (Html.BeginCollectionItem("DisDetailList"))
-            //{
             @Html.HiddenFor(modelItem => Model.DisDetailList[i].DisbursementId)
             @Html.HiddenFor(modelItem => Model.DisDetailList[i].ItemNum)
             @Html.HiddenFor(modelItem => Model.DisDetailList[i].UnitPrice)
@@ -88,7 +86,7 @@
                     @Html.HiddenFor(modelItem=>Model.DisDetailList[i].RequestedQty)
                 </td>
                 <td>
-                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { @value = Model.DisDetailList[i].ActualQty })
+                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @value = Model.DisDetailList[i].ActualQty, @min = "0", @max = @Model.DisDetailList[i].RequestedQty} })
                     @Html.ValidationMessageFor(model => Model.DisDetailList[i].ActualQty, "", new { @class = "text-danger" })
 
                 </td>

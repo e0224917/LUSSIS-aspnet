@@ -2,6 +2,7 @@
 using LUSSIS.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -184,7 +185,7 @@ namespace LUSSIS.Controllers
             return View(new RetrievalItemsWithDateDTO
             {
                 retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
-                collectionDate = DateTime.Today,
+                collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
                 hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
             });
         }
@@ -198,18 +199,15 @@ namespace LUSSIS.Controllers
 
             if (ModelState.IsValid)
             {
-                reqRepo.ArrangeRetrievalAndDisbursement(listWithDate.collectionDate);
-                //call arrange disbursement
-                //pass the view to another action: RetrievalInProcess, and display
-                //that action needs to have a button to confirm retrieval is done
-                //during this processs, not disbursement can be arranged
+                DateTime selectedDate = DateTime.ParseExact(listWithDate.collectionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                reqRepo.ArrangeRetrievalAndDisbursement(selectedDate);
                 return RedirectToAction("RetrievalInProcess");
             }
 
             return View("Consolidated", new RetrievalItemsWithDateDTO
             {
                 retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
-                collectionDate = DateTime.Today,
+                collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
                 hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
             });
         }
