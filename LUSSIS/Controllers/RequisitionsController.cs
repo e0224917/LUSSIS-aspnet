@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using LUSSIS.Exceptions;
 using LUSSIS.Models.WebDTO;
 using PagedList;
+using LUSSIS.Emails;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
 
@@ -165,7 +166,7 @@ namespace LUSSIS.Controllers
         private StationeryRepository strepo = new StationeryRepository();
         private EmployeeRepository erepo = new EmployeeRepository();
         // GET: DeptEmpReqs
-        
+
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
             List<Stationery> stationerys = strepo.GetAll().ToList<Stationery>();
@@ -199,12 +200,12 @@ namespace LUSSIS.Controllers
         //    return View(reqRepo.GetRequisitionByEmpNum(EmpNum));
         //}
         public ActionResult EmpReq(string currentFilter, int? page)
-        {           
-            int id=erepo.GetCurrentUser().EmpNum;
-            List<Requisition> reqlist = reqrepo.GetRequisitionByEmpNum(id).OrderByDescending(s=>s.RequisitionDate).OrderByDescending(s=>s.RequisitionId).ToList();
+        {
+            int id = erepo.GetCurrentUser().EmpNum;
+            List<Requisition> reqlist = reqrepo.GetRequisitionByEmpNum(id).OrderByDescending(s => s.RequisitionDate).OrderByDescending(s => s.RequisitionId).ToList();
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(reqlist.ToPagedList(pageNumber,pageSize));
+            return View(reqlist.ToPagedList(pageNumber, pageSize));
         }
         // GET: Requisitions/EmpReqDetail/5
         [HttpGet]
@@ -216,9 +217,10 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult SubmitReq()
         {
-            var itemNum = (List<string> )Session["itemNub"];
+            var itemNum = (List<string>)Session["itemNub"];
             var itemQty = (List<int>)Session["itemQty"];
             int reqEmp = erepo.GetCurrentUser().EmpNum;
+            string body = "Description".PadRight(20,' ')+"\t\t"+"UOM".PadRight(20, ' ') + "\t\t"+"Quantity".PadRight(20, ' ') + "\n";
             DateTime reqDate = System.DateTime.Now.Date;
             string status = "pending";
             string remarks = Request["remarks"];
@@ -229,19 +231,25 @@ namespace LUSSIS.Controllers
                 requisition.RequisitionDate = reqDate;
                 requisition.RequisitionEmpNum = reqEmp;
                 requisition.Status = status;
-                reqrepo.Add(requisition);               
+                reqrepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
                 {
                     RequisitionDetail requisitionDetail = new RequisitionDetail();
                     requisitionDetail.RequisitionId = requisition.RequisitionId;
-                    requisitionDetail.ItemNum = itemNum[i];                  
-                    requisitionDetail.Quantity = itemQty[i];
+                    requisitionDetail.ItemNum = itemNum[i];
+                    requisitionDetail.Quantity = itemQty[i];                   
                     reqrepo.AddRequisitionDetail(requisitionDetail);
+                    body += strepo.GetById(requisitionDetail.ItemNum).Description.PadRight(20,' ') + "\t\t" + strepo.GetById(requisitionDetail.ItemNum).UnitOfMeasure.PadRight(20,' ') + "\t\t" + requisitionDetail.Quantity.ToString().PadRight(20,' ') + "\n";
                 }
                 Session["itemNub"] = null;
                 Session["itemQty"] = null;
                 Session["MyCart"] = new ShoppingCart();
                 //return View();
+                //send email
+                //string destinationEmail=erepo.GetById(erepo.GetDepartmentByUser(erepo.GetCurrentUser()).DeptHeadNum.ToString()).EmailAddress;
+                string destinationEmail = "cuirunzesg@gmail.com";
+                string subject = erepo.GetCurrentUser().FullName+" requested stationeries";
+                EmailHelper emailHelper = new EmailHelper(destinationEmail, subject, body);               
                 return RedirectToAction("EmpReq");
             }
             else
@@ -302,7 +310,7 @@ namespace LUSSIS.Controllers
         //TODO: A method to display in process Retrieval
         public ActionResult RetrievalInProcess()
         {
-           return View(reqRepo.GetRetrievalInPorcess());
+            return View(reqRepo.GetRetrievalInPorcess());
         }
 
         [HttpGet]
@@ -329,5 +337,8 @@ namespace LUSSIS.Controllers
             }
             return PartialView(RADTO);
         }
+
+
+
     }
 }
