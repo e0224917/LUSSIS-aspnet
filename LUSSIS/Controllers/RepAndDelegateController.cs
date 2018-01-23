@@ -13,7 +13,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
 using System.Web.Security;
 using LUSSIS.DAL;
-
+using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {

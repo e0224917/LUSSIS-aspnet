@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace LUSSIS.Controllers
+namespace LUSSIS.CustomAuthority
 {
     public class CustomAuthorizeAttribute : AuthorizeAttribute
     {

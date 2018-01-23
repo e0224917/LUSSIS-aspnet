@@ -14,6 +14,7 @@ using PagedList;
 using LUSSIS.Emails;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
+using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
