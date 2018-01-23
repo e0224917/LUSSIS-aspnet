@@ -20,38 +20,40 @@
         <th>
             @Html.DisplayName("View")
         </th>
+        @if (ViewBag.Message != "Delegate")
+        {
         <th>
-            @if (ViewBag.Message == "IsDelegateOrNoDelegate")
-            {
-                @Html.DisplayName("Manage")}
+            @Html.DisplayName("Manage")}
         </th>
+        }
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequisitionDate, "Requisition Date")
-                @Html.HiddenFor(modelItem => item.RequisitionId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName, "Employee")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
-            </td>
-            <td>
-                @Html.ActionLink("Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, null)
-            </td>
-            <td>
-                @if (ViewBag.Message == "NoDelegate")
-                {
-                    <a href="#" class="btn btn-success" onclick="ApproveReq(@item.RequisitionId)">Approve</a>
-                    <a href="#" class="btn btn-danger" onclick="RejectReq(@item.RequisitionId)">Reject</a>
-                }
-            </td>
-        </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequisitionDate, "Requisition Date")
+            @Html.HiddenFor(modelItem => item.RequisitionId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName, "Employee")
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
+        </td>
+        <td>
+            @Html.ActionLink("Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, null)
+        </td>
+        @if (ViewBag.Message != "Delegate")
+        {
+        <td>
+            <a href="#" class="btn btn-success" onclick="ApproveReq(@item.RequisitionId)">Approve</a>
+            <a href="#" class="btn btn-danger" onclick="RejectReq(@item.RequisitionId)">Reject</a>
+            
+        </td>
+        }
+    </tr>
     }
 
 </table>

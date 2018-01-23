@@ -104,7 +104,7 @@
                         <td>@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { @class = "line_qty" })</td>
                         <td>@Html.DropDownList("unit_of_measure", new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.UnitOfMeasure", itemNum), new { @class = "unit_of_measure", @disabled = true })</td>
                         <td>
-                            @Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new SelectList(ViewBag.Stationery, "Price", "Price"), new { @class = "unit_price", @disabled = true })
+                            @Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new SelectList(ViewBag.Stationery, "Price", "Price"), new { @class = "unit_price" , @disabled=true})
                             @Html.HiddenFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice,new { @class="hide_unit_price"})
                         </td>
                         <td><input type="text" class="line_price" value="0.00" disabled></td>
@@ -193,16 +193,20 @@
 
     //initialise class and attributes
     $(document).ready(function () {
+        for (var i = 0; i < cindex; i++) {
+            var showId = '#id' + i;
+            $(showId).find('.unit_price').prop('selectedIndex', i + 1);
+        }
         for (var i = cindex; i < 100; i++) {
             var hideId = '#id' + i;
             $(hideId).attr('hidden', true);
         }
         for (var i = 0; i < 100; i++) {
             var lineQtyId = '#PurchaseOrderDetailsDTO_' + i + '__OrderQty';
-            $(lineQtyId).addClass('line_qty')
+            $(lineQtyId).addClass('line_qty');
         }
         $('#GstAmt').prop('disabled','disabled');
-        $('#TotalPoAmt').prop('disabled','disabled');
+        $('#TotalPoAmt').prop('disabled', 'disabled');
         calculateAll();
     });
 

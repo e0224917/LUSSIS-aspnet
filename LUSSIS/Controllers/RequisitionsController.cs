@@ -27,6 +27,7 @@ namespace LUSSIS.Controllers
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
+        [CustomAuthorize("head", "staff")]
         public ActionResult Pending()
         {
             List<Requisition> req = reqRepo.GetPendingRequisitions();
@@ -37,24 +38,12 @@ namespace LUSSIS.Controllers
                     //If user is head and there is delegate
                     ViewBag.Message = "Delegate";
                 }
-                else
-                {
-                    //If user is head and there is not delegate
-                    ViewBag.Message = "IsDelegateOrNoDelegate";
-                }
-            }
-            else if (empRepo.CheckIfLoggedInUserIsDelegate())
-            {
-                ViewBag.Message = "IsDelegateOrNoDelegate";
-            }
-            else
-            {
-                return new HttpUnauthorizedResult();
             }
             return View(req);
         }
 
         //TODO: Add authroization - DepartmentHead or Delegate only
+        [CustomAuthorize("head", "staff")]
         [HttpGet]
         public ActionResult Detail(int reqId)
         {
@@ -66,32 +55,15 @@ namespace LUSSIS.Controllers
                     //If user is head and there is delegate
                     ViewBag.Message = "Delegate";
                 }
-                else
-                {
-                    //If user is head and there is not delegate
-                    ViewBag.Message = "IsDelegateOrNoDelegate";
-                }
             }
-            else if (empRepo.CheckIfLoggedInUserIsDelegate())
-            {
-                ViewBag.Message = "IsDelegateOrNoDelegate";
-            }
-            else
-            {//if user is staff but not delegate
-                return new HttpUnauthorizedResult();
-            }
-            //other scenario will load the req to check if it is pending or not, non pending cases will be redirected to PDetail (pastDetails)
             var req = reqRepo.GetById(reqId);
             if (req != null)
             {
                 if (req.Status == "pending")
                 {
-                    return View(req);
+                    ViewBag.Pending = "Pending";
                 }
-                else
-                {
-                    return RedirectToAction("PDetails", "Requisitions", new { id = reqId });
-                }
+                return View(req);
             }
             else
             {
@@ -100,37 +72,7 @@ namespace LUSSIS.Controllers
 
         }
 
-
-
-        //TODO: View requisition details (without approve and reject button)
-        // [employee page] GET: Requisition/Details/5
-        public ActionResult PDetail(int id)
-        {
-            if (empRepo.GetCurrentUser().JobTitle == "head")
-            {
-                if (empRepo.CheckIfUserDepartmentHasDelegate())
-                {
-                    //If user is head and there is delegate
-                    ViewBag.Message = "Delegate";
-                }
-                else
-                {
-                    //If user is head and there is no delegate
-                    ViewBag.Message = "IsDelegateOrNoDelegate";
-                }
-            }
-            else if (empRepo.CheckIfLoggedInUserIsDelegate())
-            {
-                ViewBag.Message = "IsDelegateOrNoDelegate";
-            }
-            else
-            {//if user is staff but not delegate
-                return new HttpUnauthorizedResult();
-            }
-            var req = reqRepo.GetById(id);
-            return View(req);
-        }
-
+        [CustomAuthorize("head", "staff")]
         [HttpGet]
         public ActionResult All()
         {
@@ -139,13 +81,14 @@ namespace LUSSIS.Controllers
 
 
         //TODO: Add authroization - DepartmentHead or Delegate only
+        [CustomAuthorize("head", "staff")]
         [HttpPost]
         public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks")] Requisition requisition, string SubmitButton)
         {
             if (requisition.Status == "pending")
-            {
-                if (empRepo.GetCurrentUser().JobTitle == "head" || empRepo.CheckIfLoggedInUserIsDelegate())
-                {
+            {//requisition must be pending for any approval and reject
+                if ((empRepo.GetCurrentUser().JobTitle == "head" && !empRepo.CheckIfUserDepartmentHasDelegate()) || empRepo.CheckIfLoggedInUserIsDelegate())
+                {//if (user is head and there is no delegate) or (user is currently delegate)
                     if (ModelState.IsValid)
                     {
                         requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
@@ -264,14 +207,14 @@ namespace LUSSIS.Controllers
             {
                 stationerys = strepo.GetByDescription(searchString).ToList();
                 if (stationerys.Count == 0)
-                {                   
-                    stationerys = strepo.GetAll().ToList();                    
+                {
+                    stationerys = strepo.GetAll().ToList();
                 }
             }
             else
             {
                 stationerys = strepo.GetAll().ToList();
-               
+
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
@@ -419,6 +362,7 @@ namespace LUSSIS.Controllers
             return View(reqRepo.GetRetrievalInPorcess());
         }
 
+        [CustomAuthorize("head", "staff")]
         [HttpGet]
         public PartialViewResult _ApproveReq(int Id, String Status)
         {
@@ -427,38 +371,39 @@ namespace LUSSIS.Controllers
                 RequisitionId = Id,
                 Status = Status
             };
-            if (empRepo.GetCurrentUser().JobTitle == "head")
-            {
-                if (empRepo.CheckIfUserDepartmentHasDelegate())
-                {
-                    return PartialView("_hasDelegate");
-                }
-                else return PartialView("_ApproveReq", reqDTO);
-            }
-            else if (empRepo.CheckIfLoggedInUserIsDelegate())
+            if ((empRepo.GetCurrentUser().JobTitle == "head" && !empRepo.CheckIfUserDepartmentHasDelegate()) || empRepo.CheckIfLoggedInUserIsDelegate())
             {
                 return PartialView("_ApproveReq", reqDTO);
             }
-            else return PartialView("_unauthoriseAccess");
+            else { return PartialView("_hasDelegate"); }
         }
 
+
+        [CustomAuthorize("head", "staff")]
         [HttpPost]
         public PartialViewResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]ReqApproveRejectDTO RADTO)
         {
-            if (ModelState.IsValid)
-            {
-                Requisition req = reqRepo.GetById(RADTO.RequisitionId);
-                req.Status = RADTO.Status;
-                req.ApprovalRemarks = RADTO.ApprovalRemarks;
-                req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
-                req.ApprovalDate = DateTime.Today;
-                reqRepo.Update(req);
-                return PartialView();
+
+            Requisition req = reqRepo.GetById(RADTO.RequisitionId);
+            if (req.Status == "pending")
+            {//must be pending for approval and reject
+                if ((empRepo.GetCurrentUser().JobTitle == "head" && !empRepo.CheckIfUserDepartmentHasDelegate()) || empRepo.CheckIfLoggedInUserIsDelegate())
+                {//if (user is head and there is no delegate) or (user is currently delegate)
+                    if (ModelState.IsValid)
+                    {
+                        req.Status = RADTO.Status;
+                        req.ApprovalRemarks = RADTO.ApprovalRemarks;
+                        req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                        req.ApprovalDate = DateTime.Today;
+                        reqRepo.Update(req);
+                        return PartialView();
+                    }
+                    else { return PartialView(RADTO); } //invalid modelstate
+
+                }
+                else { return PartialView("_hasDelegate"); } //user is head and there is delegate case 
             }
-            return PartialView(RADTO);
+            return PartialView("_unuthoriseAccess"); //cannot edit a non pending requisition
         }
-
-
-
     }
 }
