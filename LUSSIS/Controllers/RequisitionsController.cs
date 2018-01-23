@@ -14,6 +14,7 @@ using PagedList;
 using LUSSIS.Emails;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
+using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
@@ -144,6 +145,8 @@ namespace LUSSIS.Controllers
 
         //TODO: return create page, only showing necessary fields
         // GET: Requisition/Create
+        //???
+        [DelegateStaffCustomAuth("staff")]
         public ActionResult Create()
         {
             return View();
@@ -151,6 +154,7 @@ namespace LUSSIS.Controllers
 
         // TODO: 1. create new requisition, 2. it's status set to pending, 3. send notification to departmenthead
         // [employee page] POST: Requisition/Create
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
@@ -166,6 +170,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only implement once main project is done. Enable editing if status is pending
         // [employee page]  GET: Requisition/Edit/5
+        [DelegateStaffCustomAuth("staff")]
         public ActionResult Edit(int id)
         {
             return View();
@@ -173,6 +178,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only enable editing if status is pending
         // [employee page]  POST: Requisition/Edit/5
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -194,6 +200,7 @@ namespace LUSSIS.Controllers
 
         // POST: Requisition/Delete/5
         [HttpPost]
+        [Authorize(Roles = "clerk")]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
@@ -212,6 +219,9 @@ namespace LUSSIS.Controllers
         private EmployeeRepository erepo = new EmployeeRepository();
         // GET: DeptEmpReqs
 
+
+        //StoreClerk??
+        [Authorize(Roles = "clerk")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
             List<Stationery> stationerys = strepo.GetAll().ToList<Stationery>();
@@ -240,6 +250,7 @@ namespace LUSSIS.Controllers
         }
 
         // /Requisitions/AddToCart
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
@@ -254,6 +265,7 @@ namespace LUSSIS.Controllers
         //{
         //    return View(reqRepo.GetRequisitionByEmpNum(EmpNum));
         //}
+        [DelegateStaffCustomAuth("staff")]
         public ActionResult EmpReq(string currentFilter, int? page)
         {
             int id = erepo.GetCurrentUser().EmpNum;
@@ -263,12 +275,14 @@ namespace LUSSIS.Controllers
             return View(reqlist.ToPagedList(pageNumber, pageSize));
         }
         // GET: Requisitions/EmpReqDetail/5
+        [DelegateStaffCustomAuth("staff")]
         [HttpGet]
         public ActionResult EmpReqDetail(int id)
         {
             List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult SubmitReq()
         {
@@ -313,11 +327,15 @@ namespace LUSSIS.Controllers
                 return RedirectToAction("EmpCart");
             }
         }
+
+        [DelegateStaffCustomAuth("staff")]
         public ActionResult EmpCart()
         {
             ShoppingCart mycart = (ShoppingCart)Session["MyCart"];
             return View(mycart.GetAllCartItem());
         }
+
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult DeleteCartItem(string id, int qty)
         {
@@ -326,6 +344,8 @@ namespace LUSSIS.Controllers
             mycart.deleteCart(id);
             return RedirectToAction("EmpCart");
         }
+
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult UpdateCartItem(string id, int qty)
         {
@@ -341,6 +361,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("EmpCart");
         }
         //Stock Clerk's page
+        [Authorize(Roles = "clerk")]
         public ActionResult Consolidated()
         {
 
@@ -355,6 +376,7 @@ namespace LUSSIS.Controllers
         //TODO: Add authorization - Stock Clerk only 
         //click on generate button - post with date selected
         [HttpPost]
+        [Authorize(Roles = "clerk")]
         [ValidateAntiForgeryToken]
         public ActionResult Retrieve([Bind(Include = "collectionDate")] RetrievalItemsWithDateDTO listWithDate)
         {
@@ -375,6 +397,7 @@ namespace LUSSIS.Controllers
         }
 
         //TODO: A method to display in process Retrieval
+        [Authorize(Roles = "clerk")]
         public ActionResult RetrievalInProcess()
         {
             return View(reqRepo.GetRetrievalInPorcess());
