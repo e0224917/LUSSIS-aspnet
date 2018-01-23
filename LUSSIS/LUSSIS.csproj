@@ -630,6 +630,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\Delegate\" />
   </ItemGroup>
   <ItemGroup>
