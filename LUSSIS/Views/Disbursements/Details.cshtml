@@ -1,53 +1,100 @@
-﻿@model LUSSIS.Models.Disbursement
+﻿@using LUSSIS.Models
+@model LUSSIS.Models.WebDTO.DisbursementDetailDTO
 
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Disbursement for @Model.Department.DeptName</h2>
-<button type="button" class="btn btn-success">Generate QR Code</button>
+<h2>Disbursement for @Model.CurrentDisbursement.Department.DeptName</h2>
 <hr />
-<div class="row">
-    <div class="card col-lg-3">
-        <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionDate)</h6>
-            <h4 class="card-title">@Html.DisplayFor(model => model.CollectionDate) @Html.DisplayFor(model => model.CollectionPoint.Time)</h4>
-            <p class="card-text"></p>
+@using (Html.BeginForm("Acknowledge", "Disbursements", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
+{
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-success">Generate QR Code</button>
+    <br />
+
+    <hr />
+
+    <div class="row">
+        <div class="card col-lg-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => Model.CurrentDisbursement.CollectionDate)</h6>
+                <h4 class="card-title">@Html.DisplayFor(model => Model.CurrentDisbursement.CollectionDate) @Html.DisplayFor(model => Model.CurrentDisbursement.CollectionPoint.Time)</h4>
+                <p class="card-text"></p>
+            </div>
         </div>
-    </div>
-    <div class="card col-lg-3">
-        <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)</h6>
-            <h4 class="card-title">@Html.DisplayFor(model => model.CollectionPoint.CollectionName)</h4>
+        <div class="card col-lg-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => Model.CurrentDisbursement.CollectionPoint.CollectionName)</h6>
+                <h4 class="card-title">@Html.DisplayFor(model => Model.CurrentDisbursement.CollectionPoint.CollectionName)</h4>
 
+            </div>
         </div>
-    </div>
-    <div class="card col-lg-3">
-        <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted">Representative Name</h6>
-            <h4 class="card-title">@Model.Department.RepEmployee.FullName</h4>
+        <div class="card col-lg-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Representative Name</h6>
+                <h4 class="card-title">@Model.CurrentDisbursement.Department.RepEmployee.FullName</h4>
 
+            </div>
         </div>
-    </div>
-    <div class="card col-lg-3">
-        <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted">Contact Number</h6>
-            <h4 class="card-title">@Model.Department.TelephoneNum</h4>
+        <div class="card col-lg-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Contact Number</h6>
+                <h4 class="card-title">@Model.CurrentDisbursement.Department.TelephoneNum</h4>
 
+            </div>
         </div>
+
     </div>
+    <p style="padding: 1rem; width: 100%">
+        @Html.ActionLink("Edit", "Edit", new { id = Model.CurrentDisbursement.DisbursementId }) |
+        @Html.ActionLink("Back to List", "Index")
 
-</div>
-<p style="padding: 1rem; width: 100%">
-@Html.ActionLink("Edit", "Edit", new { id = Model.DisbursementId }) |
-    @Html.ActionLink("Back to List", "Index")
+    </p>
 
-</p>
+    <h4>Disbursement Details</h4>
+    <hr />
+    @*@Html.Partial("_DetailsList", Model.CurrentDisbursement.DisbursementDetails)*@
 
+    <table class="table table-hover">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DisDetailList.First().Stationery.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisDetailList.First().RequestedQty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisDetailList.First().ActualQty)
+            </th>
 
+        </tr>
 
-<h4>Disbursement Details</h4>
-<hr />
-@Html.Partial("_DetailsList", Model.DisbursementDetails)
+        @for(int i = 0; i < Model.DisDetailList.Count; i++)
+        {
 
+            //using (Html.BeginCollectionItem("DisDetailList"))
+            //{
+            @Html.HiddenFor(modelItem => Model.DisDetailList[i].DisbursementId)
+            @Html.HiddenFor(modelItem => Model.DisDetailList[i].ItemNum)
+            @Html.HiddenFor(modelItem => Model.DisDetailList[i].UnitPrice)
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.DisDetailList[i].Stationery.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.DisDetailList[i].RequestedQty)
+                    @Html.HiddenFor(modelItem=>Model.DisDetailList[i].RequestedQty)
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { @value = Model.DisDetailList[i].ActualQty })
+                    @Html.ValidationMessageFor(model => Model.DisDetailList[i].ActualQty, "", new { @class = "text-danger" })
+
+                </td>
+
+            </tr>
+            //}
+        }
+    </table>
+}

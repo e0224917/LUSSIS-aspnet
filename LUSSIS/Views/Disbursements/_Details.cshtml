@@ -1,0 +1,38 @@
+﻿@model IEnumerable<LUSSIS.Models.DisbursementDetail>
+
+@using (Html.BeginCollectionItem("DisDetailList"))
+{
+<table class="table table-hover">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Stationery.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RequestedQty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActualQty)
+            </th>
+
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stationery.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestedQty)
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => item.ActualQty)
+
+                </td>
+
+            </tr>
+        }
+
+    </table>
+    
+}

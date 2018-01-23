@@ -240,9 +240,11 @@
     <Compile Include="Controllers\RepAndDelegateController.cs" />
     <Compile Include="Controllers\RequisitionsController.cs" />
     <Compile Include="Controllers\StockAdjustmentController.cs" />
+    <Compile Include="Controllers\SupervisorDashboardController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Controllers\WebAPI\DelegateController.cs" />
+    <Compile Include="Controllers\WebAPI\DisbursementController.cs" />
     <Compile Include="Controllers\WebAPI\RequisitionsController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
@@ -281,8 +283,10 @@
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
     <Compile Include="Models\WebAPI\DelegateDTO.cs" />
+    <Compile Include="Models\WebAPI\DisbursementDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDetailDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDTO.cs" />
+    <Compile Include="Models\WebAPI\RetrievalItemDTO.cs" />
     <Compile Include="Models\WebDTO\AdjVoucherColView.cs" />
     <Compile Include="Models\WebDTO\Cart.cs" />
     <Compile Include="Models\Category.cs" />
@@ -302,6 +306,7 @@
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
     <Compile Include="Models\WebDTO\DeptHeadDashBoardDTO.cs" />
+    <Compile Include="Models\WebDTO\DisbursementDetailDTO.cs" />
     <Compile Include="Models\WebDTO\PendingPurchaseOrderDTO.cs" />
     <Compile Include="Models\WebDTO\PurchaseOrderDetailDTO.cs" />
     <Compile Include="Models\WebDTO\PurchaseOrderDTO.cs" />
@@ -323,6 +328,7 @@
     <Compile Include="Repositories\CollectionRepository.cs" />
     <Compile Include="Repositories\DelegateRepository.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
+    <Compile Include="Repositories\EmailHelper.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\Interface\ICollectionRepository.cs" />
     <Compile Include="Repositories\Interface\IDelegateRepository.cs" />
@@ -488,6 +494,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\loader.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\moment-with-locales.js" />
@@ -583,7 +590,7 @@
     <Content Include="Scripts\popper.min.js.map" />
     <Content Include="Scripts\README.md" />
     <Content Include="Views\RepAndDelegate\DeptRep.cshtml" />
-    <Content Include="Views\Disbursements\_DetailsList.cshtml" />
+    <Content Include="Views\Disbursements\_Details.cshtml" />
     <Content Include="Views\RepAndDelegate\DeptDelegate.cshtml" />
     <Content Include="Views\PurchaseOrders\Summary.cshtml" />
     <Content Include="Views\PurchaseOrders\Order.cshtml" />
@@ -591,7 +598,6 @@
     <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
     <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
-    <Content Include="Views\PurchaseOrders\SupervisorDashboard.cshtml" />
     <Content Include="Views\PurchaseOrders\ViewPendingPOList.cshtml" />
     <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
     <Content Include="Views\Shared\__ClerkMenu.cshtml" />
@@ -605,6 +611,7 @@
     <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
     <Content Include="Views\Requisitions\Index.cshtml" />
     <Content Include="Views\Suppliers\Quotation.cshtml" />
+    <Content Include="Views\SupervisorDashboard\SupervisorDashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -21,7 +21,9 @@
             @Html.DisplayName("View")
         </th>
         <th>
-            @Html.DisplayName("Manage")
+            @if (ViewBag.Message == "NoDelegate")
+            {
+                @Html.DisplayName("Manage")}
         </th>
         <th></th>
     </tr>
@@ -40,11 +42,14 @@
                 @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
             </td>
             <td>
-                @Html.ActionLink("Details", "Detail", "Requisitions ", new { reqId = item.RequisitionId }, null)
+                @Html.ActionLink("Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, null)
             </td>
             <td>
-                <a href="#" class="btn btn-success" onclick="ApproveReq(@item.RequisitionId)">Approve</a>
-                <a href="#" class="btn btn-danger" onclick="RejectReq(@item.RequisitionId)">Reject</a>
+                @if (ViewBag.Message == "NoDelegate")
+                {
+                    <a href="#" class="btn btn-success" onclick="ApproveReq(@item.RequisitionId)">Approve</a>
+                    <a href="#" class="btn btn-danger" onclick="RejectReq(@item.RequisitionId)">Reject</a>
+                }
             </td>
         </tr>
     }
@@ -84,5 +89,5 @@
         $("#myApproveModalBodyDiv").load(url, function () {
             $("#myApproveModal").modal("show");
         })
-    }      
+    }
 </script>
