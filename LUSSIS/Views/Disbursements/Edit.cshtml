@@ -1,5 +1,5 @@
 ﻿@model LUSSIS.Models.Disbursement
-
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -21,7 +21,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.CollectionDate, new { @class = "col-form-label" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.CollectionDate, new { htmlAttributes = new { @class = "form-control" } })
+                <input type="text" class = "form-control" name="collectionDate" id="collectionDate" onkeydown="return false">
                 @Html.ValidationMessageFor(model => model.CollectionDate, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -53,5 +53,18 @@
 
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $("#collectionDate")
+                .datepicker({
+                    minDate: 0,
+                    maxDate: "+1M +10D",
+                    dateFormat: "dd/mm/yy"
+                });
+        });
+    </script>
+    }
+
+

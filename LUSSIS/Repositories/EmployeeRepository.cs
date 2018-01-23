@@ -56,11 +56,17 @@ namespace LUSSIS.Repositories
                                                       && y.JobTitle == "staff").ToList();
         }
 
+        public List<Employee> GetAllStoreClerk()
+        {
+            return GetStaffByDepartmentCode("STNR").Where(x => x.JobTitle == "clerk").ToList();
+        }
+
         public List<Employee> GetSelectionByDepartment(string prefix, Department department)
         {
             List<Employee> employee = GetStaffRepByDepartment(department);
             return employee.Where(x => x.FullName.Contains(prefix)).ToList();
         }
+
 
         public List<Employee> GetDelSelectionByDepartment(string prefix, Department department)
         {
@@ -110,6 +116,30 @@ namespace LUSSIS.Repositories
             return allDel.Where(k => k.StartDate <= dateTime && k.EndDate >= dateTime).FirstOrDefault();
         }
 
+        public bool CheckIfLoggedInUserIsDelegate()
+        {
+            int employeeNum = GetCurrentUser().EmpNum;
+            DateTime dateTime = DateTime.Today.Date;
+            Models.Delegate meDelegate = GetAllDelegates().Where(x => x.EmpNum == employeeNum && x.StartDate <= dateTime && x.EndDate >= dateTime).FirstOrDefault();
+            if (meDelegate == null)
+            {
+                return false;
+            }
+            else { return true; }
+        }
+
+        public bool CheckIfUserDepartmentHasDelegate()
+        {
+            Department meDept = GetCurrentUser().Department;
+            Models.Delegate meDeptDelegate = GetDelegateByDate(meDept, DateTime.Today.Date);
+            if (meDeptDelegate == null)
+            {
+                return false;
+            }
+            else { return true; }
+        }
+    
+
         public void DeleteDelegate(Department department)
         {
             Models.Delegate del = GetFutureDelegate(department, DateTime.Now.Date);
@@ -124,6 +154,8 @@ namespace LUSSIS.Repositories
             return depList;
 
         }
+
+        
         public List<String> GetDepartmentNames()
         {
             return LUSSISContext.Departments.Select(x => x.DeptName).ToList();
@@ -140,7 +172,5 @@ namespace LUSSIS.Repositories
             }
             return valueList;
         }
-
-
     }
 }
