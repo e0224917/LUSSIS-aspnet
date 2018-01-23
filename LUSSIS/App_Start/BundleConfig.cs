@@ -26,11 +26,6 @@ namespace LUSSIS
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap-united.css",
                       "~/Content/site.css"));
-
-            bundles.Add(new ScriptBundle("~/bundles/datetime").Include(
-                "~/Scripts/moment*",
-            "~/Scripts/bootstrap-datetimepicker*"
-                
                 ));
         }
     }
