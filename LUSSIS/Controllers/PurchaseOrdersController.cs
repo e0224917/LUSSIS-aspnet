@@ -346,13 +346,14 @@ namespace LUSSIS.Controllers
                 return RedirectToAction("Order", new { p = po.PoNum.ToString(), error = e.Message });
             }
         }
-
+        [Authorize(Roles = "supervisor")]
         public async Task<ActionResult> ViewPendingPOList()
         {
 
             return View(pr.GetPendingApprovalPODTO());
 
         }
+        [Authorize(Roles = "supervisor")]
         [HttpGet]
         public ActionResult ApproveRejectPO(String List, String Status)
         {
@@ -361,6 +362,7 @@ namespace LUSSIS.Controllers
             ViewBag.status = Status;
             return PartialView("ApproveRejectPO");
         }
+        [Authorize(Roles = "supervisor")]
         [HttpPost]
         public ActionResult ApproveRejectPO(String checkList, String status, String a)
         {

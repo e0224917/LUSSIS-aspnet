@@ -66,7 +66,7 @@ namespace LUSSIS.Repositories
 
         public double GetPOAmountByPoNum(int poNum)
         {
-            List<PurchaseOrderDetail> pd_list =GetPODetailsByPoNum(poNum);
+            List<PurchaseOrderDetail> pd_list =LUSSISContext.PurchaseOrderDetails.Where(x=>x.PoNum==poNum).ToList();
             double total = 0;
             foreach (PurchaseOrderDetail pod in pd_list)
             {
@@ -105,7 +105,7 @@ namespace LUSSIS.Repositories
 
             foreach (PurchaseOrder po in list)
             {
-                List<PurchaseOrderDetail> pd_list = GetPODetailsByPoNum(po.PoNum);
+                List<PurchaseOrderDetail> pd_list = po.PurchaseOrderDetails.ToList();
 
                 foreach (PurchaseOrderDetail pod in pd_list)
                 {
@@ -117,10 +117,6 @@ namespace LUSSIS.Repositories
         }
 
       
-        public List<PurchaseOrderDetail> GetPODetailsByPoNum(int poNum)
-        {
-            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PoNum == poNum).ToList();
-        }
         public void UpDatePOStatus(int i, String status)
         {
             PurchaseOrder p = GetById(i);
@@ -129,11 +125,11 @@ namespace LUSSIS.Repositories
             Update(p);
         }
        
-       public double GetPOAmountByCategory(int Category)
+       public double GetPOAmountByCategory(int categoryId)
              {
             double total = 0;
             List<String> ItemList = new List<String>();
-            ItemList = sr.GetItembyCategory(Category);
+            ItemList = sr.GetItembyCategory(categoryId);
             List<PurchaseOrderDetail> pd_list = new List<PurchaseOrderDetail>();
             foreach (String e in ItemList)
             {

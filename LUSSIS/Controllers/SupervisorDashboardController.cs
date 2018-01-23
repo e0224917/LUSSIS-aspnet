@@ -10,6 +10,8 @@ using System.Web.Mvc;
 using LUSSIS.Models;
 using LUSSIS.Repositories;
 using LUSSIS.Models.WebDTO;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 
 namespace LUSSIS.Controllers
 {
@@ -21,12 +23,14 @@ namespace LUSSIS.Controllers
         private StationeryRepository sr = new StationeryRepository();
         private EmployeeRepository er = new EmployeeRepository();
         private SupplierRepository sur = new SupplierRepository();
-        
 
-        
-        
+
+
+        [Authorize(Roles = "manager,supervisor")]
         public async Task<ActionResult> SupervisorDashboard()
         {
+            var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
             SupervisorDashboardDTO dash = new SupervisorDashboardDTO();
 
             dash.PendingPOTotalAmount = pr.GetPendingPOTotalAmount();
@@ -36,7 +40,7 @@ namespace LUSSIS.Controllers
             dash.PendingStockAdjSubtractQty = stockRepo.GetPendingStockSubtractQty();
             dash.PendingStockAdjCount = stockRepo.GetPendingStockCount();
             dash.TotalDisbursementAmount = disRepo.GetDisbursementTotalAmount();
-
+            
             return View(dash);
         }
         /*  public ActionResult CharterColumn()
