@@ -146,7 +146,7 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult DirectToRequisitons()
         {
-            return RedirectToAction("ApproveReq", "Requisitions");
+            return RedirectToAction("_ApproveReq", "Requisitions");
         }
 
         // GET: RepAndDelegate/Details/5

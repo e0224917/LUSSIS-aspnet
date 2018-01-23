@@ -1,0 +1,47 @@
+﻿@model IEnumerable<LUSSIS.Models.DisbursementDetail>
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Disbursement Details - @Model.First().Disbursement.Department.DeptName</h2>
+<table class="table">
+    <tr>
+        
+        <th>
+            @Html.DisplayNameFor(model => model.Stationery.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UnitPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestedQty)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ActualQty)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            
+            <td>
+                @Html.HiddenFor(modelItem => item.Disbursement.DeptCode)
+                @Html.DisplayFor(modelItem => item.Stationery.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnitPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestedQty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActualQty)
+            </td>
+        </tr>
+    }
+
+</table>
+@Html.ActionLink("Back to List", "History")

@@ -2,6 +2,7 @@
 using LUSSIS.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -28,15 +29,26 @@ namespace LUSSIS.Controllers
         public ActionResult Pending()
         {
             List<Requisition> req = reqRepo.GetPendingRequisitions();
-            Department meDept = empRepo.GetCurrentUser().Department;
-            Models.Delegate meDeptDelegate = empRepo.GetDelegateByDate(meDept, DateTime.Today);
-            if (meDeptDelegate != null)
+            if (empRepo.GetCurrentUser().JobTitle == "head")
             {
-                ViewBag.Message = "Delegate";
+                if (empRepo.CheckIfUserDepartmentHasDelegate())
+                {
+                    //If user is head and there is delegate
+                    ViewBag.Message = "Delegate";
+                }
+                else
+                {
+                    //If user is head and there is not delegate
+                    ViewBag.Message = "IsDelegateOrNoDelegate";
+                }
+            }
+            else if (empRepo.CheckIfLoggedInUserIsDelegate())
+            {                
+                ViewBag.Message = "IsDelegateOrNoDelegate";
             }
             else
             {
-                ViewBag.Message = "NoDelegate";
+                return new HttpUnauthorizedResult();
             }
             return View(req);
         }
@@ -154,7 +166,7 @@ namespace LUSSIS.Controllers
             if (!String.IsNullOrEmpty(searchString))
             { stationeries = statRepo.GetByDescription(searchString).ToList(); }
             else { stationeries = statRepo.GetAll().ToList(); }
-            int pageSize = 20;
+            int pageSize = 15;
             int pageNumber = (page ?? 1);
             return View(stationeries.ToPagedList(pageNumber, pageSize));
         }
@@ -184,7 +196,7 @@ namespace LUSSIS.Controllers
             return View(new RetrievalItemsWithDateDTO
             {
                 retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
-                collectionDate = DateTime.Today,
+                collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
                 hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
             });
         }
@@ -198,18 +210,15 @@ namespace LUSSIS.Controllers
 
             if (ModelState.IsValid)
             {
-                reqRepo.ArrangeRetrievalAndDisbursement(listWithDate.collectionDate);
-                //call arrange disbursement
-                //pass the view to another action: RetrievalInProcess, and display
-                //that action needs to have a button to confirm retrieval is done
-                //during this processs, not disbursement can be arranged
+                DateTime selectedDate = DateTime.ParseExact(listWithDate.collectionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                reqRepo.ArrangeRetrievalAndDisbursement(selectedDate);
                 return RedirectToAction("RetrievalInProcess");
             }
 
             return View("Consolidated", new RetrievalItemsWithDateDTO
             {
                 retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
-                collectionDate = DateTime.Today,
+                collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
                 hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
             });
         }
@@ -217,20 +226,31 @@ namespace LUSSIS.Controllers
         //TODO: A method to display in process Retrieval
         public ActionResult RetrievalInProcess()
         {
-           return View(reqRepo.GetRetrievalInPorcess());
+           return View(reqRepo.GetRetrievalInProcess());
         }
 
         [HttpGet]
-        public ActionResult ApproveReq(int Id, String Status)
-        {
-            ReqApproveRejectDTO reqDTO = new ReqApproveRejectDTO();
-            reqDTO.RequisitionId = Id;
-            reqDTO.Status = Status;
-            return PartialView("ApproveReq", reqDTO);
+        public PartialViewResult _ApproveReq(int Id, String Status)
+        {        
+            ReqApproveRejectDTO reqDTO = new ReqApproveRejectDTO
+            {
+                RequisitionId = Id,
+                Status = Status
+            };
+            if (empRepo.GetCurrentUser().JobTitle == "head") {
+                if (empRepo.CheckIfUserDepartmentHasDelegate())
+                {
+                    return PartialView("_hasDelegate");
+                }else return PartialView("_ApproveReq", reqDTO);
+            }
+            else if(empRepo.CheckIfLoggedInUserIsDelegate())
+            {
+                return PartialView("_ApproveReq", reqDTO); 
+            }else return PartialView("_unauthoriseAccess");
         }
 
         [HttpPost]
-        public ActionResult ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]ReqApproveRejectDTO RADTO)
+        public PartialViewResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]ReqApproveRejectDTO RADTO)
         {
             if (ModelState.IsValid)
             {

@@ -21,7 +21,7 @@
             @Html.DisplayName("View")
         </th>
         <th>
-            @if (ViewBag.Message == "NoDelegate")
+            @if (ViewBag.Message == "IsDelegateOrNoDelegate")
             {
                 @Html.DisplayName("Manage")}
         </th>
@@ -76,7 +76,7 @@
 <script>
     var ApproveReq = function (RequisitionId) {
         document.getElementById("ApprovalTitle").textContent = "Approve"
-        var url = "/Requisitions/ApproveReq?Id=" + RequisitionId + "&Status=approved";
+        var url = "/Requisitions/_ApproveReq?Id=" + RequisitionId + "&Status=approved";
 
         $("#myApproveModalBodyDiv").load(url, function () {
             $("#myApproveModal").modal("show");
@@ -84,7 +84,7 @@
     }
     var RejectReq = function (RequisitionId) {
         document.getElementById("ApprovalTitle").textContent = "Reject"
-        var url = "/Requisitions/ApproveReq?Id=" + RequisitionId + "&Status=rejected";
+        var url = "/Requisitions/_ApproveReq?Id=" + RequisitionId + "&Status=rejected";
 
         $("#myApproveModalBodyDiv").load(url, function () {
             $("#myApproveModal").modal("show");

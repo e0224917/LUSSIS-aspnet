@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
@@ -27,6 +28,10 @@ namespace LUSSIS.Repositories
             }
         }
 
+        public IEnumerable<Disbursement> GetDisbursementsByDeptName(string deptName)
+        {
+            return LUSSISContext.Disbursements.Where(d => d.Department.DeptName.Contains(deptName));
+        }
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
             Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
@@ -34,7 +39,7 @@ namespace LUSSIS.Repositories
         }
         public IEnumerable<CollectionPoint> GetAllCollectionPoint()
         {
-            return LUSSISContext.CollectionPoints;
+            return LUSSISContext.CollectionPoints.Include(c=>c.InChargeEmployee);
         }
 
         public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
