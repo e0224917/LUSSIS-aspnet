@@ -28,7 +28,7 @@ namespace LUSSIS.Controllers
         public const double GST_RATE = 0.07;
 
         // GET: PurchaseOrders
-        public ActionResult Index(int? page=1)
+        public ActionResult Index(int? page = 1)
         {
             var purchaseOrders = pr.GetAll();
             int pageSize = 20;
@@ -133,7 +133,7 @@ namespace LUSSIS.Controllers
             StationerySupplier ss = new StationerySupplier();
             ss.ItemNum = emptyStationery.ItemNum;
             ss.Price = emptyStationery.AverageCost;
-            ss.Stationery=emptyStationery;
+            ss.Stationery = emptyStationery;
             List<StationerySupplier> sslist = new List<StationerySupplier>() { ss };
             sslist.AddRange(sr.GetStationerySupplierBySupplierId(supplierId).ToList());
             ViewBag.Stationery = sslist;
@@ -188,6 +188,8 @@ namespace LUSSIS.Controllers
                 }
                 if (purchaseOrder.PurchaseOrderDetails.Count == 0)
                     throw new Exception("Purchase Order was not created, no items found");
+                if (purchaseOrder.PurchaseOrderDetails.Count > purchaseOrder.PurchaseOrderDetails.Select(x => x.ItemNum).Distinct().Count())
+                    throw new Exception("the same stationery cannot appear in multiple lines of the PO");
 
                 //save to database
                 pr.Add(purchaseOrder);
@@ -339,7 +341,7 @@ namespace LUSSIS.Controllers
             }
             return PartialView();
         }
-       
+
 
 
 
