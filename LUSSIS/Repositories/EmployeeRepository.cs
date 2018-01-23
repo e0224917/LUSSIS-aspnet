@@ -104,6 +104,30 @@ namespace LUSSIS.Repositories
             return allDel.Where(k => k.StartDate <= dateTime && k.EndDate >= dateTime).FirstOrDefault();
         }
 
+        public bool CheckIfLoggedInUserIsDelegate()
+        {
+            int employeeNum = GetCurrentUser().EmpNum;
+            DateTime dateTime = DateTime.Today.Date;
+            Models.Delegate meDelegate = GetAllDelegates().Where(x => x.EmpNum == employeeNum && x.StartDate <= dateTime && x.EndDate >= dateTime).FirstOrDefault();
+            if (meDelegate == null)
+            {
+                return false;
+            }
+            else { return true; }
+        }
+
+        public bool CheckIfUserDepartmentHasDelegate()
+        {
+            Department meDept = GetCurrentUser().Department;
+            Models.Delegate meDeptDelegate = GetDelegateByDate(meDept, DateTime.Today.Date);
+            if (meDeptDelegate == null)
+            {
+                return false;
+            }
+            else { return true; }
+        }
+    
+
         public void DeleteDelegate(Department department)
         {
             Models.Delegate del = GetDelegate(department);
@@ -134,7 +158,5 @@ namespace LUSSIS.Repositories
             }
             return valueList;
         }
-
-
     }
 }

@@ -19,8 +19,8 @@ namespace LUSSIS.Controllers
         {
             var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
-            
-            switch(ViewBag.Message)
+
+            switch (ViewBag.Message)
             {
                 case "head":
                     return RedirectToAction("Index", "RepAndDelegate");

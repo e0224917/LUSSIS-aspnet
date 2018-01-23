@@ -11,7 +11,7 @@
 @using (Html.BeginForm("Acknowledge", "Disbursements", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
 {
     @Html.AntiForgeryToken()
-    <button type="submit" class="btn btn-success">Generate QR Code</button>
+    <button type="button" class="btn btn-success" onclick="GenerateQR(@Model.CurrentDisbursement.DisbursementId)">Generate QR Code</button>
     <br />
 
     <hr />
@@ -71,7 +71,7 @@
 
         </tr>
 
-        @for(int i = 0; i < Model.DisDetailList.Count; i++)
+        @for (int i = 0; i < Model.DisDetailList.Count; i++)
         {
 
             //using (Html.BeginCollectionItem("DisDetailList"))
@@ -85,7 +85,7 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => Model.DisDetailList[i].RequestedQty)
-                    @Html.HiddenFor(modelItem=>Model.DisDetailList[i].RequestedQty)
+                    @Html.HiddenFor(modelItem => Model.DisDetailList[i].RequestedQty)
                 </td>
                 <td>
                     @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { @value = Model.DisDetailList[i].ActualQty })
@@ -98,3 +98,26 @@
         }
     </table>
 }
+
+
+
+<div class="modal" id="QRModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="QRBody" align="center">
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    var GenerateQR = function (DisbursementId) {
+        var url = "/Disbursements/_QR?Id=" + DisbursementId;
+        $("#QRBody").load(url, function () {
+            $("#QRModal").modal("show");
+        })
+    }
+</script>
