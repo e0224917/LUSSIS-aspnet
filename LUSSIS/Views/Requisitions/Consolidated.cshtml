@@ -3,45 +3,50 @@
 @using LUSSIS.Models.WebDTO
 @model RetrievalItemsWithDateDTO
 
-
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 @{
     ViewBag.Title = "Consolidated";
 }
 <h2>Consolidated Stationery Requisitions</h2>
 
-@if (Model.retrievalItems == null || !Model.retrievalItems.Any() )
+@if (Model.retrievalItems == null || !Model.retrievalItems.Any())
 {
     <div class="alert alert-dismissible alert-info">
-        <strong>Interesting...</strong> <br/>There is no requisition and remaining items to be viewed.
+        <strong>Interesting...</strong> <br />There is no requisition and remaining items to be viewed.
     </div>
 }
 else
 {
     @*We are able to generate multiple batches of disbursements, however retrieval in process list will combine all disbursement that are inprocess.
         Since generating multiple batches of retrieval is not a business requirement, we will omit this funtion *@
-    if(Model.hasInprocessDisbursement)
-     {
-         <div class="alert alert-dismissible alert-info">
-             <strong>There are already disbursements in process . <br/>
-                 </strong> You can arrange for new disbursements once the current ones are completed.
-         </div>
+    if (Model.hasInprocessDisbursement)
+    {
+        <div class="alert alert-dismissible alert-info">
+            <strong>
+                There are already disbursements in process . <br />
+            </strong> You can arrange for new disbursements once the current ones are completed.
+        </div>
     }
     else
     {
-    <hr />
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="navbar-nav mr-auto"></div>
-        @using (Html.BeginForm("Retrieve", "Requisitions", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
-        {
-            @Html.AntiForgeryToken()
-            @Html.LabelFor(model => model.collectionDate, "Select a collection date", new { @class = "nav-item nav-link" })
-            @Html.EditorFor(model => model.collectionDate, new { @class = "form-control mr-sm-2", id = "collectionDate", @Value = Model.collectionDate.Date })
-            @Html.ValidationMessageFor(model => model.collectionDate, "must be later than today", new { @class = "invalid-feedback" })
-            <div class="nav-item nav-link"><button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button></div>
-        }
-    </nav>
-    <hr />
+        <hr />
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="navbar-nav mr-auto"></div>
+            @using (Html.BeginForm("Retrieve", "Requisitions", FormMethod.Post, new { @class = "form-inline my-2 my-lg-0" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.LabelFor(model => model.collectionDate, "Select a collection date", new { @class = "nav-item nav-link" })
+                <input type="text" name="collectionDate" id="collectionDate" onkeydown="return false">
+                @Html.ValidationMessageFor(model => model.collectionDate, "must be later than today", new { @class = "invalid-feedback" })
+
+                <div class="nav-item nav-link"><button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button></div>
+            }
+        </nav>
+        <hr />
+
     }
+
     <table id="long-table" class="table table-hover">
         <thead>
             <tr>
@@ -81,22 +86,21 @@ else
 
     </table>
     <small id="fileHelp" class="form-text text-muted">*Unfullfilled Qty from previous disbursements has been added to Requested Qty</small>
+
 }
 
-
-@section scripts{
-    <script type="text/javascript">
+@section scripts {
+    @*<script src="https://code.jquery.com/jquery-1.12.4.js"></script>*@
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
         $(function () {
-            $('#collectionDate').datetimepicker({
-                defaultDate: '@Model.collectionDate.Date',
-                format: "yyyy-mm-dd",
-                minDate: getMoment(),
-                maxDate: getMoment().add(1, 'year'),
-                showClose: true,
-                showClear: true,
-                toolbarPlacement: 'top'
-            });
-         });
-
+            $("#collectionDate")
+                .datepicker({
+                    minDate: 0,
+                    maxDate: "+1M +10D",
+                    dateFormat: "dd/mm/yy"
+                });
+        });
     </script>
+    
 }

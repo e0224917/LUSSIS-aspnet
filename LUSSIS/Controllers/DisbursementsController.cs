@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
+using PagedList;
 using QRCoder;
 
 namespace LUSSIS.Controllers
@@ -19,12 +20,15 @@ namespace LUSSIS.Controllers
     {
         private LUSSISContext db = new LUSSISContext();
         private DisbursementRepository disRepo = new DisbursementRepository();
-        // GET: Disbursement
+
+
+        // GET: Upcoming Disbursement
         public ActionResult Index()
         {
             var disbursements = disRepo.GetInProcessDisbursements();
             return View(disbursements.ToList());
         }
+
 
         // GET: Disbursement/Details/5
         public ActionResult Details(int? id)
@@ -43,7 +47,7 @@ namespace LUSSIS.Controllers
             return View(disDetailDTO);
         }
 
-        
+
         // GET: Disbursement/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
@@ -88,7 +92,16 @@ namespace LUSSIS.Controllers
             {
                 //Disbursement d = disbursementDTO.CurrentDisbursement;
                 Disbursement d = disRepo.GetById(disbursementDTO.DisDetailList.First().DisbursementId);
-                d.DisbursementDetails = disbursementDTO.DisDetailList;
+                foreach (var dd in d.DisbursementDetails)
+                {
+                    foreach (var ddEdited in disbursementDTO.DisDetailList)
+                    {
+                        if (dd.ItemNum == ddEdited.ItemNum)
+                        {
+                            dd.ActualQty = ddEdited.ActualQty;
+                        }
+                    }
+                }
                 disRepo.Acknowledge(d);
                 return RedirectToAction("Index");
             }
@@ -106,6 +119,45 @@ namespace LUSSIS.Controllers
             return PartialView();
         }
 
+        // GET: All Disbursements
+        public ActionResult History(string searchString, string currentFilter, int? page)
+        {
+            List<Disbursement> disbursements = new List<Disbursement>();
+            if (searchString != null)
+            { page = 1; }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                disbursements = disRepo.GetDisbursementsByDeptName(searchString).ToList();
+            }
+            else
+            {
+                disbursements = disRepo.GetAll().ToList();
+            }
+            int pageSize = 15;
+            int pageNumber = (page ?? 1);
+            return View(disbursements.ToPagedList(pageNumber, pageSize));
+            //return View(disRepo.GetAll());
+        }
+
+        public ActionResult ViewDetails(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Disbursement d = disRepo.GetById((int)id);
+            if (d == null)
+            {
+                return HttpNotFound();
+            }
+            return View(d.DisbursementDetails);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -115,6 +167,6 @@ namespace LUSSIS.Controllers
             base.Dispose(disposing);
         }
 
-        
+
     }
 }
