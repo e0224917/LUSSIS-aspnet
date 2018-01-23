@@ -6,64 +6,7 @@
     List<int> itemQty = new List<int>();
 
 }
-<script src="~/Scripts/jquery-1.10.2.min.js"
-        type="text/javascript"></script>
-<script type="text/javascript">
-    $(function () {
-        // Document.ready -> link up remove event handler
-        $(".RemoveLink").click(function () {
-            // Get the id from the link
-            var stationeryToDelete = $(this).attr("data-id");
-            var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-            if (stationeryToDelete != '') {
-                // Perform the ajax post
-                $.post("/Requisitions/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
-                    function (data) {
-                        // Successful requests get here
-                        // Update the page elements
-                        alert("Delete from cart successfully");
-                        location.reload();
-                        //if (data.ItemCount == 0) {
-                        //    $('#row-' + data.DeleteId).fadeOut('slow');
-                        //} else {
-                        //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
-                        //}
-                        //$('#cart-total').text(data.CartTotal);
-                        //$('#update-message').text(data.Message);
-                        //$('#cart-status').text('Cart (' + data.CartCount + ')');
-                    });
-            }
-        });
-    });
-</script>
-<script type="text/javascript">
-    $(function () {
-        // Document.ready -> link up remove event handler
-        $(".UpdateLink").click(function () {
-            // Get the id from the link
-            var stationeryToUpdate = $(this).attr("data-id");
-            var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-            if (stationeryToUpdate != '') {
-                // Perform the ajax post
-                $.post("/Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
-                    function (data) {
-                        // Successful requests get here
-                        // Update the page elements
-                        alert("Update cart successfully");
-                        location.reload();
-                        //if (data.ItemCount == 0) {
-                        //    $('#row-' + data.DeleteId).fadeOut('slow');
-                        //} else {
-                        //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
-                        //}
-                        //$('#cart-total').text(data.CartTotal);
-                        //$('#update-message').text(data.Message);
-                        //$('#cart-status').text('Cart (' + data.CartCount + ')');
-                    });
-            }
-        });
-    });
-</script>
+
 <h2>Requisition Cart</h2>
 @if (Model.Count() != 0)
 {
@@ -104,7 +47,7 @@
                     @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
                 </td>
                 <td>
-                    <input type="number" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum"> 
+                    <input type="number" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
                     <input type="submit" value="Update" class="UpdateLink" data-id="@item.stationery.ItemNum" />
                 </td>
                 <td>
@@ -126,11 +69,67 @@ else
     <div class="alert alert-dismissible alert-danger">
         <br />
         <div class="alert-danger"><strong>Your cart is empty, please add items to cart</strong></div>
-        <br/>
+        <br />
     </div>
 }
 
-
-
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            // Document.ready -> link up remove event handler
+            $(".RemoveLink").click(function () {
+                // Get the id from the link
+                var stationeryToDelete = $(this).attr("data-id");
+                var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
+                if (stationeryToDelete != '') {
+                    // Perform the ajax post
+                    $.post("/Requisitions/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
+                        function (data) {
+                            // Successful requests get here
+                            // Update the page elements
+                            confirm("Delete from cart successfully");
+                            location.reload();
+                            //if (data.ItemCount == 0) {
+                            //    $('#row-' + data.DeleteId).fadeOut('slow');
+                            //} else {
+                            //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
+                            //}
+                            //$('#cart-total').text(data.CartTotal);
+                            //$('#update-message').text(data.Message);
+                            //$('#cart-status').text('Cart (' + data.CartCount + ')');
+                        });
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            // Document.ready -> link up remove event handler
+            $(".UpdateLink").click(function () {
+                // Get the id from the link
+                var stationeryToUpdate = $(this).attr("data-id");
+                var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
+                if (stationeryToUpdate != '') {
+                    // Perform the ajax post
+                    $.post("/Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
+                        function (data) {
+                            // Successful requests get here
+                            // Update the page elements
+                            alert("Update cart successfully");
+                            location.reload();
+                            //if (data.ItemCount == 0) {
+                            //    $('#row-' + data.DeleteId).fadeOut('slow');
+                            //} else {
+                            //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
+                            //}
+                            //$('#cart-total').text(data.CartTotal);
+                            //$('#update-message').text(data.Message);
+                            //$('#cart-status').text('Cart (' + data.CartCount + ')');
+                        });
+                }
+            });
+        });
+    </script>
+}
 
 

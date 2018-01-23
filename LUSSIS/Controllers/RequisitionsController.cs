@@ -44,7 +44,7 @@ namespace LUSSIS.Controllers
                 }
             }
             else if (empRepo.CheckIfLoggedInUserIsDelegate())
-            {                
+            {
                 ViewBag.Message = "IsDelegateOrNoDelegate";
             }
             else
@@ -189,11 +189,17 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
             if (!String.IsNullOrEmpty(searchString))
-            { stationerys = strepo.GetByDescription(searchString).ToList(); }
+            {
+                stationerys = strepo.GetByDescription(searchString).ToList();
+                if (stationerys.Count == 0)
+                {                   
+                    stationerys = strepo.GetAll().ToList();                    
+                }
+            }
             else
             {
                 stationerys = strepo.GetAll().ToList();
-                //Response.Write("<script> alert('Not found')</script>");
+               
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
@@ -262,8 +268,9 @@ namespace LUSSIS.Controllers
                 Session["MyCart"] = new ShoppingCart();
                 //return View();
                 //send email
-                string destinationEmail = erepo.GetById(erepo.GetDepartmentByUser(erepo.GetCurrentUser()).DeptHeadNum.ToString().ToString()).EmailAddress;
-                //string destinationEmail = "cuirunzesg@gmail.com";
+                //invalid email address
+                //string destinationEmail = erepo.GetById(erepo.GetDepartmentByUser(erepo.GetCurrentUser()).DeptHeadNum.ToString().ToString()).EmailAddress;
+                string destinationEmail = "cuirunzesg@gmail.com";
                 string subject = erepo.GetCurrentUser().FullName + " requested stationeries";
                 EmailHelper emailHelper = new EmailHelper(destinationEmail, subject, body);
                 return RedirectToAction("EmpReq");
@@ -291,9 +298,9 @@ namespace LUSSIS.Controllers
         {
 
             ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
-            foreach(Cart cart in mycart.shoppingCart)
+            foreach (Cart cart in mycart.shoppingCart)
             {
-                if (cart.stationery.ItemNum==id)
+                if (cart.stationery.ItemNum == id)
                 {
                     cart.quantity = qty;
                 }
@@ -337,27 +344,30 @@ namespace LUSSIS.Controllers
         //TODO: A method to display in process Retrieval
         public ActionResult RetrievalInProcess()
         {
-           return View(reqRepo.GetRetrievalInProcess());
+            return View(reqRepo.GetRetrievalInPorcess());
         }
 
         [HttpGet]
         public PartialViewResult _ApproveReq(int Id, String Status)
-        {        
+        {
             ReqApproveRejectDTO reqDTO = new ReqApproveRejectDTO
             {
                 RequisitionId = Id,
                 Status = Status
             };
-            if (empRepo.GetCurrentUser().JobTitle == "head") {
+            if (empRepo.GetCurrentUser().JobTitle == "head")
+            {
                 if (empRepo.CheckIfUserDepartmentHasDelegate())
                 {
                     return PartialView("_hasDelegate");
-                }else return PartialView("_ApproveReq", reqDTO);
+                }
+                else return PartialView("_ApproveReq", reqDTO);
             }
-            else if(empRepo.CheckIfLoggedInUserIsDelegate())
+            else if (empRepo.CheckIfLoggedInUserIsDelegate())
             {
-                return PartialView("_ApproveReq", reqDTO); 
-            }else return PartialView("_unauthoriseAccess");
+                return PartialView("_ApproveReq", reqDTO);
+            }
+            else return PartialView("_unauthoriseAccess");
         }
 
         [HttpPost]
