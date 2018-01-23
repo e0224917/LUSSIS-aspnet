@@ -28,6 +28,10 @@ namespace LUSSIS.Repositories
             }
         }
 
+        public IEnumerable<Disbursement> GetDisbursementsByDeptName(string deptName)
+        {
+            return LUSSISContext.Disbursements.Where(d => d.Department.DeptName.Contains(deptName));
+        }
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
             Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);

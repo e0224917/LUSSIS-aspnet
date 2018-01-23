@@ -166,7 +166,7 @@ namespace LUSSIS.Controllers
             if (!String.IsNullOrEmpty(searchString))
             { stationeries = statRepo.GetByDescription(searchString).ToList(); }
             else { stationeries = statRepo.GetAll().ToList(); }
-            int pageSize = 20;
+            int pageSize = 15;
             int pageNumber = (page ?? 1);
             return View(stationeries.ToPagedList(pageNumber, pageSize));
         }
@@ -226,7 +226,7 @@ namespace LUSSIS.Controllers
         //TODO: A method to display in process Retrieval
         public ActionResult RetrievalInProcess()
         {
-           return View(reqRepo.GetRetrievalInPorcess());
+           return View(reqRepo.GetRetrievalInProcess());
         }
 
         [HttpGet]

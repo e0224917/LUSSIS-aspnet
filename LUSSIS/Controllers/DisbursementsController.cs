@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
+using PagedList;
 using QRCoder;
 
 namespace LUSSIS.Controllers
@@ -46,7 +47,7 @@ namespace LUSSIS.Controllers
             return View(disDetailDTO);
         }
 
-        
+
         // GET: Disbursement/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
@@ -119,9 +120,28 @@ namespace LUSSIS.Controllers
         }
 
         // GET: All Disbursements
-        public ActionResult History()
+        public ActionResult History(string searchString, string currentFilter, int? page)
         {
-            return View(disRepo.GetAll());
+            List<Disbursement> disbursements = new List<Disbursement>();
+            if (searchString != null)
+            { page = 1; }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                disbursements = disRepo.GetDisbursementsByDeptName(searchString).ToList();
+            }
+            else
+            {
+                disbursements = disRepo.GetAll().ToList();
+            }
+            int pageSize = 15;
+            int pageNumber = (page ?? 1);
+            return View(disbursements.ToPagedList(pageNumber, pageSize));
+            //return View(disRepo.GetAll());
         }
 
         public ActionResult ViewDetails(int? id)
@@ -130,14 +150,14 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Disbursement d = disRepo.GetById((int) id);
+            Disbursement d = disRepo.GetById((int)id);
             if (d == null)
             {
                 return HttpNotFound();
             }
             return View(d.DisbursementDetails);
         }
-        
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
