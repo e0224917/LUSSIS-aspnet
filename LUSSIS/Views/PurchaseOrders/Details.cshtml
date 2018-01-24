@@ -45,7 +45,7 @@
                     <label class="control-label col-md-12"><strong>Created On</strong></label>
                     <div class="col-md-12">
                         @Html.HiddenFor(model => model.CreateDate)
-                        <input type="date" class="form-control" value="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" disabled />
+                        <input type="date" class="form-control" value="@Model.CreateDate.ToString("yyyy-MM-dd")" disabled />
                     </div>
                 </div>
                
@@ -117,7 +117,7 @@
         </dt>
         <dd>
             @Html.HiddenFor(model => model.CreateDate)
-            <input type="date" value="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" disabled />
+            <input type="date" value="@Model.CreateDate.ToString("yyyy-MM-dd")" disabled />
         </dd>
         @if (Model.ApprovalEmpNum == null)
         {
