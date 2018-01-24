@@ -295,18 +295,22 @@ namespace LUSSIS.Controllers
             string remarks = Request["remarks"];
             if (itemNum != null)
             {
-                Requisition requisition = new Requisition();
-                requisition.RequestRemarks = remarks;
-                requisition.RequisitionDate = reqDate;
-                requisition.RequisitionEmpNum = reqEmp;
-                requisition.Status = status;
+                Requisition requisition = new Requisition()
+                {
+                    RequestRemarks = remarks,
+                    RequisitionDate = reqDate,
+                    RequisitionEmpNum = reqEmp,
+                    Status = status
+                };
                 reqrepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
                 {
-                    RequisitionDetail requisitionDetail = new RequisitionDetail();
-                    requisitionDetail.RequisitionId = requisition.RequisitionId;
-                    requisitionDetail.ItemNum = itemNum[i];
-                    requisitionDetail.Quantity = itemQty[i];
+                    RequisitionDetail requisitionDetail = new RequisitionDetail()
+                    {
+                        RequisitionId = requisition.RequisitionId,
+                        ItemNum = itemNum[i],
+                        Quantity = itemQty[i]
+                    };
                     reqrepo.AddRequisitionDetail(requisitionDetail);
                     body += strepo.GetById(requisitionDetail.ItemNum).Description.PadRight(30, ' ') + "\t\t" + strepo.GetById(requisitionDetail.ItemNum).UnitOfMeasure.PadRight(30, ' ') + "\t\t" + requisitionDetail.Quantity.ToString().PadRight(30, ' ') + "\n";
                 }
