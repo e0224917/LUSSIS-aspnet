@@ -67,7 +67,7 @@ namespace LUSSIS.Controllers
 
 
         // GET: PurchaseOrders/Create or PurchaseOrders/Create?supplierId=1
-        [Authorize(Roles = "clerk"]
+        [Authorize(Roles = "clerk")]
         public ActionResult Create(int? supplierId, string error = null)
         {
             //catch error from redirect

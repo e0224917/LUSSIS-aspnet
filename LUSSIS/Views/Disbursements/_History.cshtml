@@ -50,9 +50,10 @@
             </tr>
         }
     </table>
-
-    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-    @Html.PagedListPager(Model, page => Url.Action("History", new { page, currentFilter = ViewBag.CurrentFilter }))
+    <div class="pagination">
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("History", new { page, currentFilter = ViewBag.CurrentFilter }))
+    </div>
 </div>
 
 
