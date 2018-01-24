@@ -18,7 +18,7 @@ using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
-    
+    [Authorize(Roles = "staff, clerk, head")]
     public class RequisitionsController : Controller
     {
 
@@ -95,7 +95,15 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(requistions.ToPagedList(pageNumber, pageSize));
+
+            var reqAll = requistions.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_All", reqAll);
+            }
+
+            return View(reqAll);
         }
 
 
@@ -137,16 +145,10 @@ namespace LUSSIS.Controllers
         }
 
 
-
-
-
-
-
-
         //TODO: return create page, only showing necessary fields
         // GET: Requisition/Create
         //???
-        //[DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff")]
         public ActionResult Create()
         {
             return View();
@@ -154,7 +156,7 @@ namespace LUSSIS.Controllers
 
         // TODO: 1. create new requisition, 2. it's status set to pending, 3. send notification to departmenthead
         // [employee page] POST: Requisition/Create
-        //[DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
@@ -170,7 +172,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only implement once main project is done. Enable editing if status is pending
         // [employee page]  GET: Requisition/Edit/5
-        //[DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff")]
         public ActionResult Edit(int id)
         {
             return View();
@@ -178,7 +180,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only enable editing if status is pending
         // [employee page]  POST: Requisition/Edit/5
-        //[DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -220,7 +222,6 @@ namespace LUSSIS.Controllers
         // GET: DeptEmpReqs
 
 
-        //StoreClerk??
         [Authorize(Roles = "clerk, staff")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
@@ -246,11 +247,18 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(stationerys.ToPagedList(pageNumber, pageSize));
+
+            var stationeryList = stationerys.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_Index", stationeryList);
+            }
+            return View(stationeryList);
         }
 
         // /Requisitions/AddToCart
-        //[DelegateStaffCustomAuth("staff")]
+        [OverrideAuthorization]
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
@@ -265,7 +273,7 @@ namespace LUSSIS.Controllers
         //{
         //    return View(reqRepo.GetRequisitionByEmpNum(EmpNum));
         //}
-        //[DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff")]
         public ActionResult EmpReq(string currentFilter, int? page)
         {
             int id = erepo.GetCurrentUser().EmpNum;
@@ -275,13 +283,14 @@ namespace LUSSIS.Controllers
             return View(reqlist.ToPagedList(pageNumber, pageSize));
         }
         // GET: Requisitions/EmpReqDetail/5
-        //[DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff")]
         [HttpGet]
         public ActionResult EmpReqDetail(int id)
         {
             List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
+
         [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult SubmitReq()
@@ -328,14 +337,14 @@ namespace LUSSIS.Controllers
             }
         }
 
-        //[DelegateStaffCustomAuth("staff")]
+        [OverrideAuthorization]
         public ActionResult EmpCart()
         {
             ShoppingCart mycart = (ShoppingCart)Session["MyCart"];
             return View(mycart.GetAllCartItem());
         }
 
-        //[DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult DeleteCartItem(string id, int qty)
         {
@@ -345,7 +354,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("EmpCart");
         }
 
-        //[DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult UpdateCartItem(string id, int qty)
         {
