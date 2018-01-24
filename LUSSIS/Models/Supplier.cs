@@ -46,6 +46,23 @@ namespace LUSSIS.Models
 
         public string Address3 { get; set; }
 
+        public string Address
+        {
+            get { return Address1 + Environment.NewLine + Address2 + Environment.NewLine + Address3; }
+            set
+            {
+                if (value != null)
+                {
+                    string[] addressArr = value.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                    Address1 = addressArr[0];
+                    if (addressArr.Length > 1)
+                        Address2 = addressArr[1];
+                    for (int i = 2; i < addressArr.Length; i++)
+                        Address3 += addressArr[i];
+                }
+            }
+        }
+
         [Required]
         [StringLength(30)]
         [Display(Name = "Gst Registration")]
