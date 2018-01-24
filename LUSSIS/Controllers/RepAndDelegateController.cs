@@ -18,7 +18,7 @@ using LUSSIS.CustomAuthority;
 namespace LUSSIS.Controllers
 {
 
-    [CustomAuthorize("head", "staff")]
+    [CustomAuthorize("head, staff")]
     public class RepAndDelegateController : Controller
     {
         EmployeeRepository employeeRepo = new EmployeeRepository();
