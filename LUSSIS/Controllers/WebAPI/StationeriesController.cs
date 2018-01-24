@@ -48,7 +48,14 @@ namespace LUSSIS.Controllers.WebAPI
 
             var dto = new StationeryDTO()
             {
-                BinNum = stationery.BinNum
+                Description = stationery.Description,
+                BinNum = stationery.BinNum,
+                AvailableQty = stationery.AvailableQty,
+                Category = stationery.Category.CategoryName,
+                ItemNum = stationery.ItemNum,
+                ReorderLevel = stationery.ReorderLevel,
+                ReorderQty = stationery.ReorderLevel,
+                UnitOfMeasure = stationery.UnitOfMeasure
             };
 
             return Ok(dto);

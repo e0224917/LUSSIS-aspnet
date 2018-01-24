@@ -26,7 +26,7 @@ namespace LUSSIS.Controllers.WebAPI
         {
             var d = _repo.GetAll().LastOrDefault(de => de.Employee.DeptCode == dept);
 
-            if (d == null) return NotFound();
+            if (d == null) return BadRequest("No delegate available.");
 
             var result = new DelegateDTO()
             {
@@ -47,7 +47,6 @@ namespace LUSSIS.Controllers.WebAPI
                 }
             };
             return Ok(result);
-
         }
 
         [HttpPost]
@@ -91,7 +90,7 @@ namespace LUSSIS.Controllers.WebAPI
         {
             _repo.DeleteByDeptCode(dept);
 
-            return Ok(new { Message = "Revoked delegate" });
+            return Ok(new {Message = "Revoked delegate"});
         }
 
         [HttpGet]

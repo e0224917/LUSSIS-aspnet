@@ -37,7 +37,7 @@ else
             }
         </table>
         <div class="text-right">
-            <a href="/PurchaseOrders/Create?supplierId=@entry.Key.SupplierId" class="btn-block">Generate PO</a>
+            <a href="@Url.Action("Create", new {supplierId=entry.Key.SupplierId })" class="btn-block">Generate PO</a>
         </div>
         <br />
     }
@@ -62,7 +62,7 @@ else
             {
                 <tr>
                     <td>@(i + 1)</td>
-                    <td><a href="/PurchaseOrders/Details/@ViewBag.PendingApprovalPOList[i].PoNum">@ViewBag.PendingApprovalPOList[i].PoNum</a></td>
+                    <td><a href="@Url.Action("Details", new {id=ViewBag.PendingApprovalPOList[i].PoNum })">@ViewBag.PendingApprovalPOList[i].PoNum</a></td>
                     <td>@ViewBag.PendingApprovalPOList[i].Supplier.SupplierName</td>
                     <td>@ViewBag.PendingApprovalPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
                     <td>@ViewBag.PendingApprovalPOList[i].OrderEmployee.FullName</td>
@@ -90,7 +90,7 @@ else
             {
                 <tr>
                     <td>@(i + 1)</td>
-                    <td><a href="/PurchaseOrders/Order?p=@ViewBag.ApprovedPOList[i].PoNum">@ViewBag.ApprovedPOList[i].PoNum</a></td>
+                    <td><a href="@Url.Action("Order", new {p=ViewBag.ApprovedPOList[i].PoNum })">@ViewBag.ApprovedPOList[i].PoNum</a></td>
                     <td>@ViewBag.ApprovedPOList[i].Supplier.SupplierName</td>
                     <td>@ViewBag.ApprovedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
                     <td>@ViewBag.ApprovedPOList[i].OrderEmployee.FullName</td>
@@ -118,7 +118,7 @@ else
             {
                 <tr>
                     <td>@(i + 1)</td>
-                    <td><a href="/PurchaseOrders/Receive?p=@ViewBag.OrderedPOList[i].PoNum">@ViewBag.OrderedPOList[i].PoNum</a></td>
+                    <td><a href="@Url.Action("Receive", new {id=ViewBag.OrderedPOList[i].PoNum })">@ViewBag.OrderedPOList[i].PoNum</a></td>
                     <td>@ViewBag.OrderedPOList[i].Supplier.SupplierName</td>
                     <td>@ViewBag.OrderedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
                     <td>@ViewBag.OrderedPOList[i].OrderEmployee.FullName</td>
