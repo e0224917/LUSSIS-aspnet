@@ -119,11 +119,12 @@ namespace LUSSIS.Controllers
             ViewBag.supplier = supplierList;
             return View(model);
         }
-        [HttpPost]
-        public ActionResult Report()
-        {
+
+        //[HttpPost]
+        //public ActionResult Report()
+        //{
             
-        }
+        //}
 
 
 
