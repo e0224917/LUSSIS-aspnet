@@ -18,7 +18,7 @@ using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
-    [Authorize(Roles = "staff")]
+    [Authorize(Roles = "staff, clerk, head")]
     public class RequisitionsController : Controller
     {
 
@@ -221,7 +221,7 @@ namespace LUSSIS.Controllers
 
 
         //StoreClerk??
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = "clerk, staff")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
             List<Stationery> stationerys = strepo.GetAll().ToList<Stationery>();
@@ -361,7 +361,6 @@ namespace LUSSIS.Controllers
             return RedirectToAction("EmpCart");
         }
         //Stock Clerk's page
-        [OverrideAuthorization]
         [Authorize(Roles = "clerk")]
         public ActionResult Consolidated()
         {
@@ -377,7 +376,6 @@ namespace LUSSIS.Controllers
         //TODO: Add authorization - Stock Clerk only 
         //click on generate button - post with date selected
         [HttpPost]
-        [OverrideAuthorization]
         [Authorize(Roles = "clerk")]
         [ValidateAntiForgeryToken]
         public ActionResult Retrieve([Bind(Include = "collectionDate")] RetrievalItemsWithDateDTO listWithDate)
@@ -399,7 +397,6 @@ namespace LUSSIS.Controllers
         }
 
         //TODO: A method to display in process Retrieval
-        [OverrideAuthorization]
         [Authorize(Roles = "clerk")]
         public ActionResult RetrievalInProcess()
         {
