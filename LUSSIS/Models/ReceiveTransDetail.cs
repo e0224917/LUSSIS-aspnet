@@ -19,7 +19,8 @@ namespace LUSSIS.Models
         [StringLength(20)]
         public string ItemNum { get; set; }
 
-        public int? Quantity { get; set; }
+        [Required]
+        public int Quantity { get; set; }
 
         public virtual ReceiveTran ReceiveTran { get; set; }
 

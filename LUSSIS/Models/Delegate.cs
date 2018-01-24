@@ -12,15 +12,18 @@ namespace LUSSIS.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DelegateId { get; set; }
 
-        public int? EmpNum { get; set; }
+        [Required]
+        public int EmpNum { get; set; }
 
+        [Required]
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}")]
-        public DateTime? StartDate { get; set; }
+        public DateTime StartDate { get; set; }
 
+        [Required]
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}")]
-        public DateTime? EndDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         public virtual Employee Employee { get; set; }
     }

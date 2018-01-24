@@ -17,19 +17,23 @@ namespace LUSSIS.Models
         }
 
         [Key]
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PoNum { get; set; }
 
-        public int? SupplierId { get; set; }
+        [Required]
+        public int SupplierId { get; set; }
 
+        [Required]
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}")]
-        public DateTime? CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
 
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? OrderDate { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string Status { get; set; }
 
@@ -37,7 +41,22 @@ namespace LUSSIS.Models
         [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ApprovalDate { get; set; }
 
-        public int? OrderEmpNum { get; set; }
+        [Required]
+        public int OrderEmpNum { get; set; }
+
+        [Required]
+        public double GST { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        public string SupplierContact { get; set; }
+
+        [Required]
+        public string Address1 { get; set; }
+
+        public string Address2 { get; set; }
+
+        public string Address3 { get; set; }
 
         public int? ApprovalEmpNum { get; set; }
 

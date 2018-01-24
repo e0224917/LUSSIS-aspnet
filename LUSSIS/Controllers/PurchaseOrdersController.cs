@@ -381,13 +381,18 @@ namespace LUSSIS.Controllers
 
 public static class StationeryExtension
 {
-    public static double? UnitPrice(this Stationery s, int supplierId)
+    public static double UnitPrice(this Stationery s, int supplierId)
     {
+        double price = 0;
         foreach (StationerySupplier ss in s.StationerySuppliers)
         {
-            if (ss.SupplierId == supplierId) return ss.Price;
+            if (ss.SupplierId == supplierId) {
+                price=ss.Price;
+                break;
+            }
         }
-        return null;
+        //return null;
+        return price;
     }
 
     public static double LinePrice(this Stationery s, int supplierId, int? qty)
