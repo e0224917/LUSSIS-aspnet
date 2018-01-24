@@ -263,6 +263,7 @@
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Exceptions\InvalidDateException.cs" />
     <Compile Include="Exceptions\InvalidSetRepException.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
