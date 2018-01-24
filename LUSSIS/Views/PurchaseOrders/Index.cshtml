@@ -1,29 +1,30 @@
-﻿@model IEnumerable<LUSSIS.Models.PurchaseOrder>
-
+﻿
+@model PagedList.IPagedList<LUSSIS.Models.PurchaseOrder>
+@using PagedList.Mvc;
 @{
     ViewBag.Title = "Index";
 }
-
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 <h2>Purchase Order List</h2>
-
+<hr/>
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
 
-<table class="table display" id="table_with_pages">
+<table class="table display table-striped table-hover" id="table_with_pages">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CreateDate)
+            @Html.DisplayNameFor(model => model.First().CreateDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SupplierId)
+            @Html.DisplayNameFor(model => model.First().SupplierId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.OrderEmpNum)
+            @Html.DisplayNameFor(model => model.First().OrderEmpNum)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Status)
+            @Html.DisplayNameFor(model => model.First().Status)
         </th>
         <th>View Details</th>
     </tr>
@@ -44,19 +45,15 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.ActionLink("View Details", "Details", new { id = item.PoNum })
+                @Html.ActionLink("View Details", "Details", new { id = item.PoNum }, new { @class = "btn btn-outline-success btn-sm" })
             </td>
         </tr>
     }
 
 </table>
-<ul class="pagination">
-    @if (ViewBag.page > 1)
-    {
-        <li>@Html.ActionLink("<", "Index", new { page = ViewBag.page - 1 })</li>
-    }
-    @if (Model.Count() == 20)
-    {
-    <li>@Html.ActionLink(">", "Index", new { page = ViewBag.page + 1 })</li>
-    }
-</ul>
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page =>
+    Url.Action("Index",
+        new { page, currentFilter = ViewBag.CurrentFilter }))

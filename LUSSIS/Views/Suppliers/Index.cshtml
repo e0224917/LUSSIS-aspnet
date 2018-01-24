@@ -4,12 +4,12 @@
     ViewBag.Title = "List of Suppliers";
 }
 
-<h2>List of Suppliers</h2>
-
+<h2>All Suppliers</h2>
+<hr/>
 <p>
     @Html.ActionLink("Add New Supplier", "Create")
 </p>
-<table class="table">
+<table class="table table-hover table-striped">
     <tr>
         <th>
             Supplier Name
@@ -43,9 +43,9 @@
             @Html.DisplayFor(modelItem => item.FaxNum)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.SupplierId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.SupplierId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.SupplierId })
+            @Html.ActionLink("Edit", "Edit", new { id=item.SupplierId }, new { @class = "btn btn-outline-warning btn-sm"} ) 
+            @Html.ActionLink("Details", "Details", new { id=item.SupplierId }, new { @class = "btn btn-outline-success btn-sm" }) 
+            @Html.ActionLink("Delete", "Delete", new { id=item.SupplierId }, new { @class = "btn btn-outline-danger btn-sm" })
         </td>
     </tr>
 }
