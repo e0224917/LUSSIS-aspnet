@@ -41,7 +41,7 @@ namespace LUSSIS.Controllers
             dash.PendingStockAdjSubtractQty = stockRepo.GetPendingStockSubtractQty();
             dash.PendingStockAdjCount = stockRepo.GetPendingStockCount();
             dash.TotalDisbursementAmount = disRepo.GetDisbursementTotalAmount();
-            
+
             return View(dash);
         }
         /*  public ActionResult CharterColumn()
@@ -101,5 +101,24 @@ namespace LUSSIS.Controllers
             return Json(new { firstList = Name, secondList = Value }, JsonRequestBehavior.AllowGet);
         }
 
+
+
+        public ActionResult GenerateReport()
+        {
+            SupervisorReportDTO model = new SupervisorReportDTO();
+            return View(model);
+        }
+
+
+
+
+    }
+    public class SupervisorReportDTO
+    {
+        public List<Supplier> Suppliers { get; set; }
+        public List<Category> Categories { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+        public bool IsChart { get; set; }
     }
 }

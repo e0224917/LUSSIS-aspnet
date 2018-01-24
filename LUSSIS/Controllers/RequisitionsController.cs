@@ -18,7 +18,7 @@ using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
-    [Authorize(Roles = "staff")]
+    [Authorize(Roles = "staff, clerk, head")]
     public class RequisitionsController : Controller
     {
 
@@ -137,12 +137,6 @@ namespace LUSSIS.Controllers
         }
 
 
-
-
-
-
-
-
         //TODO: return create page, only showing necessary fields
         // GET: Requisition/Create
         //???
@@ -220,8 +214,7 @@ namespace LUSSIS.Controllers
         // GET: DeptEmpReqs
 
 
-        //StoreClerk??
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = "clerk, staff")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
             List<Stationery> stationerys = strepo.GetAll().ToList<Stationery>();
@@ -246,11 +239,18 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(stationerys.ToPagedList(pageNumber, pageSize));
+
+            var stationeryList = stationerys.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_Index", stationeryList);
+            }
+            return View(stationeryList);
         }
 
         // /Requisitions/AddToCart
-        [DelegateStaffCustomAuth("staff")]
+        [OverrideAuthorization]
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
@@ -282,6 +282,7 @@ namespace LUSSIS.Controllers
             List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
+
         [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult SubmitReq()
@@ -332,7 +333,7 @@ namespace LUSSIS.Controllers
             }
         }
 
-        [DelegateStaffCustomAuth("staff")]
+        [OverrideAuthorization]
         public ActionResult EmpCart()
         {
             ShoppingCart mycart = (ShoppingCart)Session["MyCart"];
