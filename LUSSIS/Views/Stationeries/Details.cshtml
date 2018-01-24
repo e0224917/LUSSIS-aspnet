@@ -1,0 +1,244 @@
+﻿@model LUSSIS.Models.WebDTO.StationeryDTO
+
+@{
+    ViewBag.Title = "Details";
+}
+@*<script src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script language="javaScript" type="text/javascript">
+    $(Document).ready(function () {
+        $('#FromDate').datetimepicker({
+            format: 'MM/DD/YY',
+            showTodayButton: true
+        });
+    }
+    </script>*@
+
+<h2>Stationery Details</h2>
+
+<div>
+    <hr />
+    <div class="container-fluid col-md-12 ">
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    ItemCode:
+                </dt>
+            </div>
+            <div class="col-md-3">
+                <dd>
+                    @Html.DisplayFor(model => model.stationery.ItemNum)
+                </dd>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    Item Description:
+                </dt>
+            </div>
+            <div class="col-md-3">
+                <dd>
+                    @Html.DisplayFor(model => model.stationery.Description)
+                </dd>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    Reorder Lvl:
+                </dt>
+            </div>
+            <div>
+                <dd>
+                    @Html.DisplayFor(model => model.stationery.ReorderLevel)
+                </dd>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    Reorder Qty:
+                </dt>
+            </div>
+            <div>
+                <dd>
+                    @Html.DisplayFor(model => model.stationery.ReorderQty)
+                </dd>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    BinNum #:
+                </dt>
+            </div>
+            <div>
+                <dd>
+                    @Html.DisplayFor(model => model.stationery.BinNum)
+                </dd>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    UOM:
+                </dt>
+            </div>
+            <div>
+                <dd>
+                    @Html.DisplayFor(model => model.stationery.UnitOfMeasure)
+                </dd>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    CurrentQty:
+                </dt>
+            </div>
+            <div>
+                <dd>
+                    @Html.DisplayFor(model => model.stationery.CurrentQty)
+                </dd>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    1st Supplier:
+                </dt>
+            </div>
+            <div>
+                <dd>
+                    @Html.DisplayFor(model => model.SupplierName1)
+                </dd>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    2st Supplier:
+                </dt>
+            </div>
+            <div>
+                <dd>
+                    @Html.DisplayFor(model => model.SupplierName2)
+                </dd>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <dt>
+                    3st Supplier:
+                </dt>
+            </div>
+            <div>
+                <dd>
+                    @Html.DisplayFor(model => model.SupplierName3)
+                </dd>
+            </div>
+        </div>
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.stationery.ItemNum })
+            @Html.ActionLink("Stock Adjustment", "Stock Adjustment")
+        </p>
+        <h2>Transaction History</h2>
+        <hr />
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <span class="nav-item nav-link">From Date </span>
+            <input type="date" class="form-control mr-sm-2" id="FromDate" />
+            <span class="nav-item nav-link">To Date </span>
+            <input type="date" class="form-control mr-sm-2" id="ToDate" />
+            <button type="submit" class="btn btn-success my-2 my-sm-0">Filter</button>
+        </nav>
+        @*<div class='input-group date' id='FromDate'>
+            <input type='text' class="form-control" />
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>*@
+        <hr />
+        <table class="table">
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Transaction type
+                </th>
+                <th>
+                    Dept/Supplier
+                </th>
+                <th>
+                    Qty
+                </th>
+                <th>
+                    Balance
+                </th>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.ReceiveDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.TransactioType)
+              
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.SupplierName)
+                  
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.Quantity)
+                 
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.CurrentQty)
+                  
+                </td>
+          </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.CollectionDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.TransactioType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.DeptName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.ActualQty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.CurrentQty)
+                </td>
+              </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.ApprovalDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.TransactioType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.ApprovalDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.Quantity1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.CurrentQty)
+                </td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
