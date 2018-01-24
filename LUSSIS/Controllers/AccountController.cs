@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LUSSIS.Models;
 using System.Collections.Generic;
+using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {
@@ -18,6 +19,7 @@ namespace LUSSIS.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        EmployeeRepository empRepo = new EmployeeRepository();
 
         public AccountController()
         {
@@ -131,7 +133,7 @@ namespace LUSSIS.Controllers
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    UserManager.AddToRole(user.Id, empRepo.GetJobTitleByEmail(model.Email));
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);

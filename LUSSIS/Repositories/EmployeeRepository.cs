@@ -94,6 +94,14 @@ namespace LUSSIS.Repositories
             department.RepEmployee.JobTitle = "rep";
             UpdateDepartment(department);
         }
+
+        public void AddRep(Department department, string repEmp)
+        {
+            department.RepEmpNum = Convert.ToInt32(repEmp);
+            UpdateDepartment(department);
+            department.RepEmployee.JobTitle = "rep";
+            Update(department.RepEmployee);
+        }
         
         public List <LUSSIS.Models.Delegate> GetAllDelegates()
         {

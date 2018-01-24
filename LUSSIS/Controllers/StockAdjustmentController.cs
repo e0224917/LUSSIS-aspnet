@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
+using PagedList;
 
 namespace LUSSIS.Controllers
 {
@@ -29,10 +30,48 @@ namespace LUSSIS.Controllers
 
             return View(await sar.GetAllAsync());
         }
-        public async Task<ActionResult> History()
+
+        public ActionResult History(string searchString, string currentFilter, int? page)
         {
-            return View(await db.AdjVouchers.ToListAsync());
+            List<AdjVoucher> adjustments = new List<AdjVoucher>();
+            if (searchString != null)
+            { page = 1; }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                adjustments = sar.GetAllAdjVoucherSearch(searchString);
+            }
+            else
+            {
+                adjustments = sar.GetAll().ToList();
+            }
+            int pageSize = 15;
+            int pageNumber = (page ?? 1);
+
+            var reqAll = adjustments.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_History", reqAll);
+            }
+
+            return View(reqAll);
         }
+
+
+
+
+
+
+
+
+
+
+
         public ActionResult Details(int id)
         {
             return View();

@@ -34,7 +34,7 @@ namespace LUSSIS.Models
         {
             modelBuilder.Entity<Department>()
                 .HasMany(e => e.Employees)
-                .WithOptional(e => e.Department)
+                .WithRequired(e => e.Department)
                 .HasForeignKey(e => e.DeptCode);
 
             modelBuilder.Entity<Disbursement>()
@@ -49,12 +49,12 @@ namespace LUSSIS.Models
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.RequestAdjVouchers)
-                .WithOptional(e => e.RequestEmployee)
+                .WithRequired(e => e.RequestEmployee)
                 .HasForeignKey(e => e.RequestEmpNum);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.CollectionPoints)
-                .WithOptional(e => e.InChargeEmployee)
+                .WithRequired(e => e.InChargeEmployee)
                 .HasForeignKey(e => e.InChargeEmpNum);
 
             modelBuilder.Entity<Employee>()
@@ -69,7 +69,7 @@ namespace LUSSIS.Models
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.PurchaseOrders)
-                .WithOptional(e => e.OrderEmployee)
+                .WithRequired(e => e.OrderEmployee)
                 .HasForeignKey(e => e.OrderEmpNum);
 
             modelBuilder.Entity<Employee>()
@@ -84,7 +84,7 @@ namespace LUSSIS.Models
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Requisitions1)
-                .WithOptional(e => e.RequisitionEmployee)
+                .WithRequired(e => e.RequisitionEmployee)
                 .HasForeignKey(e => e.RequisitionEmpNum);
 
             modelBuilder.Entity<PurchaseOrder>()
