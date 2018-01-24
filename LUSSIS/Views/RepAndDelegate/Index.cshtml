@@ -43,7 +43,7 @@
             </div>
         </div>
     </div>
-    @if ((Session["Roles"] as List<String>).Contains("head"))
+    @if (Model.GetCurrentLoggedIn.JobTitle == "head")
     {
     <div class="class=" col-lg-4">
         <div class="bs-component">
@@ -125,31 +125,32 @@ using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post)
                     <div class="card-header"><h4 class="card-title">Department Rep</h4></div>
                     <div class="card-body">
                         @if (Model.Department.RepEmployee != null)
-                        {
-                        <table class="table table-hover">
-                            <tr>
-                                <th>
-                                    Current Department Rep:
-                                </th>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
-                                </td>
-                            </tr>
-                        </table>
-                        }
-                        else
-                        {
-                        <h6>No department representative at the moment.</h6>
-                        }
-
-                    
-                    @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
-{
-    if (Model.GetDelegateByDate == null)
     {
+                    <table class="table table-hover">
+                        <tr>
+                            <th>
+                                Current Department Rep:
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
+                            </td>
+                        </tr>
+                    </table>
+}
+else
+{
+                    <h6>No department representative at the moment.</h6>
+                    <br />
+}
+                        
+
+                        @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
+    {
+        if (Model.GetDelegateByDate == null)
+        {           
                     <input type="submit" class="btn btn-success my-2 my-sm-0" value="Set New Representative" />
 }
 }

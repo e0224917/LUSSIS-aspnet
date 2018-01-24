@@ -17,7 +17,6 @@ using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
-
     [CustomAuthorize("head, staff")]
     public class RepAndDelegateController : Controller
     {
@@ -28,8 +27,9 @@ namespace LUSSIS.Controllers
         RequisitionRepository reqRepo = new RequisitionRepository();
 
         public ActionResult Index()
-        {      
-            dbdto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+        {
+            dbdto.GetCurrentLoggedIn = employeeRepo.GetCurrentUser();
+            dbdto.Department = employeeRepo.GetDepartmentByUser(dbdto.GetCurrentLoggedIn);
             dbdto.GetDelegate = employeeRepo.GetFutureDelegate(dbdto.Department, DateTime.Now.Date);
             dbdto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(dbdto.Department);
             dbdto.GetRequisitionListCount = reqRepo.GetPendingListForHead(dbdto.Department.DeptCode).Count();
@@ -59,6 +59,7 @@ namespace LUSSIS.Controllers
             return Json(selectedEmp, JsonRequestBehavior.AllowGet);
         }
 
+        [CustomAuthorize("head")]
         [HttpGet]
         public JsonResult GetEmpForDelJson(string prefix)
         {
@@ -94,6 +95,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("DeptRep");
         }
 
+        [CustomAuthorize("head")]
         [HttpPost]
         public ActionResult AddDelegate(string delegateEmp, string from, string to)
         {
@@ -112,6 +114,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("DeptDelegate");
         }
 
+        [CustomAuthorize("head")]
         [HttpPost]
         public ActionResult DeleteDelegate()
         {
@@ -124,6 +127,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("DeptDelegate");
         }
 
+        [CustomAuthorize("head")]
         [HttpPost]
         public ActionResult DeleteDelegateFromDB()
         {
@@ -136,6 +140,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("Index");
         }
 
+        [CustomAuthorize("head")]
         public ActionResult DeptDelegate()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
