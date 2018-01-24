@@ -6,14 +6,12 @@
 
 <h2>Manage Collection Point</h2>
 
-<table class="table">
+<table class="table table-hover">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
+            @*@Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)*@
+            Current Collection Point and Time
         </th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.CollectionPoint.Time)
-        </th>*@
     </tr>
     <tr>
 
@@ -21,46 +19,36 @@
 
             @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
 
-        @*</td>
-        <td>*@
             @Html.DisplayFor(model => model.CollectionPoint.Time)
 
         </td>
     </tr>
 </table>
 <hr />
-@using (Html.BeginForm("UpdateCollection", "Collection", FormMethod.Post))
-{
+<nav class="navbar navbar-light bg-light">
+    <div class="navbar-nav mr-auto">
+        @using (Html.BeginForm("UpdateCollection", "Collection", FormMethod.Post))
+        {
 
-    foreach (var item in Model.GetAll)
-    {
+            foreach (var item in Model.GetAll)
+            {
+                @Html.RadioButtonFor(m => m.CollectionPoint.CollectionPointId, item.CollectionPointId,
+                               item.CollectionName == Model.CollectionPoint.CollectionName ? new { @checked = "checked" } : null)
+                @item.CollectionName
+                <text>  </text>
+                @item.Time
 
-        <tr>
+                <br />
+            }
 
-            @Html.RadioButtonFor(m => m.CollectionPoint.CollectionPointId, item.CollectionPointId,
-                item.CollectionName == Model.CollectionPoint.CollectionName ? new { @checked = "checked" } : null)
-            @item.CollectionName
-            @item.Time
-        </tr>
-        <br />
-    }
+            <br />
+            <input type="submit" value="Set New Collection Point" class="btn btn-success my-2 my-sm-0" />
 
-    <br />
-    <input type="submit" value="Submit" />
-
-}
+        }
+    </div>
+</nav>
 <br />
+
 <iframe src="https://snazzymaps.com/embed/41737" width="1200" height="500" style="border:none;"></iframe>
-
-<style type="text/css">
-    td {
-        width: 2%;
-    }
-
-    th {
-        width: 2%;
-    }
-</style>
-
 
 

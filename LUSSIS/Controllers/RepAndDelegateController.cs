@@ -9,11 +9,17 @@ using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Exceptions;
 using System.Globalization;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
+using System.Web.Security;
+using LUSSIS.DAL;
+using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
 
-    [Authorize(Roles = "head")]
+    [CustomAuthorize("head", "staff")]
+
     public class RepAndDelegateController : Controller
     {
         EmployeeRepository employeeRepo = new EmployeeRepository();
@@ -22,11 +28,10 @@ namespace LUSSIS.Controllers
         DeptHeadDashBoardDTO dbdto = new DeptHeadDashBoardDTO();
         RequisitionRepository reqRepo = new RequisitionRepository();
 
-
         public ActionResult Index()
         {      
             dbdto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            dbdto.GetDelegate = employeeRepo.GetDelegate(dbdto.Department);
+            dbdto.GetDelegate = employeeRepo.GetFutureDelegate(dbdto.Department, DateTime.Now.Date);
             dbdto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(dbdto.Department);
             dbdto.GetRequisitionListCount = reqRepo.GetPendingListForHead(dbdto.Department.DeptCode).Count();
             dbdto.GetDelegateByDate = employeeRepo.GetDelegateByDate(dbdto.Department, DateTime.Now.Date);
@@ -75,7 +80,17 @@ namespace LUSSIS.Controllers
             {
                 string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
                 Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                employeeRepo.ChangeRep(department, repEmp);       
+                string emailRepOld = department.RepEmployee.EmailAddress;
+                var context = new ApplicationDbContext();
+                var user = context.Users.FirstOrDefault(u => u.Email == emailRepOld);
+                var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                userManager.RemoveFromRole(user.Id, "rep");
+                userManager.AddToRole(user.Id, "staff");
+                employeeRepo.ChangeRep(department, repEmp);
+                string emailRepNew = department.RepEmployee.EmailAddress;
+                var user2 = context.Users.FirstOrDefault(u => u.Email == emailRepNew);
+                userManager.RemoveFromRole(user2.Id, "staff");
+                userManager.AddToRole(user2.Id, "rep");
             }
             return RedirectToAction("DeptRep");
         }
@@ -125,14 +140,14 @@ namespace LUSSIS.Controllers
         public ActionResult DeptDelegate()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            raddto.GetDelegate = employeeRepo.GetDelegate(raddto.Department);
+            raddto.GetDelegate = employeeRepo.GetFutureDelegate(raddto.Department, DateTime.Now.Date);
             return View(raddto);
         }
 
         [HttpPost]
         public ActionResult DirectToRequisitons()
         {
-            return RedirectToAction("ApproveReq", "Requisitions");
+            return RedirectToAction("_ApproveReq", "Requisitions");
         }
 
         // GET: RepAndDelegate/Details/5

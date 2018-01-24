@@ -7,34 +7,45 @@ using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Repositories;
 using LUSSIS.Models;
+using LUSSIS.Controllers;
 
 namespace LUSSIS.Controllers
 {
     [RequireHttps]
     public class HomeController : Controller
     {
+
         EmployeeRepository employeeRepo = new EmployeeRepository();
 
         public ActionResult Index()
         {
-            var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
-            
-            switch(ViewBag.Message)
+            //var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            //ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
+            string justARole = employeeRepo.GetCurrentUser().JobTitle;
+            switch (justARole)
             {
-                case "head":
-                    return RedirectToAction("Index", "RepAndDelegate");
                 case "rep":
                     return RedirectToAction("Index", "Collection");
+                case "head":
+                    return RedirectToAction("Index", "RepAndDelegate");   
                 case "staff":
-                    return RedirectToAction("Index", "Requisitions");
+                    if (employeeRepo.CheckIfLoggedInUserIsDelegate())
+                    {
+                        return RedirectToAction("Index", "RepAndDelegate");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Requisitions");
+                    }
+                   
                 case "manager":
                     return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
                 case "supervisor":
-                    return RedirectToAction("SupervisorDashboard", "PurchaseOrders");                    
+                    return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
                 case "clerk":
                     return RedirectToAction("Consolidated", "Requisitions");
             }
+
             return View();
         }
 

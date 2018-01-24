@@ -1,4 +1,5 @@
-﻿@model LUSSIS.Models.WebDTO.DisbursementDetailDTO
+﻿@using LUSSIS.Models
+@model LUSSIS.Models.WebDTO.DisbursementDetailDTO
 
 @{
     ViewBag.Title = "Details";
@@ -7,13 +8,12 @@
 
 <h2>Disbursement for @Model.CurrentDisbursement.Department.DeptName</h2>
 <hr />
-@using (Html.BeginForm("Acknowledge", "Disbursements", FormMethod.Post, new {@class = "form-inline my-2 my-lg-0"}))
+@using (Html.BeginForm("Acknowledge", "Disbursements", FormMethod.Post, new { @class = "my-2 my-lg-0" }))
 {
     @Html.AntiForgeryToken()
-    <button type="submit" class="btn btn-success">Generate QR Code</button>
-    <br/>
+    
+   
 
-    <hr/>
     <div class="row">
         <div class="card col-lg-3">
             <div class="card-body">
@@ -45,14 +45,78 @@
         </div>
 
     </div>
-    <p style="padding: 1rem; width: 100%">
-        @Html.ActionLink("Edit", "Edit", new {id = Model.CurrentDisbursement.DisbursementId}) |
-        @Html.ActionLink("Back to List", "Index")
+    <div style="padding: 1rem; width: 100%; text-align:left">
 
-    </p>
-
+        <button type="button" class="btn btn-success" onclick="GenerateQR(@Model.CurrentDisbursement.DisbursementId)">Generate QR Code</button>
+        <span style="float:right;">
+            @Html.ActionLink("Edit", "Edit", new { id = Model.CurrentDisbursement.DisbursementId }) |
+                @Html.ActionLink("Back to List", "Index")
+            </span>
+    </div>
+        <hr />
     <h4>Disbursement Details</h4>
-    <hr/>
-    @Html.Partial("_DetailsList", Model.CurrentDisbursement.DisbursementDetails)
+    <hr />
+    @*@Html.Partial("_DetailsList", Model.CurrentDisbursement.DisbursementDetails)*@
 
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DisDetailList.First().Stationery.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisDetailList.First().RequestedQty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisDetailList.First().ActualQty)
+            </th>
+
+        </tr>
+
+        @for (int i = 0; i < Model.DisDetailList.Count; i++)
+        {
+
+            @Html.HiddenFor(modelItem => Model.DisDetailList[i].DisbursementId)
+            @Html.HiddenFor(modelItem => Model.DisDetailList[i].ItemNum)
+            @Html.HiddenFor(modelItem => Model.DisDetailList[i].UnitPrice)
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.DisDetailList[i].Stationery.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.DisDetailList[i].RequestedQty)
+                    @Html.HiddenFor(modelItem => Model.DisDetailList[i].RequestedQty)
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @value = Model.DisDetailList[i].ActualQty, @min = "0", @max = @Model.DisDetailList[i].RequestedQty} })
+                    @Html.ValidationMessageFor(model => Model.DisDetailList[i].ActualQty, "", new { @class = "text-danger" })
+
+                </td>
+
+            </tr>
+            //}
+        }
+    </table>
 }
+
+
+
+<div class="modal" id="QRModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="QRBody" align="center">
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    var GenerateQR = function (DisbursementId) {
+        var url = "/Disbursements/_QR?Id=" + DisbursementId;
+        $("#QRBody").load(url, function () {
+            $("#QRModal").modal("show");
+        })
+    }
+</script>
