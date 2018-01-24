@@ -23,6 +23,7 @@ namespace LUSSIS.Controllers
         {
         }
 
+
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
@@ -376,6 +377,12 @@ namespace LUSSIS.Controllers
             Session["Name"] = "";
             Session["Roles"] = new List<string>();
             return RedirectToAction("Index", "Home");
+        }
+
+        [HandleError]
+        public ActionResult NotAuthorized()
+        {
+            return View();
         }
 
         //

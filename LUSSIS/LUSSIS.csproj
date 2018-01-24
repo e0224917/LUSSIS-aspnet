@@ -638,6 +638,7 @@
     <Content Include="Views\Disbursements\_History.cshtml" />
     <Content Include="Views\Requisitions\_Index.cshtml" />
     <Content Include="Views\Requisitions\_All.cshtml" />
+    <Content Include="Views\Account\NotAuthorized.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -4,22 +4,22 @@
 }
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <h2>My Delegate</h2>
+@if (Model.GetDelegate != null)
+{
+    <table class="table table-hover">
+        <tr>
+            <th>
+                My Delegate
+            </th>
+            <th>
+                From
+            </th>
+            <th>
+                To
+            </th>
+        </tr>
+        <tr>
 
-<table class="table table-hover">
-    <tr>
-        <th>
-            My Delegate
-        </th>
-        <th>
-            From
-        </th>
-        <th>
-            To
-        </th>
-    </tr>
-    <tr>
-        @if (Model.GetDelegate != null)
-        {
             <td>
                 @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
             </td>
@@ -29,158 +29,158 @@
             <td>
                 @Html.DisplayFor(model => model.GetDelegate.EndDate)
             </td>
-        }
-    </tr>
-</table>
+        </tr>
+    </table>
+}
 @if (Model.GetDelegate == null)
 {
-    <text>You have no delegate at the moment.</text>
+    <div class="alert alert-dismissible alert-info">
+        You have no delegate at the moment.</div>
 }
 
-@if (Model.GetDelegate != null)
-{
-    using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
-    {
-        <input type="submit" class="btn btn-success my-2 my-sm-0" value="Revoke Delegate" />
-    }
-}
-
-
-@if (Model.GetDelegate == null)
-{
-    <hr />
-    <nav class="navbar navbar-light bg-light">
-        <div class="navbar-nav mr-auto">
-            <table class="table table-hover">
-                <tr>
-                    <th>
-                        Set New Delegate
-                    </th>
-                </tr>
-            </table>
-
-            @using (Html.BeginForm("AddDelegate", "RepAndDelegate", FormMethod.Post))
+        @if (Model.GetDelegate != null)
+        {
+            using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
             {
-                <label>Select Date:</label>
-                <br />
-                <label for="from">From</label>
-                <input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" />
-                <label for="to">&nbsp;&nbsp;To</label>
-                <input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" />
-                <br /><br />
-                <label>Search Employee:</label>
-                <br />
-                <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" />
-                <input id="Submit1" type="submit" value="Set New Delegate" class="btn btn-success my-2 my-sm-0" />
-                <input type="hidden" id="Emp2" name="DelegateEmp" />
-                <br />
-                <label id="tagsname" style="color:red" />
+                <input type="submit" class="btn btn-success my-2 my-sm-0" value="Revoke Delegate" />
             }
-        </div>
-    </nav>
-}
+        }
 
-@section scripts {
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $(':input[type="submit"]').prop('disabled', true);
-            $('#from, #to, #Emp').keyup(validate);
-            //$('#from, #to, #Emp').select(validate);
-            function validate() {
-                if ($('#from').val().length > 0 &&
-                    $('#to').val().length > 0 &&
-                    $('#Emp').val().length > 0) {
-                    $("input[type=submit]").prop("disabled", false);
-                }
-                else if ($('#Emp').val() == '')
-                {
-                    $(':input[type="submit"]').prop('disabled', true);
-                    $('#tagsname').html('You selected none ');
-                }
-                else {
-                    $("input[type=submit]").prop("disabled", true);
-                }
-            };
-        
-        var dateNow = new Date();
-        var dateToday = moment(dateNow).format('DD/MM/YYYY');
-        $(function () {
-            from = $("#from")
-                .datepicker({
-                    dateFormat: 'dd/mm/yy',
-                    minDate: dateToday,
-                    changeMonth: true,
-                    numberOfMonths: 1
-                })
-                .on("change", function () {
-                    to.datepicker("option", "minDate", getDate(this));
-                }),
-                to = $("#to").datepicker({
-                    dateFormat: 'dd/mm/yy',
-                    changeMonth: true,
-                    numberOfMonths: 1
-                })
-                    .on("change", function () {
-                        from.datepicker("option", "maxDate", getDate(this));
+
+        @if (Model.GetDelegate == null)
+        {
+            <hr />
+            <nav class="navbar navbar-light bg-light">
+                <div class="navbar-nav mr-auto">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>
+                                Set New Delegate
+                            </th>
+                        </tr>
+                    </table>
+
+                    @using (Html.BeginForm("AddDelegate", "RepAndDelegate", FormMethod.Post))
+                    {
+                        <label>Select Date:</label>
+                        <br />
+                        <label for="from">From</label>
+                        <input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" />
+                        <label for="to">&nbsp;&nbsp;To</label>
+                        <input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" />
+                        <br /><br />
+                        <label>Search Employee:</label>
+                        <br />
+                        <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" />
+                        <input id="Submit1" type="submit" value="Set New Delegate" class="btn btn-success my-2 my-sm-0" />
+                        <input type="hidden" id="Emp2" name="DelegateEmp" />
+                        <br />
+                        <label id="tagsname" style="color:red" />
+                    }
+                </div>
+            </nav>
+        }
+
+        @section scripts {
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#Submit1').prop('disabled', true);
+                    $('#from, #to, #Emp').keyup(validate);
+                    //$('#from, #to, #Emp').select(validate);
+                    function validate() {
+                        if ($('#from').val().length > 0 &&
+                            $('#to').val().length > 0 &&
+                            $('#Emp').val().length > 0) {
+                            $("#Submit1").prop("disabled", false);
+                        }
+                        else if ($('#Emp').val() == '') {
+                            $('#Submit1').prop('disabled', true);
+                            $('#tagsname').html('You selected none ');
+                        }
+                        else {
+                            $("#Submit1").prop("disabled", true);
+                        }
+                    };
+
+                    var dateNow = new Date();
+                    var dateToday = moment(dateNow).format('DD/MM/YYYY');
+                    $(function () {
+                        from = $("#from")
+                            .datepicker({
+                                dateFormat: 'dd/mm/yy',
+                                minDate: dateToday,
+                                changeMonth: true,
+                                numberOfMonths: 1
+                            })
+                            .on("change", function () {
+                                to.datepicker("option", "minDate", getDate(this));
+                            }),
+                            to = $("#to").datepicker({
+                                dateFormat: 'dd/mm/yy',
+                                changeMonth: true,
+                                numberOfMonths: 1
+                            })
+                                .on("change", function () {
+                                    from.datepicker("option", "maxDate", getDate(this));
+                                });
+
+                        function getDate(element) {
+                            var date;
+                            try {
+                                date = $.datepicker.parseDate("dd/mm/yy", element.value);
+                            } catch (error) {
+                                date = null;
+                            }
+
+                            return date;
+                        }
                     });
 
-            function getDate(element) {
-                var date;
-                try {
-                    date = $.datepicker.parseDate("dd/mm/yy", element.value);
-                } catch (error) {
-                    date = null;
-                }
+                    $("#Emp").autocomplete({
+                        source: function (request, response) {
+                            $.ajax({
+                                url: "/RepAndDelegate/GetEmpForDelJson",
+                                type: "GET",
+                                dataType: "json",
+                                data: { prefix: request.term },
+                                success: function (data) {
+                                    response($.map(data, function (item) {
+                                        return { label: item.FullName, value: item.EmpNum };
+                                    }))
+                                }
+                            })
+                        },
+                        select: function (event, ui) {
+                            event.preventDefault(); //default gives the value instead of label.
+                            $('#Emp2').val(ui.item.value);
+                            $(this).val(ui.item.label);
+                            if (ui.item == null) {
+                                $("#Emp").val('');
+                                $("#Submit1").prop("disabled", true);
+                            }
+                            else {
+                                $('#tagsname').html('You selected: ' + ui.item.label);
+                            }
+                        },
+                        change: function (event, ui) {
+                            if (ui.item == null) {
+                                $("#Emp").val('');
+                                $('#Submit1').prop('disabled', true);
 
-                return date;
-            }
-        });
-
-            $("#Emp").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "/RepAndDelegate/GetEmpForDelJson",
-                        type: "GET",
-                        dataType: "json",
-                        data: { prefix: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return { label: item.FullName, value: item.EmpNum };
-                            }))
+                            }
+                        },
+                        focus: function (event, ui) {
+                            $(this).val(ui.item.label);
+                            if (ui.item == null) {
+                                $("#Emp").val('');
+                                $('#Submit1').prop('disabled', true);
+                            }
+                        },
+                        close: function (event, ui) {
+                            $(this).data().term = null;
                         }
-                    })
-                },
-                select: function (event, ui) {
-                    event.preventDefault(); //default gives the value instead of label.
-                    $('#Emp2').val(ui.item.value);
-                    $(this).val(ui.item.label);
-                    if (ui.item == null) {
-                        $("#Emp").val('');
-                        $("input[type=submit]").prop("disabled", true);
-                    }
-                    else {
-                        $('#tagsname').html('You selected: ' + ui.item.label);
-                    }
-                },
-                change: function (event, ui) {
-                    if (ui.item == null) {
-                        $("#Emp").val('');
-                        $('#Submit1').prop('disabled', true);
-
-                    }
-                },
-                focus: function (event, ui) {
-                    $(this).val(ui.item.label);
-                    if (ui.item == null) {
-                        $("#Emp").val('');
-                        $('#Submit1').prop('disabled', true);
-                    }
-                },
-                close: function (event, ui) {
-                    $(this).data().term = null;
-                }
-            });
-        });
-    </script>
-}
+                    });
+                });
+            </script>
+        }
