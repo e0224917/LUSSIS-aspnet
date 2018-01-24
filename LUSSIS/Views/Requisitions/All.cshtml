@@ -1,72 +1,47 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Requisition>
 @using PagedList.Mvc;
-
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @{
-    ViewBag.Title = "All";
+    ViewBag.Title = "Requisition History";
 }
 
-<h2>All Requisitions</h2>
+<h2>Requisition History</h2>
 <hr />
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="navbar-nav mr-auto"></div>
     <div class="form-inline my-2 my-lg-0">
-        @using (Html.BeginForm())
+        @using (Ajax.BeginForm(new AjaxOptions
+        {
+            HttpMethod = "POST",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "reqHistory"
+        }))
         {
             <span class="d-inline nav-item nav-link">Find: </span>
             @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
             <span class="d-inline nav-item nav-link"><input type="submit" placeholder="Search" class="btn btn-secondary my-2 my-sm-0" /></span>
 
         }
-        <form action="/Requistions/All" method="get">
+        @using (Ajax.BeginForm(new AjaxOptions
+        {
+            HttpMethod = "POST",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "reqHistory"
+        }))
+        {
             <span style="float:right">
                 <input type="submit" value="Show All" class="btn btn-secondary my-2 my-sm-0" />
             </span>
-        </form>
+        }
     </div>
 </nav>
 <hr />
-<table class="table table-striped table-hover">
-    <tr>
-        <th>
-            Requistion Date
-        </th>
-        <th>
-            Employee
-        </th>
-        <th>
-            Request Reason
-        </th>
-        <th>
-            @Html.DisplayName("View")
-        </th>
-        <th></th>
-    </tr>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequisitionDate, "Requisition Date")
-                @Html.HiddenFor(modelItem => item.RequisitionId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName, "Employee")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
-            </td>
-            <td>
-                @Html.ActionLink("Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, null)
-            </td>
-            <td>
-                @Html.ActionLink("Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, null)
-            </td>
-        </tr>
-    }
+@Html.Partial("_All", Model)
 
-</table>
+@section scripts {
+    <script src="~/Scripts/jquery.unobstrusive-ajax.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 
 
-    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-    @Html.PagedListPager(Model, page => Url.Action("History", new { page, currentFilter = ViewBag.CurrentFilter }))
-
+}

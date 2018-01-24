@@ -242,6 +242,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CollectionController.cs" />
+    <Compile Include="Controllers\StationeriesController.cs" />
     <Compile Include="CustomAuthority\CustomAuthorizeAttribute.cs" />
     <Compile Include="Controllers\DisbursementsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -258,9 +259,11 @@
     <Compile Include="Controllers\WebAPI\RequisitionsController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="CustomAuthority\DelegateStaffCustomAuth.cs" />
+    <Compile Include="CustomAuthority\HeadWithDelegateAuth.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Exceptions\InvalidDateException.cs" />
     <Compile Include="Exceptions\InvalidSetRepException.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -335,6 +338,7 @@
     <Compile Include="Models\WebDTO\AdjustmentVoucherDTO.cs" />
     <Compile Include="Models\WebDTO\ManageCollectionDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
+    <Compile Include="Models\WebDTO\StationeryDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorReportDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -499,6 +503,7 @@
     <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.min.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.unobstrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobstrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -627,9 +632,7 @@
     <Content Include="Views\Requisitions\_unauthoriseAccess.cshtml" />
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
-    <Content Include="Views\Requisitions\PDetail.cshtml" />
     <Content Include="Views\SupervisorDashboard\GenerateReport.cshtml" />
-    <Content Include="Views\SupervisorDashboard\Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,7 +1,6 @@
 ﻿@model LUSSIS.Models.Requisition
 
 
-
 @{
     ViewBag.Title = "Detail";
 }
@@ -17,19 +16,26 @@
     @Html.HiddenFor(model => model.RequisitionEmpNum)
     @Html.HiddenFor(model => model.RequestRemarks)
     @Html.HiddenFor(model => model.RequisitionDate)
+    @Html.HiddenFor(model => model.Status)
 
 
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.RequisitionEmployee.FullName)
+                @Html.DisplayName("Employee")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RequisitionDate)
+                @Html.DisplayName("Requisition Date")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RequestRemarks)
+                @Html.DisplayName("Reason")
             </th>
+            @if (ViewBag.Pending != "Pending")
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+            }
         </tr>
         <tr>
             <td>
@@ -41,29 +47,33 @@
             <td>
                 @Html.DisplayFor(model => model.RequestRemarks)
             </td>
+            @if (ViewBag.Pending != "Pending")
+            {
+                <td>
+                    @Html.DisplayFor(model => model.Status)
+                </td>
+            }
         </tr>
     </table>
 
     <table>
         <tr>
-            @if (ViewBag.Pending == "Pending")
-            {
-            <td>@Html.LabelFor(model => model.ApprovalRemarks, "Your comments", htmlAttributes: new { @class = "control-label col-md-2" })</td>
-            }
-            else { <td>@Html.DisplayFor(model => model.RequestRemarks)</td>  }
-
-            @if (ViewBag.Message != "Delegate" && ViewBag.Pending == "Pending")
-            {
-        <td></td>
-        <td></td>
-            }
+            <th colspan="2">@Html.LabelFor(model => model.ApprovalRemarks, "Approval comments")</th>
+            <td></td>
         </tr>
         <tr>
-            <td>@Html.EditorFor(model => model.ApprovalRemarks)</td>
-            @if (ViewBag.Message != "Delegate")
+            @if (ViewBag.Message != "Delegate" && ViewBag.Pending == "Pending")
             {
-            <td><button type="submit" name="SubmitButton" value="Approve">Approve</button></td>
-            <td><button type="submit" name="SubmitButton" value="Reject">Reject</button></td>
+                <td>@Html.EditorFor(model => model.ApprovalRemarks)</td>
+            }
+            else
+            {
+                <td>@Html.DisplayFor(model => model.ApprovalRemarks)</td>
+            }
+            @if (ViewBag.Message != "Delegate" && ViewBag.Pending == "Pending")
+            {
+                <td><button type="submit" name="SubmitButton" value="Approve">Approve</button></td>
+                <td><button type="submit" name="SubmitButton" value="Reject">Reject</button></td>
             }
         </tr>
     </table>

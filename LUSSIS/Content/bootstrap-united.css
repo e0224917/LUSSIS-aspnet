@@ -234,8 +234,8 @@ label,
 select,
 summary,
 textarea {
-  -ms-touch-action: manipulation;
-      touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
 }
 
 table {
@@ -273,10 +273,10 @@ button,
 select,
 optgroup,
 textarea {
-  margin: 0;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
 }
 
 button,
@@ -293,7 +293,8 @@ button,
 html [type="button"],
 [type="reset"],
 [type="submit"] {
-  -webkit-appearance: button;
+  /*-webkit-appearance: button;*/
+    -webkit-appearance: none;
 }
 
 button::-moz-focus-inner,
@@ -319,8 +320,10 @@ input[type="month"] {
 }
 
 textarea {
-  overflow: auto;
-  resize: vertical;
+    padding: 20px;
+    width: 300px;
+    resize: both;
+    overflow: auto;
 }
 
 fieldset {

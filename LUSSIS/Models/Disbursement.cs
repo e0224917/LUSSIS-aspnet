@@ -21,21 +21,25 @@ namespace LUSSIS.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DisbursementId { get; set; }
 
+        [Required]
         [Column(TypeName = "date")]
         [Display(Name="Collection Date")]
         [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
         //[CollectionDate] //validation
-        public DateTime? CollectionDate { get; set; }
+        public DateTime CollectionDate { get; set; }
 
+        //[Required]
         [Display(Name = "Collection Point Id")]
         public int? CollectionPointId { get; set; }
 
+        [Required]
         [StringLength(20)]
         [Display(Name = "Department Code")]
         public string DeptCode { get; set; }
 
         public int? AcknowledgeEmpNum { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string Status { get; set; }
 

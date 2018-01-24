@@ -31,7 +31,7 @@ namespace LUSSIS.Controllers
         public ActionResult Index(int? page = 1)
         {
             var purchaseOrders = pr.GetAll();
-            int pageSize = 20;
+            int pageSize = 15;
             ViewBag.page = page;
             return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate).ToPagedList(Convert.ToInt32(page), pageSize));
         }
@@ -74,7 +74,6 @@ namespace LUSSIS.Controllers
             ViewBag.Error = error;
 
             PurchaseOrderDTO po = new PurchaseOrderDTO(); //view model
-            List<Stationery> stationeries;  //for dropdown list
             int countOfLines = 1; //no of purchase detail lines to show
 
             if (supplierId == null)
@@ -93,6 +92,8 @@ namespace LUSSIS.Controllers
             po.Supplier = supplier;
             po.SupplierId = supplier.SupplierId;
             po.CreateDate = DateTime.Today;
+            po.SupplierAddress = supplier.Address1 + Environment.NewLine + supplier.Address2 + Environment.NewLine + supplier.Address3;
+            po.SupplierContact = supplier.ContactName;
 
             //set empty Stationery template
             Stationery emptyStationery = new Stationery();
@@ -100,7 +101,6 @@ namespace LUSSIS.Controllers
             emptyStationery.Description = "select a stationery";
             emptyStationery.UnitOfMeasure = "-";
             emptyStationery.AverageCost = 0.00;
-
 
             //get list of recommended for purchase stationery and put in purchase order details
             var a = sr.GetOutstandingStationeryByAllSupplier();
@@ -176,6 +176,10 @@ namespace LUSSIS.Controllers
                     purchaseOrder.CreateDate = purchaseOrderDTO.CreateDate;
                 purchaseOrder.Status = "pending";
                 purchaseOrder.SupplierId = purchaseOrderDTO.SupplierId;
+                purchaseOrder.SupplierContact = purchaseOrderDTO.SupplierContact;
+                purchaseOrder.Address1 = purchaseOrderDTO.Address1;
+                purchaseOrder.Address2 = purchaseOrderDTO.Address2;
+                purchaseOrder.Address3 = purchaseOrderDTO.Address3;
 
                 //set PO detail values
                 for (int i = purchaseOrderDTO.PurchaseOrderDetailsDTO.Count - 1; i >= 0; i--)
@@ -251,6 +255,9 @@ namespace LUSSIS.Controllers
         {
             try
             {
+                if (receiveModel.InvoiceNum == null || receiveModel.DeliveryOrderNum == null)
+                    throw new Exception("Delivery Order Number and Invoice Number are required fields");
+
                 if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
 
@@ -381,13 +388,18 @@ namespace LUSSIS.Controllers
 
 public static class StationeryExtension
 {
-    public static double? UnitPrice(this Stationery s, int supplierId)
+    public static double UnitPrice(this Stationery s, int supplierId)
     {
+        double price = 0;
         foreach (StationerySupplier ss in s.StationerySuppliers)
         {
-            if (ss.SupplierId == supplierId) return ss.Price;
+            if (ss.SupplierId == supplierId) {
+                price=ss.Price;
+                break;
+            }
         }
-        return null;
+        //return null;
+        return price;
     }
 
     public static double LinePrice(this Stationery s, int supplierId, int? qty)

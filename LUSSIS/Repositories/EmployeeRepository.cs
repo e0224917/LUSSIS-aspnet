@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using LUSSIS.Exceptions;
+using LUSSIS.Extensions;
 
 namespace LUSSIS.Repositories
 {
@@ -64,14 +65,14 @@ namespace LUSSIS.Repositories
         public List<Employee> GetSelectionByDepartment(string prefix, Department department)
         {
             List<Employee> employee = GetStaffRepByDepartment(department);
-            return employee.Where(x => x.FullName.Contains(prefix)).ToList();
+            return employee.Where(x => x.FullName.Contains(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
 
         public List<Employee> GetDelSelectionByDepartment(string prefix, Department department)
         {
             List<Employee> employee = GetStaffOnlyByDepartment(department);
-            return employee.Where(x => x.FullName.Contains(prefix)).ToList();
+            return employee.Where(x => x.FullName.Contains(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         public void UpdateDepartment(Department department)
@@ -93,6 +94,14 @@ namespace LUSSIS.Repositories
             UpdateDepartment(department);
             department.RepEmployee.JobTitle = "rep";
             UpdateDepartment(department);
+        }
+
+        public void AddRep(Department department, string repEmp)
+        {
+            department.RepEmpNum = Convert.ToInt32(repEmp);
+            UpdateDepartment(department);
+            department.RepEmployee.JobTitle = "rep";
+            Update(department.RepEmployee);
         }
         
         public List <LUSSIS.Models.Delegate> GetAllDelegates()
