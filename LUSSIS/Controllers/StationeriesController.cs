@@ -187,7 +187,7 @@ namespace LUSSIS.Controllers
 
                     StationerySupplier sp1 = new StationerySupplier();
                     sp1.ItemNum = generatedItemNum;
-                    sp1.SupplierId = 1;  //Int32.Parse(stationerynDTO.SupplierName1);
+                    sp1.SupplierId = Int32.Parse(stationerynDTO.SupplierName1);
                     sp1.Price = stationerynDTO.Price1;
                     sp1.Rank = 1;
                     strepo.AddSS(sp1);
@@ -281,7 +281,7 @@ namespace LUSSIS.Controllers
 
                     StationerySupplier sp1 = new StationerySupplier();
                     sp1.ItemNum = stationerynDTO.ItemNum;
-                    sp1.SupplierId = 1;  //Int32.Parse(stationerynDTO.SupplierName1);
+                    sp1.SupplierId = Int32.Parse(stationerynDTO.SupplierName1);
                     sp1.Price = stationerynDTO.Price1;
                     sp1.Rank = 1;
                     strepo.AddSS(sp1);
@@ -300,6 +300,7 @@ namespace LUSSIS.Controllers
                     sp3.Price = stationerynDTO.Price3;
                     sp3.Rank = 3;
                     strepo.AddSS(sp3);
+
                     return RedirectToAction("Index");
                 }
 
