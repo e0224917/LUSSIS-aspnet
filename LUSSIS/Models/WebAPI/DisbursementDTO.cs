@@ -15,6 +15,10 @@ namespace LUSSIS.Models.WebAPI
 
         public DateTime CollectionDate { get; set; }
 
+        public string CollectionTime { get; set; }
+
+        public string DepartmentName { get; set; }
+
         public IEnumerable<RequisitionDetailDTO> DisbursementDetails { get; set; }
     }
 }
