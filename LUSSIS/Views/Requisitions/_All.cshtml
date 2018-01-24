@@ -1,0 +1,52 @@
+﻿@model PagedList.IPagedList<LUSSIS.Models.Requisition>
+@using PagedList.Mvc;
+
+<div id="reqHistory">
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>
+                Requistion Date
+            </th>
+            <th>
+                Employee
+            </th>
+            <th>
+                Request Reason
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequisitionDate, "Requisition Date")
+                @Html.HiddenFor(modelItem => item.RequisitionId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName, "Employee")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status, "Status")
+            </td>
+            <td>
+                @Html.ActionLink("View Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, new { @class = "btn btn-outline-success" })
+            </td>
+        </tr>
+        }
+
+    </table>
+
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("All", new { page, currentFilter = ViewBag.CurrentFilter }))
+
+</div>

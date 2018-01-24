@@ -110,7 +110,7 @@ namespace LUSSIS.Controllers
             foreach (var disbursementlist in DisbursementList)
             {
                 stationeryDTO.CollectionDate = disbursementlist.CollectionDate;
-                stationeryDTO.TransactioType = "Dursement";
+                stationeryDTO.TransactioType = "Disbursement";
                 stationeryDTO.DeptName = disbursementlist.DeptName;
                 stationeryDTO.ActualQty = disbursementlist.ActualQty;
                 stationeryDTO.CurrentQty = disbursementlist.CurrentQty;
@@ -194,7 +194,8 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 double[] supplierPrice = { Convert.ToDouble(stationeryDT.Price1), Convert.ToDouble(stationeryDT.Price2), Convert.ToDouble(stationeryDT.Price3) };
-                double averageItemprice = supplierPrice.Average();
+                double averageItemprice1 = supplierPrice.Average();
+                double averageItemprice = Math.Round(averageItemprice1, 2);
 
                 stationery.CategoryId = stationeryDT.stationery.CategoryId;
 
@@ -372,7 +373,8 @@ namespace LUSSIS.Controllers
                 db.SaveChanges();
 
                 double[] supplierPrice = { Convert.ToDouble(stationeryDTO.Price1), Convert.ToDouble(stationeryDTO.Price2), Convert.ToDouble(stationeryDTO.Price3) };
-                double averageItemprice = supplierPrice.Average();
+                double averageItemprice1 = supplierPrice.Average();
+                double averageItemprice = Math.Round(averageItemprice1, 2);
 
                 StationerySupplier stationerysupplier = new StationerySupplier(); ;
                 for (int i = 0; i < 3; i++)
