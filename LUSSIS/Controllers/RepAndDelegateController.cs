@@ -17,7 +17,7 @@ using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
-    [CustomAuthorize("head, staff")]
+    [CustomAuthorize("head", "staff")]
     public class RepAndDelegateController : Controller
     {
         EmployeeRepository employeeRepo = new EmployeeRepository();
@@ -26,6 +26,7 @@ namespace LUSSIS.Controllers
         DeptHeadDashBoardDTO dbdto = new DeptHeadDashBoardDTO();
         RequisitionRepository reqRepo = new RequisitionRepository();
 
+        //for delegate and head only
         public ActionResult Index()
         {
             dbdto.GetCurrentLoggedIn = employeeRepo.GetCurrentUser();
@@ -38,6 +39,7 @@ namespace LUSSIS.Controllers
             return View(dbdto);
         }
 
+        [HeadWithDelegateAuth("head", "staff")]
         public ActionResult DeptRep()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
@@ -73,7 +75,7 @@ namespace LUSSIS.Controllers
             return Json(selectedEmp, JsonRequestBehavior.AllowGet);
         }
 
-
+        [HeadWithDelegateAuth("head", "staff")]
         [HttpPost]
         public ActionResult UpdateRep(string repEmp)
         {
