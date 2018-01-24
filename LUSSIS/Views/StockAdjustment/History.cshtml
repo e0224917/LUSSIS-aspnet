@@ -1,60 +1,47 @@
-﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
-
+﻿@model PagedList.IPagedList<LUSSIS.Models.AdjVoucher>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @{
     ViewBag.Title = "History";
 }
 
-<h2>Adjustment History</h2>
+<h2>Stock Adjustment History</h2>
+<hr />
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="navbar-nav mr-auto"></div>
+    <div class="form-inline my-2 my-lg-0">
+        @using (Ajax.BeginForm(new AjaxOptions
+        {
+            HttpMethod = "POST",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "stockAdjHistory"
+        }))
+        {
+            <span class="d-inline nav-item nav-link">Find: </span>
+            @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
+            <span class="d-inline nav-item nav-link"><input type="submit" placeholder="Search" class="btn btn-secondary my-2 my-sm-0" /></span>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.CreateDate)
-        </th>
-        <th>
-            @Html.DisplayName("Applied by")
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Stationery.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Reason)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Remark)
-        </th>
-    </tr>
+        }
+        @using (Ajax.BeginForm(new AjaxOptions
+        {
+            HttpMethod = "POST",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "stockAdjHistory"
+        }))
+        {
+            <span style="float:right">
+                <input type="submit" value="Show All" class="btn btn-secondary my-2 my-sm-0" />
+            </span>
+        }
+    </div>
+</nav>
+<hr />
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreateDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RequestEmployee.FullName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Stationery.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Quantity)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Reason)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Remark)
-        </td>
-    </tr>
+@Html.Partial("_History", Model)
+
+@section scripts {
+    <script src="~/Scripts/jquery.unobstrusive-ajax.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+
 }
-
-</table>

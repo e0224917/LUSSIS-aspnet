@@ -95,14 +95,22 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(requistions.ToPagedList(pageNumber, pageSize));
+
+            var reqAll = requistions.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_All", reqAll);
+            }
+
+            return View(reqAll);
         }
 
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         [CustomAuthorize("head", "staff")]
         [HttpPost]
-        public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks")] Requisition requisition, string SubmitButton)
+        public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status")] Requisition requisition, string SubmitButton)
         {
             if (requisition.Status == "pending")
             {//requisition must be pending for any approval and reject
@@ -116,31 +124,30 @@ namespace LUSSIS.Controllers
                         {
                             requisition.Status = "approved";
                             await reqRepo.UpdateAsync(requisition);
-                            return RedirectToAction("index");
+                            return RedirectToAction("Pending");
                         }
 
                         if (SubmitButton == "Reject")
                         {
-                            requisition.Status = "reject";
+                            requisition.Status = "rejected";
                             await reqRepo.UpdateAsync(requisition);
-                            return RedirectToAction("index");
+                            return RedirectToAction("Pending");
                         }
                     }
                     else
                     {
-                        return RedirectToAction("index");
+                        return View(requisition);
                     }
 
                 }
+                else { return new HttpUnauthorizedResult(); }
             }
-            return new HttpUnauthorizedResult();
+            else
+            {
+                return new HttpUnauthorizedResult();
+            }
+            return View(requisition);
         }
-
-
-
-
-
-
 
 
         //TODO: return create page, only showing necessary fields
@@ -220,7 +227,6 @@ namespace LUSSIS.Controllers
         // GET: DeptEmpReqs
 
 
-        //StoreClerk??
         [Authorize(Roles = "clerk, staff")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
@@ -246,11 +252,18 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(stationerys.ToPagedList(pageNumber, pageSize));
+
+            var stationeryList = stationerys.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_Index", stationeryList);
+            }
+            return View(stationeryList);
         }
 
         // /Requisitions/AddToCart
-        [DelegateStaffCustomAuth("staff")]
+        [OverrideAuthorization]
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
@@ -282,6 +295,7 @@ namespace LUSSIS.Controllers
             List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
+
         [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult SubmitReq()
@@ -328,7 +342,7 @@ namespace LUSSIS.Controllers
             }
         }
 
-        [DelegateStaffCustomAuth("staff")]
+        [OverrideAuthorization]
         public ActionResult EmpCart()
         {
             ShoppingCart mycart = (ShoppingCart)Session["MyCart"];
