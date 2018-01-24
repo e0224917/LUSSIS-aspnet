@@ -137,12 +137,6 @@ namespace LUSSIS.Controllers
         }
 
 
-
-
-
-
-
-
         //TODO: return create page, only showing necessary fields
         // GET: Requisition/Create
         //???
@@ -220,7 +214,6 @@ namespace LUSSIS.Controllers
         // GET: DeptEmpReqs
 
 
-        //StoreClerk??
         [Authorize(Roles = "clerk, staff")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
@@ -246,11 +239,18 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(stationerys.ToPagedList(pageNumber, pageSize));
+
+            var stationeryList = stationerys.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_Index", stationeryList);
+            }
+            return View(stationeryList);
         }
 
         // /Requisitions/AddToCart
-        [DelegateStaffCustomAuth("staff")]
+        [OverrideAuthorization]
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
@@ -282,6 +282,7 @@ namespace LUSSIS.Controllers
             List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
+
         [DelegateStaffCustomAuth("staff")]
         [HttpPost]
         public ActionResult SubmitReq()
@@ -328,7 +329,7 @@ namespace LUSSIS.Controllers
             }
         }
 
-        [DelegateStaffCustomAuth("staff")]
+        [OverrideAuthorization]
         public ActionResult EmpCart()
         {
             ShoppingCart mycart = (ShoppingCart)Session["MyCart"];
