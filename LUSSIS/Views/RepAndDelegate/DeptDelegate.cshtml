@@ -82,11 +82,11 @@
         }
 
         @section scripts {
-            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
             <script type="text/javascript">
                 $(document).ready(function () {
                     $('#Submit1').prop('disabled', true);
-                    $('#from, #to, #Emp').keyup(validate);
+                    $('#from, #to').change(validate);
+                    $('#Emp').keyup(validate2);
                     //$('#from, #to, #Emp').select(validate);
                     function validate() {
                         if ($('#from').val().length > 0 &&
@@ -94,12 +94,20 @@
                             $('#Emp').val().length > 0) {
                             $("#Submit1").prop("disabled", false);
                         }
-                        else if ($('#Emp').val() == '') {
-                            $('#Submit1').prop('disabled', true);
-                            $('#tagsname').html('You selected none ');
+                        else {
+                            $("#Submit1").prop("disabled", true);
+                        }
+                    };
+
+                    function validate2() {
+                        if ($('#from').val().length > 0 &&
+                            $('#to').val().length > 0 &&
+                            $('#Emp').val().length > 0) {
+                            $("#Submit1").prop("disabled", false);
                         }
                         else {
                             $("#Submit1").prop("disabled", true);
+                            $('#tagsname').html('You selected: none')
                         }
                     };
 
@@ -157,7 +165,8 @@
                             $(this).val(ui.item.label);
                             if (ui.item == null) {
                                 $("#Emp").val('');
-                                $("#Submit1").prop("disabled", true);
+                                $('#tagsname').html('You selected: none')
+                                
                             }
                             else {
                                 $('#tagsname').html('You selected: ' + ui.item.label);
@@ -166,14 +175,15 @@
                         change: function (event, ui) {
                             if (ui.item == null) {
                                 $("#Emp").val('');
+                                $('#tagsname').html('You selected: none')
                                 $('#Submit1').prop('disabled', true);
-
-                            }
+                            } 
                         },
                         focus: function (event, ui) {
                             $(this).val(ui.item.label);
                             if (ui.item == null) {
                                 $("#Emp").val('');
+                                $('#tagsname').html('You selected: none')
                                 $('#Submit1').prop('disabled', true);
                             }
                         },

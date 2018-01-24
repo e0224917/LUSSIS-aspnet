@@ -17,9 +17,9 @@ namespace LUSSIS.Models
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequisitionId { get; set; }
-
-        public int? RequisitionEmpNum { get; set; }
-
+        [Required]
+        public int RequisitionEmpNum { get; set; }
+        [Required]
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime? RequisitionDate { get; set; }
@@ -33,7 +33,7 @@ namespace LUSSIS.Models
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ApprovalDate { get; set; }
-
+        [Required]
         [StringLength(20)]
         public string Status { get; set; }
 

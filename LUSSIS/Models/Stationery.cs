@@ -24,30 +24,34 @@ namespace LUSSIS.Models
         [StringLength(20)]
         public string ItemNum { get; set; }
 
-        public int? CategoryId { get; set; }
+        [Required]
+        public int CategoryId { get; set; }
 
-        //[Required(ErrorMessage = "Description is required")]
+        [Required]
         public string Description { get; set; }
 
-        //[Required(ErrorMessage = "ReorderLevel is required")]
-        public int? ReorderLevel { get; set; }
+        [Required]
+        public int ReorderLevel { get; set; }
 
-        //[Required(ErrorMessage = "ReorderQty is required")]
-        public int? ReorderQty { get; set; }
+        [Required]
+        public int ReorderQty { get; set; }
 
-        public double? AverageCost { get; set; }
+        [Required]
+        public double AverageCost { get; set; }
 
-        //[Required(ErrorMessage = "UnitOfMeasure is required")]
+        [Required]
         [StringLength(10)]
         public string UnitOfMeasure { get; set; }
 
-        public int? CurrentQty { get; set; }
+        [Required]
+        public int CurrentQty { get; set; }
 
-        //[Required(ErrorMessage = "BinNum is required")]
+        [Required]
         [StringLength(10)]
         public string BinNum { get; set; }
 
-        public int? AvailableQty { get; set; }
+        [Required]
+        public int AvailableQty { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AdjVoucher> AdjVouchers { get; set; }
