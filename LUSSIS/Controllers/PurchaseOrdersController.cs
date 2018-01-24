@@ -255,6 +255,9 @@ namespace LUSSIS.Controllers
         {
             try
             {
+                if (receiveModel.InvoiceNum == null || receiveModel.DeliveryOrderNum == null)
+                    throw new Exception("Delivery Order Number and Invoice Number are required fields");
+
                 if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
 

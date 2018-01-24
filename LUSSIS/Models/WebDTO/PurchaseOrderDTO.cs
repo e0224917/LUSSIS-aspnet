@@ -62,10 +62,10 @@ namespace LUSSIS.Models.WebDTO
             this.OrderEmployee = po.OrderEmployee;
             this.ApprovalEmployee = po.ApprovalEmployee;
             this.Supplier = po.Supplier;
-            this.SupplierContact = po.Supplier.ContactName;
-            this.Address1 = po.Supplier.Address1;
-            this.Address2 = po.Supplier.Address2;
-            this.Address3 = po.Supplier.Address3;
+            this.SupplierContact = po.SupplierContact;
+            this.Address1 = po.Address1;
+            this.Address2 = po.Address2;
+            this.Address3 = po.Address3;
             this.PurchaseOrderDetails = po.PurchaseOrderDetails.ToList();
         }
     }
