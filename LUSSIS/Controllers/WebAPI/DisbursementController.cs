@@ -15,6 +15,30 @@ namespace LUSSIS.Controllers.WebAPI
         private readonly DisbursementRepository _repo = new DisbursementRepository();
 
         [HttpGet]
+        [Route("api/Disbursement/")]
+        public IHttpActionResult Get()
+        {
+            var list = _repo.GetDisbursementByStatus("inprocess");
+            var result = list.Select(item => new DisbursementDTO()
+            {
+                CollectionDate = (DateTime) item.CollectionDate,
+                CollectionPoint = item.CollectionPoint.CollectionName,
+                CollectionPointId = (int) item.CollectionPointId,
+                CollectionTime = item.CollectionPoint.Time,
+                DepartmentName = item.Department.DeptName,
+                DisbursementId = item.DisbursementId,
+                DisbursementDetails = item.DisbursementDetails.Select(detail => new RequisitionDetailDTO()
+                {
+                    Description = detail.Stationery.Description,
+                    Quantity = (int) detail.ActualQty,
+                    UnitOfMeasure = detail.Stationery.UnitOfMeasure
+                })
+            });
+
+            return Ok(result);
+        }
+
+        [HttpGet]
         [Route("api/Disbursement/{dept}")]
         [ResponseType(typeof(DisbursementDTO))]
         public IHttpActionResult Upcoming([FromUri] string dept)
@@ -28,6 +52,8 @@ namespace LUSSIS.Controllers.WebAPI
                 CollectionDate = (DateTime) d.CollectionDate,
                 CollectionPoint = d.CollectionPoint.CollectionName,
                 CollectionPointId = (int) d.CollectionPointId,
+                CollectionTime = d.CollectionPoint.Time,
+                DepartmentName = d.Department.DeptName,
                 DisbursementDetails = d.DisbursementDetails.Select(details => new RequisitionDetailDTO()
                 {
                     Description = details.Stationery.Description,

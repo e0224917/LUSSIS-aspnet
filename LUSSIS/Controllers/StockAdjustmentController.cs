@@ -223,6 +223,7 @@ namespace LUSSIS.Controllers
                         Adj.Reason = AVDTO.Reason;
                         Adj.RequestEmpNum = ENum;
                         Adj.CreateDate = todayDate;
+                        Adj.Status = "pending";
                         sar.Add(Adj);
                     }
                 }
@@ -268,6 +269,7 @@ namespace LUSSIS.Controllers
                 { adjVoucher.Quantity = adjVoucher.Quantity * -1; }
                 adj.Quantity = adjVoucher.Quantity;
                 adj.Reason = adjVoucher.Reason;
+                adj.Status = "pending";
                 sar.Add(adj);
                 return RedirectToAction("index");
             }
