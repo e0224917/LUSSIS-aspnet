@@ -501,6 +501,7 @@
     <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.min.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.unobstrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobstrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
