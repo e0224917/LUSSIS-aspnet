@@ -12,8 +12,7 @@
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>Supplier</h4>
-        <hr />
+       <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.SupplierId)
 
@@ -74,6 +73,7 @@
 }
 
 <div>
+
     @Html.ActionLink("Back to List", "Index")
 </div>
 

@@ -475,6 +475,8 @@ namespace LUSSIS.Controllers
                 }
                 else { return PartialView("_hasDelegate"); }
             }
+
+            return PartialView("_unuthoriseAccess");
         }
     }
 }
