@@ -11,6 +11,54 @@ namespace LUSSIS.Repositories
         public StationeryRepository()
         {
         }
+        public IEnumerable<Category> GetAllCategories()
+        {
+            return LUSSISContext.Categories.ToList();
+        }
+
+        public String GetCategoryInitial(string categoryId)
+        {
+            int catId = Int32.Parse(categoryId);   
+            Category cat = LUSSISContext.Categories.Where(x => x.CategoryId == catId).First();
+            return cat.CategoryName.Substring(0, 1);
+        }
+
+        public int GetLastRunningPlusOne(string initial)
+        {
+            List<Stationery> st = LUSSISContext.Stationeries.Where(x => x.ItemNum.StartsWith(initial)).ToList();
+            List<int> haha = new List<int>();
+            foreach (Stationery station in st)
+            {
+                haha.Add(Int32.Parse(station.ItemNum.Substring(1)));
+            }
+            haha.Sort();
+            return (haha.Last() + 1);
+        }
+
+        public void AddSS(StationerySupplier stationerySupplier)
+        {
+            LUSSISContext.Set<StationerySupplier>().Add(stationerySupplier);
+            LUSSISContext.SaveChanges();
+        }
+
+        public StationerySupplier GetSSByIdRank(string id, int rank)
+        {
+            return LUSSISContext.StationerySuppliers.Where(x => x.ItemNum == id && x.Rank == rank).FirstOrDefault();
+        }
+
+        
+        public void DeleteStationerySUpplier(string itemNum)
+        {
+            List < StationerySupplier > ss = LUSSISContext.StationerySuppliers.Where(x => x.ItemNum == itemNum).ToList();
+            foreach (StationerySupplier stationsupllier in ss)
+            {
+                LUSSISContext.StationerySuppliers.Remove(stationsupllier);
+            }
+                LUSSISContext.SaveChanges();
+            
+        }
+
+        
 
         public IEnumerable<Stationery> GetByCategory(string category)
         {
@@ -29,6 +77,11 @@ namespace LUSSIS.Repositories
                 slist.Add(c.CategoryName);
             }
             return slist;
+        }
+
+        public IEnumerable<StationerySupplier> GetAllStationerySuppliers()
+        {
+            return LUSSISContext.StationerySuppliers;
         }
 
         public IEnumerable<String> GetAllItemNum()
@@ -113,12 +166,16 @@ namespace LUSSIS.Repositories
         {  
            
             List<String> stList = new List<String>();
-            List<Stationery>l = LUSSISContext.Stationeries.Where(x => x.CategoryId == c).ToList();
+            List<Stationery>l =GetAll().Where(x => x.CategoryId == c).ToList();
             foreach(Stationery a in l)
             {
                 stList.Add(a.ItemNum);
             }
             return stList;
+        }
+        public List<Category>GetAllCategoryList()
+        {
+            return LUSSISContext.Categories.ToList();
         }
 
 

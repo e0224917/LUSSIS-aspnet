@@ -1,23 +1,22 @@
-﻿using System;
+﻿using LUSSIS.Repositories;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using LUSSIS.Repositories;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 
 namespace LUSSIS.CustomAuthority
 {
-    public class DelegateStaffCustomAuthAttribute : AuthorizeAttribute
+    public class HeadWithDelegateAuthAttribute : AuthorizeAttribute
     {
-        
         EmployeeRepository empRepo = new EmployeeRepository();
 
         private readonly string[] allowedRoles;
 
-        public DelegateStaffCustomAuthAttribute(params string[] roles)
+        public HeadWithDelegateAuthAttribute(params string[] roles)
         {
             this.allowedRoles = roles;
         }
@@ -27,18 +26,18 @@ namespace LUSSIS.CustomAuthority
             var user = System.Web.HttpContext.Current.User.Identity.GetUserId();
             var userManager = httpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var roles = userManager.GetRoles(user);
-            if (roles.Contains("staff") || roles.Contains("rep"))
+            if (roles.Contains("head") && !empRepo.CheckIfUserDepartmentHasDelegate())
             {
-                if(empRepo.CheckIfLoggedInUserIsDelegate())
-                {
-                    return false;
-                }
-                else
+                return true;
+            }
+            else if (roles.Contains("staff"))
+            {
+                if (empRepo.CheckIfLoggedInUserIsDelegate())
                 {
                     return true;
                 }
             }
-           
+
             return false;
         }
 

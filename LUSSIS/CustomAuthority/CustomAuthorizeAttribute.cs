@@ -30,7 +30,7 @@ namespace LUSSIS.CustomAuthority
             var roles = userManager.GetRoles(user);
             if (roles.Contains("head"))
             {
-                return true;
+                    return true;
             }
             else if(roles.Contains("staff"))
             {
@@ -39,7 +39,6 @@ namespace LUSSIS.CustomAuthority
                     return true;
                 }
             }
-
             return false;     
         }
 

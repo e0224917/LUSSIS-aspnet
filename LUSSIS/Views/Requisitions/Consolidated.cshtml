@@ -38,17 +38,17 @@ else
                 @Html.AntiForgeryToken()
 
                 @Html.LabelFor(model => model.collectionDate, "Select a collection date", new { @class = "nav-item nav-link" })
-                <input type="text" name="collectionDate" id="collectionDate" onkeydown="return false">
+                <input type="text" class="form-control" name="collectionDate" id="collectionDate" onkeydown="return false">
                 @Html.ValidationMessageFor(model => model.collectionDate, "must be later than today", new { @class = "invalid-feedback" })
 
-                <div class="nav-item nav-link"><button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button></div>
+                <div class="nav-item nav-link"><button type="submit" class="btn btn-outline-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button></div>
             }
         </nav>
         <hr />
 
     }
 
-    <table id="long-table" class="table table-hover">
+    <table id="long-table" class="table table-hover table-striped">
         <thead>
             <tr>
                 <th scope="col">Bin Num</th>
@@ -56,7 +56,7 @@ else
                 <th scope="col">UOM</th>
                 <th scope="col">Requested Qty*</th>
                 <th scope="col">Available Qty</th>
-                <th></th>
+                
             </tr>
         </thead>
         <tbody>

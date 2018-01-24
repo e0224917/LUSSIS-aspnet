@@ -18,15 +18,19 @@ namespace LUSSIS.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ReceiveId { get; set; }
 
-        public int? PoNum { get; set; }
+        [Required]
+        public int PoNum { get; set; }
 
+        [Required]
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}")]
-        public DateTime? ReceiveDate { get; set; }
+        public DateTime ReceiveDate { get; set; }
 
+        [Required]
         [StringLength(30)]
         public string InvoiceNum { get; set; }
 
+        [Required]
         [StringLength(30)]
         public string DeliveryOrderNum { get; set; }
 
