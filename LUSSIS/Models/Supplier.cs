@@ -59,6 +59,7 @@ namespace LUSSIS.Models
                     Address1 = addressArr[0];
                     if (addressArr.Length > 1)
                         Address2 = addressArr[1];
+                    Address3 = "";
                     for (int i = 2; i < addressArr.Length; i++)
                         Address3 += addressArr[i];
                 }
