@@ -146,6 +146,7 @@ namespace LUSSIS.Repositories
             LUSSISContext.Delegates.Remove(del);
             LUSSISContext.SaveChanges();
         }
+
        
         public List<Department> GetDepartmentAll()
         {

@@ -14,6 +14,7 @@ using System.IO;
 
 namespace LUSSIS.Controllers
 {
+    [Authorize(Roles = "clerk")]
     public class SuppliersController : Controller
     {
         private SupplierRepository repo = new SupplierRepository();

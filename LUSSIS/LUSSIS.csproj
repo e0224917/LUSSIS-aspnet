@@ -257,6 +257,7 @@
     <Compile Include="Controllers\WebAPI\DisbursementController.cs" />
     <Compile Include="Controllers\WebAPI\RequisitionsController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
+    <Compile Include="CustomAuthority\DelegateStaffCustomAuth.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Exceptions\InvalidDateException.cs" />
     <Compile Include="Exceptions\InvalidSetRepException.cs" />
@@ -315,6 +316,7 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
+    <Compile Include="Models\WebDTO\DelegateStaffDTO.cs" />
     <Compile Include="Models\WebDTO\DeptHeadDashBoardDTO.cs" />
     <Compile Include="Models\WebDTO\DisbursementDetailDTO.cs" />
     <Compile Include="Models\WebDTO\PendingPurchaseOrderDTO.cs" />

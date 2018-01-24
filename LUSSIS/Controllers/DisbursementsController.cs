@@ -16,6 +16,7 @@ using QRCoder;
 
 namespace LUSSIS.Controllers
 {
+    [Authorize(Roles = "clerk")]
     public class DisbursementsController : Controller
     {
         private LUSSISContext db = new LUSSISContext();
@@ -79,6 +80,9 @@ namespace LUSSIS.Controllers
             return View(disbursement);
         }
 
+
+        [OverrideAuthorization]
+        [Authorize(Roles = "clerk, rep")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Acknowledge(DisbursementDetailDTO disbursementDTO)
