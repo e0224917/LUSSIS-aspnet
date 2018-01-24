@@ -140,7 +140,15 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(disbursements.ToPagedList(pageNumber, pageSize));
+
+            var disHistory = disbursements.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_History", disHistory);
+            }
+
+            return View(disHistory);
             //return View(disRepo.GetAll());
         }
 
