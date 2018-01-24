@@ -1,10 +1,10 @@
-﻿<div>
-    <form id="approveForm">
-        <br />
-        <h3>Invalid Request</h3>
-        <br />
-        <a href="#" class="btn btn-default" data-dismiss="modal"> Cancel</a>
-    </form>
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-</div>
+@{
+    ViewBag.Title = "Error";
+}
 
+<h1 class="text-danger">Error!</h1>
+<h2 class="text-danger">You are not allowed to approve/reject your own PO!</h2>

@@ -116,37 +116,42 @@ namespace LUSSIS.Controllers
             {//requisition must be pending for any approval and reject
                 if ((empRepo.GetCurrentUser().JobTitle == "head" && !empRepo.CheckIfUserDepartmentHasDelegate()) || empRepo.CheckIfLoggedInUserIsDelegate())
                 {//if (user is head and there is no delegate) or (user is currently delegate)
-                    if (ModelState.IsValid)
+                    if ((empRepo.GetCurrentUser().EmpNum == requisition.RequisitionEmpNum))
                     {
-                        requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
-                        requisition.ApprovalDate = DateTime.Today;
-                        if (SubmitButton == "Approve")
-                        {
-                            requisition.Status = "approved";
-                            await reqRepo.UpdateAsync(requisition);
-                            return RedirectToAction("Pending");
-                        }
-
-                        if (SubmitButton == "Reject")
-                        {
-                            requisition.Status = "rejected";
-                            await reqRepo.UpdateAsync(requisition);
-                            return RedirectToAction("Pending");
-                        }
+                        return View("_unauthoriseAccess");
                     }
                     else
                     {
-                        return View(requisition);
-                    }
+                        if (ModelState.IsValid)
+                        {
+                            requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                            requisition.ApprovalDate = DateTime.Today;
+                            if (SubmitButton == "Approve")
+                            {
+                                requisition.Status = "approved";
+                                await reqRepo.UpdateAsync(requisition);
+                                return RedirectToAction("Pending");
+                            }
 
+                            if (SubmitButton == "Reject")
+                            {
+                                requisition.Status = "rejected";
+                                await reqRepo.UpdateAsync(requisition);
+                                return RedirectToAction("Pending");
+                            }
+                        }
+                        else
+                        {
+                            return View(requisition);
+                        }
+                    }
                 }
-                else { return new HttpUnauthorizedResult(); }
+                return View("_hasDelegate");
             }
             else
             {
                 return new HttpUnauthorizedResult();
             }
-            return View(requisition);
         }
 
 
@@ -161,7 +166,7 @@ namespace LUSSIS.Controllers
 
         // TODO: 1. create new requisition, 2. it's status set to pending, 3. send notification to departmenthead
         // [employee page] POST: Requisition/Create
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
@@ -177,7 +182,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only implement once main project is done. Enable editing if status is pending
         // [employee page]  GET: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         public ActionResult Edit(int id)
         {
             return View();
@@ -185,7 +190,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only enable editing if status is pending
         // [employee page]  POST: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -449,19 +454,28 @@ namespace LUSSIS.Controllers
                 {//if (user is head and there is no delegate) or (user is currently delegate)
                     if (ModelState.IsValid)
                     {
-                        req.Status = RADTO.Status;
-                        req.ApprovalRemarks = RADTO.ApprovalRemarks;
-                        req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
-                        req.ApprovalDate = DateTime.Today;
-                        reqRepo.Update(req);
-                        return PartialView();
+                        if (req.ApprovalEmpNum == empRepo.GetCurrentUser().EmpNum)
+                        {
+
+                            return PartialView("_unuthoriseAccess");
+                        }
+                        else
+                        {
+                            req.Status = RADTO.Status;
+                            req.ApprovalRemarks = RADTO.ApprovalRemarks;
+                            req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                            req.ApprovalDate = DateTime.Today;
+                            reqRepo.Update(req);
+                            return PartialView();
+                        }
                     }
                     else { return PartialView(RADTO); } //invalid modelstate
 
                 }
-                else { return PartialView("_hasDelegate"); } //user is head and there is delegate case 
+                else { return PartialView("_hasDelegate"); }
             }
-            return PartialView("_unuthoriseAccess"); //cannot edit a non pending requisition
+
+            return PartialView("_unuthoriseAccess");
         }
     }
 }
