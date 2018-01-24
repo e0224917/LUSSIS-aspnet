@@ -19,9 +19,11 @@ namespace LUSSIS.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int SupplierId { get; set; }
 
-        public double? Price { get; set; }
+        [Required]
+        public double Price { get; set; }
 
-        public int? Rank { get; set; }
+        [Required]
+        public int Rank { get; set; }
 
         public virtual Stationery Stationery { get; set; }
 

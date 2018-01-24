@@ -19,11 +19,14 @@ namespace LUSSIS.Models
         [StringLength(20)]
         public string ItemNum { get; set; }
 
-        public int? OrderQty { get; set; }
+        [Required]
+        public int OrderQty { get; set; }
 
-        public double? UnitPrice { get; set; }
+        [Required]
+        public double UnitPrice { get; set; }
 
-        public int? ReceiveQty { get; set; }
+        [Required]
+        public int ReceiveQty { get; set; }
 
         public virtual PurchaseOrder PurchaseOrder { get; set; }
 

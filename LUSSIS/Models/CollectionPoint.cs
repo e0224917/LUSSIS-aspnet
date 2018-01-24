@@ -19,14 +19,17 @@ namespace LUSSIS.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int CollectionPointId { get; set; }
 
+        [Required]
         [StringLength(30)]
         [Display(Name = "Collection Point")]
         public string CollectionName { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string Time { get; set; }
 
-        public int? InChargeEmpNum { get; set; }
+        [Required]
+        public int InChargeEmpNum { get; set; }
 
         [Display(Name = "Person In Charge")]
         public virtual Employee InChargeEmployee { get; set; }

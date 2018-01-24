@@ -19,24 +19,34 @@ namespace LUSSIS.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SupplierId { get; set; }
 
+        [Required]
         [StringLength(50)]
         [Display(Name = "Supplier Name")]
         public string SupplierName { get; set; }
 
+        [Required]
         [StringLength(20)]
         [Display(Name = "Contact Name")]
         public string ContactName { get; set; }
 
+        [Required]
         [StringLength(20)]
         [Display(Name = "Phone No")]
         public string TelephoneNum { get; set; }
 
+        [Required]
         [StringLength(30)]
         [Display(Name = "Fax No")]
         public string FaxNum { get; set; }
 
-        public string Address { get; set; }
+        [Required]
+        public string Address1 { get; set; }
 
+        public string Address2 { get; set; }
+
+        public string Address3 { get; set; }
+
+        [Required]
         [StringLength(30)]
         [Display(Name = "Gst Registration")]
         public string GstRegistration { get; set; }

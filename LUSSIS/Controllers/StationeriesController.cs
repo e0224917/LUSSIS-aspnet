@@ -218,8 +218,8 @@ namespace LUSSIS.Controllers
                 stationery.BinNum = stationeryDT.stationery.BinNum;
                 stationery.UnitOfMeasure = stationeryDT.stationery.UnitOfMeasure;
                 stationery.ItemNum = itemNum;
-                stationery.CurrentQty = stationeryDT.stationery.ReorderLevel + stationeryDT.stationery.ReorderQty;
-                stationery.AvailableQty = stationeryDT.stationery.ReorderLevel + stationeryDT.stationery.ReorderQty;
+                stationery.CurrentQty = 0;
+                stationery.AvailableQty = 0;
                 stationery.AverageCost = averageItemprice;
 
 

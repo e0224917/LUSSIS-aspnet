@@ -79,7 +79,7 @@ namespace LUSSIS.Controllers.WebAPI
 
             s.Description = stationery.Description;
             s.ReorderLevel = stationery.ReorderLevel;
-            s.ReorderQty = stationery.ReorderQty;
+            s.ReorderQty = stationery.ReorderLevel;
             if (s.AvailableQty != stationery.AvailableQty)
             {
                 //TODO: create adjustment voucher
