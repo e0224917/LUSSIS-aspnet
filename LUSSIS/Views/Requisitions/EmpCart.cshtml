@@ -8,9 +8,12 @@
 }
 
 <h2>Requisition Cart</h2>
+<hr />
+
 @if (Model.Count() != 0)
 {
-    using (Html.BeginForm("SubmitReq", "Requisitions"))
+<div class="jumbotron">
+    @using (Html.BeginForm("SubmitReq", "Requisitions"))
     {
         <div class="form-group">
             Remarks:<textarea class="form-control" rows="3" id="remarks" name="remarks"></textarea>
@@ -20,116 +23,117 @@
         </p>
 
     }
-    <table class="table">
-        <tr>
-            <th>
-                Stationery Item
-            </th>
-            <th>
-                UOM
-            </th>
-            <th>
-                Quantity
-            </th>
-            <th>
-                Delete
-            </th>
-        </tr>
-
-        @foreach (var item in Model)
-
-        {
+</div>
+  <table class="table table-striped table-hover">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.stationery.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
-                </td>
-                <td>
-                    <input type="number" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum"> 
-                    <input type="submit" value="Update" class="UpdateLink btn btn-outline-warning" data-id="@item.stationery.ItemNum" />
-                </td>
-                <td>
-                    <input type="submit" value="Delete" class="RemoveLink btn btn-outline-danger" data-id="@item.stationery.ItemNum" />
-                </td>
+                <th>
+                    Stationery Item
+                </th>
+                <th>
+                    UOM
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Delete
+                </th>
             </tr>
+
+            @foreach (var item in Model)
+
             {
-                itemNub.Add(@item.stationery.ItemNum);
-                Session["itemNub"] = itemNub;
-                itemQty.Add(@item.quantity);
-                Session["itemQty"] = itemQty;
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.stationery.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
+                    </td>
+                    <td>
+                        <input type="number" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
+                        <input type="submit" value="Update" class="UpdateLink btn btn-outline-warning" data-id="@item.stationery.ItemNum" />
+                    </td>
+                    <td>
+                        <input type="submit" value="Delete" class="RemoveLink btn btn-outline-danger" data-id="@item.stationery.ItemNum" />
+                    </td>
+                </tr>
+                {
+                    itemNub.Add(@item.stationery.ItemNum);
+                    Session["itemNub"] = itemNub;
+                    itemQty.Add(@item.quantity);
+                    Session["itemQty"] = itemQty;
+                }
             }
+        </table>
         }
-    </table>
-}
 
-else
-{
-    <div class="alert alert-dismissible alert-danger">
-        <br />
-        <div class="alert-danger"><strong>Your cart is empty, please add items to cart</strong></div>
-        <br />
-    </div>
-}
+        else
+        {
+        <div class="alert alert-dismissible alert-danger">
+            <br />
+            <div class="alert-danger"><strong>Your cart is empty, please add items to cart</strong></div>
+            <br />
+        </div>
+        }
 
-@section scripts {
-    <script type="text/javascript">
-        $(function () {
-            // Document.ready -> link up remove event handler
-            $(".RemoveLink").click(function () {
-                // Get the id from the link
-                var stationeryToDelete = $(this).attr("data-id");
-                var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (stationeryToDelete != '') {
-                    // Perform the ajax post
-                    $.post("/Requisitions/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
-                        function (data) {
-                            // Successful requests get here
-                            // Update the page elements
-                            confirm("Delete from cart successfully");
-                            location.reload();
-                            //if (data.ItemCount == 0) {
-                            //    $('#row-' + data.DeleteId).fadeOut('slow');
-                            //} else {
-                            //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
-                            //}
-                            //$('#cart-total').text(data.CartTotal);
-                            //$('#update-message').text(data.Message);
-                            //$('#cart-status').text('Cart (' + data.CartCount + ')');
-                        });
-                }
-            });
-        });
-    </script>
-    <script type="text/javascript">
-        $(function () {
-            // Document.ready -> link up remove event handler
-            $(".UpdateLink").click(function () {
-                // Get the id from the link
-                var stationeryToUpdate = $(this).attr("data-id");
-                var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (stationeryToUpdate != '') {
-                    // Perform the ajax post
-                    $.post("/Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
-                        function (data) {
-                            // Successful requests get here
-                            // Update the page elements
-                            alert("Update cart successfully");
-                            location.reload();
-                            //if (data.ItemCount == 0) {
-                            //    $('#row-' + data.DeleteId).fadeOut('slow');
-                            //} else {
-                            //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
-                            //}
-                            //$('#cart-total').text(data.CartTotal);
-                            //$('#update-message').text(data.Message);
-                            //$('#cart-status').text('Cart (' + data.CartCount + ')');
-                        });
-                }
-            });
-        });
-    </script>
-}
+        @section scripts {
+            <script type="text/javascript">
+                $(function () {
+                    // Document.ready -> link up remove event handler
+                    $(".RemoveLink").click(function () {
+                        // Get the id from the link
+                        var stationeryToDelete = $(this).attr("data-id");
+                        var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
+                        if (stationeryToDelete != '') {
+                            // Perform the ajax post
+                            $.post("/Requisitions/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
+                                function (data) {
+                                    // Successful requests get here
+                                    // Update the page elements
+                                    confirm("Delete from cart successfully");
+                                    location.reload();
+                                    //if (data.ItemCount == 0) {
+                                    //    $('#row-' + data.DeleteId).fadeOut('slow');
+                                    //} else {
+                                    //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
+                                    //}
+                                    //$('#cart-total').text(data.CartTotal);
+                                    //$('#update-message').text(data.Message);
+                                    //$('#cart-status').text('Cart (' + data.CartCount + ')');
+                                });
+                        }
+                    });
+                });
+            </script>
+            <script type="text/javascript">
+                $(function () {
+                    // Document.ready -> link up remove event handler
+                    $(".UpdateLink").click(function () {
+                        // Get the id from the link
+                        var stationeryToUpdate = $(this).attr("data-id");
+                        var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
+                        if (stationeryToUpdate != '') {
+                            // Perform the ajax post
+                            $.post("/Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
+                                function (data) {
+                                    // Successful requests get here
+                                    // Update the page elements
+                                    alert("Update cart successfully");
+                                    location.reload();
+                                    //if (data.ItemCount == 0) {
+                                    //    $('#row-' + data.DeleteId).fadeOut('slow');
+                                    //} else {
+                                    //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
+                                    //}
+                                    //$('#cart-total').text(data.CartTotal);
+                                    //$('#update-message').text(data.Message);
+                                    //$('#cart-status').text('Cart (' + data.CartCount + ')');
+                                });
+                        }
+                    });
+                });
+            </script>
+        }
 
 

@@ -16,7 +16,7 @@ using PagedList;
 
 namespace LUSSIS.Controllers
 {
-
+    [Authorize(Roles = "clerk, supervisor")]
     public class PurchaseOrdersController : Controller
     {
         private PORepository pr = new PORepository();
@@ -67,6 +67,7 @@ namespace LUSSIS.Controllers
 
 
         // GET: PurchaseOrders/Create or PurchaseOrders/Create?supplierId=1
+        [Authorize(Roles = "clerk")]
         public ActionResult Create(int? supplierId, string error = null)
         {
             //catch error from redirect
@@ -154,6 +155,7 @@ namespace LUSSIS.Controllers
         // POST: PurchaseOrders/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "clerk")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(PurchaseOrderDTO purchaseOrderDTO)
@@ -209,6 +211,7 @@ namespace LUSSIS.Controllers
 
 
         //GET: PurchaseOrders/Receive?p=10001
+        [Authorize(Roles = "clerk")]
         [HttpGet]
         public ActionResult Receive(int? p = null, string error = null)
         {
@@ -242,6 +245,7 @@ namespace LUSSIS.Controllers
         }
 
         //POST: PurchaseOrders/Receive
+        [Authorize(Roles = "clerk")]
         [HttpPost]
         public ActionResult Receive(ReceiveTransDTO receiveModel)
         {
@@ -309,7 +313,7 @@ namespace LUSSIS.Controllers
             return View(po);
         }
 
-
+        [Authorize(Roles = "clerk")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Order(PurchaseOrderDTO po)
@@ -332,7 +336,7 @@ namespace LUSSIS.Controllers
             }
         }
         [Authorize(Roles = "supervisor")]
-        public async Task<ActionResult> ViewPendingPOList()
+        public ActionResult ViewPendingPOList()
         {
 
             return View(pr.GetPendingApprovalPODTO());

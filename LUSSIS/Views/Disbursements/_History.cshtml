@@ -1,0 +1,60 @@
+﻿@model PagedList.IPagedList<LUSSIS.Models.Disbursement>
+@using PagedList.Mvc;
+
+<div id="disHistory">
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>
+                Department
+            </th>
+            <th>
+                Collection Point
+            </th>
+            <th>
+                Collection Date
+            </th>
+
+            <th>
+                Status
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Department.DeptName)
+                </td>
+                <td>
+                    @Html.HiddenFor(modelItem => item.AcknowledgeEmployee.Title)
+                    @Html.DisplayFor(modelItem => item.CollectionPoint.CollectionName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CollectionDate)
+                </td>
+
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    <span>
+                        <a href="@Url.Action("ViewDetails")/@item.DisbursementId" class="btn btn-outline-success">
+                            <span class="glyphicon glyphicon-plus-sign"></span>
+                            View Details
+                        </a>
+                    </span>
+
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="pagination">
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("History", new { page, currentFilter = ViewBag.CurrentFilter }))
+    </div>
+</div>
+
+
+

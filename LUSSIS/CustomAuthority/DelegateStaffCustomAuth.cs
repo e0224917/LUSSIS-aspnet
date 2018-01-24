@@ -1,21 +1,21 @@
-﻿using LUSSIS.Models;
-using LUSSIS.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using LUSSIS.Repositories;
 
 namespace LUSSIS.CustomAuthority
 {
-    public class CustomAuthorizeAttribute : AuthorizeAttribute
+    public class DelegateStaffCustomAuthAttribute : AuthorizeAttribute
     {
+        
         EmployeeRepository empRepo = new EmployeeRepository();
 
         private readonly string[] allowedRoles;
 
-        public CustomAuthorizeAttribute(params string[] roles)
+        public DelegateStaffCustomAuthAttribute(params string[] roles)
         {
             this.allowedRoles = roles;
         }
@@ -24,18 +24,19 @@ namespace LUSSIS.CustomAuthority
         {
             var user = httpContext.User;
 
-            if(user.IsInRole("head"))
+            if (user.IsInRole("staff"))
             {
-                return true;
-            }
-            else if(user.IsInRole("staff"))
-            {
-                if(empRepo.CheckIfLoggedInUserIsDelegate())
+                if(!empRepo.CheckIfLoggedInUserIsDelegate())
+                {
+                    return false;
+                }
+                else
                 {
                     return true;
                 }
             }
-            return false;     
+           
+            return false;
         }
 
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)

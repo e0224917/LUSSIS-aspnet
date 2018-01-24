@@ -16,6 +16,7 @@ using QRCoder;
 
 namespace LUSSIS.Controllers
 {
+    [Authorize(Roles = "clerk")]
     public class DisbursementsController : Controller
     {
         private LUSSISContext db = new LUSSISContext();
@@ -68,7 +69,7 @@ namespace LUSSIS.Controllers
         //POST: Disbursement/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "DisbursementId, CollectionDate, CollectionPointId, AcknowledgeEmpNum, DeptCode, Status")] Disbursement disbursement)
+        public ActionResult Edit([Bind(Include = "DisbursementId, CollectionDate, CollectionPointId, AcknowledgeEmpNum, DeptCode, Status")] Disbursement disbursement)
         {
             if (ModelState.IsValid)
             {
@@ -79,6 +80,9 @@ namespace LUSSIS.Controllers
             return View(disbursement);
         }
 
+
+        [OverrideAuthorization]
+        [Authorize(Roles = "clerk, rep")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Acknowledge(DisbursementDetailDTO disbursementDTO)
@@ -140,7 +144,15 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(disbursements.ToPagedList(pageNumber, pageSize));
+
+            var disHistory = disbursements.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_History", disHistory);
+            }
+
+            return View(disHistory);
             //return View(disRepo.GetAll());
         }
 

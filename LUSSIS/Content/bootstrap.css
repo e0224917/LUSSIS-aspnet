@@ -3338,13 +3338,15 @@ tbody.collapse.in {
 }
 @media (min-width: 768px) {
   .navbar-right .dropdown-menu {
+    float: right;
     right: 0;
     left: auto;
   }
-  .navbar-right .dropdown-menu-left {
-    right: auto;
-    left: 0;
-  }
+    .navbar-right .dropdown-menu-left {
+        right: auto;
+        float: right;
+        left: 0;
+    }
 }
 .btn-group,
 .btn-group-vertical {
@@ -4189,9 +4191,10 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     float: right !important;
     margin-right: -15px;
   }
-  .navbar-right ~ .navbar-right {
-    margin-right: 0;
-  }
+    .navbar-right ~ .navbar-right {
+        margin-right: 0;
+        float: right;
+    }
 }
 .navbar-default {
   background-color: #f8f8f8;
@@ -4673,11 +4676,11 @@ a.list-group-item.active > .badge,
 }
 @media screen and (min-width: 768px) {
   .jumbotron {
-    padding: 48px 0;
+    padding: 10px 0;
   }
   .container .jumbotron {
-    padding-right: 60px;
-    padding-left: 60px;
+    padding-right: 20px;
+    padding-left: 20px;
   }
   .jumbotron h1,
   .jumbotron .h1 {

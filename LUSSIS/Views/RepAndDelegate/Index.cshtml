@@ -137,7 +137,10 @@
                         </table>
                         @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
                         {
+                            if (Model.GetDelegateByDate == null)
+                            {
                             <input type="submit" class="btn btn-success my-2 my-sm-0" value="Set New Representative" />
+                            }
                         }
                     </div>
                 </div>

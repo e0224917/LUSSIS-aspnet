@@ -29,21 +29,15 @@ namespace LUSSIS.Controllers
                 case "head":
                     return RedirectToAction("Index", "RepAndDelegate");   
                 case "staff":
-                    //if (employeeRepo.GetDelegateByDate(employeeRepo.GetCurrentUser().Department, DateTime.Now.Date) != null)
-                    //{
-                    //    if (employeeRepo.GetCurrentUser().EmpNum == employeeRepo.GetDelegateByDate(employeeRepo.GetCurrentUser().Department, DateTime.Now.Date).EmpNum)
-                    //    {
-                    //        return RedirectToAction("Index", "RepAndDelegate");
-                    //    }
-                    //    else
-                    //    {
-                    //        return RedirectToAction("Index", "Requisitions");
-                    //    }
-                    //}
-                    //else
-                    //{
+                    if (employeeRepo.CheckIfLoggedInUserIsDelegate())
+                    {
+                        return RedirectToAction("Index", "RepAndDelegate");
+                    }
+                    else
+                    {
                         return RedirectToAction("Index", "Requisitions");
-                    //}
+                    }
+                   
                 case "manager":
                     return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
                 case "supervisor":

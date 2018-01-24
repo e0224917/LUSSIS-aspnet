@@ -81,23 +81,28 @@
 }
 
 @section scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            validate();
-            $('#from, #to, #Emp').change(validate);
+            $(':input[type="submit"]').prop('disabled', true);
+            $('#from, #to, #Emp').keyup(validate);
             //$('#from, #to, #Emp').select(validate);
-            $('#Emp').keyup(validate);
             function validate() {
                 if ($('#from').val().length > 0 &&
                     $('#to').val().length > 0 &&
                     $('#Emp').val().length > 0) {
                     $("input[type=submit]").prop("disabled", false);
                 }
+                else if ($('#Emp').val() == '')
+                {
+                    $(':input[type="submit"]').prop('disabled', true);
+                    $('#tagsname').html('You selected none ');
+                }
                 else {
                     $("input[type=submit]").prop("disabled", true);
                 }
             };
-        });
+        
         var dateNow = new Date();
         var dateToday = moment(dateNow).format('DD/MM/YYYY');
         $(function () {
@@ -131,12 +136,6 @@
                 return date;
             }
         });
-
-        $('#Emp').keyup(function () {
-            if ($.trim($(this).val()) == '') {
-                $('#Submit1').prop('disabled', true);
-                $('#tagsname').html('You selected none ');
-            }
 
             $("#Emp").autocomplete({
                 source: function (request, response) {
