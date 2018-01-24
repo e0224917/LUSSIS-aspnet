@@ -24,7 +24,7 @@ namespace LUSSIS.Models
         [Required]
         [Column(TypeName = "date")]
         [Display(Name="Collection Date")]
-        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         //[CollectionDate] //validation
         public DateTime CollectionDate { get; set; }
 
