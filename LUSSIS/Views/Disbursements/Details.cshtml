@@ -8,12 +8,13 @@
 
 <h2>Disbursement for @Model.CurrentDisbursement.Department.DeptName</h2>
 <hr />
+
 @using (Html.BeginForm("Acknowledge", "Disbursements", FormMethod.Post, new { @class = "my-2 my-lg-0" }))
 {
     @Html.AntiForgeryToken()
-    
-   
 
+
+    <h2>@ViewBag.Message</h2>
     <div class="row">
         <div class="card col-lg-3">
             <div class="card-body">
@@ -50,10 +51,10 @@
         <button type="button" class="btn btn-success" onclick="GenerateQR(@Model.CurrentDisbursement.DisbursementId)">Generate QR Code</button>
         <span style="float:right;">
             @Html.ActionLink("Edit", "Edit", new { id = Model.CurrentDisbursement.DisbursementId }) |
-                @Html.ActionLink("Back to List", "Index")
-            </span>
+            @Html.ActionLink("Back to List", "Index")
+        </span>
     </div>
-        <hr />
+    <hr />
     <h4>Disbursement Details</h4>
     <hr />
     @*@Html.Partial("_DetailsList", Model.CurrentDisbursement.DisbursementDetails)*@
@@ -87,7 +88,7 @@
                     @Html.HiddenFor(modelItem => Model.DisDetailList[i].RequestedQty)
                 </td>
                 <td>
-                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @value = Model.DisDetailList[i].ActualQty, @min = "0", @max = @Model.DisDetailList[i].RequestedQty} })
+                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @class = "form-control", @value = Model.DisDetailList[i].ActualQty, @min = "0", @max = @Model.DisDetailList[i].RequestedQty} })
                     @Html.ValidationMessageFor(model => Model.DisDetailList[i].ActualQty, "", new { @class = "text-danger" })
 
                 </td>

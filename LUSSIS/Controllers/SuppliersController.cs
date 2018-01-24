@@ -175,10 +175,10 @@ namespace LUSSIS.Controllers
         }
 
         //GET: Suppliers/QuotationTemplate (will download Excel file directly)
-      /*  public ActionResult QuotationTemplate()
+       public ActionResult QuotationTemplate()
         {
             List<StationerySupplierQuote> slist =
-                srepo.GetStationerySupplier().Select(x => new StationerySupplierQuote
+                srepo.GetAllStationerySuppliers().Select(x => new StationerySupplierQuote
                 {
                     ItemCode = x.ItemNum,
                     ItemName = x.Stationery.Description,
@@ -190,7 +190,7 @@ namespace LUSSIS.Controllers
 
             byte[] filecontent = StationerySupplierQuote.ConvertListToByte(slist);
             return File(filecontent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "quotations.xlsx");
-        }*/
+        }
 
 
         //helper class to import/export from/to Excel

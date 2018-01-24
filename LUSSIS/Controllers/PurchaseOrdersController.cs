@@ -31,7 +31,7 @@ namespace LUSSIS.Controllers
         public ActionResult Index(int? page = 1)
         {
             var purchaseOrders = pr.GetAll();
-            int pageSize = 20;
+            int pageSize = 15;
             ViewBag.page = page;
             return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate).ToPagedList(Convert.ToInt32(page), pageSize));
         }

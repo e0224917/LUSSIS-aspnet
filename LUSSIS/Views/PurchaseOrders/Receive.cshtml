@@ -4,8 +4,8 @@
     ViewBag.Title = "Receive";
 }
 
-<h2>Purchase Order Receive</h2>
-
+<h2>Purchase Order - Receive</h2>
+<hr />
 @if (ViewBag.Error != null)
 {
     <div class="alert alert-danger">
@@ -15,24 +15,28 @@
 
 @if (@ViewBag.PurchaseOrder == null)
 {
-    if (ViewBag.OrderedPO == null)
+    if (ViewBag.OrderedPO == null || ViewBag.OrderedPO.Count == 0)
     {
-        <span>There are no purchase orders awaiting for shipment</span>
+        <div class="alert alert-dismissible alert-info">
+            <span>There are no purchase orders awaiting for shipment</span>
+        </div>
     }
     else
     {
         @Scripts.Render("~/bundles/jquery")
+        <h6 type="text" class="control-label col-md-12">Select a Purchase Order to update receipt of stationery</h6>
 
-        <h4>Select a Purchase Order to update receipt of stationery </h4>
-        <select id="select_PO">
-            <option value="0">Select a purchase order</option>
-            @foreach (var po in ViewBag.OrderedPO)
-            {
-                <option value="@po.PoNum">
-                    @po.PoNum - @po.Supplier.SupplierName
-                </option>
-            }
-        </select>
+        <div class="col-md-12">
+            <select id="select_PO" class="form-control">
+                <option value="0">Select a purchase order</option>
+                @foreach (var po in ViewBag.OrderedPO)
+                {
+                    <option value="@po.PoNum">
+                        @po.PoNum - @po.Supplier.SupplierName
+                    </option>
+                }
+            </select>
+        </div>
     }
 }
 else
