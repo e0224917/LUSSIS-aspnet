@@ -166,7 +166,7 @@ namespace LUSSIS.Controllers
 
         // TODO: 1. create new requisition, 2. it's status set to pending, 3. send notification to departmenthead
         // [employee page] POST: Requisition/Create
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
@@ -182,7 +182,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only implement once main project is done. Enable editing if status is pending
         // [employee page]  GET: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         public ActionResult Edit(int id)
         {
             return View();
@@ -190,7 +190,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only enable editing if status is pending
         // [employee page]  POST: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {

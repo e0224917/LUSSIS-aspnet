@@ -259,6 +259,7 @@
     <Compile Include="Controllers\WebAPI\RequisitionsController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="CustomAuthority\DelegateStaffCustomAuth.cs" />
+    <Compile Include="CustomAuthority\HeadWithDelegateAuth.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Exceptions\InvalidDateException.cs" />
     <Compile Include="Exceptions\InvalidSetRepException.cs" />
