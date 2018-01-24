@@ -62,7 +62,7 @@ else
                 </dt>
                 <dd>
                     @Html.HiddenFor(model => model.CreateDate)
-                    <input type="date" value="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" disabled />
+                    <input type="date" value="@Model.CreateDate.ToString("yyyy-MM-dd")" disabled />
                 </dd>
                 <dt>
                     Approved By
