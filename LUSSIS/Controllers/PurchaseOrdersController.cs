@@ -268,6 +268,21 @@ namespace LUSSIS.Controllers
             }
         }
 
+        public ActionResult PrintPO(string id)
+        {
+            //ReportDocument rd = new ReportDocument();
+            //rd.Load(Path.Combine(Server.MapPath("~/Reports/CrystalReport3.rpt")));
+            //ds.Tables.Add(GetPO(id));
+            //rd.SetDataSource(ds);
+            //Response.Buffer = false;
+            //Response.ClearContent();
+            //Response.ClearHeaders();
+            //Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+            //stream.Seek(0, SeekOrigin.Begin);
+            //return File(stream, "application/pdf");
+            return View();
+        }
+
 
 
         //GET: PurchaseOrders/Order?p=10001
