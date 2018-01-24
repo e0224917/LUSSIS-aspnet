@@ -184,8 +184,8 @@ namespace LUSSIS.Controllers
                     ItemName = x.Stationery.Description,
                     SupplierCode = x.SupplierId,
                     SupplierName = x.Supplier.SupplierName,
-                    Rank = x.Rank ?? 0,
-                    UnitPrice = x.Price ?? 0
+                    Rank = x.Rank,
+                    UnitPrice = x.Price
                 }).ToList();
 
             byte[] filecontent = StationerySupplierQuote.ConvertListToByte(slist);
