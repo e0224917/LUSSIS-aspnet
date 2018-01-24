@@ -7,9 +7,9 @@ namespace LUSSIS.Extensions
 {
     public static class StringExtensions
     {
-        public static bool Contains(this string json, string prefix, StringComparison comp)
+        public static bool Contains(this string source, string toCheck, StringComparison comp)
         {
-            return source?.IndexOf(json, prefix) >= 0;
+            return source?.IndexOf(toCheck, comp) >= 0;
         }
     }
 }
