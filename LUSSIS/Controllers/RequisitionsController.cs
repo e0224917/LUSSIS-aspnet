@@ -18,7 +18,7 @@ using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
-    [Authorize(Roles = "staff")]
+    [Authorize(Roles = "staff, clerk, head")]
     public class RequisitionsController : Controller
     {
 
@@ -221,7 +221,7 @@ namespace LUSSIS.Controllers
 
 
         //StoreClerk??
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = "clerk, staff")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
             List<Stationery> stationerys = strepo.GetAll().ToList<Stationery>();
