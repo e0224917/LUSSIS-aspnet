@@ -339,6 +339,7 @@
     <Compile Include="Models\WebDTO\ManageCollectionDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
     <Compile Include="Models\WebDTO\StationeryDTO.cs" />
+    <Compile Include="Models\WebDTO\StationerynDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorReportDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -633,6 +634,18 @@
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
     <Content Include="Views\SupervisorDashboard\GenerateReport.cshtml" />
+    <Content Include="Views\Stationeries\Create.cshtml" />
+    <Content Include="Views\Stationeries\Delete.cshtml" />
+    <Content Include="Views\Stationeries\Details.cshtml" />
+    <Content Include="Views\Stationeries\Edit.cshtml" />
+    <Content Include="Views\Stationeries\Index.cshtml" />
+    <Content Include="Views\Disbursements\_History.cshtml" />
+    <Content Include="Views\Requisitions\_Index.cshtml" />
+    <Content Include="Views\Requisitions\_All.cshtml" />
+    <Content Include="Views\Account\NotAuthorized.cshtml" />
+    <Content Include="Views\StockAdjustment\_History.cshtml" />
+    <Content Include="Views\Stationeries\Create1.cshtml" />
+    <Content Include="Views\Stationeries\Edit1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
