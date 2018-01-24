@@ -1,0 +1,73 @@
+﻿@model PagedList.IPagedList<LUSSIS.Models.Stationery>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+}
+<h2>Stationery</h2>
+
+@using (Html.BeginForm())
+{
+<p>
+    Find By Description: @Html.TextBox("SearchString")
+    <input type="submit" value="Search" />
+    @Html.ActionLink("Add New Stationary", "Create")
+</p>
+}
+
+</p>
+<table class="table">
+    <tr>
+        <th>
+            #Bin
+        </th>
+        <th>
+            Category
+        </th>
+        <th>
+            Description
+        </th>
+        <th>
+            UOM
+        </th>
+        <th>
+            Current Qty
+        </th>
+        <th>
+            View
+           
+        </th>
+     
+    </tr>
+    
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BinNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnitOfMeasure)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentQty)
+            </td>
+
+            <td>
+
+                @Html.ActionLink("Details", "Details", new { id = item.ItemNum }) |
+                @Html.ActionLink("Adjust", "Adjust", new { id = item.ItemNum })
+                
+            </td>
+        </tr>
+    }
+
+</table>
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }))
