@@ -1,30 +1,161 @@
-﻿@model LUSSIS.Controllers.SupervisorReportDTO
+﻿@model LUSSIS.Models.WebDTO.SupervisorReportDTO
 
 @{
     ViewBag.Title = "GenerateReport";
 }
 
+ViewBag.Message
+
+
 <h2>GenerateReport</h2>
-<div class="row">
-    <div class="col-md-3">
-        <div>
-            <input type="radio" id="select_supplier" name="supplier_or_category" /><label for="select_supplier">Supplier</label>
-            <input type="radio" id="seleect_category" name="supplier_or_category" /><label for="select_category">Supplier</label>
+    @using (Html.BeginForm("Report", "SupervisorDashborad", FormMethod.Post))
+    {
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="bs-component">
+                <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                    <div class="col-xs-12 text-left">
+                        <div class="card text-black">
+
+                            <div class="card-body">
+
+                                <input type="radio" id="supplier" name="supplier_or_category" value="supplier" onclick="handleClick(this)" /><label for="supplier">Supplier</label>
+                                <br />
+                                <input type="radio" id="category" name="supplier_or_category" value="category" onclick="handleClick(this)" /><label for="category">Category</label>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="bs-component">
+                <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                    <div class="col-xs-12 text-left">
+                        <div class="card text-black">
+
+                            <div class="card-body">
+
+                                <input type="radio" id="This_month" value="This_month" name="date_range" onclick="handleClick(this)" /><label for="This_month">This Month</label>
+                                <br />
+                                <input type="radio" id="This_year" value="This_year" name="date_range" onclick="handleClick(this)" /><label for="This_year">This Year</label>
+                                <br />
+                                <input type="radio" id="Past_Three_Months" value="Past_Three_Months" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Past Three Months</label>
+                                <br />
+                                <input type="radio" id="Past_Six_Months" value="Past_Six_Months" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Past six Months</label>
+                                <br />
+
+                                <input type="radio" id="Custom_Range" value="Custom_Range" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Custom Range</label>
+                                <br />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="bs-component">
+                <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                    <div class="col-xs-12 text-left">
+                        <div class="card text-black">
+
+                            <div class="card-body">
+
+                                <input type="checkbox" name="chart_or_table" id="BarChart" value="BarChart" onclick="handleClick(this)" /><label for="BarChart">Barchart</label><br />
+
+                                <input type="checkbox" name="chart_or_table" id="Table" value="Table" onclick="handleClick(this)" /><label for="Table">Table</label><br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div>
-            <input type="radio" id="This_month" name="date_range" /><label for="This_month">Supplier</label>
-            <input type="radio" id="This_year" name="date_range" /><label for="This_year">Supplier</label>
-            <input type="radio" id="Past Three Months" name="date_range" /><label for="Supplier">Supplier</label>
-            <input type="radio" id="Past Six Months" name="date_range" /><label for="Supplier">Supplier</label>
-            <input type="radio" id="Custom Range" name="date_range" /><label for="Supplier">Supplier</label>
-        </div>
-        <div>
-            <input type="checkbox" name="chart_or_table" id="BarChart" />
-            <input type="checkbox" name="chart_or_table" id="Table" />
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6" id="notshowSupplier" style="display:none;">
+                    <h6>Select Supplier</h6>
+                    <select id="select_supplier" multiple size="8" onchange="supplierChange()">
+                        <option value="0">Select a supplier</option>
+                        @foreach (var sup in Model.Suppliers)
+                        {
+                            <option value="@sup.SupplierId">
+                                @sup.SupplierName
+                            </option>
+                        }
+                    </select>
+
+
+                </div>
+                <div class="col-md-6" id="notshowCategory" style="display:none;">
+                    <h6>Select Category</h6>
+
+                    <select id="select_category" multiple size="8">
+
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat.CategoryId">
+                                @cat.CategoryName
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4" id="notshowDate" style="display:none;">
+                    <h6> Select Date</h6>
+                    <br />
+                    <label for="from">From</label>
+                    <input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" />
+                    <label for="to">&nbsp;&nbsp;To</label>
+                    <input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" />
+                    <br /><br />
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
-<div class="row">
+    <input type="submit" value="Generate" id="Generate"/>
+ }
+
+    <script>
 
 
-</div>
+        function supplierChange() {
+            var values = $('#select_supplier').val();
+            if (values.length == 1) {
+                document.getElementById("notshowCategory").style.display = "block";
+            }
+            else {
+                document.getElementById("notshowCategory").style.display = "none";
+            }
+
+        }
+
+        function handleClick(myRadio) {
+
+            var check = $(myRadio).val();
+            if (check == "supplier") {
+                document.getElementById("notshowSupplier").style.display = "block";
+                document.getElementById("notshowCategory").style.display = "none";
+            }
+            if (check == "category") {
+                document.getElementById("notshowCategory").style.display = "block";
+                document.getElementById("notshowSupplier").style.display = "none";
+            }
+            if (check == "Custom_Range") {
+                document.getElementById("notshowDate").style.display = "block";
+
+            }
+            if (check == "This_month" || check == "This_year" || check == "Past_Three_Months" || check == "Past_Six_Months") {
+                document.getElementById("notshowDate").style.display = "none";
+            }
+        }
+
+      
+
+
+    </script>
+
+
+

@@ -15,9 +15,12 @@ namespace LUSSIS.Models.WebDTO
         }
         public int PoNum { get; set; }
         public int SupplierId { get; set; }
+        [Display(Name="Created Date")]
         public DateTime CreateDate { get; set; }
+        [Display(Name = "Ordered Date")]
         public DateTime? OrderDate { get; set; }
         public string Status { get; set; }
+        [Display(Name = "Approved Date")]
         public DateTime? ApprovalDate { get; set; }
         public int OrderEmpNum { get; set; }
         public int? ApprovalEmpNum { get; set; }
@@ -59,10 +62,10 @@ namespace LUSSIS.Models.WebDTO
             this.OrderEmployee = po.OrderEmployee;
             this.ApprovalEmployee = po.ApprovalEmployee;
             this.Supplier = po.Supplier;
-            this.SupplierContact = po.Supplier.ContactName;
-            this.Address1 = po.Supplier.Address1;
-            this.Address2 = po.Supplier.Address2;
-            this.Address3 = po.Supplier.Address3;
+            this.SupplierContact = po.SupplierContact;
+            this.Address1 = po.Address1;
+            this.Address2 = po.Address2;
+            this.Address3 = po.Address3;
             this.PurchaseOrderDetails = po.PurchaseOrderDetails.ToList();
         }
     }

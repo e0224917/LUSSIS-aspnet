@@ -322,7 +322,6 @@ namespace LUSSIS.Controllers
 
             ViewBag.Category = categoryList;
 
-
             //var supplierlist1 = (from val in db.Suppliers
             //                     join val1 in db.StationerySuppliers
             //                     on val.SupplierId equals val1.SupplierId
@@ -334,23 +333,8 @@ namespace LUSSIS.Controllers
 
             ViewBag.Supplier1 = supplierlist1;
 
-            //var supplierlist2 = (from val in db.Suppliers
-            //                     join val1 in db.StationerySuppliers
-            //                     on val.SupplierId equals val1.SupplierId
-            //                     where val1.Rank == 2
-            //                     select new { val.SupplierId, val.SupplierName }).Distinct().ToList();
-
-
-            //ViewBag.Supplier2 = supplierlist2;
             ViewBag.Supplier2 = supplierlist1;
-            //var supplierlist3 = (from val in db.Suppliers
-            //                     join val1 in db.StationerySuppliers
-            //                     on val.SupplierId equals val1.SupplierId
-            //                     where val1.Rank == 3
-            //                     select new { val.SupplierId, val.SupplierName }).Distinct().ToList();
-
-
-            //ViewBag.Supplier3 = supplierlist3;
+          
             ViewBag.Supplier3 = supplierlist1;
 
             return View();
@@ -370,6 +354,7 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 double[] supplierPrice = { Convert.ToDouble(stationeryDT.Price1), Convert.ToDouble(stationeryDT.Price2), Convert.ToDouble(stationeryDT.Price3) };
+
                 double averageItemprice1 = supplierPrice.Average();
                 double averageItemprice = Math.Round(averageItemprice1, 2);
 
@@ -380,8 +365,6 @@ namespace LUSSIS.Controllers
                                   select values1.ItemNum.Substring(1, 3)).ToList().Max();
 
                 nextItemNum = (maxItemNum == null) ? 1 : Convert.ToInt32(maxItemNum) + 1;
-
-                // var intialChar = stationeryDT.BinNum.Substring(0, 1);
 
                 var intialChar = (from values1 in db.Stationeries
                                   where values1.CategoryId == stationeryDT.stationery.CategoryId
@@ -435,8 +418,9 @@ namespace LUSSIS.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "CategoryName", stationery.CategoryId);
-            return View(stationery);
+            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "CategoryName",stationeryDT.stationery.CategoryId);
+           
+            return View(stationeryDT);
         }
 
 
@@ -463,35 +447,13 @@ namespace LUSSIS.Controllers
                                       where S1.ItemNum == id
                                       select new { S1.ItemNum, S1.SupplierId, S1.Price, S1.Rank, S2.SupplierName }).ToList();
 
-
-            //var supplierlist1 = (from val in db.Suppliers
-            //                     join val1 in db.StationerySuppliers
-            //                     on val.SupplierId equals val1.SupplierId
-            //                     where val1.Rank == 1 && val1.ItemNum==id
-            //                     select new { val.SupplierId, val.SupplierName }).Distinct().ToList();
             var supplierlist1 = (from val in db.Suppliers
                                  select new { val.SupplierId, val.SupplierName }).Distinct().ToList();
 
             ViewBag.Supplier1 = supplierlist1;
-
-            //var supplierlist2 = (from val in db.Suppliers
-            //                     join val1 in db.StationerySuppliers
-            //                     on val.SupplierId equals val1.SupplierId
-            //                     where val1.Rank == 2 && val1.ItemNum == id
-            //                     select new { val.SupplierId, val.SupplierName }).Distinct().ToList();
-
-
-            //ViewBag.Supplier2 = supplierlist2;
+     
             ViewBag.Supplier2 = supplierlist1;
-            //var supplierlist3 = (from val in db.Suppliers
-            //                     join val1 in db.StationerySuppliers
-            //                     on val.SupplierId equals val1.SupplierId
-            //                     where val1.Rank == 3 && val1.ItemNum == id
-            //                     select new { val.SupplierId, val.SupplierName }).Distinct().ToList();
-
-
-            //ViewBag.Supplier3 = supplierlist3;
-
+     
             ViewBag.Supplier3 = supplierlist1;
 
 

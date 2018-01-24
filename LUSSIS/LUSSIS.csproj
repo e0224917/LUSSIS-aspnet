@@ -263,6 +263,7 @@
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Exceptions\InvalidDateException.cs" />
     <Compile Include="Exceptions\InvalidSetRepException.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -339,6 +340,7 @@
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
     <Compile Include="Models\WebDTO\StationeryDTO.cs" />
     <Compile Include="Models\WebDTO\StationerynDTO.cs" />
+    <Compile Include="Models\WebDTO\SupervisorReportDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CollectionRepository.cs" />
@@ -502,6 +504,7 @@
     <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.min.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.unobstrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobstrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -623,14 +626,13 @@
     <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
     <Content Include="Views\Requisitions\Index.cshtml" />
     <Content Include="Views\Suppliers\Quotation.cshtml" />
-    <Content Include="Views\SupervisorDashboard\SupervisorDashboard.cshtml" />
+    <Content Include="Views\SupervisorDashboard\Index.cshtml" />
     <Content Include="Views\Disbursements\History.cshtml" />
     <Content Include="Views\Disbursements\ViewDetails.cshtml" />
     <Content Include="Views\Requisitions\_hasDelegate.cshtml" />
     <Content Include="Views\Requisitions\_unauthoriseAccess.cshtml" />
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
-    <Content Include="Views\Requisitions\PDetail.cshtml" />
     <Content Include="Views\SupervisorDashboard\GenerateReport.cshtml" />
     <Content Include="Views\Stationeries\Create.cshtml" />
     <Content Include="Views\Stationeries\Delete.cshtml" />

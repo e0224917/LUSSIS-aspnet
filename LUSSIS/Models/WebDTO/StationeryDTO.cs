@@ -65,5 +65,8 @@ namespace LUSSIS.Models.WebDTO
         public DateTime? ApprovalDate { get; set; }
         public int Quantity1 { get; set; }
 
+
+        //public int? CategoryId { get; set; }
+
     }
 }
