@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using LUSSIS.Repositories;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace LUSSIS.CustomAuthority
 {
@@ -22,9 +24,10 @@ namespace LUSSIS.CustomAuthority
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            var user = httpContext.User;
-
-            if (user.IsInRole("staff"))
+            var user = System.Web.HttpContext.Current.User.Identity.GetUserId();
+            var userManager = httpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var roles = userManager.GetRoles(user);
+            if (roles.Contains("staff"))
             {
                 if(!empRepo.CheckIfLoggedInUserIsDelegate())
                 {

@@ -26,19 +26,24 @@ namespace LUSSIS.Models
 
         public int? CategoryId { get; set; }
 
+        //[Required(ErrorMessage = "Description is required")]
         public string Description { get; set; }
 
+        //[Required(ErrorMessage = "ReorderLevel is required")]
         public int? ReorderLevel { get; set; }
 
+        //[Required(ErrorMessage = "ReorderQty is required")]
         public int? ReorderQty { get; set; }
 
         public double? AverageCost { get; set; }
 
+        //[Required(ErrorMessage = "UnitOfMeasure is required")]
         [StringLength(10)]
         public string UnitOfMeasure { get; set; }
 
         public int? CurrentQty { get; set; }
 
+        //[Required(ErrorMessage = "BinNum is required")]
         [StringLength(10)]
         public string BinNum { get; set; }
 
