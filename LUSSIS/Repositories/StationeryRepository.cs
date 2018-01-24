@@ -118,12 +118,16 @@ namespace LUSSIS.Repositories
         {  
            
             List<String> stList = new List<String>();
-            List<Stationery>l = LUSSISContext.Stationeries.Where(x => x.CategoryId == c).ToList();
+            List<Stationery>l =GetAll().Where(x => x.CategoryId == c).ToList();
             foreach(Stationery a in l)
             {
                 stList.Add(a.ItemNum);
             }
             return stList;
+        }
+        public List<Category>GetAllCategoryList()
+        {
+            return LUSSISContext.Categories.ToList();
         }
 
 
