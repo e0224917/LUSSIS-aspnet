@@ -52,7 +52,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-12">Contact Name</label>
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.SupplierContact)
+                                @Html.EditorFor(model => model.SupplierContact, new{htmlAttribute=new{@class="form-control"}})
                             </div>
                         </div>
                         <div class="form-group">
