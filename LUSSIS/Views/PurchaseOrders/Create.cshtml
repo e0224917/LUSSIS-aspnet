@@ -7,7 +7,7 @@
 @Scripts.Render("~/bundles/jquery")
 
 <h2>Create New Purchase Order</h2>
-
+<hr />
 @{
     int lineNo = 0;
     int supplierId = -1;
@@ -34,133 +34,135 @@
 
 
     <div class="form-horizontal">
-        <hr />
+       
         <div>
             <div class="form-group">
-                <label type="text" class="control-label col-md-12">Please select a supplier:</label>
+                <h6 type="text" class="control-label col-md-12">Please select a supplier</h6>
                 <div class="col-md-12">
                     @Html.DropDownListFor(model => model.SupplierId, new SelectList(ViewBag.Suppliers, "SupplierId", "SupplierName", ViewBag.Supplier.SupplierId), htmlAttributes: new { @class = "form-control" })
                 </div>
             </div>
         </div>
         @if (ViewBag.Supplier.SupplierId > -1)
-        {
+    {
 
-            <div class="row">
-                <div class="card col-lg-4">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label class="control-label col-md-12">Contact Name</label>
-                            <div class="col-md-12">
-                                <input class="form-control" value="@ViewBag.Supplier.ContactName" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-12">GST Registration No</label>
-                            <div class="col-md-12">
-                                <input class="form-control" value="@ViewBag.Supplier.GstRegistration" />
-                            </div>
+        <div class="row">
+            <div class="card col-lg-4">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="control-label col-md-12">Contact Name</label>
+                        <div class="col-md-12">
+                            <input class="form-control" value="@ViewBag.Supplier.ContactName" />
                         </div>
                     </div>
-                </div>
-                <div class="card col-lg-4">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label class="control-label col-md-12">Supplier Address</label>
-                            <div class="col-md-12">
-                                <textarea rows="4" class="form-control">@ViewBag.Supplier.Address</textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card col-lg-4">
-                    <div class="card-body">
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.CreateDate, htmlAttributes: new { @class = "control-label col-md-12", @value = Model.CreateDate.Value.ToString("yyyy-MM-dd") })
-                            <div class="col-md-12">
-                                <input type="date" name="CreateDate" id="CreateDate" class="form-control" value="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" />
-                                @Html.ValidationMessageFor(model => model.CreateDate, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label type="text" class="control-label col-md-12">Status</label>
-                            <div class="col-md-12">
-                                <input type="text" class="form-control" disabled="disabled" value="N.A." />
-                            </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-12">GST Registration No</label>
+                        <div class="col-md-12">
+                            <input class="form-control" value="@ViewBag.Supplier.GstRegistration" />
                         </div>
                     </div>
                 </div>
             </div>
-            <br />
-            <hr />
-            <table id="details" class="table table-hover table-striped">
-                <tr>
-                    <th>No</th>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Unit of Measure</th>
-                    <th>Unit Price</th>
-                    <th>Line Price</th>
-                </tr>
-
-                @for (int i = 0; i < Model.PurchaseOrderDetailsDTO.Count; i++)
-                {
-                    <tr id="id@(i)" class="po_line">
-                        @{
-                            string itemNum = Model.PurchaseOrderDetailsDTO[i].ItemNum;
-                        }
-                        <td>@(i + 1)</td>
-                        <td>@Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].ItemNum, new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.Description", itemNum), new { @class = "line_item" })</td>
-                        <td>@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { @class = "line_qty" })</td>
-                        <td>@Html.DropDownList("unit_of_measure", new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.UnitOfMeasure", itemNum), new { @class = "unit_of_measure", @disabled = true })</td>
-                        <td>
-                            @Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new SelectList(ViewBag.Stationery, "Price", "Price"), new { @class = "unit_price", @disabled = true })
-                            @Html.HiddenFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new { @class = "hide_unit_price" })
-                        </td>
-                        <td><input type="text" class="line_price" value="0.00" disabled></td>
-
-                    </tr>
-                }
-            </table>
-            <div class="text-right">
-                <input type="button" value="Add Line Item" id="btn_add_row" class="btn btn-outline-primary" />
-            </div><br />
-            <div class="card col-lg-12">
+            <div class="card col-lg-4">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="form-group">
-                            <label type="text" class="control-label col-md-12">Product Cost</label>
-                            <div class="col-md-12">
-                                <input type="text" id="product_cost" class="form-control" disabled />
-                            </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-12">Supplier Address</label>
+                        <div class="col-md-12">
+                            <textarea rows="4" class="form-control">@ViewBag.Supplier.Address</textarea>
                         </div>
-
-                        <div class="form-group">
-                            <label type="text" class="control-label col-md-12">GST</label>
-                            <div class="col-md-12">
-                                @Html.Editor("GstAmt", "0")
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label type="text" class="control-label col-md-12">Total Cost</label>
-                            <div class="col-md-12">
-                                @Html.Editor("TotalPoAmt", "0")
-                            </div>
-                        </div>
-                    </div>
-                    
                     </div>
                 </div>
-            
-                        <div class="form-group">
-                            <div class="col-md-offset-2 col-md-10">
-                                <input type="submit" value="Create" class="btn btn-success" />
-                            </div>
+            </div>
+            <div class="card col-lg-4">
+                <div class="card-body">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CreateDate, htmlAttributes: new { @class = "control-label col-md-12", @value = Model.CreateDate.Value.ToString("yyyy-MM-dd") })
+                        <div class="col-md-12">
+                            <input type="date" name="CreateDate" id="CreateDate" class="form-control" value="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" />
+                            @Html.ValidationMessageFor(model => model.CreateDate, "", new { @class = "text-danger" })
                         </div>
-                   
-        }
+                    </div>
+
+                    <div class="form-group">
+                        <label type="text" class="control-label col-md-12">Status</label>
+                        <div class="col-md-12">
+                            <input type="text" class="form-control" disabled="disabled" value="N.A." />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <hr />
+        <table id="details" class="table table-hover table-striped">
+            <tr>
+                <th>No</th>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>UOM</th>
+                <th>Unit Price</th>
+                <th>Line Price</th>
+            </tr>
+
+            @for (int i = 0; i < Model.PurchaseOrderDetailsDTO.Count; i++)
+        {
+            <tr id="id@(i)" class="po_line">
+                @{
+                string itemNum = Model.PurchaseOrderDetailsDTO[i].ItemNum;
+                }
+                <td style="width:2%;">@(i + 1)</td>
+                <td style="width:33%">@Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].ItemNum, new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.Description", itemNum), new { @class = "line_item form-control" })</td>
+                <td style="width:10%">@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { htmlAttributes = new { @class = "line_qty form-control", @min = "0" }})</td>
+                <td style="width:15%">@Html.DropDownList("unit_of_measure", new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.UnitOfMeasure", itemNum), new { @class = "unit_of_measure form-control", @disabled = true })</td>
+                <td  style="width:20%">
+                    @Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new SelectList(ViewBag.Stationery, "Price", "Price"), new { @class = "unit_price form-control", @disabled = true })
+                    @Html.HiddenFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new { @class = "hide_unit_price" })
+                </td>
+                <td style="width:20%"><input type="text" class="line_price form-control" id="readOnlyInput" value="0.00" disabled></td>
+
+            </tr>
+    }
+        </table>
+        <div class="text-right">
+            <input type="button" value="Add Line Item" id="btn_add_row" class="btn btn-outline-primary" />
+        </div><br />
+        <div class="card col-lg-12">
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label type="text" class="control-label col-md-12">Product Cost</label>
+                        <div class="col-md-12">
+                            <input type="text" id="product_cost" class="form-control" disabled />
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label type="text" class="control-label col-md-12">GST</label>
+                        <div class="col-md-12">
+                            <input type="text" class="line_price form-control" id="GstAmt" placeholder="0" disabled>
+                            @*@Html.Editor("GstAmt", "0")*@
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label type="text" class="control-label col-md-12">Total Cost</label>
+                        <div class="col-md-12">
+                            <input type="text" class="line_price form-control" id="TotalPoAmt" placeholder="0" disabled>
+                            @*@Html.Editor("TotalPoAmt", "0")*@
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <div class="text-right">
+            <input type="submit" value="Create" class="btn btn-success btn-lg" style="width:40%"/>
+        </div>
+       
+
+
+}
     </div>
 }
 
