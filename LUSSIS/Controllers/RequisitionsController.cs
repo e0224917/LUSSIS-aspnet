@@ -95,7 +95,15 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(requistions.ToPagedList(pageNumber, pageSize));
+
+            var reqAll = requistions.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_All", reqAll);
+            }
+
+            return View(reqAll);
         }
 
 

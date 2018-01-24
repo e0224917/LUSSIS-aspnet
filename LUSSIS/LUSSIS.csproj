@@ -637,6 +637,7 @@
     <Content Include="Views\Stationeries\Index.cshtml" />
     <Content Include="Views\Disbursements\_History.cshtml" />
     <Content Include="Views\Requisitions\_Index.cshtml" />
+    <Content Include="Views\Requisitions\_All.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
