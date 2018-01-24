@@ -13,12 +13,12 @@ namespace LUSSIS.Models.WebDTO
             PurchaseOrderDetailsDTO = new List<PurchaseOrderDetailDTO>();//tried to use this for validation but it fails
         }
     public int PoNum { get; set; }
-    public int? SupplierId { get; set; }
-    public DateTime? CreateDate { get; set; }
+    public int SupplierId { get; set; }
+    public DateTime CreateDate { get; set; }
     public DateTime? OrderDate { get; set; }
     public string Status { get; set; }
     public DateTime? ApprovalDate { get; set; }
-    public int? OrderEmpNum { get; set; }
+    public int OrderEmpNum { get; set; }
     public int? ApprovalEmpNum { get; set; }
     public double GstAmt { get; set; }
     public double TotalPoAmt { get; set; }

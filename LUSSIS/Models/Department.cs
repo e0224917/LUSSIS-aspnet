@@ -21,18 +21,23 @@ namespace LUSSIS.Models
         [Display(Name = "Department Code")]
         public string DeptCode { get; set; }
 
+        [Required]
         [StringLength(50)]
         [Display(Name = "Department Name")]
         public string DeptName { get; set; }
 
-        public int? DeptHeadNum { get; set; }
+        [Required]
+        public int DeptHeadNum { get; set; }
 
+        [Required]
         [StringLength(50)]
         public string ContactName { get; set; }
 
+        [Required]
         [StringLength(30)]
         public string FaxNum { get; set; }
 
+        [Required]
         [StringLength(30)]
         public string TelephoneNum { get; set; }
 

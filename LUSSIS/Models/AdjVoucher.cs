@@ -12,26 +12,32 @@ namespace LUSSIS.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AdjVoucherId { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string ItemNum { get; set; }
 
         public int? ApprovalEmpNum { get; set; }
 
-        public int? Quantity { get; set; }
+        [Required]
+        public int Quantity { get; set; }
 
+        [Required]
         [StringLength(50)]
         public string Reason { get; set; }
 
+        [Required]
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}")]
-        public DateTime? CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
 
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ApprovalDate { get; set; }
 
-        public int? RequestEmpNum { get; set; }
+        [Required]
+        public int RequestEmpNum { get; set; }
 
+        [Required]
         [StringLength(10)]
         public string Status { get; set; }
 
