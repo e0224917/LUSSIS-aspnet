@@ -49,118 +49,125 @@ else
             @Html.Hidden("PoNum", (int)@ViewBag.PurchaseOrder.PoNum)
 
             @Html.AntiForgeryToken()
-            <dl class="dl-horizontal">
-                <dt>
-                    @Html.Raw("Purchase Order No")
-                </dt>
-                <dd>
-                    @Html.TextBox("PoNum", (int)@ViewBag.PurchaseOrder.PoNum, new { disabled = "disabled" })
-                </dd>
-                <dt>
-                    @Html.Raw("Created By")
-                </dt>
-                <dd>
-                    @Html.TextBox("PoOrderEmpNum", (string)@ViewBag.PurchaseOrder.OrderEmployee.FullName, new { disabled = "disabled" })
-                </dd>
-                <dt>
-                    @Html.Raw("Created Date")
-                </dt>
-                <dd>
-                    <input type="date" value="@ViewBag.PurchaseOrder.CreateDate.ToString("yyyy-MM-dd")" disabled />
-                </dd>
-                <dt>
-                    @Html.Raw("Approved By")
-                </dt>
-                <dd>
-                    @Html.TextBox("PoApprovalEmpNum", (string)@ViewBag.PurchaseOrder.ApprovalEmployee.FullName, new { disabled = "disabled" })
-                </dd>
-                <dt>
-                    @Html.Raw("Approval Date")
-                </dt>
-                <dd>
-                    <input type="date" value="@ViewBag.PurchaseOrder.ApprovalDate.ToString("yyyy-MM-dd")" disabled />
-                </dd>
-                <dt>
-                    @Html.Raw("Order Date")
-                </dt>
-                <dd>
-                    <input type="date" value="@ViewBag.PurchaseOrder.OrderDate.ToString("yyyy-MM-dd")" disabled />
-                </dd>
-                <dt>
-                    @Html.Raw("Supplier Name")
-                </dt>
-                <dd>
-                    @Html.TextBox("PoSupplierName", (string)@ViewBag.PurchaseOrder.Supplier.SupplierName, new { disabled = "disabled" })
-                </dd>
-                <dt>
-                    @Html.Raw("Supplier Contact Name")
-                </dt>
-                <dd>
-                    @Html.TextBox("PoSupplierContactName", (string)@ViewBag.PurchaseOrder.Supplier.ContactName, new { disabled = "disabled" })
-                </dd>
-                <dt>
-                    @Html.Raw("Delivery Order No")
-                </dt>
-                <dd>
-                    @Html.EditorFor(model => model.DeliveryOrderNum)
-                </dd>
-                <dt>
-                    @Html.Raw("Invoice No")
-                </dt>
-                <dd>
-                    @Html.EditorFor(model => model.InvoiceNum)
-                </dd>
-                <dt>
-                    @Html.Raw("Received Date")
-                </dt>
-                <dd>
-                    <input type="date" name="ReceiveDate" value="@Model.ReceiveDate.ToString("yyyy-MM-dd")" />
-                </dd>
 
-            </dl>
-            <table class="table">
-                <tr>
-                    <th>No</th>
-                    <th>Product</th>
-                    <th>Unit of Measure</th>
-                    <th>Order Qty</th>
-                    <th>Received Qty (Before)</th>
-                    <th>Received Qty (Now)</th>
-                </tr>
+            </div>
+            <div>
+                <div class="row">
+                    <div class="card col-lg-4">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="control-label col-md-12"><strong>Purchase Order Number</strong></label>
+                                <div class="col-md-12">
+                                    <input class="form-control" type="number" value="@ViewBag.PurchaseOrder.PoNum" disabled name="PoNum" id="PoNum" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-12"><strong>Supplier Name</strong></label>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" value="@ViewBag.PurchaseOrder.Supplier.SupplierName" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-12"><strong>Supplier Contact Name</strong></label>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" value="@ViewBag.PurchaseOrder.SupplierContact" disabled />
+                                </div>
+                            </div>
 
-                @if (ViewBag.PurchaseOrder != null)
+                        </div>
+                    </div>
+                    <div class="card col-lg-4">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="control-label col-md-12"><strong>Delivery Order Number</strong></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model=>model.DeliveryOrderNum, new { htmlAttributes = new { @class = "form-control", @required=true } })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-12"><strong>Invoice Number</strong></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.InvoiceNum, new { htmlAttributes = new { @class = "form-control", @required=true } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-12"><strong>Received Date</strong></label>
+                                <div class="col-md-12">
+                                    <input type="date" class="form-control" name="ReceiveDate" id="ReceiveDate" value="@Model.ReceiveDate.ToString("yyyy-MM-dd")" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card col-lg-4">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 text-primary"><strong>Status</strong></label>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control text-primary" value="@ViewBag.PurchaseOrder.Status" disabled />
+                                </div>
+                            </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-12"><strong>Approved By</strong></label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" value="@ViewBag.PurchaseOrder.ApprovalEmployee.FullName" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-12"><strong>Approved On</strong></label>
+                            <div class="col-md-12">
+                                <input type="date" class="form-control" value="@ViewBag.PurchaseOrder.ApprovalDate.ToString("yyyy-MM-dd")" disabled />
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+
+                </div>      <br />
+                <table class="table table-hover table-striped">
+                    <tr>
+                        <th>No</th>
+                        <th>Product</th>
+                        <th>Unit of Measure</th>
+                        <th>Order Qty</th>
+                        <th>Received Qty (Before)</th>
+                        <th>Received Qty (Now)</th>
+                    </tr>
+
+                    @if (ViewBag.PurchaseOrder != null)
+            {
+                for (int i = 0; i < ViewBag.PurchaseOrder.PurchaseOrderDetails.Count; i++)
                 {
-                    for (int i = 0; i < ViewBag.PurchaseOrder.PurchaseOrderDetails.Count; i++)
-                    {
-                        <tr>
-                            <td>@(i + 1)</td>
-                            <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].Stationery.Description</td>
-                            <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
-                            <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].OrderQty</td>
-                            <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].ReceiveQty</td>
-                            <td>
-                                @Html.HiddenFor(model => model.ReceiveTransDetails[i].ItemNum)
-                                @Html.EditorFor(model => model.ReceiveTransDetails[i].Quantity)
-                            </td>
-                        </tr>
-                    }
-                }
-            </table>
-        </div>
-        <p>
-
-            <input type="submit" value="Receive" class="btn btn-default" />
-
-        </p>
-    }
-}
-
-<script>
-    //redirect page if PO selected from no-PO page
-    $(document).on('change', '#select_PO', function () {
-        if ($(this).val() != 0) {
-            var newLink = "/PurchaseOrders/Receive?p=" + $(this).val();
-            window.location.replace(newLink);
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].Stationery.Description</td>
+                        <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
+                        <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].OrderQty</td>
+                        <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].ReceiveQty</td>
+                        <td>
+                            @Html.HiddenFor(model => model.ReceiveTransDetails[i].ItemNum)
+                            @Html.EditorFor(model => model.ReceiveTransDetails[i].Quantity)
+                        </td>
+                    </tr>
         }
-    });
-</script>
+    }
+                </table>
+            </div>
+            <p>
+
+                <input type="submit" value="Receive" class="btn btn-outline-success" />
+
+            </p>
+            }
+            }
+
+            <script>
+                //redirect page if PO selected from no-PO page
+                $(document).on('change', '#select_PO', function () {
+                    if ($(this).val() != 0) {
+                        var newLink = "/PurchaseOrders/Receive?p=" + $(this).val();
+                        window.location.replace(newLink);
+                    }
+                });
+            </script>
