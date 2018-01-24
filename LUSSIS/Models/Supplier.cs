@@ -30,11 +30,13 @@ namespace LUSSIS.Models
         public string ContactName { get; set; }
 
         [Required]
+        [RegularExpression(@"^[0-9\+\-]*$", ErrorMessage ="Invalid Phone Number")]
         [StringLength(20)]
         [Display(Name = "Phone No")]
         public string TelephoneNum { get; set; }
 
         [Required]
+        [RegularExpression(@"^[0-9\+\-]*$", ErrorMessage = "Invalid Fax Number")]
         [StringLength(30)]
         [Display(Name = "Fax No")]
         public string FaxNum { get; set; }

@@ -253,7 +253,6 @@ namespace LUSSIS.Controllers
             else
             {
                 stationerys = strepo.GetAll().ToList();
-
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
