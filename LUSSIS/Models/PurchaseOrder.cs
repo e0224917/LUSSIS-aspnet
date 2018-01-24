@@ -17,6 +17,7 @@ namespace LUSSIS.Models
         }
 
         [Key]
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PoNum { get; set; }
 
@@ -42,6 +43,20 @@ namespace LUSSIS.Models
 
         [Required]
         public int OrderEmpNum { get; set; }
+
+        [Required]
+        public double GST { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        public string SupplierContact { get; set; }
+
+        [Required]
+        public string Address1 { get; set; }
+
+        public string Address2 { get; set; }
+
+        public string Address3 { get; set; }
 
         public int? ApprovalEmpNum { get; set; }
 

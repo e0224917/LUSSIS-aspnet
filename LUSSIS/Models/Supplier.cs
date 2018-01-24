@@ -40,7 +40,11 @@ namespace LUSSIS.Models
         public string FaxNum { get; set; }
 
         [Required]
-        public string Address { get; set; }
+        public string Address1 { get; set; }
+
+        public string Address2 { get; set; }
+
+        public string Address3 { get; set; }
 
         [Required]
         [StringLength(30)]

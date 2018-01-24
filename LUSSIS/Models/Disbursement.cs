@@ -28,9 +28,9 @@ namespace LUSSIS.Models
         //[CollectionDate] //validation
         public DateTime CollectionDate { get; set; }
 
-        [Required]
+        //[Required]
         [Display(Name = "Collection Point Id")]
-        public int CollectionPointId { get; set; }
+        public int? CollectionPointId { get; set; }
 
         [Required]
         [StringLength(20)]

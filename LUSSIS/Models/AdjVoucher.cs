@@ -10,6 +10,7 @@ namespace LUSSIS.Models
     public partial class AdjVoucher
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Required]
         public int AdjVoucherId { get; set; }
 
         [Required]

@@ -34,6 +34,7 @@ namespace LUSSIS.Models
         }
 
         [Key]
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EmpNum { get; set; }
 
