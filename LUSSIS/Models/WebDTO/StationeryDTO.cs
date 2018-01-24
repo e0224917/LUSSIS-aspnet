@@ -9,7 +9,7 @@ namespace LUSSIS.Models.WebDTO
     public class StationeryDTO
     {
     
-        public virtual Stationery stationery { get; set; }
+        public Stationery stationery { get; set; }
 
         [Required(ErrorMessage = "Supplier is required")]
         public int SupplierId { get; set; }
@@ -36,34 +36,34 @@ namespace LUSSIS.Models.WebDTO
         //public double? Price { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
-        public double? Price1 { get; set; }
+        public double Price1 { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
-        public double? Price2 { get; set; }
+        public double Price2 { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
-        public double? Price3 { get; set; }
+        public double Price3 { get; set; }
 
-        public int? Rank { get; set; }
+        public int Rank { get; set; }
 
         [Required(ErrorMessage = "This SupplierName is required")]
         public string SupplierName { get; set; }
 
-        public DateTime? ReceiveDate { get; set; }
+        public DateTime ReceiveDate { get; set; }
 
         [Range(1, 10000, ErrorMessage = "Please enter a valid quantity")]
-        public int? Quantity { get; set; }
+        public int Quantity { get; set; }
 
-        public int? CurrentQty { get; set; }
+        public int CurrentQty { get; set; }
 
         public string TransactioType { get; set; }
-        public DateTime? CollectionDate { get; set; }
+        public DateTime CollectionDate { get; set; }
         public string DeptName { get; set; }
         public string DeptCode { get; set; }
-        public int? ActualQty { get; set; }
+        public int ActualQty { get; set; }
 
         public DateTime? ApprovalDate { get; set; }
-        public int? Quantity1 { get; set; }
+        public int Quantity1 { get; set; }
 
     }
 }

@@ -73,6 +73,7 @@ namespace LUSSIS.Controllers
             return Json(selectedEmp, JsonRequestBehavior.AllowGet);
         }
 
+
         [HttpPost]
         public ActionResult UpdateRep(string repEmp)
         {
@@ -80,17 +81,24 @@ namespace LUSSIS.Controllers
             {
                 string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
                 Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                string emailRepOld = department.RepEmployee.EmailAddress;
-                var context = new ApplicationDbContext();
-                var user = context.Users.FirstOrDefault(u => u.Email == emailRepOld);
-                var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                userManager.RemoveFromRole(user.Id, "rep");
-                userManager.AddToRole(user.Id, "staff");
-                employeeRepo.ChangeRep(department, repEmp);
-                string emailRepNew = department.RepEmployee.EmailAddress;
-                var user2 = context.Users.FirstOrDefault(u => u.Email == emailRepNew);
-                userManager.RemoveFromRole(user2.Id, "staff");
-                userManager.AddToRole(user2.Id, "rep");
+                if (department.RepEmployee == null)
+                {
+                    employeeRepo.AddRep(department, repEmp);
+                }
+                else
+                {
+                    string emailRepOld = department.RepEmployee.EmailAddress;
+                    var context = new ApplicationDbContext();
+                    var user = context.Users.FirstOrDefault(u => u.Email == emailRepOld);
+                    var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                    userManager.RemoveFromRole(user.Id, "rep");
+                    userManager.AddToRole(user.Id, "staff");
+                    employeeRepo.ChangeRep(department, repEmp);
+                    string emailRepNew = department.RepEmployee.EmailAddress;
+                    var user2 = context.Users.FirstOrDefault(u => u.Email == emailRepNew);
+                    userManager.RemoveFromRole(user2.Id, "staff");
+                    userManager.AddToRole(user2.Id, "rep");
+                }
             }
             return RedirectToAction("DeptRep");
         }

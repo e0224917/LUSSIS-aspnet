@@ -18,8 +18,8 @@ namespace LUSSIS.Models
         [Column(Order = 1)]
         [StringLength(20)]
         public string ItemNum { get; set; }
-
-        public int? Quantity { get; set; }
+        [Required]
+        public int Quantity { get; set; }
 
         public virtual Requisition Requisition { get; set; }
 

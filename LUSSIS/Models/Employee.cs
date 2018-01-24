@@ -34,25 +34,32 @@ namespace LUSSIS.Models
         }
 
         [Key]
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EmpNum { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string Title { get; set; }
 
+        [Required]
         [StringLength(30)]
         public string FirstName { get; set; }
 
+        [Required]
         [StringLength(30)]
         public string LastName { get; set; }
 
+        [Required]
         [StringLength(50)]
         [Display(Name = "Email Address")]
         public string EmailAddress { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string JobTitle { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string DeptCode { get; set; }
 
