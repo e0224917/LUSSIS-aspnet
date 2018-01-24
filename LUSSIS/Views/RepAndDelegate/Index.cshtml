@@ -11,26 +11,33 @@
                 <div class="col-xs-12 text-center">
                     <div class="card-header"><h4 class="card-title">Pending Requisitions</h4></div>
                     <div class="card-body">
-                        <table class="table table-hover">
-                            <tr>
-                                <th>
-                                    No. of Pending Requisitions:
-                                </th>
-                            </tr>
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(Model => Model.GetRequisitionListCount)
-                                    <br />
-                                </td>
-                            </tr>
-                        </table>
                         @if (Model.GetRequisitionListCount != 0)
                         {
-                            using (Html.BeginForm("Pending", "Requisitions", FormMethod.Post))
-                            {
-                                <input type="submit" class="btn btn-success my-2 my-sm-0" value="View Pending Requisitions" />
-                            }
+                    <table class="table table-hover">
+                        <tr>
+                            <th>
+                                No. of Pending Requisitions:
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(Model => Model.GetRequisitionListCount)
+                                <br />
+                            </td>
+                        </tr>
+                    </table>
                         }
+                        else
+                        {
+                            <h6>No pending requisitions at the moment.</h6>
+                        }
+                    @if (Model.GetRequisitionListCount != 0)
+{
+    using (Html.BeginForm("Pending", "Requisitions", FormMethod.Post))
+    {
+                    <input type="submit" class="btn btn-success my-2 my-sm-0" value="View Pending Requisitions" />
+}
+}
                     </div>
                 </div>
             </div>
@@ -44,62 +51,64 @@
                 <div class="col-xs-12 text-center">
                     <div class="card-header"><h4 class="card-title">My Delegate</h4></div>
                     <div class="card-body">
-                        <table class="table table-hover">
-                            <tr>
-                                <th>
-                                    My Delegate
-                                </th>
-                                <th>
-                                    From
-                                </th>
-                                <th>
-                                    To
-                                </th>
-                            </tr>
-                            @if (Model.GetDelegate != null)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(model => model.GetDelegate.StartDate)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(model => model.GetDelegate.EndDate)
-                                    </td>
-                                </tr>
-                            }
-                        </table>
-                        @if (Model.GetDelegate == null)
+                        @if (Model.GetDelegate != null)
                         {
-                            <text> You have no delegate at the moment.</text>
-                            using (Html.BeginForm("DeptDelegate", "RepAndDelegate", FormMethod.Post))
-                            {
-                                <br />
-                                <input type="submit" class="btn btn-success my-2 my-sm-0" value="Set My Delegate" />
-                            }
+                    <table class="table table-hover">
+                        <tr>
+                            <th>
+                                My Delegate
+                            </th>
+                            <th>
+                                From
+                            </th>
+                            <th>
+                                To
+                            </th>
+                        </tr>
 
-                        }
-                        else if (Model.GetDelegateByDate != null)
-                        {
-                            <h6>Your delegate is activated today!</h6>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.GetDelegate.StartDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.GetDelegate.EndDate)
+                            </td>
+                        </tr>
 
-                            <br />using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
-                            {
-                                <input type="submit" class="btn btn-success my-2 my-sm-0" value="Revoke Delegate" />
-                            }
+                    </table>
                         }
-                        else
-                        {
-                            <h6>Your delegate will be activated on </h6>@Html.DisplayFor(mode => Model.GetDelegate.StartDate)
-                            <br />
-                            <br />
-                            using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
-                            {
-                                <input type="submit" class="btn btn-success my-2 my-sm-0" value="Revoke Delegate" />
-                            }
-                        }
+                    @if (Model.GetDelegate == null)
+{
+                    <h6> You have no delegate at the moment.</h6>
+using (Html.BeginForm("DeptDelegate", "RepAndDelegate", FormMethod.Post))
+{
+                    <br />
+                    <input type="submit" class="btn btn-success my-2 my-sm-0" value="Set My Delegate" />
+}
+
+}
+else if (Model.GetDelegateByDate != null)
+{
+                    <h6>Your delegate is activated today!</h6>
+
+                    <br />using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
+{
+                    <input type="submit" class="btn btn-success my-2 my-sm-0" value="Revoke Delegate" />
+}
+}
+else
+{
+                    <h6>Your delegate will be activated on </h6>@Html.DisplayFor(mode => Model.GetDelegate.StartDate)
+                    <br />
+                    <br />
+using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
+{
+                    <input type="submit" class="btn btn-success my-2 my-sm-0" value="Revoke Delegate" />
+}
+}
 
 
                     </div>
@@ -115,33 +124,35 @@
                 <div class="col-xs-12 text-center">
                     <div class="card-header"><h4 class="card-title">Department Rep</h4></div>
                     <div class="card-body">
+                        @if (Model.Department.RepEmployee != null)
+                        {
                         <table class="table table-hover">
                             <tr>
                                 <th>
                                     Current Department Rep:
                                 </th>
                             </tr>
-                            @if (Model.Department.RepEmployee != null)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
-                                    </td>
-                                </tr>
-                            }
-                            else
-                            {
-                                <text>No department representative at the moment.</text>
-                            }
 
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
+                                </td>
+                            </tr>
                         </table>
-                        @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
-                        {
-                            if (Model.GetDelegateByDate == null)
-                            {
-                            <input type="submit" class="btn btn-success my-2 my-sm-0" value="Set New Representative" />
-                            }
                         }
+                        else
+                        {
+                        <h6>No department representative at the moment.</h6>
+                        }
+
+                    
+                    @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
+{
+    if (Model.GetDelegateByDate == null)
+    {
+                    <input type="submit" class="btn btn-success my-2 my-sm-0" value="Set New Representative" />
+}
+}
                     </div>
                 </div>
             </div>

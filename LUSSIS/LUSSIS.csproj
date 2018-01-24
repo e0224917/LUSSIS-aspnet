@@ -626,6 +626,7 @@
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
     <Content Include="Views\Disbursements\_History.cshtml" />
+    <Content Include="Views\Account\NotAuthorized.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
