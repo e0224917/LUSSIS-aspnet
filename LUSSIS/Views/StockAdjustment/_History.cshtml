@@ -1,22 +1,29 @@
-﻿@model PagedList.IPagedList<LUSSIS.Models.Requisition>
+﻿@model PagedList.IPagedList<LUSSIS.Models.AdjVoucher>
 @using PagedList.Mvc;
 
-<div id="reqHistory">
+<div id="stockAdjHistory">
     <table class="table table-striped table-hover">
         <tr>
             <th>
-                Requistion Date
+                Create Date
             </th>
             <th>
                 Employee
             </th>
             <th>
-                Request Reason
+                Item
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Reason
             </th>
             <th>
                 Status
             </th>
             <th>
+                Remark
             </th>
         </tr>
 
@@ -24,20 +31,26 @@
         {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.RequisitionDate, "Requisition Date")
-                @Html.HiddenFor(modelItem => item.RequisitionId)
+                @Html.DisplayFor(modelItem => item.CreateDate, "Date of creation")
+                @Html.HiddenFor(modelItem => item.AdjVoucherId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName, "Employee")
+                @Html.DisplayFor(modelItem => item.RequestEmployee.FullName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
+                @Html.DisplayFor(modelItem => item.Stationery.Description, "Item")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity, "Quantity")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reason, "Reason")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status, "Status")
             </td>
             <td>
-                @Html.ActionLink("View Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, new { @class = "btn btn-outline-success" })
+                @Html.DisplayFor(modelItem => item.Remark, "Approval remark")
             </td>
         </tr>
         }
@@ -50,3 +63,5 @@
     @Html.PagedListPager(Model, page => Url.Action("All", new { page, currentFilter = ViewBag.CurrentFilter }))
 
 </div>
+
+

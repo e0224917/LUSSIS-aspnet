@@ -4,10 +4,10 @@
 @if (!new EmployeeRepository().CheckIfLoggedInUserIsDelegate())
 {
     <div class="nav navbar-nav">
-        <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("Index", "Requisitions")"><span>Stationery</span></a>
+        <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("Index", "Requisitions")"><span>Stationery</span></a>
     </div>
     <div class="nav navbar-nav">
-        <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("EmpReq", "Requisitions")"><span>My Requisition</span></a>
+        <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("EmpReq", "Requisitions")"><span>My Requisition</span></a>
     </div>
 }
 else
@@ -18,11 +18,11 @@ else
         </button>
         <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
             <li class="dropdown-item"><a href="@Url.Action("Pending", "Requisitions")"><span>Pending Requisition</span></a></li>
-            <li class="dropdown-item"><a href="@Url.Action("History", "Requisitions")"><span>All Requisition???</span></a></li>
+            <li class="dropdown-item"><a href="@Url.Action("History", "Requisitions")"><span>My Requisition History</span></a></li>
         </ul>
     </div>
     <div class="nav navbar-nav">
-        <a class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")"><span>Department Rep</span></a>
+        <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")"><span>Department Rep</span></a>
     </div>
 }
 
