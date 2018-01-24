@@ -27,9 +27,9 @@ namespace LUSSIS.CustomAuthority
             var user = System.Web.HttpContext.Current.User.Identity.GetUserId();
             var userManager = httpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var roles = userManager.GetRoles(user);
-            if (roles.Contains("staff"))
+            if (roles.Contains("staff") || roles.Contains("rep"))
             {
-                if(!empRepo.CheckIfLoggedInUserIsDelegate())
+                if(empRepo.CheckIfLoggedInUserIsDelegate())
                 {
                     return false;
                 }
