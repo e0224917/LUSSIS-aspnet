@@ -110,7 +110,7 @@ namespace LUSSIS.Controllers
         //TODO: Add authroization - DepartmentHead or Delegate only
         [CustomAuthorize("head", "staff")]
         [HttpPost]
-        public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks")] Requisition requisition, string SubmitButton)
+        public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status")] Requisition requisition, string SubmitButton)
         {
             if (requisition.Status == "pending")
             {//requisition must be pending for any approval and reject
@@ -124,24 +124,29 @@ namespace LUSSIS.Controllers
                         {
                             requisition.Status = "approved";
                             await reqRepo.UpdateAsync(requisition);
-                            return RedirectToAction("index");
+                            return RedirectToAction("Pending");
                         }
 
                         if (SubmitButton == "Reject")
                         {
-                            requisition.Status = "reject";
+                            requisition.Status = "rejected";
                             await reqRepo.UpdateAsync(requisition);
-                            return RedirectToAction("index");
+                            return RedirectToAction("Pending");
                         }
                     }
                     else
                     {
-                        return RedirectToAction("index");
+                        return View(requisition);
                     }
 
                 }
+                else { return new HttpUnauthorizedResult(); }
             }
-            return new HttpUnauthorizedResult();
+            else
+            {
+                return new HttpUnauthorizedResult();
+            }
+            return View(requisition);
         }
 
 
