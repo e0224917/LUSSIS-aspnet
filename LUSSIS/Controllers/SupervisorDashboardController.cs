@@ -27,7 +27,7 @@ namespace LUSSIS.Controllers
 
 
 
-        
+
         public async Task<ActionResult> Index()
         {
             var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
@@ -86,7 +86,7 @@ namespace LUSSIS.Controllers
 
               return null;
           }*/
-        public JsonResult GetPiechartJSON()
+        public JsonResult GetPiechartJSON(String List, String date, String e)
         {
             List<String> pileName = sr.GetAllCategory().ToList();
             List<double> pileValue = pr.GetPOByCategory();
@@ -100,32 +100,6 @@ namespace LUSSIS.Controllers
 
             return Json(new { firstList = Name, secondList = Value }, JsonRequestBehavior.AllowGet);
         }
-
-
-        private MultiSelectList GetCountries(string[] selectedValues)
-        {
-            List<Supplier> s=sur.GetAll().ToList();
-            return new MultiSelectList(s, "SupplierId", "SupplierName", selectedValues);
-
-        }
-        [HttpGet]
-        public async Task<ActionResult> GenerateReport()
-        {
-            SupervisorReportDTO model = new SupervisorReportDTO();
-            List<Supplier>supplierList= sur.GetAll().ToList<Supplier>();
-            List<Category> categoryList = sr.GetAllCategoryList().ToList<Category>();
-            model.Suppliers = supplierList;
-            model.Categories = categoryList;
-            ViewBag.supplier = supplierList;
-            return View(model);
-        }
-
-        //[HttpPost]
-        //public ActionResult Report()
-        //{
-            
-        //}
-
 
 
 
