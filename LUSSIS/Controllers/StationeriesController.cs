@@ -87,6 +87,18 @@ namespace LUSSIS.Controllers
 
         }
 
+        //[HttpGet]
+        //public ActionResult Create()
+        //{
+        //    StationerynDTO stationerynDTO = new StationerynDTO
+        //    {
+        //        CategoryList = strepo.GetCategories(),
+        //        SupplierList = srepo.GetSupplierList()
+        //    };
+        //    ViewBag.Category = stationerynDTO.CategoryList;
+
+        //    return View(stationerynDTO);
+        //}
         [HttpGet]
         public ActionResult Create()
         {
@@ -95,11 +107,13 @@ namespace LUSSIS.Controllers
                 CategoryList = strepo.GetCategories(),
                 SupplierList = srepo.GetSupplierList()
             };
+            ViewBag.Category = stationerynDTO.CategoryList;
+
             return View(stationerynDTO);
         }
 
         [HttpPost]
-        public ActionResult Create1(StationerynDTO stationerynDTO)  //Create in MVC architecture
+        public ActionResult Create(StationerynDTO stationerynDTO)  //Create in MVC architecture
         {
 
             if (ModelState.IsValid)
@@ -176,7 +190,7 @@ namespace LUSSIS.Controllers
         }
 
         [HttpGet]
-        public ActionResult Edit1(string id) //Edit in MVC architecture
+        public ActionResult Edit(string id) //Edit in MVC architecture
         {
             if (id == null)
             {
@@ -212,7 +226,7 @@ namespace LUSSIS.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit1(StationerynDTO stationerynDTO) //Edit in MVC architecture
+        public ActionResult Edit(StationerynDTO stationerynDTO) //Edit in MVC architecture
         {
             if (ModelState.IsValid)
             {
@@ -276,30 +290,30 @@ namespace LUSSIS.Controllers
         }
 
         // GET: Stationeries/Delete/5
-        public ActionResult Delete(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Stationery stationery = db.Stationeries.Find(id);
-            if (stationery == null)
-            {
-                return HttpNotFound();
-            }
-            return View(stationery);
-        }
+        //public ActionResult Delete(string id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    Stationery stationery = db.Stationeries.Find(id);
+        //    if (stationery == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(stationery);
+        //}
 
-        // POST: Stationeries/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
-        {
-            Stationery stationery = db.Stationeries.Find(id);
-            db.Stationeries.Remove(stationery);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+        //// POST: Stationeries/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult DeleteConfirmed(string id)
+        //{
+        //    Stationery stationery = db.Stationeries.Find(id);
+        //    db.Stationeries.Remove(stationery);
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
 
         protected override void Dispose(bool disposing)
         {
