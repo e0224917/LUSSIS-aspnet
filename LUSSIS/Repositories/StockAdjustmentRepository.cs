@@ -112,7 +112,10 @@ namespace LUSSIS.Repositories
 
 
 
-
+        public IEnumerable<AdjVoucher> GetApprovedAdjVoucherByItem(string id)
+        {
+            return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == id && x.Status == "approved");
+        } 
 
 
     }
