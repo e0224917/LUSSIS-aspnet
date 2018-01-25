@@ -6,6 +6,7 @@ using System.Web.Http;
 using Microsoft.AspNet.Identity.Owin;
 using System.Threading.Tasks;
 using System.Web.Http.Description;
+using LUSSIS.Emails;
 using LUSSIS.Models.WebAPI;
 
 namespace LUSSIS.Controllers.WebAPI
@@ -61,6 +62,43 @@ namespace LUSSIS.Controllers.WebAPI
             {
                 return Ok(e);
             }
+        }
+
+        [HttpPost]
+        public async Task<IHttpActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var userManager = HttpContext.Current.GetOwinContext().Get<ApplicationUserManager>();
+                    var user = await userManager.FindByNameAsync(model.Email);
+                    if (user == null)
+                    {
+                        return BadRequest("No email exists in the database.");
+                    }
+
+                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    string code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
+                    var callbackUrl = Url.Link("Default",
+                        new { controller = "Account", action = "ResetPassword", userId = user.Id, code = code });
+                    // await userManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    string subject = "Reset password for " + model.Email;
+                    string body = "Please reset your password by clicking <a href=" + callbackUrl + ">here</a>";
+                    string to = "minhnhattonthat@gmail.com";
+                    EmailHelper.SendEmail(to, subject, body);
+                }
+                catch (Exception e)
+                {
+                    return Ok(e);
+                }
+
+                return Ok(new { Message = "Reset link sent to your email." });
+            }
+
+            return BadRequest("Something is wrong. Please try again.");
         }
     }
 }

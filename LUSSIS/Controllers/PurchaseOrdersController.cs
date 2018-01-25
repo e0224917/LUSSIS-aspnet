@@ -56,6 +56,7 @@ namespace LUSSIS.Controllers
 
 
         //GET: PurchaseOrders/Summary
+        [Authorize(Roles = "clerk")]
         public ActionResult Summary()
         {
             ViewBag.OutstandingStationeryList = sr.GetOutstandingStationeryByAllSupplier();

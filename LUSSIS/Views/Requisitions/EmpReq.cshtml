@@ -3,13 +3,11 @@
 @{
     ViewBag.Title = "EmpReq";
 }
-
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 <h2>List of Requisition</h2>
+<hr/>
 
-<p>
-
-</p>
-<table class="table">
+<table class="table table-striped table-hover">
     <tr>
         <th>
             Requisition No.
@@ -44,7 +42,7 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.ActionLink("Detail", "EmpReqDetail", new { id = item.RequisitionId},null)
+                @Html.ActionLink("View Details", "EmpReqDetail", new { id = item.RequisitionId}, new{@class="btn btn-outline-info btn-sm"})
             </td>
         </tr>
     }

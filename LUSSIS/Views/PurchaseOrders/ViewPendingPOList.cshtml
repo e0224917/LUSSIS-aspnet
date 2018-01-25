@@ -85,7 +85,7 @@
                 $ @Html.DisplayFor(modelItem => item.TotalCost)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { id = item.PoNum })
+                @Html.ActionLink("View Details", "Details", new { id = item.PoNum }, new{@class="btn btn-sm btn-outline-info"})
             </td>
         </tr>
     }

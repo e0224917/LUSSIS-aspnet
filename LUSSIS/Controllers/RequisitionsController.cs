@@ -245,10 +245,11 @@ namespace LUSSIS.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 stationerys = strepo.GetByDescription(searchString).ToList();
-                if (stationerys.Count == 0)
-                {
-                    stationerys = strepo.GetAll().ToList();
-                }
+                //if no result, display no result therefore the next 4 lines can be deleted
+                //if (stationerys.Count == 0)
+                //{
+                //    stationerys = strepo.GetAll().ToList();
+                //}
             }
             else
             {
@@ -311,6 +312,7 @@ namespace LUSSIS.Controllers
             DateTime reqDate = System.DateTime.Now.Date;
             string status = "pending";
             string remarks = Request["remarks"];
+            string deptCode = erepo.GetCurrentUser().DeptCode;
             if (itemNum != null)
             {
                 Requisition requisition = new Requisition()
@@ -318,7 +320,8 @@ namespace LUSSIS.Controllers
                     RequestRemarks = remarks,
                     RequisitionDate = reqDate,
                     RequisitionEmpNum = reqEmp,
-                    Status = status
+                    Status = status,
+                    DeptCode=deptCode
                 };
                 reqrepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
