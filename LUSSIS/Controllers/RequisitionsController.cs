@@ -18,7 +18,7 @@ using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
-    [Authorize(Roles ="head, staff, clerk, rep")]
+    [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {
 
@@ -273,7 +273,8 @@ namespace LUSSIS.Controllers
         public ActionResult AddToCart(string id, int qty)
         {
             Cart cart = new Cart(strepo.GetById(id), qty);
-            (Session["MyCart"] as ShoppingCart).addToCart(cart);
+            if (qty > 0)
+            { (Session["MyCart"] as ShoppingCart).addToCart(cart); }
             return RedirectToAction("Index");
             //return Json("ok");
 
@@ -321,7 +322,7 @@ namespace LUSSIS.Controllers
                     RequisitionDate = reqDate,
                     RequisitionEmpNum = reqEmp,
                     Status = status,
-                    DeptCode=deptCode
+                    DeptCode = deptCode
                 };
                 reqrepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
@@ -376,12 +377,19 @@ namespace LUSSIS.Controllers
         {
 
             ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
+            Cart c = new Cart();
             foreach (Cart cart in mycart.shoppingCart)
             {
                 if (cart.stationery.ItemNum == id)
                 {
+                     c = cart;
                     cart.quantity = qty;
+                    break;
                 }
+            }
+            if (c.quantity<=0)
+            {
+                mycart.shoppingCart.Remove(c);
             }
             return RedirectToAction("EmpCart");
         }
