@@ -1,28 +1,19 @@
 ﻿@model IEnumerable<LUSSIS.Models.WebDTO.Cart>
 
 @{
-    ViewBag.Title = "EmpCart";
+    ViewBag.Title = "My Cart";
     List<string> itemNub = new List<string>();
     List<int> itemQty = new List<int>();
 
 }
-<style>
-body{
-    background-image:url('/Images/images3.jpg');
-    background-size:100% 100%;
-    background-repeat:no-repeat;
-}
-    </style>
+
 <h2>Requisition Cart</h2>
 <hr />
 
 @if (Model.Count() != 0)
 {
-
-
-
     <table class="table table-striped table-hover">
-        <tr>
+        <tr class="table-active">
             <th>
                 Stationery Item
             </th>
@@ -50,11 +41,11 @@ body{
                 <td>
                     <div class="row">
                         <input type="number" class="form-control form-control-sm col-md-6" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
-                        <input type="submit" value="Update" class="UpdateLink btn btn-outline-warning btn-sm" data-id="@item.stationery.ItemNum" />
+                        <input type="submit" value="Update" class="UpdateLink btn btn-warning btn-sm" data-id="@item.stationery.ItemNum" />
                     </div>
                 </td>
                 <td>
-                    <input type="submit" value="Delete" class="RemoveLink btn btn-outline-danger btn-sm" data-id="@item.stationery.ItemNum" />
+                    <input type="submit" value="Delete" class="RemoveLink btn btn-danger btn-sm" data-id="@item.stationery.ItemNum" />
                 </td>
             </tr>
             {
@@ -74,7 +65,7 @@ body{
         </div>
         <div class="form-group col-md-6">
             <br/>
-            <input type="submit" name="button" class="btn btn-outline-success btn-lg btn-block" value="Submit Requisition" style="float: right;"/>
+            <input type="submit" name="button" class="btn btn-success btn-lg btn-block" value="Submit Requisition" style="float: right;"/>
         </div>
     </div>
     } }

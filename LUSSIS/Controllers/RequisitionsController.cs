@@ -47,7 +47,7 @@ namespace LUSSIS.Controllers
         //TODO: Add authroization - DepartmentHead or Delegate only
         [CustomAuthorize("head", "staff")]
         [HttpGet]
-        public ActionResult Detail(int reqId)
+        public ActionResult Details(int reqId)
         {
 
             if (empRepo.GetCurrentUser().JobTitle == "head")
@@ -110,7 +110,7 @@ namespace LUSSIS.Controllers
         //TODO: Add authroization - DepartmentHead or Delegate only
         [CustomAuthorize("head", "staff")]
         [HttpPost]
-        public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status")] Requisition requisition, string SubmitButton)
+        public async Task<ActionResult> Details([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status")] Requisition requisition, string SubmitButton)
         {
             if (requisition.Status == "pending")
             {//requisition must be pending for any approval and reject
@@ -229,9 +229,10 @@ namespace LUSSIS.Controllers
         private RequisitionRepository reqrepo = new RequisitionRepository();
         private StationeryRepository strepo = new StationeryRepository();
         private EmployeeRepository erepo = new EmployeeRepository();
+        
+        
+        
         // GET: DeptEmpReqs
-
-
         [DelegateStaffCustomAuth("staff", "rep")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
@@ -285,7 +286,7 @@ namespace LUSSIS.Controllers
         //    return View(reqRepo.GetRequisitionByEmpNum(EmpNum));
         //}
         [DelegateStaffCustomAuth("staff", "rep")]
-        public ActionResult EmpReq(string currentFilter, int? page)
+        public ActionResult MyRequisitions(string currentFilter, int? page)
         {
             int id = erepo.GetCurrentUser().EmpNum;
             List<Requisition> reqlist = reqrepo.GetRequisitionByEmpNum(id).OrderByDescending(s => s.RequisitionDate).OrderByDescending(s => s.RequisitionId).ToList();
@@ -296,7 +297,7 @@ namespace LUSSIS.Controllers
         // GET: Requisitions/EmpReqDetail/5
         [DelegateStaffCustomAuth("staff", "rep")]
         [HttpGet]
-        public ActionResult EmpReqDetail(int id)
+        public ActionResult MyRequisitionDetails(int id)
         {
             List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
@@ -346,16 +347,16 @@ namespace LUSSIS.Controllers
                 string destinationEmail = "cuirunzesg@gmail.com";
                 string subject = erepo.GetCurrentUser().FullName + " requested stationeries";
                 EmailHelper.SendEmail(destinationEmail, subject, body);
-                return RedirectToAction("EmpReq");
+                return RedirectToAction("MyRequisitions");
             }
             else
             {
-                return RedirectToAction("EmpCart");
+                return RedirectToAction("MyCart");
             }
         }
 
         [DelegateStaffCustomAuth("staff", "rep")]
-        public ActionResult EmpCart()
+        public ActionResult MyCart()
         {
             ShoppingCart mycart = (ShoppingCart)Session["MyCart"];
             return View(mycart.GetAllCartItem());
@@ -368,7 +369,7 @@ namespace LUSSIS.Controllers
 
             ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
             mycart.deleteCart(id);
-            return RedirectToAction("EmpCart");
+            return RedirectToAction("MyCart");
         }
 
         [DelegateStaffCustomAuth("staff", "rep")]
@@ -391,7 +392,7 @@ namespace LUSSIS.Controllers
             {
                 mycart.shoppingCart.Remove(c);
             }
-            return RedirectToAction("EmpCart");
+            return RedirectToAction("MyCart");
         }
         //Stock Clerk's page
         [Authorize(Roles = "clerk")]

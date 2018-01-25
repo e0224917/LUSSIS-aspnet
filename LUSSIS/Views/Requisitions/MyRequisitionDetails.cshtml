@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<LUSSIS.Models.RequisitionDetail>
 
 @{
-    ViewBag.Title = "EmpReqDetail";
+    ViewBag.Title = "My Requisition Details";
 
 }
 
-<h2>Requisition Details</h2>
+<h2>My Requisition Details</h2>
 <hr/>
 @if (!Model.Any())
 {
@@ -15,7 +15,7 @@
 }
 else
 {
-    <table class="table table-secondary">
+    <table class="table table-dark">
         <tr>
             <th>Requisition No.</th>
             <th>Requested Date</th>
