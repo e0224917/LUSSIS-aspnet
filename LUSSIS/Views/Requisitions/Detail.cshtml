@@ -50,8 +50,9 @@
             </td>
             @if (ViewBag.Pending != "Pending")
             {
-                <td>
-                    @Html.DisplayFor(model => model.Status, new { htmlAttribute = new { @class = "text-primary" } })
+                <td><span class="text-warning lead">
+    @Html.DisplayFor(model => model.Status)
+</span>
                 </td>
             }
         </tr>
@@ -73,7 +74,7 @@
     else
     {
         <div class="card border-dark col-sm-12 col-lg-12" style="padding:0">
-            <div class="card-header"> @(Model.Status == "rejected" ? "Rejection" : "Approval") Comments: </div>
+            <div class="card-header"> @(Model.Status == "rejected" ? "Rejection" : "Approval") Comments from <strong>@(Model.ApprovalEmployee.FullName)</strong>: </div>
             <div class="card-body">
                 @Html.DisplayFor(model => model.ApprovalRemarks, new { @class = "card-text", @readonly = "readonly" })
             </div>
