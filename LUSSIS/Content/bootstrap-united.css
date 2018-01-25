@@ -321,7 +321,7 @@ input[type="month"] {
 
 textarea {
     padding: 20px;
-    width: 300px;
+    width: auto;
     resize: both;
     overflow: auto;
 }
@@ -1810,7 +1810,7 @@ pre code {
 .table-dark,
 .table-dark > th,
 .table-dark > td {
-  background-color: #d9c3cf;
+  background-color: #997578;
 }
 
 .table-hover .table-dark:hover {
