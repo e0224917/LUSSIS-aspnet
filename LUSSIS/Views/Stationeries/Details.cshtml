@@ -22,10 +22,10 @@
                 </div>
                 <br />
                 <div class="form-group">
-                    <div>@Html.ActionLink("Edit", "Edit", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-outline-success btn-sm" })</div>
+                    <div>@Html.ActionLink("Edit", "Edit1", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-outline-warning btn-sm" })</div>
                 </div>
                 <div class="form-group">
-                    <div>@Html.ActionLink("Stock Adjustment", "Stock Adjustment", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-outline-success btn-sm" })</div>
+                    <div>@Html.ActionLink("Stock Adjustment","CreateAdjustment", "StockAdjustment",  new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-outline-primary btn-sm" })</div>
                 </div>
             </div>
         </div>

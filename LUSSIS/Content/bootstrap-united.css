@@ -321,7 +321,7 @@ input[type="month"] {
 
 textarea {
     padding: 20px;
-    width: 300px;
+    width: auto;
     resize: both;
     overflow: auto;
 }
@@ -636,6 +636,7 @@ pre code {
   margin-right: -15px;
   margin-left: -15px;
 }
+
 
 .no-gutters {
   margin-right: 0;
@@ -1810,7 +1811,7 @@ pre code {
 .table-dark,
 .table-dark > th,
 .table-dark > td {
-  background-color: #d9c3cf;
+    background-color: #997578;
 }
 
 .table-hover .table-dark:hover {
@@ -1838,9 +1839,9 @@ pre code {
 }
 
 .table .thead-dark th {
-  color: #fff;
-  background-color: #772953;
-  border-color: #642246;
+    color: #fff;
+    background-color: #997578;
+    border-color: #F2DCDE;
 }
 
 .table .thead-light th {
@@ -1850,15 +1851,15 @@ pre code {
 }
 
 .table-dark {
-  color: #fff;
-  background-color: #772953;
+    color: #fff;
+    background-color: #705658;
 }
 
-.table-dark th,
-.table-dark td,
-.table-dark thead th {
-  border-color: #642246;
-}
+    .table-dark th,
+    .table-dark td,
+    .table-dark thead th {
+        border-color: #F2DCDE;
+    }
 
 .table-dark.table-bordered {
   border: 0;

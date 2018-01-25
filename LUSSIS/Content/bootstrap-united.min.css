@@ -1874,15 +1874,15 @@ pre {
     }
 
 .table-dark, .table-dark > th, .table-dark > td {
-    background-color: #d9c3cf
+    background-color: #997578
 }
 
 .table-hover .table-dark:hover {
-    background-color: #cfb3c3
+    background-color: #997578
 }
 
     .table-hover .table-dark:hover > td, .table-hover .table-dark:hover > th {
-        background-color: #cfb3c3
+        background-color: #997578
     }
 
 .table-active, .table-active > th, .table-active > td {
@@ -1899,8 +1899,8 @@ pre {
 
 .table .thead-dark th {
     color: #fff;
-    background-color: #772953;
-    border-color: #642246
+    background-color: #997578;
+    border-color: #fff
 }
 
 .table .thead-light th {
@@ -1911,11 +1911,11 @@ pre {
 
 .table-dark {
     color: #fff;
-    background-color: #772953
+    background-color: #997578
 }
 
     .table-dark th, .table-dark td, .table-dark thead th {
-        border-color: #642246
+        border-color: #705658
     }
 
     .table-dark.table-bordered {

@@ -4,6 +4,7 @@
 }
 
 <h2>Print Purchase Order</h2>
+<hr/>
 
 @if (ViewBag.Error != null)
 {
@@ -41,10 +42,11 @@ else
     {
         @Html.AntiForgeryToken()
 
-        <div>
-            <div class="row">
-                <div class="card col-lg-4">
-                    <div class="card-body">
+        <div class="card border-dark col-lg-12 col-sm-12 col-md-12">
+   
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4 col-sm-4 col-md-4">
                         <div class="form-group">
                             @Html.HiddenFor(model => model.PoNum)
                             <label class="control-label col-md-12"><strong>Purchase Order Number</strong></label>
@@ -67,9 +69,8 @@ else
                         </div>
 
                     </div>
-                </div>
-                <div class="card col-lg-4">
-                    <div class="card-body">
+               
+                    <div class="col-lg-4 col-sm-4 col-md-4">
                         <div class="form-group">
                             <label class="control-label col-md-12"><strong>Created By</strong></label>
                             <div class="col-md-12">
@@ -94,9 +95,8 @@ else
                         </div>
 
                     </div>
-                </div>
-                <div class="card col-lg-4">
-                    <div class="card-body">
+               
+                    <div class="col-lg-4 col-sm-4 col-md-4">
                         <div class="form-group">
                             <label class="control-label col-md-12 text-primary"><strong>Status</strong></label>
                             <div class="col-md-12">
@@ -124,7 +124,7 @@ else
                 </div>
 
 
-            </div>      <br />
+            </div>  </div>    <br />
 
             <table class="table table-hover table-striped">
                 <tr>
@@ -148,11 +148,9 @@ else
                     </tr>
                 }
             </table>
-        </div>
-        <div class="form-group">
-            <div>
-                <input type="submit" value="Submit Order and Print" class="btn btn-outline-success" />
-            </div>
+
+        <div class="text-right">
+            <input type="submit" value="Submit Order and Print" class="btn btn-outline-success btn-lg" style="width:40%" />
         </div>
     }
 }
