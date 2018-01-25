@@ -143,7 +143,7 @@ else
                             <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].ReceiveQty</td>
                             <td>
                                 @Html.HiddenFor(model => model.ReceiveTransDetails[i].ItemNum)
-                                @Html.EditorFor(model => model.ReceiveTransDetails[i].Quantity, new { htmlAttributes = new { @class = "form-control", @min="0" } })
+                                @Html.EditorFor(model => model.ReceiveTransDetails[i].Quantity, new { htmlAttributes = new { @class = "form-control", @min="0", @onkeydown="false" } })
                             </td>
                         </tr>
                     }

@@ -88,7 +88,7 @@
                     @Html.HiddenFor(modelItem => Model.DisDetailList[i].RequestedQty)
                 </td>
                 <td>
-                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @class = "form-control", @value = Model.DisDetailList[i].ActualQty, @min = "0", @max = @Model.DisDetailList[i].RequestedQty} })
+                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @class = "form-control", @value = Model.DisDetailList[i].ActualQty, @onkeydown = "false", @min = "0", @max = @Model.DisDetailList[i].RequestedQty} })
                     @Html.ValidationMessageFor(model => Model.DisDetailList[i].ActualQty, "", new { @class = "text-danger" })
 
                 </td>
