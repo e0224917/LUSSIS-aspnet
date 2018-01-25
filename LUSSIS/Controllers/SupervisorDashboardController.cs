@@ -28,7 +28,7 @@ namespace LUSSIS.Controllers
 
 
         
-        public async Task<ActionResult> SupervisorDashboard()
+        public async Task<ActionResult> Index()
         {
             var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
@@ -102,23 +102,36 @@ namespace LUSSIS.Controllers
         }
 
 
+        private MultiSelectList GetCountries(string[] selectedValues)
+        {
+            List<Supplier> s=sur.GetAll().ToList();
+            return new MultiSelectList(s, "SupplierId", "SupplierName", selectedValues);
 
-        public ActionResult GenerateReport()
+        }
+        [HttpGet]
+        public async Task<ActionResult> GenerateReport()
         {
             SupervisorReportDTO model = new SupervisorReportDTO();
+            List<Supplier>supplierList= sur.GetAll().ToList<Supplier>();
+            List<Category> categoryList = sr.GetAllCategoryList().ToList<Category>();
+            model.Suppliers = supplierList;
+            model.Categories = categoryList;
+            ViewBag.supplier = supplierList;
             return View(model);
         }
 
+        //[HttpPost]
+        //public ActionResult Report()
+        //{
+            
+        //}
+
+
+
+
 
 
 
     }
-    public class SupervisorReportDTO
-    {
-        public List<Supplier> Suppliers { get; set; }
-        public List<Category> Categories { get; set; }
-        public DateTime FromDate { get; set; }
-        public DateTime ToDate { get; set; }
-        public bool IsChart { get; set; }
-    }
+
 }
