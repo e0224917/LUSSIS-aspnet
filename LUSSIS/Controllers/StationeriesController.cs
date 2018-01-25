@@ -90,9 +90,11 @@ namespace LUSSIS.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            StationerynDTO stationerynDTO = new StationerynDTO();
-            stationerynDTO.CategoryList = strepo.GetCategories();
-            stationerynDTO.SupplierList = srepo.GetSupplierList();
+            StationerynDTO stationerynDTO = new StationerynDTO
+            {
+                CategoryList = strepo.GetCategories(),
+                SupplierList = srepo.GetSupplierList()
+            };
             return View(stationerynDTO);
         }
 
@@ -132,7 +134,7 @@ namespace LUSSIS.Controllers
                         AverageCost = 0,
                         UnitOfMeasure = stationerynDTO.UnitOfMeasure,
                         CurrentQty = 0,
-                        BinNum = initial + stationerynDTO.BinNum.ToString(),
+                        BinNum = stationerynDTO.BinNum,
                         AvailableQty = 0
                     };
                     strepo.Add(st);
@@ -188,7 +190,7 @@ namespace LUSSIS.Controllers
                     SupplierList = srepo.GetSupplierList(),
                     CategoryList = strepo.GetCategories(),
                     ItemNum = id,
-                    BinNum = Int32.Parse(st.BinNum.ToString().Substring(1)),
+                    BinNum = st.BinNum,
                     CategoryId = st.CategoryId.ToString(),
                     Description = st.Description,
                     ReorderLevel = st.ReorderLevel,
@@ -238,7 +240,7 @@ namespace LUSSIS.Controllers
                     st.ReorderLevel = stationerynDTO.ReorderLevel;
                     st.ReorderQty = stationerynDTO.ReorderQty;
                     st.UnitOfMeasure = stationerynDTO.UnitOfMeasure;
-                    st.BinNum = initial + stationerynDTO.BinNum.ToString();
+                    st.BinNum = stationerynDTO.BinNum;
                     strepo.Update(st);
                     strepo.DeleteStationerySUpplier(stationerynDTO.ItemNum);
 
