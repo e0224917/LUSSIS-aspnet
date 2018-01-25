@@ -243,6 +243,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CollectionController.cs" />
     <Compile Include="Controllers\StationeriesController.cs" />
+    <Compile Include="Controllers\SupervisorDashboardController.cs" />
     <Compile Include="Controllers\WebAPI\StockAdjustmentController.cs" />
     <Compile Include="CustomAuthority\CustomAuthorizeAttribute.cs" />
     <Compile Include="Controllers\DisbursementsController.cs" />
@@ -635,7 +636,6 @@
     <Content Include="Views\Requisitions\_unauthoriseAccess.cshtml" />
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
-    <Content Include="Views\SupervisorDashboard\GenerateReport.cshtml" />
     <Content Include="Views\Stationeries\Create.cshtml" />
     <Content Include="Views\Stationeries\Delete.cshtml" />
     <Content Include="Views\Stationeries\Details.cshtml" />
