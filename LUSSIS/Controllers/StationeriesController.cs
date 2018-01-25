@@ -90,79 +90,91 @@ namespace LUSSIS.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            ViewBag.Category = strepo.GetAllCategories();
-            ViewBag.Suppliers = srepo.GetAll();
-            return View();
+            StationerynDTO stationerynDTO = new StationerynDTO();
+            stationerynDTO.CategoryList = strepo.GetCategories();
+            stationerynDTO.SupplierList = srepo.GetSupplierList();
+            return View(stationerynDTO);
         }
 
         [HttpPost]
-        public ActionResult Create(StationerynDTO stationerynDTO)
+        public ActionResult Create1(StationerynDTO stationerynDTO)  //Create in MVC architecture
         {
 
             if (ModelState.IsValid)
             {
-                List<string> theList = new List<string>();
-                theList.Add(stationerynDTO.SupplierName1);
-                theList.Add(stationerynDTO.SupplierName2);
-                theList.Add(stationerynDTO.SupplierName3);
+                //This is to check if supplier are unique
+                List<string> theList = new List<string>
+                {
+                    stationerynDTO.SupplierName1,
+                    stationerynDTO.SupplierName2,
+                    stationerynDTO.SupplierName3
+                };
                 bool isUnique = theList.Distinct().Count() == theList.Count();
                 if (isUnique == false)
                 {
                     ViewBag.DistinctError = "Please select different suppliers";
-                    ViewBag.Category = strepo.GetAllCategories();
-                    ViewBag.Suppliers = srepo.GetAll();
+                    stationerynDTO.CategoryList = strepo.GetCategories();
+                    stationerynDTO.SupplierList = srepo.GetSupplierList();
                     return View(stationerynDTO);
                 }
                 else
                 {
-
-                    Stationery st = new Stationery();
                     string initial = strepo.GetCategoryInitial(stationerynDTO.CategoryId);
                     string number = strepo.GetLastRunningPlusOne(initial).ToString();
                     string generatedItemNum = initial + number.PadLeft(3, '0');
-                    st.ItemNum = generatedItemNum;
-                    st.CategoryId = Int32.Parse(stationerynDTO.CategoryId);
-                    st.Description = stationerynDTO.Description;
-                    st.ReorderLevel = stationerynDTO.ReorderLevel;
-                    st.ReorderQty = stationerynDTO.ReorderQty;
-                    st.AverageCost = 0;
-                    st.UnitOfMeasure = stationerynDTO.UnitOfMeasure;
-                    st.CurrentQty = 0;
-                    st.BinNum = initial + stationerynDTO.BinNum.ToString();
-                    st.AvailableQty = 0;
+                    Stationery st = new Stationery
+                    {
+                        ItemNum = generatedItemNum,
+                        CategoryId = Int32.Parse(stationerynDTO.CategoryId),
+                        Description = stationerynDTO.Description,
+                        ReorderLevel = stationerynDTO.ReorderLevel,
+                        ReorderQty = stationerynDTO.ReorderQty,
+                        AverageCost = 0,
+                        UnitOfMeasure = stationerynDTO.UnitOfMeasure,
+                        CurrentQty = 0,
+                        BinNum = initial + stationerynDTO.BinNum.ToString(),
+                        AvailableQty = 0
+                    };
                     strepo.Add(st);
 
-                    StationerySupplier sp1 = new StationerySupplier();
-                    sp1.ItemNum = generatedItemNum;
-                    sp1.SupplierId = Int32.Parse(stationerynDTO.SupplierName1);
-                    sp1.Price = stationerynDTO.Price1;
-                    sp1.Rank = 1;
+                    StationerySupplier sp1 = new StationerySupplier
+                    {
+                        ItemNum = generatedItemNum,
+                        SupplierId = Int32.Parse(stationerynDTO.SupplierName1),
+                        Price = stationerynDTO.Price1,
+                        Rank = 1
+                    };
                     strepo.AddSS(sp1);
 
 
-                    StationerySupplier sp2 = new StationerySupplier();
-                    sp2.ItemNum = generatedItemNum;
-                    sp2.SupplierId = Int32.Parse(stationerynDTO.SupplierName2);
-                    sp2.Price = stationerynDTO.Price2;
-                    sp2.Rank = 2;
+                    StationerySupplier sp2 = new StationerySupplier
+                    {
+                        ItemNum = generatedItemNum,
+                        SupplierId = Int32.Parse(stationerynDTO.SupplierName2),
+                        Price = stationerynDTO.Price2,
+                        Rank = 2
+                    };
                     strepo.AddSS(sp2);
 
-                    StationerySupplier sp3 = new StationerySupplier();
-                    sp3.ItemNum = generatedItemNum;
-                    sp3.SupplierId = Int32.Parse(stationerynDTO.SupplierName3);
-                    sp3.Price = stationerynDTO.Price3;
-                    sp3.Rank = 3;
+                    StationerySupplier sp3 = new StationerySupplier
+                    {
+                        ItemNum = generatedItemNum,
+                        SupplierId = Int32.Parse(stationerynDTO.SupplierName3),
+                        Price = stationerynDTO.Price3,
+                        Rank = 3
+                    };
                     strepo.AddSS(sp3);
                     return RedirectToAction("Index");
                 }
 
             }
-            ViewBag.Category = strepo.GetAllCategories();
-            ViewBag.Suppliers = srepo.GetAll();
+            stationerynDTO.CategoryList = strepo.GetCategories();
+            stationerynDTO.SupplierList = srepo.GetSupplierList();
             return View(stationerynDTO);
         }
 
-        public ActionResult Edit(string id)
+        [HttpGet]
+        public ActionResult Edit1(string id) //Edit in MVC architecture
         {
             if (id == null)
             {
@@ -170,17 +182,19 @@ namespace LUSSIS.Controllers
             }
             else
             {
-                ViewBag.Category = strepo.GetAllCategories();
-                ViewBag.Suppliers = srepo.GetAll();
                 Stationery st = strepo.GetById(id);
-                StationerynDTO nDTO = new StationerynDTO();
-                nDTO.ItemNum = id;
-                nDTO.BinNum = Int32.Parse(st.BinNum.ToString().Substring(1));
-                nDTO.CategoryId = st.CategoryId.ToString();
-                nDTO.Description = st.Description;
-                nDTO.ReorderLevel = st.ReorderLevel;
-                nDTO.ReorderQty = st.ReorderQty;
-                nDTO.UnitOfMeasure = st.UnitOfMeasure;
+                StationerynDTO nDTO = new StationerynDTO
+                {
+                    SupplierList = srepo.GetSupplierList(),
+                    CategoryList = strepo.GetCategories(),
+                    ItemNum = id,
+                    BinNum = Int32.Parse(st.BinNum.ToString().Substring(1)),
+                    CategoryId = st.CategoryId.ToString(),
+                    Description = st.Description,
+                    ReorderLevel = st.ReorderLevel,
+                    ReorderQty = st.ReorderQty,
+                    UnitOfMeasure = st.UnitOfMeasure
+                };
                 StationerySupplier ss1 = strepo.GetSSByIdRank(id,1);
                 nDTO.SupplierName1 = ss1.SupplierId.ToString();
                 nDTO.Price1 = ss1.Price;
@@ -196,20 +210,22 @@ namespace LUSSIS.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(StationerynDTO stationerynDTO)
+        public ActionResult Edit1(StationerynDTO stationerynDTO) //Edit in MVC architecture
         {
             if (ModelState.IsValid)
             {
-                List<string> theList = new List<string>();
-                theList.Add(stationerynDTO.SupplierName1);
-                theList.Add(stationerynDTO.SupplierName2);
-                theList.Add(stationerynDTO.SupplierName3);
+                List<string> theList = new List<string>
+                {
+                    stationerynDTO.SupplierName1,
+                    stationerynDTO.SupplierName2,
+                    stationerynDTO.SupplierName3
+                };
                 bool isUnique = theList.Distinct().Count() == theList.Count();
                 if (isUnique == false)
                 {
                     ViewBag.DistinctError = "Please select different suppliers";
-                    ViewBag.Category = strepo.GetAllCategories();
-                    ViewBag.Suppliers = srepo.GetAll();
+                    stationerynDTO.CategoryList = strepo.GetCategories();
+                    stationerynDTO.SupplierList = srepo.GetSupplierList();
                     return View(stationerynDTO);
                 }
                 else
@@ -252,8 +268,8 @@ namespace LUSSIS.Controllers
                 }
 
             }
-            ViewBag.Category = strepo.GetAllCategories();
-            ViewBag.Suppliers = srepo.GetAll();
+            stationerynDTO.CategoryList = strepo.GetCategories();
+            stationerynDTO.SupplierList = srepo.GetSupplierList();
             return View(stationerynDTO);
         }
 

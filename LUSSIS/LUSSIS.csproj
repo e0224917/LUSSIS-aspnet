@@ -252,7 +252,6 @@
     <Compile Include="Controllers\RepAndDelegateController.cs" />
     <Compile Include="Controllers\RequisitionsController.cs" />
     <Compile Include="Controllers\StockAdjustmentController.cs" />
-    <Compile Include="Controllers\SupervisorDashboardController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Controllers\WebAPI\DelegateController.cs" />

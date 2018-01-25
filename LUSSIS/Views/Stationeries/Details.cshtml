@@ -126,12 +126,11 @@
         var d2 = $('#to_date').val().split('-');
         var from_date = new Date(d1[1] + "/" + d1[2] + "/" + d1[0]);
         var to_date = new Date(d2[1] + "/" + d2[2] + "/" + d2[0]);
-
         $('tr').each(function (i, obj) {
             $(obj).show();
             var html_date = $(obj).find('.row_date').html();
             if (typeof html_date != "undefined") {
-                var d3 = html_date.split("/");
+                var d3 = html_date.split("-");
                 var this_date = new Date(d3[1] + "/" + d3[0] + "/" + d3[2]);
                 if (this_date<from_date || this_date>to_date) {
                     $(obj).hide();

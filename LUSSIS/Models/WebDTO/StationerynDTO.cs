@@ -13,6 +13,7 @@ namespace LUSSIS.Models.WebDTO
 
         [Required]
         public string CategoryId { get; set; }
+        public IEnumerable<SelectListItem> CategoryList { get; set; }
 
         [Required]
         public int ReorderLevel { get; set; }
@@ -32,6 +33,8 @@ namespace LUSSIS.Models.WebDTO
 
         [Required(ErrorMessage = "Please choose a supplier")]
         public string SupplierName1 { get; set; }
+
+        public IEnumerable<SelectListItem> SupplierList { get; set; }
 
         [Required(ErrorMessage = "Please choose a supplier")]
         public string SupplierName2 { get; set; }
