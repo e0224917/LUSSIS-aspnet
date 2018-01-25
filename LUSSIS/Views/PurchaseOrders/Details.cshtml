@@ -128,16 +128,20 @@
     @Html.ActionLink("Back to List", "Summary", null, new { @class = "btn btn-outline-secondary" })
 </p>
 
-<script>
-    var details=@Model.PoNum;
+@section scripts
+{
+    <script>
+        var details=@Model.PoNum;
 
-    $(document).on('change', '#PoNum', function () {
-        if (confirm('Navigate from page?')) {
-            var newLink = "/PurchaseOrders/Details/" + $(this).val();
-            window.location.replace(newLink);
-        }
-        else { $(this).val(details) }
-    });
-</script>
+        $(document).on('change', '#PoNum', function () {
+            if (confirm('Navigate from page?')) {
+                var newLink = "@Url.Content("~/")PurchaseOrders/Details/" + $(this).val();
+                window.location.replace(newLink);
+            }
+            else { $(this).val(details) }
+        });
+    </script>
+}
+
 
 

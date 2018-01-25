@@ -4,8 +4,6 @@
     ViewBag.Title = "_CreateAdjustments";
 }
 
-@*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
-
 <tr>
     @using (Html.BeginCollectionItem("MyList"))
     {
@@ -42,9 +40,13 @@
 </tr>
 
 
-<script type="text/javascript">
-    $(document).on("click", ".deleteEntry", function () {
-        $(this).closest("tr").remove();
-    });
-</script>
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).on("click", ".deleteEntry", function () {
+            $(this).closest("tr").remove();
+        });
+    </script>
+}
+
 

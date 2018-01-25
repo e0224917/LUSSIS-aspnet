@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using LUSSIS.Models.WebAPI;
@@ -21,7 +22,7 @@ namespace LUSSIS.Controllers.WebAPI
             var list = _repo.GetDisbursementByStatus("inprocess");
             var result = list.Select(item => new DisbursementDTO()
             {
-                CollectionDate = (DateTime) item.CollectionDate,
+                CollectionDate = item.CollectionDate,
                 CollectionPoint = item.CollectionPoint.CollectionName,
                 CollectionPointId = (int) item.CollectionPointId,
                 CollectionTime = item.CollectionPoint.Time,
@@ -30,13 +31,35 @@ namespace LUSSIS.Controllers.WebAPI
                 DisbursementDetails = item.DisbursementDetails.Select(detail => new RequisitionDetailDTO()
                 {
                     Description = detail.Stationery.Description,
-                    Quantity = (int) detail.ActualQty,
+                    Quantity = detail.ActualQty,
                     UnitOfMeasure = detail.Stationery.UnitOfMeasure
                 })
             });
 
             return Ok(result);
         }
+
+        [HttpGet]
+        [Route("api/Disbursement/{id}")]
+        public async Task<DisbursementDTO> Get(int id)
+        {
+            var item = await _repo.GetByIdAsync(id);
+            return new DisbursementDTO()
+            {
+                CollectionDate = item.CollectionDate,
+                CollectionPoint = item.CollectionPoint.CollectionName,
+                CollectionPointId = (int) item.CollectionPointId,
+                CollectionTime = item.CollectionPoint.Time,
+                DepartmentName = item.Department.DeptName,
+                DisbursementId = item.DisbursementId,
+                DisbursementDetails = item.DisbursementDetails.Select(detail => new RequisitionDetailDTO()
+                {
+                    Description = detail.Stationery.Description,
+                    Quantity = detail.ActualQty,
+                    UnitOfMeasure = detail.Stationery.UnitOfMeasure
+                })
+            };
+        } 
 
         [HttpGet]
         [Route("api/Disbursement/{dept}")]
@@ -49,7 +72,7 @@ namespace LUSSIS.Controllers.WebAPI
             var result = new DisbursementDTO()
             {
                 DisbursementId = d.DisbursementId,
-                CollectionDate = (DateTime) d.CollectionDate,
+                CollectionDate = d.CollectionDate,
                 CollectionPoint = d.CollectionPoint.CollectionName,
                 CollectionPointId = (int) d.CollectionPointId,
                 CollectionTime = d.CollectionPoint.Time,
@@ -57,7 +80,7 @@ namespace LUSSIS.Controllers.WebAPI
                 DisbursementDetails = d.DisbursementDetails.Select(details => new RequisitionDetailDTO()
                 {
                     Description = details.Stationery.Description,
-                    Quantity = (int) details.ActualQty,
+                    Quantity = details.ActualQty,
                     UnitOfMeasure = details.Stationery.UnitOfMeasure
                 })
             };

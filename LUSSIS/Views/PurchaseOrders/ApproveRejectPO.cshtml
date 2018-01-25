@@ -26,25 +26,27 @@
 </div>
 
 
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#ok").click(function() {
+                var formdata = $("#confirmForm").serialize();
 
-<script>
-    $(document).ready(function () {
-        $("#ok").click(function () {
-            var formdata = $("#confirmForm").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Content("~/")PurchaseOrders/ApproveRejectPO",
+                    data: formdata,
+                    success: function() {
+                        $("#myApproveModal").modal("hide");
 
-            $.ajax({
-                type: "POST",
-                url: "/PurchaseOrders/ApproveRejectPO",
-                data: formdata,
-                success: function () {
-                    $("#myApproveModal").modal("hide");
-
-                }
-            })
-            location.reload()
+                    }
+                });
+                location.reload();
+            });
         })
-    })
-</script>
+    </script>
+}
+
 
 
 

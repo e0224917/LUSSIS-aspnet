@@ -27,24 +27,27 @@
 </div>
 
 
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#approve").click(function() {
+                var formdata = $("#approveForm").serialize();
 
-<script>
-    $(document).ready(function () {
-        $("#approve").click(function () {
-            var formdata = $("#approveForm").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Content("~/")StockAdjustment/ApproveReject",
+                    data: formdata,
+                    success: function() {
+                        $("#myApproveModal").modal("hide");
 
-            $.ajax({
-                type: "POST",
-                url: "/StockAdjustment/ApproveReject",
-                data: formdata,
-                success: function () {
-                    $("#myApproveModal").modal("hide");
-
-                }
-            })
-            location.reload()
+                    }
+                });
+                location.reload();
+            });
         })
-    })
-</script>
+    </script>
+}
+
 
 

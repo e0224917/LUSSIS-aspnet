@@ -1,5 +1,6 @@
 ﻿using LUSSIS.Models;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -36,7 +37,7 @@ namespace LUSSIS.Controllers.WebAPI
 
                 if (result != SignInStatus.Success) return BadRequest("Wrong email or password. Please try again.");
 
-                var emp = db.Employees.First(em => em.EmailAddress == model.Email);
+                var emp = await db.Employees.FirstOrDefaultAsync(em => em.EmailAddress == model.Email);
                 int num = emp.EmpNum;
                 var delegateEmp = db.Delegates.AsEnumerable().LastOrDefault(d => d.EmpNum == num);
 

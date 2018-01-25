@@ -46,8 +46,7 @@
 }
 
 
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+@section scripts {
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
@@ -79,7 +78,7 @@
                 $(this).autocomplete({
                     source: function (request, response) {
                         $.ajax({
-                            url: '/StockAdjustment/GetItemNum',
+                            url: '@Url.Content("~/")StockAdjustment/GetItemNum',
                             data: { term: request.term },
                             dataType: 'json',
                             type: 'GET',

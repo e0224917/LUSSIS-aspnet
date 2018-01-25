@@ -1,10 +1,8 @@
 ﻿@model LUSSIS.Models.WebDTO.PurchaseOrderDTO
-@using LUSSIS.Controllers;
 
 @{
     ViewBag.Title = "Create";
 }
-@Scripts.Render("~/bundles/jquery")
 
 <h2>Create New Purchase Order</h2>
 
@@ -148,8 +146,9 @@
     </div>
 }
 
-
-<script>
+@section scripts
+{
+    <script>
     var cindex = @lineNo;
     var GST = @GST;
     var supplierId = @supplierId;
@@ -157,11 +156,11 @@
     //redirect page if supplier is changed
     $(document).on('change', '#SupplierId', function () {
         if (supplierId == -1) {
-            var newLink = "/PurchaseOrders/Create?supplierId=" + $(this).val();
+            var newLink = "@Url.Content("~/")PurchaseOrders/Create?supplierId=" + $(this).val();
             window.location.replace(newLink);
         }
         else if (confirm('Switch Supplier?')) {
-            var newLink = "/PurchaseOrders/Create?supplierId=" + $(this).val();
+            var newLink = "@Url.Content("~/")PurchaseOrders/Create?supplierId=" + $(this).val();
             window.location.replace(newLink);
         }
         else { $(this).val(supplierId) }
@@ -263,4 +262,6 @@
     });
     */
 
-</script>
+    </script>
+}
+

@@ -118,37 +118,42 @@
             </div>
 
 
-          
-            <script>
+@section scripts
+{
+    <script>
 
-                var ApproveReject = function (CheckList) {
-                    if (CheckList.length < 1) {
-                        $("#showError").show();
-                    } else {
-                        $("#showError").hide();
+        var ApproveReject = function (CheckList) {
+            if (CheckList.length < 1) {
+                $("#showError").show();
+            } else {
+                $("#showError").hide();
                        
-                        var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=approved";
+                var url = "@Url.Content("~/")StockAdjustment/ApproveReject?List=" + CheckList + "&Status=approved";
 
-                        $("#myApproveModalBodyDiv").load(url, function () {
-                            $("#myApproveModal").modal("show");
-                        })
-                    }
+                $("#myApproveModalBodyDiv").load(url,
+                    function() {
+                        $("#myApproveModal").modal("show");
+                    });
+            }
 
 
-                }
-                var RejectReject = function (CheckList) {
-                    if (CheckList.length < 1) {
-                        $("#showError").show();
+        }
+        var RejectReject = function (CheckList) {
+            if (CheckList.length < 1) {
+                $("#showError").show();
 
-                    }
-                    else {
-                        $("#showError").hide();
-                        var url = "/StockAdjustment/ApproveReject?List=" + CheckList + "&Status=rejected";
+            }
+            else {
+                $("#showError").hide();
+                var url = "@Url.Content("~/")StockAdjustment/ApproveReject?List=" + CheckList + "&Status=rejected";
 
-                        $("#myApproveModalBodyDiv").load(url, function () {
-                            $("#myApproveModal").modal("show");
-                        })
-                    }
+                $("#myApproveModalBodyDiv").load(url,
+                    function() {
+                        $("#myApproveModal").modal("show");
+                    });
+            }
 
-                }
-            </script>
+        }
+    </script>
+}
+

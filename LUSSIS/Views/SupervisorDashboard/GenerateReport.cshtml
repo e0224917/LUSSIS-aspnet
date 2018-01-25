@@ -118,9 +118,9 @@ ViewBag.Message
     <input type="submit" value="Generate" id="Generate"/>
  }
 
+@section scripts
+{
     <script>
-
-
         function supplierChange() {
             var values = $('#select_supplier').val();
             if (values.length == 1) {
@@ -135,27 +135,22 @@ ViewBag.Message
         function handleClick(myRadio) {
 
             var check = $(myRadio).val();
-            if (check == "supplier") {
+            if (check === "supplier") {
                 document.getElementById("notshowSupplier").style.display = "block";
                 document.getElementById("notshowCategory").style.display = "none";
             }
-            if (check == "category") {
+            if (check === "category") {
                 document.getElementById("notshowCategory").style.display = "block";
                 document.getElementById("notshowSupplier").style.display = "none";
             }
-            if (check == "Custom_Range") {
+            if (check === "Custom_Range") {
                 document.getElementById("notshowDate").style.display = "block";
 
             }
-            if (check == "This_month" || check == "This_year" || check == "Past_Three_Months" || check == "Past_Six_Months") {
+            if (check === "This_month" || check === "This_year" || check === "Past_Three_Months" || check === "Past_Six_Months") {
                 document.getElementById("notshowDate").style.display = "none";
             }
         }
 
-      
-
-
     </script>
-
-
-
+}

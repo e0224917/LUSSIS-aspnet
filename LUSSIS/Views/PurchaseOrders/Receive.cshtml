@@ -162,12 +162,16 @@ else
             }
             }
 
-            <script>
-                //redirect page if PO selected from no-PO page
-                $(document).on('change', '#select_PO', function () {
-                    if ($(this).val() != 0) {
-                        var newLink = "/PurchaseOrders/Receive?p=" + $(this).val();
-                        window.location.replace(newLink);
-                    }
-                });
-            </script>
+@section scripts
+{
+    <script>
+        //redirect page if PO selected from no-PO page
+        $(document).on('change', '#select_PO', function () {
+            if ($(this).val() != 0) {
+                var newLink = "@Url.Content("~/")PurchaseOrders/Receive?p=" + $(this).val();
+                window.location.replace(newLink);
+            }
+        });
+    </script>
+}
+

@@ -267,16 +267,17 @@ namespace LUSSIS.Controllers
         }
 
         // /Requisitions/AddToCart
-        [DelegateStaffCustomAuth("staff", "rep")]
+        //[DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
-            Cart cart = new Cart(strepo.GetById(id), qty);
-            (Session["MyCart"] as ShoppingCart).addToCart(cart);
-            return RedirectToAction("Index");
-            //return Json("ok");
-
+            var item = strepo.GetById(id);
+            var cart = new Cart(item, qty);
+            var shoppingCart = Session["MyCart"] as ShoppingCart;
+            shoppingCart?.addToCart(cart);
+            return Json(shoppingCart?.GetCartItemCount());
         }
+
         //GET: MyRequisitions
         //public async Task<ActionResult> EmpReq(int EmpNum)
         //{
@@ -361,9 +362,8 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult DeleteCartItem(string id, int qty)
         {
-
-            ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
-            mycart.deleteCart(id);
+            var myCart = Session["MyCart"] as ShoppingCart;
+            myCart?.deleteCart(id);
             return RedirectToAction("EmpCart");
         }
 

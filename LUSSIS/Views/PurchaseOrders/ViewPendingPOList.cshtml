@@ -114,34 +114,37 @@
 </div>
 
 
-<script>
+@section scripts
+{
+    <script>
 
-    var ApproveReject = function (CheckList) {
-        if (CheckList < 1) {
-            $("#showError").show();
+        var ApproveReject = function (CheckList) {
+            if (CheckList < 1) {
+                $("#showError").show();
+            }
+            else {
+                $("#showError").hide();
+                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Approve";
+
+                $("#myApproveModalBodyDiv").load(url, function () {
+                    $("#myApproveModal").modal("show");
+                })
+            }
+
         }
-        else {
-            $("#showError").hide();
-            var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Approve";
+        var RejectReject = function (CheckList) {
+            if (CheckList.length < 1) {
+                $("#showError").show();
+            }
+            else {
+                $("#showError").hide();
+                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Reject";
 
-            $("#myApproveModalBodyDiv").load(url, function () {
-                $("#myApproveModal").modal("show");
-            })
+                $("#myApproveModalBodyDiv").load(url, function () {
+                    $("#myApproveModal").modal("show");
+                })
+            }
+
         }
-
-    }
-    var RejectReject = function (CheckList) {
-        if (CheckList.length < 1) {
-            $("#showError").show();
-        }
-        else {
-            $("#showError").hide();
-            var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Reject";
-
-            $("#myApproveModalBodyDiv").load(url, function () {
-                $("#myApproveModal").modal("show");
-            })
-        }
-
-    }
-</script>
+    </script>
+}
