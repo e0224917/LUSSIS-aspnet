@@ -210,5 +210,10 @@ namespace LUSSIS.Repositories
             po.ReceiveTrans.Add(receive);
             Update(po);
         }
+
+        public IEnumerable<ReceiveTransDetail> GetReceiveTransDetailByItem(string id)
+        {
+            return LUSSISContext.ReceiveTransDetails.Where(x => x.ItemNum == id);
+        }
     }
 }
