@@ -3,70 +3,65 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace LUSSIS.Models.WebDTO
 {
     public class StationeryDTO
     {
-    
-        public Stationery stationery { get; set; }
+        public string ItemNum { get; set; }
 
-        [Required(ErrorMessage = "Supplier is required")]
-        public int SupplierId { get; set; }
+        [Required(ErrorMessage ="Please choose a category")]
+        [Display(Name = "Category")]
+        public string CategoryId { get; set; }
+        public IEnumerable<SelectListItem> CategoryList { get; set; }
 
+        [Required(ErrorMessage ="Reorder Level is required")]
+        [Display(Name = "Reorder Level")]
+        public int ReorderLevel { get; set; }
 
-        [Required(ErrorMessage = "Choose Different Supplier")]
+        [Required(ErrorMessage ="Reorder Quantity is required")]
+        [Display(Name = "Reorder Quantity")]
+        public int ReorderQty { get; set; }
+
+        [Required(ErrorMessage ="Bin Number is required")]
+        [Display(Name = "Bin Number")]
+        [RegularExpression(@"^[a-zA-Z][1-9]$", ErrorMessage ="Bin number must be in the format of an alphabet followed by a number e.g.(B9)")]
+        public string BinNum { get; set; }
+
+        [Required(ErrorMessage ="Unit of Measure is required")]
+        [Display(Name = "Unit of Measure")]
+        [StringLength(10, ErrorMessage ="Max Length of 10 characters allowed")]
+        public string UnitOfMeasure { get; set; }
+
+        [Required(ErrorMessage ="Item Description is required")]
+        [Display(Name = "Item Description")]
+        public string Description { get; set; }
+
+        [Required(ErrorMessage = "Please choose a supplier")]
+        [Display(Name = "Rank 1 Supplier")]
         public string SupplierName1 { get; set; }
 
-        [Required(ErrorMessage = "Choose Different Supplier")]
+        public IEnumerable<SelectListItem> SupplierList { get; set; }
+
+        [Required(ErrorMessage = "Please choose a supplier")]
+        [Display(Name = "Rank 2 Supplier")]
         public string SupplierName2 { get; set; }
 
-        [Required(ErrorMessage = "Choose Different Supplier")]
+        [Required(ErrorMessage = "Please choose a supplier")]
+        [Display(Name = "Rank 3 Supplier")]
         public string SupplierName3 { get; set; }
 
-        [Required(ErrorMessage = "Choose Different Supplier")]
-        public int SupplierId1 { get; set; }
-
-        [Required(ErrorMessage = "Choose Different Supplier")]
-        public int SupplierId2 { get; set; }
-
-        [Required(ErrorMessage = "Choose Different Supplier")]
-        public int SupplierId3 { get; set; }
-
-        //public double? Price { get; set; }
-
         [Required(ErrorMessage = "Price is required")]
+        [Display(Name = "Rank 1 Supplier Price")]
         public double Price1 { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
+        [Display(Name = "Rank 2 Supplier Price")]
         public double Price2 { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
+        [Display(Name = "Rank 3 Supplier Price")]
         public double Price3 { get; set; }
-
-        public int Rank { get; set; }
-
-        [Required(ErrorMessage = "This SupplierName is required")]
-        public string SupplierName { get; set; }
-
-        public DateTime ReceiveDate { get; set; }
-
-        [Range(1, 10000, ErrorMessage = "Please enter a valid quantity")]
-        public int Quantity { get; set; }
-
-        public int CurrentQty { get; set; }
-
-        public string TransactioType { get; set; }
-        public DateTime CollectionDate { get; set; }
-        public string DeptName { get; set; }
-        public string DeptCode { get; set; }
-        public int ActualQty { get; set; }
-
-        public DateTime? ApprovalDate { get; set; }
-        public int Quantity1 { get; set; }
-
-
-        //public int? CategoryId { get; set; }
-
     }
 }

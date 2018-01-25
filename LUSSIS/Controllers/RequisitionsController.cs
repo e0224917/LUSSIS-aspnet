@@ -323,7 +323,7 @@ namespace LUSSIS.Controllers
                     RequisitionDate = reqDate,
                     RequisitionEmpNum = reqEmp,
                     Status = status,
-                    DeptCode = deptCode
+                    //DeptCode = deptCode
                 };
                 reqrepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
@@ -349,10 +349,8 @@ namespace LUSSIS.Controllers
                 EmailHelper.SendEmail(destinationEmail, subject, body);
                 return RedirectToAction("MyRequisitions");
             }
-            else
-            {
-                return RedirectToAction("MyCart");
-            }
+
+            return RedirectToAction("MyCart");
         }
 
         [DelegateStaffCustomAuth("staff", "rep")]
@@ -368,7 +366,8 @@ namespace LUSSIS.Controllers
         {
             var myCart = Session["MyCart"] as ShoppingCart;
             myCart?.deleteCart(id);
-            return RedirectToAction("EmpCart");
+
+            return Json(id);
         }
 
         [DelegateStaffCustomAuth("staff", "rep")]

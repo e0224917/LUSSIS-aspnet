@@ -341,7 +341,6 @@
     <Compile Include="Models\WebDTO\ManageCollectionDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
     <Compile Include="Models\WebDTO\StationeryDTO.cs" />
-    <Compile Include="Models\WebDTO\StationerynDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorReportDTO.cs" />
     <Compile Include="Models\WebDTO\StationeryTransactionDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
@@ -637,7 +636,6 @@
     <Content Include="Views\Requisitions\_unauthoriseAccess.cshtml" />
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
-    <Content Include="Views\SupervisorDashboard\GenerateReport.cshtml" />
     <Content Include="Views\Stationeries\Delete.cshtml" />
     <Content Include="Views\Stationeries\Details.cshtml" />
     <Content Include="Views\Stationeries\Index.cshtml" />
@@ -648,8 +646,6 @@
     <Content Include="Views\StockAdjustment\_History.cshtml" />
     <Content Include="Views\Stationeries\Create.cshtml" />
     <Content Include="Views\Stationeries\Edit.cshtml" />
-    <Content Include="Views\Stationeries\Create1.cshtml" />
-    <Content Include="Views\Stationeries\Edit1.cshtml" />
     <Content Include="Views\SupervisorDashboard\Report.cshtml" />
   </ItemGroup>
   <ItemGroup>

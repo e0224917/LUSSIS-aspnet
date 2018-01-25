@@ -62,7 +62,7 @@ namespace LUSSIS.Controllers.WebAPI
         } 
 
         [HttpGet]
-        [Route("api/Disbursement/{dept}")]
+        [Route("api/Disbursement/Upcoming/{dept}")]
         [ResponseType(typeof(DisbursementDTO))]
         public IHttpActionResult Upcoming([FromUri] string dept)
         {
@@ -88,7 +88,7 @@ namespace LUSSIS.Controllers.WebAPI
         }
 
         // POST api/<controller>
-        [Route("api/Disbursement/{id}")]
+        [Route("api/Disbursement/Acknowledge/{id}")]
         public IHttpActionResult Acknowledge(int id, [FromBody] int empnum)
         {
             var disbursement = _repo.GetById(id);
