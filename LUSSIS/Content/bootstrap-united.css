@@ -5486,12 +5486,20 @@ button.close {
 
 .modal-header {
     min-height: 16.42857143px;
-    padding: 15px;
-    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    -webkit-box-align: start;
+    align-items: flex-start;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    border-top-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
 }
 
     .modal-header .close {
-        margin-top: -2px;
+        padding: 1rem;
+        margin: -1rem -1rem -1rem auto;
     }
 
 .modal-title {

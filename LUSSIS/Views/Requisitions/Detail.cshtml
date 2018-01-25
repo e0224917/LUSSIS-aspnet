@@ -6,7 +6,7 @@
 }
 
 <h2>Requisition Detail</h2>
-
+<hr />
 
 @using (Html.BeginForm())
 {
@@ -19,44 +19,63 @@
     @Html.HiddenFor(model => model.Status)
 
 
-    <table class="table">
-        <tr>
-            <th>
-                @Html.DisplayName("Employee")
-            </th>
-            <th>
-                @Html.DisplayName("Requisition Date")
-            </th>
-            <th>
-                @Html.DisplayName("Reason")
-            </th>
-            @if (ViewBag.Pending != "Pending")
-            {
+    <div class="jumbotron">
+        <table class="table table-striped">
+            <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Status)
+                    @Html.DisplayName("Employee")
                 </th>
-            }
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayFor(model => model.RequisitionEmployee.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.RequisitionDate)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.RequestRemarks)
-            </td>
-            @if (ViewBag.Pending != "Pending")
-            {
+                <th>
+                    @Html.DisplayName("Requisition Date")
+                </th>
+                <th>
+                    @Html.DisplayName("Reason")
+                </th>
+                @if (ViewBag.Pending != "Pending")
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </th>
+                }
+            </tr>
+            <tr>
                 <td>
-                    @Html.DisplayFor(model => model.Status)
+                    @Html.DisplayFor(model => model.RequisitionEmployee.FullName)
                 </td>
-            }
-        </tr>
-    </table>
-
-    <table>
+                <td>
+                    @Html.DisplayFor(model => model.RequisitionDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.RequestRemarks)
+                </td>
+                @if (ViewBag.Pending != "Pending")
+                {
+                    <td>
+                        @Html.DisplayFor(model => model.Status)
+                    </td>
+                }
+            </tr>
+        </table>
+    </div>
+    <div class="row">
+        @if (ViewBag.Message != "Delegate" && ViewBag.Pending == "Pending")
+        {
+        <div class="form-group col-md-6">
+            @Html.TextAreaFor(model => model.ApprovalRemarks, 3, 60, new { @class = "form-control" })
+        </div>
+            
+        }
+        else
+        {
+            <div class="form-group col-md-6">@Html.DisplayFor(model => model.ApprovalRemarks)</div>
+        }
+        @if (ViewBag.Message != "Delegate" && ViewBag.Pending == "Pending")
+        {
+            <button type="submit" name="SubmitButton" class="btn btn-outline-success btn-lg btn-block" value="Approve" style="float: right;"></button>
+            <button type="submit" name="SubmitButton" class="btn btn-outline-success btn-lg btn-block" value="Reject" style="float: right;"></button>
+        }
+    </div>
+    @*<table>
         <tr>
             <th colspan="2">@Html.LabelFor(model => model.ApprovalRemarks, "Approval comments")</th>
             <td></td>
@@ -76,7 +95,7 @@
                 <td><button type="submit" name="SubmitButton" value="Reject">Reject</button></td>
             }
         </tr>
-    </table>
+    </table>*@
     <br />
 
 }

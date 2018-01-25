@@ -245,10 +245,11 @@ namespace LUSSIS.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 stationerys = strepo.GetByDescription(searchString).ToList();
-                if (stationerys.Count == 0)
-                {
-                    stationerys = strepo.GetAll().ToList();
-                }
+                //if no result, display no result therefore the next 4 lines can be deleted
+                //if (stationerys.Count == 0)
+                //{
+                //    stationerys = strepo.GetAll().ToList();
+                //}
             }
             else
             {
