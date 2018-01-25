@@ -120,21 +120,22 @@ namespace LUSSIS.Controllers
                 }
                 else
                 {
-
-                    Stationery st = new Stationery();
                     string initial = strepo.GetCategoryInitial(stationerynDTO.CategoryId);
                     string number = strepo.GetLastRunningPlusOne(initial).ToString();
                     string generatedItemNum = initial + number.PadLeft(3, '0');
-                    st.ItemNum = generatedItemNum;
-                    st.CategoryId = Int32.Parse(stationerynDTO.CategoryId);
-                    st.Description = stationerynDTO.Description;
-                    st.ReorderLevel = stationerynDTO.ReorderLevel;
-                    st.ReorderQty = stationerynDTO.ReorderQty;
-                    st.AverageCost = 0;
-                    st.UnitOfMeasure = stationerynDTO.UnitOfMeasure;
-                    st.CurrentQty = 0;
-                    st.BinNum = initial + stationerynDTO.BinNum.ToString();
-                    st.AvailableQty = 0;
+                    Stationery st = new Stationery
+                    {
+                        ItemNum = generatedItemNum,
+                        CategoryId = Int32.Parse(stationerynDTO.CategoryId),
+                        Description = stationerynDTO.Description,
+                        ReorderLevel = stationerynDTO.ReorderLevel,
+                        ReorderQty = stationerynDTO.ReorderQty,
+                        AverageCost = 0,
+                        UnitOfMeasure = stationerynDTO.UnitOfMeasure,
+                        CurrentQty = 0,
+                        BinNum = initial + stationerynDTO.BinNum.ToString(),
+                        AvailableQty = 0
+                    };
                     strepo.Add(st);
 
                     StationerySupplier sp1 = new StationerySupplier
