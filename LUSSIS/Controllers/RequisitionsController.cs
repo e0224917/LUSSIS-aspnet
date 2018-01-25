@@ -312,6 +312,7 @@ namespace LUSSIS.Controllers
             DateTime reqDate = System.DateTime.Now.Date;
             string status = "pending";
             string remarks = Request["remarks"];
+            string deptCode = erepo.GetCurrentUser().DeptCode;
             if (itemNum != null)
             {
                 Requisition requisition = new Requisition()
@@ -319,7 +320,8 @@ namespace LUSSIS.Controllers
                     RequestRemarks = remarks,
                     RequisitionDate = reqDate,
                     RequisitionEmpNum = reqEmp,
-                    Status = status
+                    Status = status,
+                    DeptCode=deptCode
                 };
                 reqrepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
