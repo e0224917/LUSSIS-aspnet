@@ -6,7 +6,13 @@
     List<int> itemQty = new List<int>();
 
 }
-
+<style>
+body{
+    background-image:url('/Images/images3.jpg');
+    background-size:100% 100%;
+    background-repeat:no-repeat;
+}
+    </style>
 <h2>Requisition Cart</h2>
 <hr />
 
@@ -127,7 +133,8 @@ else
                         function (data) {
                             // Successful requests get here
                             // Update the page elements
-                            alert("Update cart successfully");
+                            //alert("Update cart successfully");
+                            //if (qty != 0) { alert("Update cart successfully");}
                             location.reload();
                             //if (data.ItemCount == 0) {
                             //    $('#row-' + data.DeleteId).fadeOut('slow');
