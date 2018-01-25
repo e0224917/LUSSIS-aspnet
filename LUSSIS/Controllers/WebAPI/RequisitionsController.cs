@@ -24,11 +24,9 @@ namespace LUSSIS.Controllers.WebAPI
             var result = list.Select(item => new RequisitionDTO()
             {
                 RequisitionId = item.RequisitionId,
-                RequisitionEmp = item.RequisitionEmployee.FirstName + " " + item.RequisitionEmployee.LastName,
+                RequisitionEmp = item.RequisitionEmployee.ToApiDTO(),
                 RequisitionDate = (DateTime) item.RequisitionDate,
-                ApprovalEmp = item.ApprovalEmpNum != null
-                    ? item.ApprovalEmployee.FirstName + " " + item.ApprovalEmployee.LastName
-                    : "",
+                ApprovalEmp = item.ApprovalEmployee.ToApiDTO(),
                 ApprovalRemarks = item.ApprovalRemarks != null ? item.ApprovalRemarks : "",
                 RequestRemarks = item.RequestRemarks != null ? item.RequestRemarks : "",
                 RequisitionDetails = item.RequisitionDetails.Select(detail => new RequisitionDetailDTO()
@@ -51,15 +49,15 @@ namespace LUSSIS.Controllers.WebAPI
 
         [HttpPost]
         [Route("api/Requisitions/Process")]
-        public async Task<IHttpActionResult> Process(int empnum, string status, [FromBody] RequisitionDTO requisition)
+        public async Task<IHttpActionResult> Process([FromBody] RequisitionDTO requisition)
         {
             try
             {
                 var req = await _repo.GetByIdAsync(requisition.RequisitionId);
-                req.ApprovalEmpNum = empnum;
+                req.ApprovalEmpNum = requisition.ApprovalEmp.EmpNum;
                 req.ApprovalRemarks = requisition.ApprovalRemarks;
                 req.ApprovalDate = DateTime.Today;
-                req.Status = status;
+                req.Status = requisition.Status;
 
                 await _repo.UpdateAsync(req);
                 return Ok(new {Message = "Updated"});
@@ -77,11 +75,11 @@ namespace LUSSIS.Controllers.WebAPI
             var req = _repo.GetRequisitionByEmpNum(empnum);
             var result = req.Select(item => new RequisitionDTO()
             {
-                ApprovalEmp = item.ApprovalEmployee.FirstName + " " + item.ApprovalEmployee.LastName,
+                ApprovalEmp = item.ApprovalEmployee.ToApiDTO(),
                 ApprovalRemarks = item.ApprovalRemarks,
                 RequestRemarks = item.RequestRemarks,
                 RequisitionDate = (DateTime) item.RequisitionDate,
-                RequisitionEmp = item.RequisitionEmployee.FirstName + " " + item.RequisitionEmployee.LastName,
+                RequisitionEmp = item.RequisitionEmployee.ToApiDTO(),
                 RequisitionId = item.RequisitionId,
                 Status = item.Status,
                 RequisitionDetails = item.RequisitionDetails.Select(detail => new RequisitionDetailDTO()

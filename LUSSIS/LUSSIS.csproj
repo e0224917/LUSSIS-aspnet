@@ -243,6 +243,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CollectionController.cs" />
     <Compile Include="Controllers\StationeriesController.cs" />
+    <Compile Include="Controllers\WebAPI\StockAdjustmentController.cs" />
     <Compile Include="CustomAuthority\CustomAuthorizeAttribute.cs" />
     <Compile Include="Controllers\DisbursementsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -295,6 +296,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
+    <Compile Include="Models\WebAPI\AdjustmentDTO.cs" />
     <Compile Include="Models\WebAPI\DelegateDTO.cs" />
     <Compile Include="Models\WebAPI\DisbursementDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDetailDTO.cs" />
@@ -340,6 +342,7 @@
     <Compile Include="Models\WebDTO\StationeryDTO.cs" />
     <Compile Include="Models\WebDTO\StationerynDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorReportDTO.cs" />
+    <Compile Include="Models\WebDTO\StationeryTransactionDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CollectionRepository.cs" />

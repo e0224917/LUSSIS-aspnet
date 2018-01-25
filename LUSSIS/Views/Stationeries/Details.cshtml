@@ -1,244 +1,142 @@
-﻿@model LUSSIS.Models.WebDTO.StationeryDTO
-
-@{
+﻿@{
     ViewBag.Title = "Details";
 }
-@*<script src="~/Scripts/bootstrap.min.js"></script>
-<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
-<script language="javaScript" type="text/javascript">
-    $(Document).ready(function () {
-        $('#FromDate').datetimepicker({
-            format: 'MM/DD/YY',
-            showTodayButton: true
-        });
-    }
-    </script>*@
 
 <h2>Stationery Details</h2>
-
+@{ int balance = ViewBag.InitBal;}
 <div>
-    <hr />
-    <div class="container-fluid col-md-12 ">
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    ItemCode:
-                </dt>
-            </div>
-            <div class="col-md-3">
-                <dd>
-                    @Html.DisplayFor(model => model.stationery.ItemNum)
-                </dd>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    Item Description:
-                </dt>
-            </div>
-            <div class="col-md-3">
-                <dd>
-                    @Html.DisplayFor(model => model.stationery.Description)
-                </dd>
+    <div class="row">
+        <div class="card col-lg-4">
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Stationery Name</strong></label>
+                    <div class="col-md-12">
+                        <input class="form-control" type="text" value="@ViewBag.Stationery.Description" disabled name="PoNum" id="PoNum" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Category</strong></label>
+                    <div class="col-md-12">
+                        <input class="form-control" type="text" value="@ViewBag.Stationery.Category.CategoryName" disabled name="PoNum" id="PoNum" />
+                    </div>
+                </div>
+                <br />
+                <div class="form-group">
+                    <div>@Html.ActionLink("Edit", "Edit", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-outline-success btn-sm" })</div>
+                </div>
+                <div class="form-group">
+                    <div>@Html.ActionLink("Stock Adjustment", "Stock Adjustment", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-outline-success btn-sm" })</div>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    Reorder Lvl:
-                </dt>
-            </div>
-            <div>
-                <dd>
-                    @Html.DisplayFor(model => model.stationery.ReorderLevel)
-                </dd>
+        <div class="card col-lg-4">
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>1st Supplier</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@ViewBag.Supplier1" disabled />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>2nd Supplier</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@ViewBag.Supplier2" disabled />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>3rd Supplier</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@ViewBag.Supplier3" disabled />
+                    </div>
+                </div>
+
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    Reorder Qty:
-                </dt>
-            </div>
-            <div>
-                <dd>
-                    @Html.DisplayFor(model => model.stationery.ReorderQty)
-                </dd>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    BinNum #:
-                </dt>
-            </div>
-            <div>
-                <dd>
-                    @Html.DisplayFor(model => model.stationery.BinNum)
-                </dd>
+        <div class="card col-lg-4">
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Reorder Level</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@ViewBag.Stationery.ReorderLevel" disabled />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Reorder Qty</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@ViewBag.Stationery.ReorderQty" disabled />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Current Qty</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@ViewBag.Stationery.CurrentQty" disabled />
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    UOM:
-                </dt>
-            </div>
-            <div>
-                <dd>
-                    @Html.DisplayFor(model => model.stationery.UnitOfMeasure)
-                </dd>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    CurrentQty:
-                </dt>
-            </div>
-            <div>
-                <dd>
-                    @Html.DisplayFor(model => model.stationery.CurrentQty)
-                </dd>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    1st Supplier:
-                </dt>
-            </div>
-            <div>
-                <dd>
-                    @Html.DisplayFor(model => model.SupplierName1)
-                </dd>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    2st Supplier:
-                </dt>
-            </div>
-            <div>
-                <dd>
-                    @Html.DisplayFor(model => model.SupplierName2)
-                </dd>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-3">
-                <dt>
-                    3st Supplier:
-                </dt>
-            </div>
-            <div>
-                <dd>
-                    @Html.DisplayFor(model => model.SupplierName3)
-                </dd>
-            </div>
-        </div>
-        <p>
-            @Html.ActionLink("Edit", "Edit", new { id = Model.stationery.ItemNum })
-            @Html.ActionLink("Stock Adjustment", "Stock Adjustment")
-        </p>
-        <h2>Transaction History</h2>
-        <hr />
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <span class="nav-item nav-link">From Date </span>
-            <input type="date" class="form-control mr-sm-2" id="FromDate" />
-            <span class="nav-item nav-link">To Date </span>
-            <input type="date" class="form-control mr-sm-2" id="ToDate" />
-            <button type="submit" class="btn btn-success my-2 my-sm-0">Filter</button>
-        </nav>
-        @*<div class='input-group date' id='FromDate'>
-            <input type='text' class="form-control" />
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-        </div>*@
-        <hr />
-        <table class="table">
-            <tr>
-                <th>
-                    Date
-                </th>
-                <th>
-                    Transaction type
-                </th>
-                <th>
-                    Dept/Supplier
-                </th>
-                <th>
-                    Qty
-                </th>
-                <th>
-                    Balance
-                </th>
-            </tr>
-
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.ReceiveDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.TransactioType)
-              
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.SupplierName)
-                  
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.Quantity)
-                 
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.CurrentQty)
-                  
-                </td>
-          </tr>
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.CollectionDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.TransactioType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.DeptName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.ActualQty)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.CurrentQty)
-                </td>
-              </tr>
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.ApprovalDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.TransactioType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.ApprovalDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.Quantity1)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.CurrentQty)
-                </td>
-
-            </tr>
-        </table>
     </div>
 </div>
+<br /><br />
+<div class="row">
+    <div class="col-md-12 form-inline">
+        <h4>Transaction History</h4>
+        <span class="col-1"></span>
+        <span class="control-label">From Date </span>
+        <input type="date" class="form-control" id="from_date" />
+        <span class="col-1"></span>
+        <span class="control-label">To Date </span>
+        <input type="date" class="form-control" id="to_date" />
+        <span class="col-1"></span>
+        <button class="btn btn-success" onclick="filterTable()">Filter</button>
+    </div>
 
+</div>
+<br />
+<table class="table">
+    <tr>
+        <th>Date</th>
+        <th>Transaction type</th>
+        <th>Dept/Supplier</th>
+        <th>Qty</th>
+        <th>Balance</th>
+    </tr>
+
+
+    @foreach (var tx in ViewBag.StationeryTxList)
+    {
+        balance += tx.Qty;
+        <tr>
+            <td class="row_date">@tx.Date.ToString("dd/MM/yyyy")</td>
+            <td>@tx.Transtype</td>
+            <td>@tx.Remarks</td>
+            <td>@tx.Qty</td>
+            <td>@balance</td>
+        </tr>
+
+    }
+</table>
+
+
+<script>
+
+    function filterTable() {
+        var d1 = $('#from_date').val().split('-');
+        var d2 = $('#to_date').val().split('-');
+        var from_date = new Date(d1[1] + "/" + d1[2] + "/" + d1[0]);
+        var to_date = new Date(d2[1] + "/" + d2[2] + "/" + d2[0]);
+
+        $('tr').each(function (i, obj) {
+            $(obj).show();
+            var html_date = $(obj).find('.row_date').html();
+            if (typeof html_date != "undefined") {
+                var d3 = html_date.split("/");
+                var this_date = new Date(d3[1] + "/" + d3[0] + "/" + d3[2]);
+                if (this_date<from_date || this_date>to_date) {
+                    $(obj).hide();
+                }
+            }
+        })
+    }
+</script>

@@ -48,6 +48,7 @@ namespace LUSSIS.Models
 
         public string Address3 { get; set; }
 
+        [NotMapped]
         public string Address
         {
             get { return Address1 + Environment.NewLine + Address2 + Environment.NewLine + Address3; }

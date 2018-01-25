@@ -16,6 +16,9 @@ namespace LUSSIS.Controllers
     {
         private LUSSISContext db = new LUSSISContext();
         private StationeryRepository strepo = new StationeryRepository();
+        private StockAdjustmentRepository adrepo = new StockAdjustmentRepository();
+        private DisbursementRepository disrepo = new DisbursementRepository();
+        private PORepository porepo = new PORepository();
         private SupplierRepository srepo = new SupplierRepository();
 
 
@@ -38,106 +41,51 @@ namespace LUSSIS.Controllers
 
         }
 
+
         // GET: Stationeries/Details/5
         public ActionResult Details(string id)
         {
-
-            StationeryDTO stationeryDTO = new StationeryDTO();
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Stationery stationery = db.Stationeries.Find(id);
-            stationeryDTO.stationery = stationery;
-
-            var stationarySupplier = (from S1 in db.StationerySuppliers
-                                      join S2 in db.Suppliers
-                                      on S1.SupplierId equals S2.SupplierId
-                                      where S1.ItemNum == id
-                                      select new { S1.SupplierId, S2.SupplierName }).ToList();
-
-            int recordCount = 0;
-            foreach (var ssuplier in stationarySupplier)
-            {
-                recordCount++;
-                if (recordCount == 1)
-                {
-                    stationeryDTO.SupplierName1 = ssuplier.SupplierName;
-                    stationeryDTO.SupplierId1 = ssuplier.SupplierId;
-
-                }
-                else if (recordCount == 2)
-                {
-                    stationeryDTO.SupplierName2 = ssuplier.SupplierName;
-                    stationeryDTO.SupplierId2 = ssuplier.SupplierId;
-
-                }
-                else
-                {
-                    stationeryDTO.SupplierName3 = ssuplier.SupplierName;
-                    stationeryDTO.SupplierId3 = ssuplier.SupplierId;
-
-                }
-
-            }
-
-            var ReceivedList = (from s in db.Stationeries
-                                join ss in db.StationerySuppliers on s.ItemNum equals ss.ItemNum
-                                join su in db.Suppliers on ss.SupplierId equals su.SupplierId
-                                join po in db.PurchaseOrders on su.SupplierId equals po.SupplierId
-                                join pd in db.PurchaseOrderDetails on po.PoNum equals pd.PoNum
-                                join rt in db.ReceiveTrans on po.PoNum equals rt.PoNum
-                                join rtd in db.ReceiveTransDetails on rt.ReceiveId equals rtd.ReceiveId
-                                where rtd.ItemNum == s.ItemNum && rtd.ItemNum == id
-                                select new { s.ItemNum, rt.ReceiveDate, su.SupplierName, rtd.Quantity, s.CurrentQty }).ToList();
-
-            foreach (var receivedlist in ReceivedList)
-            {
-                stationeryDTO.ReceiveDate = receivedlist.ReceiveDate;
-                stationeryDTO.TransactioType = "Received";
-                stationeryDTO.SupplierName = receivedlist.SupplierName;
-                stationeryDTO.Quantity = receivedlist.Quantity;
-                stationeryDTO.CurrentQty = receivedlist.CurrentQty;
-            }
-
-
-            var DisbursementList = (from st in db.Stationeries
-                                    join dd in db.DisbursementDetails on st.ItemNum equals dd.ItemNum
-                                    join d in db.Disbursements on dd.DisbursementId equals d.DisbursementId
-                                    join dt in db.Departments on d.DeptCode equals dt.DeptCode
-                                    where st.ItemNum == id
-                                    select new { st.ItemNum, d.CollectionDate, dt.DeptName, d.DeptCode, dd.ActualQty, st.CurrentQty }).ToList();
-
-            foreach (var disbursementlist in DisbursementList)
-            {
-                stationeryDTO.CollectionDate = disbursementlist.CollectionDate;
-                stationeryDTO.TransactioType = "Disbursement";
-                stationeryDTO.DeptName = disbursementlist.DeptName;
-                stationeryDTO.ActualQty = disbursementlist.ActualQty;
-                stationeryDTO.CurrentQty = disbursementlist.CurrentQty;
-            }
-
-            var AdjustmentList = (from sts in db.Stationeries
-                                  join av in db.AdjVouchers on sts.ItemNum equals av.ItemNum
-                                  where sts.ItemNum == id
-                                  select new { sts.ItemNum, av.ApprovalDate, av.Quantity, sts.CurrentQty }).ToList();
-
-            foreach (var adjustmentlist in AdjustmentList)
-            {
-                stationeryDTO.ApprovalDate = adjustmentlist.ApprovalDate;
-                stationeryDTO.TransactioType = "Stock Adjustment";
-                stationeryDTO.ApprovalDate = adjustmentlist.ApprovalDate;
-                stationeryDTO.Quantity1 = adjustmentlist.Quantity;
-                stationeryDTO.CurrentQty = adjustmentlist.CurrentQty;
-
-            }
-
-            if (stationery == null)
-            {
+            Stationery s = strepo.GetById(id);
+            if (s == null)
                 return HttpNotFound();
-            }
+            ViewBag.Stationery = s;
+            ViewBag.Supplier1 = s.PrimarySupplier().SupplierName;
+            ViewBag.Supplier2 = s.StationerySuppliers.Where(x => x.Rank == 2).First().Supplier.SupplierName;
+            ViewBag.Supplier3 = s.StationerySuppliers.Where(x => x.Rank == 3).First().Supplier.SupplierName;
+            List<StationeryTransactionDTO> receiveList = porepo.GetReceiveTransDetailByItem(id).Select(
+                x => new StationeryTransactionDTO
+                {
+                    Date = x.ReceiveTran.ReceiveDate,
+                    Qty = x.Quantity,
+                    Transtype = "received",
+                    Remarks = x.ReceiveTran.PurchaseOrder.Supplier.SupplierName
+                }).ToList();
+            List<StationeryTransactionDTO> disburseList = disrepo.GetAllDisbursementDetailByItem(id).Select(
+                x => new StationeryTransactionDTO
+                {
+                    Date = x.Disbursement.CollectionDate,
+                    Qty = -x.ActualQty,
+                    Transtype = "disburse",
+                    Remarks = x.Disbursement.DeptCode
+                }).ToList();
+            List<StationeryTransactionDTO> adjustList = adrepo.GetApprovedAdjVoucherByItem(id).Select(
+                x => new StationeryTransactionDTO
+                {
+                    Date = x.CreateDate,
+                    Qty = x.Quantity,
+                    Transtype = "adjust",
+                    Remarks = x.Reason
+                }).ToList();
+            receiveList.AddRange(disburseList);
+            receiveList.AddRange(adjustList);
+            var p = receiveList.Sum(x => x.Qty);
+            ViewBag.InitBal = s.CurrentQty - p;
+            ViewBag.StationeryTxList =receiveList.OrderBy(x=>x.Date);
 
-            return View(stationeryDTO);
+            return View();
+
         }
 
         [HttpGet]

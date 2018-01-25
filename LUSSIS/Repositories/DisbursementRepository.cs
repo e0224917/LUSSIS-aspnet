@@ -409,5 +409,10 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements
                 .FirstOrDefault(d => d.Status == "inprocess" && d.DeptCode == deptCode);
         }
+
+        public IEnumerable<DisbursementDetail> GetAllDisbursementDetailByItem(string id)
+        {
+            return LUSSISContext.DisbursementDetails.Where(x => x.ItemNum == id);
+        }
     }
 }
