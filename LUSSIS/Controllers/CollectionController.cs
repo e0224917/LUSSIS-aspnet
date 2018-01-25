@@ -45,7 +45,7 @@ namespace LUSSIS.Controllers
             {
                 string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
                 Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                department.CollectionPointId = mcdto.CollectionPoint.CollectionPointId;
+                department.CollectionPointId = mcdto.DeptCollectionPointID;
                 employeeRepo.UpdateDepartment(department);
             }
             

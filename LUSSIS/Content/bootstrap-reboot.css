@@ -267,10 +267,7 @@ textarea {
   overflow: auto;
   resize: vertical;
 }
-textarea-hr {
-    overflow: auto;
-    resize: horizontal;
-}
+
 fieldset {
   min-width: 0;
   padding: 0;

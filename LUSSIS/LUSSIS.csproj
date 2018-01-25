@@ -243,6 +243,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CollectionController.cs" />
     <Compile Include="Controllers\StationeriesController.cs" />
+    <Compile Include="Controllers\SupervisorDashboardController.cs" />
     <Compile Include="Controllers\WebAPI\StockAdjustmentController.cs" />
     <Compile Include="CustomAuthority\CustomAuthorizeAttribute.cs" />
     <Compile Include="Controllers\DisbursementsController.cs" />
@@ -252,7 +253,6 @@
     <Compile Include="Controllers\RepAndDelegateController.cs" />
     <Compile Include="Controllers\RequisitionsController.cs" />
     <Compile Include="Controllers\StockAdjustmentController.cs" />
-    <Compile Include="Controllers\SupervisorDashboardController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Controllers\WebAPI\DelegateController.cs" />
@@ -343,6 +343,7 @@
     <Compile Include="Models\WebDTO\StationeryDTO.cs" />
     <Compile Include="Models\WebDTO\StationerynDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorReportDTO.cs" />
+    <Compile Include="Models\WebDTO\StationeryTransactionDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CollectionRepository.cs" />
@@ -386,6 +387,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\images2.jpg" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -578,8 +580,8 @@
     <Content Include="Views\StockAdjustment\CreateAdjustments.cshtml" />
     <Content Include="Views\StockAdjustment\_CreateAdjustments.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
-    <Content Include="Views\Requisitions\Detail.cshtml" />
-    <Content Include="Views\Requisitions\_Detail.cshtml" />
+    <Content Include="Views\Requisitions\Details.cshtml" />
+    <Content Include="Views\Requisitions\_Details.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
     <Content Include="Views\PurchaseOrders\Create.cshtml" />
     <Content Include="Views\PurchaseOrders\Delete.cshtml" />
@@ -623,9 +625,9 @@
     <Content Include="Views\Shared\__StoreSupMenu.cshtml" />
     <Content Include="Views\Shared\__RepMenu.cshtml" />
     <Content Include="Views\RepAndDelegate\Index.cshtml" />
-    <Content Include="Views\Requisitions\EmpCart.cshtml" />
-    <Content Include="Views\Requisitions\EmpReq.cshtml" />
-    <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
+    <Content Include="Views\Requisitions\MyCart.cshtml" />
+    <Content Include="Views\Requisitions\MyRequisitions.cshtml" />
+    <Content Include="Views\Requisitions\MyRequisitionDetails.cshtml" />
     <Content Include="Views\Requisitions\Index.cshtml" />
     <Content Include="Views\Suppliers\Quotation.cshtml" />
     <Content Include="Views\SupervisorDashboard\Index.cshtml" />
@@ -636,16 +638,16 @@
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
     <Content Include="Views\SupervisorDashboard\GenerateReport.cshtml" />
-    <Content Include="Views\Stationeries\Create.cshtml" />
     <Content Include="Views\Stationeries\Delete.cshtml" />
     <Content Include="Views\Stationeries\Details.cshtml" />
-    <Content Include="Views\Stationeries\Edit.cshtml" />
     <Content Include="Views\Stationeries\Index.cshtml" />
     <Content Include="Views\Disbursements\_History.cshtml" />
     <Content Include="Views\Requisitions\_Index.cshtml" />
     <Content Include="Views\Requisitions\_All.cshtml" />
     <Content Include="Views\Account\NotAuthorized.cshtml" />
     <Content Include="Views\StockAdjustment\_History.cshtml" />
+    <Content Include="Views\Stationeries\Create.cshtml" />
+    <Content Include="Views\Stationeries\Edit.cshtml" />
     <Content Include="Views\Stationeries\Create1.cshtml" />
     <Content Include="Views\Stationeries\Edit1.cshtml" />
     <Content Include="Views\SupervisorDashboard\Report.cshtml" />

@@ -43,23 +43,23 @@
         </div>
         @if (ViewBag.Supplier.SupplierId > -1)
         {
-            <div class="card col-lg-12">
+            <div class="card border-dark col-lg-12">
                 <div class="card-body">
                     <div class="row">
-                        <div class="form-group col-md-3"><p></p>
+                        <div class="form-group col-md-3 col-sm-3 col-lg-3"><p></p>
                             <label class="control-label col-md-12">Contact Name</label>
                             <div class="col-md-12">
                                 @Html.EditorFor(model => model.SupplierContact, new { htmlAttributes = new { @class = "form-control" } })
                             </div>
                         </div>
-                        <div class="form-group col-md-3"><p></p>
+                        <div class="form-group col-md-3 col-sm-3 col-lg-3"><p></p>
                             <label class="control-label col-md-12">GST Registration No</label>
                             <div class="col-md-12">
                                 <input class="form-control" value="@ViewBag.Supplier.GstRegistration" />
                             </div>
                         </div>
 
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-6 col-sm-6 col-lg-6">
                             <label class="control-label col-md-12">Supplier Address</label>
                             <div class="col-md-12">
                                 @Html.TextAreaFor(model => model.SupplierAddress, 3, 40, new { @class = "form-control", style="width: 800px"})
@@ -84,15 +84,15 @@
 
                 @for (int i = 0; i < Model.PurchaseOrderDetailsDTO.Count; i++)
                 {
-                    <tr id="id@(i)" class="po_line">
+                    <tr id="id@(i)" class="po_line form-group">
                         @{
                             string itemNum = Model.PurchaseOrderDetailsDTO[i].ItemNum;
                         }
                         <td style="width:5%">@(i + 1)</td>
-                        <td style="width:30%">@Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].ItemNum, new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.Description", itemNum), new { @class = "line_item form-control" })</td>
-                        <td style="width:10%">@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { htmlAttributes = new { @class = "line_qty form-control", @min = "0" } })</td>
-                        <td style="width:10%">@Html.DropDownList("unit_of_measure", new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.UnitOfMeasure", itemNum), new { @class = "unit_of_measure form-control", @disabled = true })</td>
-                        <td style="width:25%">
+                        <td style="width:33%">@Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].ItemNum, new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.Description", itemNum), new { @class = "line_item form-control" })</td>
+                        <td style="width:7%">@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { htmlAttributes = new { @class = "line_qty form-control", @min = "0" } })</td>
+                        <td style="width:15%">@Html.DropDownList("unit_of_measure", new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.UnitOfMeasure", itemNum), new { @class = "unit_of_measure form-control", @disabled = true })</td>
+                        <td style="width:20%">
                             @Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new SelectList(ViewBag.Stationery, "Price", "Price"), new { @class = "unit_price form-control", @disabled = true })
                             @Html.HiddenFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new { @class = "hide_unit_price" })
                         </td>
@@ -101,9 +101,9 @@
                 }
             </table>
             <div class="text-right">
-                <input type="button" value="Add Row" id="btn_add_row" class="btn btn-outline-primary" />
+                <input type="button" value="Add Row" id="btn_add_row" class="btn btn-primary" />
             </div><br />
-            <div class="card col-lg-12">
+            <div class="card border-dark col-lg-12">
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-md-3">
@@ -139,7 +139,7 @@
             </div>
             <br />
             <div class="text-right">
-                <input type="submit" value="Create" class="btn btn-outline-success btn-lg" style="width:40%" />
+                <input type="submit" value="Create" class="btn btn-success btn-lg" style="width:40%" />
             </div>
 
         }

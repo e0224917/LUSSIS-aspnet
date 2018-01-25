@@ -171,8 +171,6 @@ namespace LUSSIS.Repositories
                 ud.Status = "fulfilled";
             }
 
-
-
             foreach (var d in disbursements)
             {
                 Add(d);
@@ -188,12 +186,11 @@ namespace LUSSIS.Repositories
 
             SendEmailNotifyCollection(disbursements);
         }
-
-
+        
         public Disbursement UpdateAndNotify(Disbursement disbursement)
         {
-            UpdateAsync(disbursement);
-            SendEmailNotifyCollection(new List<Disbursement> { disbursement });
+            Update(disbursement);
+            SendEmailNotifyCollectionUpdate(disbursement);
             return disbursement;
         }
 
@@ -234,12 +231,13 @@ namespace LUSSIS.Repositories
             EmailHelper.SendEmail(destinationEmail, subject, body);
         }
 
-
+        //helper
         private DisbursementDetail ConvertReDetailToDisDetail(RequisitionDetail rd)
         {
             return new DisbursementDetail(rd.ItemNum, rd.Stationery.AverageCost, rd.Quantity, rd.Stationery);
         }
 
+        //helper
         private Disbursement ConvertReqListForOneDepToDisbursement(List<Requisition> ReqListForOneDep,
             DateTime collectionDate)
         {
@@ -258,7 +256,6 @@ namespace LUSSIS.Repositories
         //将reqD整理转入disD
         public void AddReqDtoDisD(List<RequisitionDetail> reqDetailListOfOneDept, ICollection<DisbursementDetail> disDetails)
         {
-
             foreach (RequisitionDetail rd in reqDetailListOfOneDept)
             {
                 bool isNew = true;
@@ -272,7 +269,6 @@ namespace LUSSIS.Repositories
                         break;
                     }
                 }
-
                 if (isNew)
                 {
                     DisbursementDetail newdisD = new DisbursementDetail()
@@ -302,7 +298,6 @@ namespace LUSSIS.Repositories
                         break;
                     }
                 }
-
                 if (isNew)
                 {
                     DisbursementDetail newdisD = new DisbursementDetail()
@@ -331,12 +326,8 @@ namespace LUSSIS.Repositories
             list = GetAll().Where(x => x.Status != "unprocessed").ToList();
             foreach (Disbursement d in list)
             {
-
                 result += GetAmountByDisbursement(d);
-
             }
-
-
             return result;
         }
         public double GetDisbursementByDepCode(String depcode)
@@ -396,7 +387,6 @@ namespace LUSSIS.Repositories
                 result += (qty * unit_price);
             }
             return result;
-
         }
 
         public DisbursementDetail GetDisbursementDetailByIdAndItem(string id, string itemNum)
@@ -408,6 +398,11 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Disbursements
                 .FirstOrDefault(d => d.Status == "inprocess" && d.DeptCode == deptCode);
+        }
+
+        public IEnumerable<DisbursementDetail> GetAllDisbursementDetailByItem(string id)
+        {
+            return LUSSISContext.DisbursementDetails.Where(x => x.ItemNum == id);
         }
     }
 }

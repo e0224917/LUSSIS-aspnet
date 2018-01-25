@@ -32,7 +32,7 @@
 
             foreach (var item in Model.GetAll)
             {
-                @Html.RadioButtonFor(m => m.CollectionPoint.CollectionPointId, item.CollectionPointId,
+                @Html.RadioButtonFor(model => model.DeptCollectionPointID, item.CollectionPointId, 
                                item.CollectionName == Model.CollectionPoint.CollectionName ? new { @checked = "checked" } : null)
                 @item.CollectionName
                 <text>  </text>

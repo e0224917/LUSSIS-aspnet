@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace LUSSIS.Repositories
 {
@@ -14,6 +15,15 @@ namespace LUSSIS.Repositories
         public IEnumerable<Category> GetAllCategories()
         {
             return LUSSISContext.Categories.ToList();
+        }
+
+        public IEnumerable<SelectListItem> GetCategories()
+        {
+           return LUSSISContext.Categories.ToList().Select(x => new SelectListItem
+            {
+                Text = x.CategoryName,
+                Value = x.CategoryId.ToString()
+            });
         }
 
         public String GetCategoryInitial(string categoryId)

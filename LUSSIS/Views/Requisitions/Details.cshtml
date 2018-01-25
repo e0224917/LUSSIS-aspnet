@@ -1,0 +1,101 @@
+﻿@model LUSSIS.Models.Requisition
+
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Requisition Details</h2>
+<hr />
+
+<h5>Requisition information</h5>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.RequisitionId)
+    @Html.HiddenFor(model => model.RequisitionEmpNum)
+    @Html.HiddenFor(model => model.RequestRemarks)
+    @Html.HiddenFor(model => model.RequisitionDate)
+    @Html.HiddenFor(model => model.Status)
+
+    
+    <table class="table table-striped table-dark">
+        <tr class="table-active">
+            <th>
+                @Html.DisplayName("Employee")
+            </th>
+            <th>
+                @Html.DisplayName("Requisition Date")
+            </th>
+            <th style="width:40%">
+                @Html.DisplayName("Reason")
+            </th>
+            @if (ViewBag.Pending != "Pending")
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+            }
+        </tr>
+        <tr class="table-dark">
+            <td>
+                @Html.DisplayFor(model => model.RequisitionEmployee.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.RequisitionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.RequestRemarks)
+            </td>
+            @if (ViewBag.Pending != "Pending")
+            {
+                <td><span class="text-warning lead">
+    @Html.DisplayFor(model => model.Status)
+</span>
+                </td>
+            }
+        </tr>
+    </table>
+    <br/>
+    if (ViewBag.Message != "Delegate" && ViewBag.Pending == "Pending")
+    {
+        <div class="row">
+            <div class="form-group col-md-6">
+                <strong>Comments (Optional):</strong>
+                @Html.TextAreaFor(model => model.ApprovalRemarks, 3, 60, new { @class = "form-control" })
+            </div>
+            <div class="form-group col-md-6">
+                <button type="submit" name="SubmitButton" class="btn btn-success btn-lg btn-block form-control" value="Approve">Approve</button>
+                <button type="submit" name="SubmitButton" class="btn btn-danger btn-lg btn-block form-control" value="Reject">Reject</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-dark col-sm-12 col-lg-12" style="padding:0">
+            <div class="card-header"> @(Model.Status == "rejected" ? "Rejection" : "Approval") Comments from <strong>@(Model.ApprovalEmployee.FullName)</strong>: </div>
+            <div class="card-body">
+                @Html.DisplayFor(model => model.ApprovalRemarks, new { @class = "card-text", @readonly = "readonly" })
+            </div>
+        </div>
+    }
+
+
+
+    <br />
+
+}
+
+@Html.Partial("_Details", Model.RequisitionDetails)
+
+
+
+
+
+<p>
+
+</p>
+
+
+
