@@ -38,7 +38,7 @@
                 </th>
             }
         </tr>
-        <tr>
+        <tr class="table-dark">
             <td>
                 @Html.DisplayFor(model => model.RequisitionEmployee.FullName)
             </td>
@@ -72,7 +72,7 @@
     }
     else
     {
-        <div class="card border-info col-sm-12 col-lg-12" style="padding:0">
+        <div class="card border-dark col-sm-12 col-lg-12" style="padding:0">
             <div class="card-header"> @(Model.Status == "rejected" ? "Rejection" : "Approval") Comments: </div>
             <div class="card-body">
                 @Html.DisplayFor(model => model.ApprovalRemarks, new { @class = "card-text", @readonly = "readonly" })

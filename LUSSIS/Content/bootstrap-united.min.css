@@ -1850,7 +1850,7 @@ pre {
     }
 
 .table-danger, .table-danger > th, .table-danger > td {
-    background-color: #997578
+    background-color: #f6c7c4
 }
 
 .table-hover .table-danger:hover {
@@ -1911,11 +1911,11 @@ pre {
 
 .table-dark {
     color: #fff;
-    background-color: #772953
+    background-color: #997578
 }
 
     .table-dark th, .table-dark td, .table-dark thead th {
-        border-color: #642246
+        border-color: #705658
     }
 
     .table-dark.table-bordered {

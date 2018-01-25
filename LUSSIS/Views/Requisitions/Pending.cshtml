@@ -42,7 +42,7 @@
                 @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
             </td>
             <td>
-                @Html.ActionLink("Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, new { @class = "btn btn-sm btn-outline-success" })
+                @Html.ActionLink("View Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, new { @class = "btn btn-sm btn-outline-info" })
             </td>
             @if (ViewBag.Message != "Delegate")
             {
