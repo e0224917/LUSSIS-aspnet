@@ -14,7 +14,6 @@ namespace LUSSIS.Controllers
 {
     public class StationeriesController : Controller
     {
-        private LUSSISContext db = new LUSSISContext();
         private StationeryRepository strepo = new StationeryRepository();
         private StockAdjustmentRepository adrepo = new StockAdjustmentRepository();
         private DisbursementRepository disrepo = new DisbursementRepository();
@@ -86,19 +85,6 @@ namespace LUSSIS.Controllers
             return View();
 
         }
-
-        //[HttpGet]
-        //public ActionResult Create()
-        //{
-        //    StationerynDTO stationerynDTO = new StationerynDTO
-        //    {
-        //        CategoryList = strepo.GetCategories(),
-        //        SupplierList = srepo.GetSupplierList()
-        //    };
-        //    ViewBag.Category = stationerynDTO.CategoryList;
-
-        //    return View(stationerynDTO);
-        //}
         [HttpGet]
         public ActionResult Create()
         {
@@ -107,8 +93,6 @@ namespace LUSSIS.Controllers
                 CategoryList = strepo.GetCategories(),
                 SupplierList = srepo.GetSupplierList()
             };
-            ViewBag.Category = stationerynDTO.CategoryList;
-
             return View(stationerynDTO);
         }
 
@@ -238,7 +222,7 @@ namespace LUSSIS.Controllers
                 };
                 bool isUnique = theList.Distinct().Count() == theList.Count();
                 if (isUnique == false)
-                {
+                {//Check Supplier is different
                     ViewBag.DistinctError = "Please select different suppliers";
                     stationerynDTO.CategoryList = strepo.GetCategories();
                     stationerynDTO.SupplierList = srepo.GetSupplierList();
@@ -246,9 +230,7 @@ namespace LUSSIS.Controllers
                 }
                 else
                 {
-
                     Stationery st = strepo.GetById(stationerynDTO.ItemNum);
-                    string initial = strepo.GetCategoryInitial(stationerynDTO.CategoryId);
                     st.CategoryId = Int32.Parse(stationerynDTO.CategoryId);
                     st.Description = stationerynDTO.Description;
                     st.ReorderLevel = stationerynDTO.ReorderLevel;
@@ -258,26 +240,31 @@ namespace LUSSIS.Controllers
                     strepo.Update(st);
                     strepo.DeleteStationerySUpplier(stationerynDTO.ItemNum);
 
-                    StationerySupplier sp1 = new StationerySupplier();
-                    sp1.ItemNum = stationerynDTO.ItemNum;
-                    sp1.SupplierId = Int32.Parse(stationerynDTO.SupplierName1);
-                    sp1.Price = stationerynDTO.Price1;
-                    sp1.Rank = 1;
+                    StationerySupplier sp1 = new StationerySupplier
+                    {
+                        ItemNum = stationerynDTO.ItemNum,
+                        SupplierId = Int32.Parse(stationerynDTO.SupplierName1),
+                        Price = stationerynDTO.Price1,
+                        Rank = 1
+                    };
                     strepo.AddSS(sp1);
 
-
-                    StationerySupplier sp2 = new StationerySupplier();
-                    sp2.ItemNum = stationerynDTO.ItemNum;
-                    sp2.SupplierId = Int32.Parse(stationerynDTO.SupplierName2);
-                    sp2.Price = stationerynDTO.Price2;
-                    sp2.Rank = 2;
+                    StationerySupplier sp2 = new StationerySupplier
+                    {
+                        ItemNum = stationerynDTO.ItemNum,
+                        SupplierId = Int32.Parse(stationerynDTO.SupplierName2),
+                        Price = stationerynDTO.Price2,
+                        Rank = 2
+                    };
                     strepo.AddSS(sp2);
 
-                    StationerySupplier sp3 = new StationerySupplier();
-                    sp3.ItemNum = stationerynDTO.ItemNum;
-                    sp3.SupplierId = Int32.Parse(stationerynDTO.SupplierName3);
-                    sp3.Price = stationerynDTO.Price3;
-                    sp3.Rank = 3;
+                    StationerySupplier sp3 = new StationerySupplier
+                    {
+                        ItemNum = stationerynDTO.ItemNum,
+                        SupplierId = Int32.Parse(stationerynDTO.SupplierName3),
+                        Price = stationerynDTO.Price3,
+                        Rank = 3
+                    };
                     strepo.AddSS(sp3);
 
                     return RedirectToAction("Index");
@@ -315,13 +302,5 @@ namespace LUSSIS.Controllers
         //    return RedirectToAction("Index");
         //}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }
