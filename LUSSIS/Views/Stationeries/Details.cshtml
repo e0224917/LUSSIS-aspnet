@@ -131,7 +131,8 @@
             $(obj).show();
             var html_date = $(obj).find('.row_date').html();
             if (typeof html_date != "undefined") {
-                var d3 = html_date.split("/");
+                var split_by = html_date.substring(2, 3);
+                var d3 = html_date.split(split_by);
                 var this_date = new Date(d3[1] + "/" + d3[0] + "/" + d3[2]);
                 if (this_date<from_date || this_date>to_date) {
                     $(obj).hide();
