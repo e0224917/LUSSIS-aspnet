@@ -650,6 +650,7 @@
     <Content Include="Views\Stationeries\Create.cshtml" />
     <Content Include="Views\Stationeries\Edit.cshtml" />
     <Content Include="Views\SupervisorDashboard\Report.cshtml" />
+    <Content Include="Views\SupervisorDashboard\TrendAnalysis.cshtml" />
     <Content Include="Views\Stationeries\_Index.cshtml" />
     <Content Include="Views\Stationeries\Index.cshtml" />
   </ItemGroup>
