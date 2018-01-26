@@ -387,9 +387,6 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\images2.jpg" />
-    <Content Include="Images\images3.jpg" />
-    <Content Include="Images\images4.jpg" />
-    <Content Include="Images\images5.jpg" />
     <Content Include="Images\images6.jpg" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />

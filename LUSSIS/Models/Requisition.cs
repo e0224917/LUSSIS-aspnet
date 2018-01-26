@@ -25,8 +25,10 @@ namespace LUSSIS.Models
         public DateTime? RequisitionDate { get; set; }
 
         public int? ApprovalEmpNum { get; set; }
-        //[Required]
-        //public string  DeptCode { get; set; }
+
+        [Required]
+        public string  DeptCode { get; set; }
+
         public string ApprovalRemarks { get; set; }
 
         public string RequestRemarks { get; set; }
