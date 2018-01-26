@@ -22,15 +22,15 @@ else
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
+                
             </th>
         </tr>
          <tr class="table-dark">
-                <td>
-                    @Html.DisplayFor(model => model.CollectionDate)
-                </td>
+             <td>
+                 @Html.DisplayFor(model => model.CollectionDate)&nbsp;&nbsp;&nbsp;@Html.DisplayFor(model => model.CollectionPoint.Time)
+             </td>
                 <td>
                     @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
-                    &nbsp;&nbsp;@Html.DisplayFor(model => model.CollectionPoint.Time)
                 </td>
             </tr>
         
