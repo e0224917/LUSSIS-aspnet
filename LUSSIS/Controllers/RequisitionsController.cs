@@ -15,6 +15,7 @@ using LUSSIS.Emails;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
 using LUSSIS.CustomAuthority;
+using System.Text;
 
 namespace LUSSIS.Controllers
 {
@@ -123,7 +124,7 @@ namespace LUSSIS.Controllers
                         return View("_unauthoriseAccess");
                     }
                     if ((self.EmpNum == requisition.RequisitionEmpNum))
-                    {//if user is trying to self approve 
+                    {//if user is trying to self approve (delegate's old requistion)
                         return View("_unauthoriseAccess");
                     }
                     else
@@ -496,10 +497,10 @@ namespace LUSSIS.Controllers
                                 reqRepo.Update(req);
 
                                 string destinationEmail = "cuirunzesg@gmail.com"; //req.RequisitionEmployee.EmailAddress;         
-                                string subject = "Your Requisition " + req.RequisitionId + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status;
-                                string body = "Your Requisition " + req.RequisitionId + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status + " by " + req.ApprovalEmployee.FullName;
-
-                                EmailHelper.SendEmail(destinationEmail, subject, body);
+                                string subject = "Requistion " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status;
+                                //StringBuilder body = new StringBuilder("Your Requisition " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status + " by " + req.ApprovalEmployee.FullName);
+                                //List<RequisitionDetail> rd = 
+                                //EmailHelper.SendEmail(destinationEmail, subject, body);
 
 
                                 return PartialView();
