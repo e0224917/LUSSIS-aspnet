@@ -37,7 +37,8 @@ namespace LUSSIS.Models
         [Required]
         [StringLength(20)]
         public string Status { get; set; }
-
+        [Required]
+        public string DeptCode { get; set; }
         public virtual Employee ApprovalEmployee { get; set; }
 
         public virtual Employee RequisitionEmployee { get; set; }
