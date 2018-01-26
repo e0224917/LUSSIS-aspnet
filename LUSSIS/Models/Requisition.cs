@@ -26,9 +26,6 @@ namespace LUSSIS.Models
 
         public int? ApprovalEmpNum { get; set; }
 
-        [Required]
-        public string  DeptCode { get; set; }
-
         public string ApprovalRemarks { get; set; }
 
         public string RequestRemarks { get; set; }
@@ -36,11 +33,14 @@ namespace LUSSIS.Models
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? ApprovalDate { get; set; }
+
         [Required]
         [StringLength(20)]
         public string Status { get; set; }
+
         [Required]
         public string DeptCode { get; set; }
+
         public virtual Employee ApprovalEmployee { get; set; }
 
         public virtual Employee RequisitionEmployee { get; set; }
