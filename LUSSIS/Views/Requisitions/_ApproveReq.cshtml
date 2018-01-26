@@ -12,8 +12,8 @@
             @Html.HiddenFor(m => m.RequisitionId)
             @Html.HiddenFor(m => m.Status)
         </div>
-
     </div>
+
     <div class="modal-footer">
         @if (@Model.Status == "approved")
         {
@@ -32,20 +32,24 @@
 </form>
 
 
-<script>
-    $(document).ready(function () {
-        $("#approve").click(function () {
-            var formdata = $("#approveForm").serialize();
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#approve").click(function() {
+                var formdata = $("#approveForm").serialize();
 
-            $.ajax({
-                type: "POST",
-                url: "/Requisitions/_ApproveReq",
-                data: formdata,
-                success: function () {
-                    $("#myApproveModal").modal("hide");
-                }
-            })
-            location.reload()
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Content("~/")Requisitions/_ApproveReq",
+                    data: formdata,
+                    success: function() {
+                        $("#myApproveModal").modal("hide");
+                    }
+                });
+                location.reload();
+            });
         })
-    })
-</script>
+    </script>
+}
+

@@ -1,7 +1,7 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Stationery>
 @using PagedList.Mvc;
 @{
-    ViewBag.Title = "Stationery List";
+    ViewBag.Title = "Stationery List for Requisition";
 
 }
 <style>
@@ -57,30 +57,16 @@
                 // Get the id from the link
                 var stationeryToAdd = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (stationeryToAdd != '') {
+                if (stationeryToAdd !== '') {
                     // Perform the ajax post
-                    $.post("/Requisitions/AddToCart",
+                    $.post("@Url.Content("~/")Requisitions/AddToCart",
                         { "id": stationeryToAdd, "qty": qty },
                         function (data) {
-                            //alert("Add to cart successfully");
-                            location.reload();
-                            // Successful requests get here
-                            // Update the page elements
-                            //alert("success");
-                            //if (data.ItemCount == 0) {
-                            //    $('#row-' + data.DeleteId).fadeOut('slow');
-                            //} else {
-                            //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
-                            //}
-                            //$('#cart-total').text(data.CartTotal);
-                            //$('#update-message').text(data.Message);
-                            //$('#cart-status').text('Cart (' + data.CartCount + ')');
+                            $("a#cart-number").text("My Cart (" + data + ")");
                         });
                 }
             });
         });
     </script>
 
-    <script src="~/Scripts/jquery.unobstrusive-ajax.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 }

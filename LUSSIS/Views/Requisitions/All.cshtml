@@ -1,6 +1,5 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Requisition>
-@using PagedList.Mvc;
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
 @{
     ViewBag.Title = "Requisition History";
 }
@@ -38,10 +37,3 @@
 <hr />
 
 @Html.Partial("_All", Model)
-
-@section scripts {
-    <script src="~/Scripts/jquery.unobstrusive-ajax.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-
-
-}

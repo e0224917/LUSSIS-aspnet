@@ -341,7 +341,6 @@
     <Compile Include="Models\WebDTO\ManageCollectionDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
     <Compile Include="Models\WebDTO\StationeryDTO.cs" />
-    <Compile Include="Models\WebDTO\StationerynDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorReportDTO.cs" />
     <Compile Include="Models\WebDTO\StationeryTransactionDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
@@ -387,7 +386,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Images\images1.jpg" />
     <Content Include="Images\images2.jpg" />
     <Content Include="Images\images3.jpg" />
     <Content Include="Images\images4.jpg" />
@@ -585,8 +583,8 @@
     <Content Include="Views\StockAdjustment\CreateAdjustments.cshtml" />
     <Content Include="Views\StockAdjustment\_CreateAdjustments.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
-    <Content Include="Views\Requisitions\Detail.cshtml" />
-    <Content Include="Views\Requisitions\_Detail.cshtml" />
+    <Content Include="Views\Requisitions\Details.cshtml" />
+    <Content Include="Views\Requisitions\_Details.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
     <Content Include="Views\PurchaseOrders\Create.cshtml" />
     <Content Include="Views\PurchaseOrders\Delete.cshtml" />
@@ -630,9 +628,9 @@
     <Content Include="Views\Shared\__StoreSupMenu.cshtml" />
     <Content Include="Views\Shared\__RepMenu.cshtml" />
     <Content Include="Views\RepAndDelegate\Index.cshtml" />
-    <Content Include="Views\Requisitions\EmpCart.cshtml" />
-    <Content Include="Views\Requisitions\EmpReq.cshtml" />
-    <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
+    <Content Include="Views\Requisitions\MyCart.cshtml" />
+    <Content Include="Views\Requisitions\MyRequisitions.cshtml" />
+    <Content Include="Views\Requisitions\MyRequisitionDetails.cshtml" />
     <Content Include="Views\Requisitions\Index.cshtml" />
     <Content Include="Views\Suppliers\Quotation.cshtml" />
     <Content Include="Views\SupervisorDashboard\Index.cshtml" />
@@ -642,7 +640,6 @@
     <Content Include="Views\Requisitions\_unauthoriseAccess.cshtml" />
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
-    <Content Include="Views\SupervisorDashboard\GenerateReport.cshtml" />
     <Content Include="Views\Stationeries\Delete.cshtml" />
     <Content Include="Views\Stationeries\Details.cshtml" />
     <Content Include="Views\Stationeries\Index.cshtml" />
@@ -653,6 +650,7 @@
     <Content Include="Views\StockAdjustment\_History.cshtml" />
     <Content Include="Views\Stationeries\Create.cshtml" />
     <Content Include="Views\Stationeries\Edit.cshtml" />
+    <Content Include="Views\SupervisorDashboard\Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
