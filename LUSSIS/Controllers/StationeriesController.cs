@@ -24,21 +24,37 @@ namespace LUSSIS.Controllers
         // GET: Stationeries
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
-            List<Stationery> stationerys = new List<Stationery>();
+            List<Stationery> adjustments = new List<Stationery>();
             if (searchString != null)
             { page = 1; }
             else
             {
                 searchString = currentFilter;
             }
-            if (!String.IsNullOrEmpty(searchString))
-            { stationerys = strepo.GetByDescription(searchString).ToList(); }
-            else { stationerys = strepo.GetAll().ToList(); }
-            int pageSize = 20;
-            int pageNumber = (page ?? 1);
-            return View(stationerys.ToPagedList(pageNumber, pageSize));
 
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                adjustments = strepo.GetByDescription(searchString).ToList();
+            }
+            else
+            {
+                adjustments = strepo.GetAll().ToList();
+            }
+            int pageSize = 15;
+            int pageNumber = (page ?? 1);
+
+            var stationeryAll = adjustments.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_Index", stationeryAll);
+            }
+
+            return View(stationeryAll);
         }
+
+
+
         
         // GET: Stationeries/Details/5
         public ActionResult Details(string id)
