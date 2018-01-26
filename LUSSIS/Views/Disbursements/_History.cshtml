@@ -40,7 +40,7 @@
                 </td>
                 <td>
                     <span>
-                        <a href="@Url.Action("ViewDetails")/@item.DisbursementId" class="btn btn-outline-success">
+                        <a href="@Url.Action("ViewDetails")/@item.DisbursementId" class="btn btn-success btn-sm">
                             <span class="glyphicon glyphicon-plus-sign"></span>
                             View Details
                         </a>
@@ -50,11 +50,10 @@
             </tr>
         }
     </table>
-    <div class="pagination">
-        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-        @Html.PagedListPager(Model, page => Url.Action("History", new { page, currentFilter = ViewBag.CurrentFilter }))
-    </div>
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+   
+    @Html.PagedListPager(Model, page =>
+                     Url.Action("History",
+                         new { page, currentFilter = ViewBag.CurrentFilter }))
 </div>
-
-
-

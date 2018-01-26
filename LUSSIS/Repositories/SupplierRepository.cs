@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace LUSSIS.Repositories
 {
@@ -22,6 +23,15 @@ namespace LUSSIS.Repositories
                 list.Add((LUSSISContext.Suppliers.Where(x => x.SupplierId==id).FirstOrDefault()).SupplierName);
             }
             return list;
+        }
+
+        public IEnumerable<SelectListItem> GetSupplierList()
+        {
+            return LUSSISContext.Suppliers.ToList().Select(x => new SelectListItem
+            {
+                Text = x.SupplierName,
+                Value = x.SupplierId.ToString()
+            });
         }
 
     }

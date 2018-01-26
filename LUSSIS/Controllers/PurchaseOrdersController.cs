@@ -3,12 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using CrystalDecisions.CrystalReports.Engine;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
@@ -31,7 +35,7 @@ namespace LUSSIS.Controllers
         public ActionResult Index(int? page = 1)
         {
             var purchaseOrders = pr.GetAll();
-            int pageSize = 20;
+            int pageSize = 15;
             ViewBag.page = page;
             return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate).ToPagedList(Convert.ToInt32(page), pageSize));
         }
@@ -56,6 +60,7 @@ namespace LUSSIS.Controllers
 
 
         //GET: PurchaseOrders/Summary
+        [Authorize(Roles = "clerk")]
         public ActionResult Summary()
         {
             ViewBag.OutstandingStationeryList = sr.GetOutstandingStationeryByAllSupplier();
@@ -74,10 +79,10 @@ namespace LUSSIS.Controllers
             ViewBag.Error = error;
 
             PurchaseOrderDTO po = new PurchaseOrderDTO(); //view model
-            List<Stationery> stationeries;  //for dropdown list
             int countOfLines = 1; //no of purchase detail lines to show
+            int countOfStationery = 0; //no ofstationery that belong to supplier
 
-            if (supplierId == null)
+            if (supplierId == null) //select supplier if non-chosen yet
             {
                 Supplier selectASupplier = new Supplier();
                 selectASupplier.SupplierId = -1;
@@ -89,22 +94,24 @@ namespace LUSSIS.Controllers
                 return View(nothingToShow);
             }
 
+            //get supplier
             Supplier supplier = sur.GetById(Convert.ToInt32(supplierId));
             po.Supplier = supplier;
             po.SupplierId = supplier.SupplierId;
             po.CreateDate = DateTime.Today;
+            po.SupplierAddress = supplier.Address1 + Environment.NewLine + supplier.Address2 + Environment.NewLine + supplier.Address3;
+            po.SupplierContact = supplier.ContactName;
 
-            //set empty Stationery template
+            //set empty Stationery template for dropdown
             Stationery emptyStationery = new Stationery();
             emptyStationery.ItemNum = "select a stationery";
             emptyStationery.Description = "select a stationery";
             emptyStationery.UnitOfMeasure = "-";
             emptyStationery.AverageCost = 0.00;
 
-
             //get list of recommended for purchase stationery and put in purchase order details
             var a = sr.GetOutstandingStationeryByAllSupplier();
-            foreach(KeyValuePair<Supplier,List<Stationery>> kvp in a)
+            foreach (KeyValuePair<Supplier, List<Stationery>> kvp in a)
             {
                 if (kvp.Key.SupplierId == supplier.SupplierId)
                 {
@@ -123,6 +130,7 @@ namespace LUSSIS.Controllers
                 }
             }
             countOfLines = Math.Max(po.PurchaseOrderDetailsDTO.Count, 1);
+            countOfStationery = Math.Max(po.PurchaseOrderDetailsDTO.Count, 0);
 
 
             //create empty puchase details so user can add up to 100 line items per PO
@@ -145,6 +153,7 @@ namespace LUSSIS.Controllers
             ViewBag.Stationery = sslist;
             ViewBag.Suppliers = sur.GetAll();
             ViewBag.Supplier = supplier;
+            ViewBag.countOfStationery = countOfStationery;
             ViewBag.countOfLines = countOfLines;
             ViewBag.GST_RATE = GST_RATE;
 
@@ -166,40 +175,51 @@ namespace LUSSIS.Controllers
                     throw new Exception("IT Error: please contact your administrator");
 
                 //create PO
-                PurchaseOrder purchaseOrder = new PurchaseOrder();
+                PurchaseOrder purchaseOrder = null;
 
-                //set PO values
-                purchaseOrder.OrderEmpNum = er.GetCurrentUser().EmpNum;
+                //fill default values
+                var CurrentUser = er.GetCurrentUser();
+                purchaseOrderDTO.OrderEmpNum = CurrentUser.EmpNum;
                 if (purchaseOrderDTO.CreateDate == null)
-                    purchaseOrder.CreateDate = DateTime.Today;
-                else
-                    purchaseOrder.CreateDate = purchaseOrderDTO.CreateDate;
-                purchaseOrder.Status = "pending";
-                purchaseOrder.SupplierId = purchaseOrderDTO.SupplierId;
+                    purchaseOrderDTO.CreateDate = DateTime.Today;
 
-                //set PO detail values
-                for (int i = purchaseOrderDTO.PurchaseOrderDetailsDTO.Count - 1; i >= 0; i--)
-                {
-                    PurchaseOrderDetailDTO pdetail = purchaseOrderDTO.PurchaseOrderDetailsDTO.ElementAt(i);
-                    if (pdetail.OrderQty > 0)
-                    {
-                        PurchaseOrderDetail newPdetail = new PurchaseOrderDetail();
-                        newPdetail.ItemNum = pdetail.ItemNum;
-                        newPdetail.OrderQty = pdetail.OrderQty;
-                        newPdetail.UnitPrice = pdetail.UnitPrice;
-                        newPdetail.ReceiveQty = 0;
-                        purchaseOrder.PurchaseOrderDetails.Add(newPdetail);
-                    }
-                    else if(pdetail.OrderQty < 0)
-                        throw new Exception("Purchase Order was not created, ordered quantity cannot be negative");
-                }
-                if (purchaseOrder.PurchaseOrderDetails.Count == 0)
-                    throw new Exception("Purchase Order was not created, no items found");
-                if (purchaseOrder.PurchaseOrderDetails.Count > purchaseOrder.PurchaseOrderDetails.Select(x => x.ItemNum).Distinct().Count())
-                    throw new Exception("the same stationery cannot appear in multiple lines of the PO");
+                //create PO
+                purchaseOrderDTO.CreatePurchaseOrder(out purchaseOrder);
 
                 //save to database
                 pr.Add(purchaseOrder);
+
+                //send email to supervisor
+                StringBuilder emailForSupervisor = new StringBuilder("New Purchase Order Created");
+                emailForSupervisor.AppendLine("This email is automatically generated and requires no reply to the sender.");
+                emailForSupervisor.AppendLine("Purchase Order No " + purchaseOrder.PoNum);
+                emailForSupervisor.AppendLine("Created By " + CurrentUser.FullName);
+                emailForSupervisor.AppendLine("Created On " + purchaseOrder.CreateDate.ToString("dd-MM-yyyy"));
+                string subject = "New Purchase Order";
+                Emails.EmailHelper.SendEmail(subject, emailForSupervisor.ToString());
+
+                //send email if using non=primary supplier
+                StringBuilder emailBody = new StringBuilder("Non-Primary Suppliers in Purchase Order " + purchaseOrder.PoNum);
+                emailForSupervisor.AppendLine("This email is automatically generated and requires no reply to the sender.");
+                emailBody.AppendLine("Created for Supplier: " + sur.GetById(purchaseOrder.SupplierId).SupplierName);
+                int index = 0;
+                foreach (PurchaseOrderDetail pdetail in purchaseOrder.PurchaseOrderDetails)
+                {
+                    Stationery s = sr.GetById(pdetail.ItemNum);
+                    if (s.PrimarySupplier().SupplierId != purchaseOrder.SupplierId)
+                    {
+                        index++;
+                        emailBody.AppendLine("Index: " + index);
+                        emailBody.AppendLine("Stationery: " + s.Description);
+                        emailBody.AppendLine("Primary Supplier: " + s.PrimarySupplier().SupplierName);
+                        emailBody.AppendLine();
+                    }
+                }
+                if (index > 0)
+                {
+                    subject = "Purchasing from Non-Primary Supplier";
+                    Emails.EmailHelper.SendEmail(subject, emailBody.ToString());
+                }
 
                 return RedirectToAction("Summary");
             }
@@ -251,6 +271,9 @@ namespace LUSSIS.Controllers
         {
             try
             {
+                if (receiveModel.InvoiceNum == null || receiveModel.DeliveryOrderNum == null)
+                    throw new Exception("Delivery Order Number and Invoice Number are required fields");
+
                 if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
 
@@ -272,19 +295,30 @@ namespace LUSSIS.Controllers
             }
         }
 
-        public ActionResult PrintPO(string id)
+        public ActionResult PrintPo(int id, double? orderDate)
         {
-            //ReportDocument rd = new ReportDocument();
-            //rd.Load(Path.Combine(Server.MapPath("~/Reports/CrystalReport3.rpt")));
-            //ds.Tables.Add(GetPO(id));
-            //rd.SetDataSource(ds);
-            //Response.Buffer = false;
-            //Response.ClearContent();
-            //Response.ClearHeaders();
-            //Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-            //stream.Seek(0, SeekOrigin.Begin);
-            //return File(stream, "application/pdf");
-            return View();
+
+            DateTime OrderDate;
+            
+            DataSet ds = new DataSet();
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
+            if (orderDate != null)
+            {
+                OrderDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(orderDate)).ToLocalTime();
+                ds.Tables.Add(GetPo(id, OrderDate));
+            }
+            else
+            {
+                ds.Tables.Add(GetPo(id));
+            }
+            rd.SetDataSource(ds);
+            Response.Buffer = false;
+            Response.ClearContent();
+            Response.ClearHeaders();
+            Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+            stream.Seek(0, SeekOrigin.Begin);
+            return File(stream, "application/pdf");
         }
 
 
@@ -336,7 +370,7 @@ namespace LUSSIS.Controllers
             }
         }
         [Authorize(Roles = "supervisor")]
-        public ActionResult ViewPendingPOList()
+        public ActionResult PendingPO()
         {
 
             return View(pr.GetPendingApprovalPODTO());
@@ -368,10 +402,40 @@ namespace LUSSIS.Controllers
             return PartialView();
         }
 
-
-
-
-
+        DataTable GetPo(int id, DateTime? orderDate=null)
+        {
+            string orderdatequery = "p.orderdate";
+            //handle orderdate
+            if (orderDate >= new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc).ToLocalTime())
+                orderdatequery = "'"+Convert.ToDateTime(orderDate).ToString("yyyy/MM/dd") + "'as orderdate";
+            string connString = System.Configuration.ConfigurationManager.ConnectionStrings["LUSSISContext"].ConnectionString;
+            DataTable table = new DataTable();
+            //get sql
+            using (SqlConnection sqlConn = new SqlConnection(connString))
+            {
+                string sqlQuery =
+                    "select p.ponum,"
+                    + orderdatequery +
+                    ",p.approvaldate,s.suppliername,p.suppliercontact, p.address1,p.address2,p.address3 " +
+                    ",st.description,q.orderqty,q.unitprice,st.unitofmeasure, e.Title+' '+e.firstname+' '+e.lastname as orderby, f.Title+' '+f.firstname+' '+f.lastname as approvedby  " +
+                    "from purchaseorder p " +
+                    "inner join supplier s on p.supplierid=s.supplierid " +
+                    "inner join purchaseorderdetail q on p.ponum=q.ponum " +
+                    "inner join stationery st on st.itemnum=q.itemnum " +
+                    "inner join employee e on e.empnum=p.orderempnum " +
+                    "inner join employee f on f.empnum=p.approvalempnum " +
+                    "where p.ponum=@id";
+                using (SqlCommand cmd = new SqlCommand(sqlQuery, sqlConn))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.Int);
+                    cmd.Parameters["@id"].Value = id;
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(table);
+                }
+            }
+            table.TableName = "PurchaseOrder";
+            return table;
+        }
 
 
     }
@@ -381,13 +445,19 @@ namespace LUSSIS.Controllers
 
 public static class StationeryExtension
 {
-    public static double? UnitPrice(this Stationery s, int supplierId)
+    public static double UnitPrice(this Stationery s, int supplierId)
     {
+        double price = 0;
         foreach (StationerySupplier ss in s.StationerySuppliers)
         {
-            if (ss.SupplierId == supplierId) return ss.Price;
+            if (ss.SupplierId == supplierId)
+            {
+                price = ss.Price;
+                break;
+            }
         }
-        return null;
+        //return null;
+        return price;
     }
 
     public static double LinePrice(this Stationery s, int supplierId, int? qty)

@@ -4,79 +4,89 @@
 }
 @Scripts.Render("~/bundles/jquery")
 <h2>Purchase Order Details</h2>
+<hr />
 
-<div>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            Purchase Order No
-        </dt>
-        <dd>
-            <input type="number" value="@Model.PoNum" disabled" name="PoNum" id="PoNum" />
-        </dd>
-        <dt>
-            Status
-        </dt>
-        <dd>
-            <input type="text" value="@Model.Status" disabled />
-        </dd>
-        <dt>
-            Created By
-        </dt>
-        <dd>
-            @Html.HiddenFor(model => model.OrderEmpNum)
-            <input type="text" value="@Model.OrderEmployee.FullName" disabled />
-        </dd>
-        <dt>
-            Created On
-        </dt>
-        <dd>
-            @Html.HiddenFor(model => model.CreateDate)
-            <input type="date" value="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" disabled />
-        </dd>
-        @if (Model.ApprovalEmpNum == null)
-    {
-        <dt>
-            Approved By
-        </dt>
-        <dd>
-            @Html.HiddenFor(model => model.ApprovalEmpNum)
-            <input type="text" value="@(Model.ApprovalEmployee == null ? "" : Model.ApprovalEmployee.FullName)" disabled />
-        </dd>
-        <dt>
-            Approved On
-        </dt>
-        <dd>
-            @Html.HiddenFor(model => model.ApprovalDate)
-            <input type="date" value="@(Model.ApprovalDate == null ? "" : Model.ApprovalDate.Value.ToString("yyyy-MM-dd"))" disabled />
-        </dd>
-}
-        @if (Model.OrderDate == null)
-    {
-        <dt>
-            Order Date
-        </dt>
-        <dd>
-            <input type="date" value="@(Model.OrderDate == null ? "" : Model.OrderDate.Value.ToString("yyyy-MM-dd"))" disabled name="OrderDate" />
-        </dd>
-}
-        <dt>
-            Supplier Name
-        </dt>
-        <dd>
-            @Html.HiddenFor(model => model.SupplierId)
-            <input type="text" value="@Model.Supplier.SupplierName" disabled />
-        </dd>
-        <dt>
-            Supplier Contact Name
-        </dt>
-        <dd>
-            <input type="text" value="@Model.Supplier.ContactName" disabled />
-        </dd>
-    </dl>
+<div class="card border-dark bg-transparent col-lg-12 col-sm-12 col-md-12">
 
-    <table class="table">
-        <tr>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-4 col-sm-4 col-md-4">
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Purchase Order Number</strong></label>
+                    <div class="col-md-12">
+                        <input class="form-control" type="number" value="@Model.PoNum" disabled name="PoNum" id="PoNum" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.HiddenFor(model => model.SupplierId)
+                    <label class="control-label col-md-12"><strong>Supplier Name</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@Model.Supplier.SupplierName" disabled />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Supplier Contact Name</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@Model.SupplierContact" disabled />
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-4 col-md-4">
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Created By</strong></label>
+                    <div class="col-md-12">
+                        @Html.HiddenFor(model => model.OrderEmpNum)
+                        <input type="text" class="form-control" value="@Model.OrderEmployee.FullName" disabled />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Created On</strong></label>
+                    <div class="col-md-12">
+                        @Html.HiddenFor(model => model.CreateDate)
+                        <input type="date" class="form-control" value="@Model.CreateDate.ToString("yyyy-MM-dd")" disabled />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Order Date</strong></label>
+                    <div class="col-md-12">
+                        @Html.HiddenFor(model => model.ApprovalDate)
+                        <input type="date" class="form-control" value="@(Model.OrderDate == null ? "Order not placed" : Model.OrderDate.Value.ToString("yyyy-MM-dd"))" disabled name="OrderDate" />
+                    </div>
+                </div>
+            </div> <div class="col-lg-4 col-sm-4 col-md-4">
+                <div class="form-group">
+                    <label class="control-label col-md-12 text-primary"><strong>Status</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control text-primary" value="@Model.Status" disabled />
+                    </div>
+                </div>
+                @if (Model.ApprovalEmpNum != null)
+                {
+                    <div class="form-group">
+                        <label class="control-label col-md-12"><strong>Approved By</strong></label>
+                        <div class="col-md-12">
+                            @Html.HiddenFor(model => model.ApprovalEmpNum)
+                            <input type="text" class="form-control" value="@(Model.ApprovalEmployee == null ? "" : Model.ApprovalEmployee.FullName)" disabled />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-12"><strong>Approved On</strong></label>
+                        <div class="col-md-12">
+                            @Html.HiddenFor(model => model.ApprovalDate)
+                            <input type="date" class="form-control" value="@(Model.ApprovalDate == null ? "" : Model.ApprovalDate.Value.ToString("yyyy-MM-dd"))" disabled />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+
+</div>      <br />
+
+    <table class="table table-hover table-striped">
+        <tr class="table-active">
             <th>No</th>
             <th>Product</th>
             <th>Item No</th>
@@ -88,41 +98,44 @@
         </tr>
         @for (int i = 0; i < Model.PurchaseOrderDetails.Count; i++)
         {
-        <tr>
-            <td>@(i + 1)</td>
-            <td>@Model.PurchaseOrderDetails[i].Stationery.Description</td>
-            <td>@Model.PurchaseOrderDetails[i].Stationery.ItemNum</td>
-            <td>@Model.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
-            <td>@Model.PurchaseOrderDetails[i].UnitPrice</td>
-            <td>@Model.PurchaseOrderDetails[i].OrderQty</td>
-            <td>@(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
-            <td>@(Model.PurchaseOrderDetails[i].ReceiveQty > 0 ? "Delivered" : "Not Delivered")</td>
-        </tr>
+            <tr>
+                <td>@(i + 1)</td>
+                <td>@Model.PurchaseOrderDetails[i].Stationery.Description</td>
+                <td>@Model.PurchaseOrderDetails[i].Stationery.ItemNum</td>
+                <td>@Model.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
+                <td>@Model.PurchaseOrderDetails[i].UnitPrice</td>
+                <td>@Model.PurchaseOrderDetails[i].OrderQty</td>
+                <td>@(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
+                <td>@(Model.PurchaseOrderDetails[i].ReceiveQty > 0 ? "Delivered" : "Not Delivered")</td>
+            </tr>
         }
     </table>
-</div>
-<p>
-    @if (Model.Status == "approved")
-    {
-        @Html.ActionLink("Order", "Order", new { p = Model.PoNum })
-    }
-    @if (Model.Status == "ordered")
-    {
-        @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum })
-    }
-    @Html.ActionLink("Back to List", "Summary")
-</p>
 
-<script>
-    var details=@Model.PoNum;
-
-    $(document).on('change', '#PoNum', function () {
-        if (confirm('Navigate from page?')) {
-            var newLink = "/PurchaseOrders/Details/" + $(this).val();
-            window.location.replace(newLink);
+    <p>
+        @if (Model.Status == "approved")
+        {
+            @Html.ActionLink("Order", "Order", new { p = Model.PoNum })
         }
-        else { $(this).val(details) }
-    });
-</script>
+        @if (Model.Status == "ordered")
+        {
+            @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum }, new { @class = "btn btn-success" })
+        }
+    </p>
+
+@section scripts
+{
+    <script>
+        var details=@Model.PoNum;
+
+        $(document).on('change', '#PoNum', function () {
+            if (confirm('Navigate from page?')) {
+                var newLink = "@Url.Content("~/")PurchaseOrders/Details/" + $(this).val();
+                window.location.replace(newLink);
+            }
+            else { $(this).val(details) }
+        });
+    </script>
+}
+
 
 

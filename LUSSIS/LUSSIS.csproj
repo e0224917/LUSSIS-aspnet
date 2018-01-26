@@ -52,6 +52,9 @@
     <Reference Include="BeginCollectionItem, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BeginCollectionItem.1.2.1.0\lib\net35\BeginCollectionItem.dll</HintPath>
     </Reference>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="EPPlus, Version=4.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.4.1.1\lib\net40\EPPlus.dll</HintPath>
     </Reference>
@@ -242,6 +245,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CollectionController.cs" />
+    <Compile Include="Controllers\StationeriesController.cs" />
+    <Compile Include="Controllers\SupervisorDashboardController.cs" />
+    <Compile Include="Controllers\WebAPI\StockAdjustmentController.cs" />
     <Compile Include="CustomAuthority\CustomAuthorizeAttribute.cs" />
     <Compile Include="Controllers\DisbursementsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -250,7 +256,6 @@
     <Compile Include="Controllers\RepAndDelegateController.cs" />
     <Compile Include="Controllers\RequisitionsController.cs" />
     <Compile Include="Controllers\StockAdjustmentController.cs" />
-    <Compile Include="Controllers\SupervisorDashboardController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Controllers\WebAPI\DelegateController.cs" />
@@ -258,9 +263,11 @@
     <Compile Include="Controllers\WebAPI\RequisitionsController.cs" />
     <Compile Include="Controllers\WebAPI\StationeriesController.cs" />
     <Compile Include="CustomAuthority\DelegateStaffCustomAuth.cs" />
+    <Compile Include="CustomAuthority\HeadWithDelegateAuth.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Exceptions\InvalidDateException.cs" />
     <Compile Include="Exceptions\InvalidSetRepException.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -293,6 +300,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\AccountViewModels.cs" />
     <Compile Include="Models\AdjVoucher.cs" />
+    <Compile Include="Models\WebAPI\AdjustmentDTO.cs" />
     <Compile Include="Models\WebAPI\DelegateDTO.cs" />
     <Compile Include="Models\WebAPI\DisbursementDTO.cs" />
     <Compile Include="Models\WebAPI\RequisitionDetailDTO.cs" />
@@ -335,9 +343,23 @@
     <Compile Include="Models\WebDTO\AdjustmentVoucherDTO.cs" />
     <Compile Include="Models\WebDTO\ManageCollectionDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemDTO.cs" />
+    <Compile Include="Models\WebDTO\StationeryDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorReportDTO.cs" />
+    <Compile Include="Models\WebDTO\StationeryTransactionDTO.cs" />
     <Compile Include="Models\WebDTO\SupervisorDashboardDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports\PoCrystalReport1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PoCrystalReport.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\RetrieveCrystalReport.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RetrieveCrystalReport.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Repositories\CollectionRepository.cs" />
     <Compile Include="Repositories\DelegateRepository.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
@@ -381,6 +403,11 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\calculator.svg" />
+    <Content Include="Images\chalk.svg" />
+    <Content Include="Images\compass.svg" />
+    <Content Include="Images\images2.jpg" />
+    <Content Include="Images\pantone.svg" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -501,6 +528,7 @@
     <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.min.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.unobstrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobstrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -572,8 +600,8 @@
     <Content Include="Views\StockAdjustment\CreateAdjustments.cshtml" />
     <Content Include="Views\StockAdjustment\_CreateAdjustments.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
-    <Content Include="Views\Requisitions\Detail.cshtml" />
-    <Content Include="Views\Requisitions\_Detail.cshtml" />
+    <Content Include="Views\Requisitions\Details.cshtml" />
+    <Content Include="Views\Requisitions\_Details.cshtml" />
     <Content Include="Views\Collection\Index.cshtml" />
     <Content Include="Views\PurchaseOrders\Create.cshtml" />
     <Content Include="Views\PurchaseOrders\Delete.cshtml" />
@@ -603,23 +631,23 @@
     <Content Include="Scripts\README.md" />
     <Content Include="Views\RepAndDelegate\DeptRep.cshtml" />
     <Content Include="Views\Disbursements\_Details.cshtml" />
-    <Content Include="Views\RepAndDelegate\DeptDelegate.cshtml" />
+    <Content Include="Views\RepAndDelegate\MyDelegate.cshtml" />
     <Content Include="Views\PurchaseOrders\Summary.cshtml" />
     <Content Include="Views\PurchaseOrders\Order.cshtml" />
     <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
     <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
-    <Content Include="Views\PurchaseOrders\ViewPendingPOList.cshtml" />
+    <Content Include="Views\PurchaseOrders\PendingPO.cshtml" />
     <Content Include="Views\Shared\__ClerkMenu.cshtml" />
     <Content Include="Views\Shared\__DeptEmpMenu.cshtml" />
     <Content Include="Views\Shared\__DeptHeadMenu.cshtml" />
     <Content Include="Views\Shared\__StoreSupMenu.cshtml" />
     <Content Include="Views\Shared\__RepMenu.cshtml" />
     <Content Include="Views\RepAndDelegate\Index.cshtml" />
-    <Content Include="Views\Requisitions\EmpCart.cshtml" />
-    <Content Include="Views\Requisitions\EmpReq.cshtml" />
-    <Content Include="Views\Requisitions\EmpReqDetail.cshtml" />
+    <Content Include="Views\Requisitions\MyCart.cshtml" />
+    <Content Include="Views\Requisitions\MyRequisitions.cshtml" />
+    <Content Include="Views\Requisitions\MyRequisitionDetails.cshtml" />
     <Content Include="Views\Requisitions\Index.cshtml" />
     <Content Include="Views\Suppliers\Quotation.cshtml" />
     <Content Include="Views\SupervisorDashboard\Index.cshtml" />
@@ -631,9 +659,6 @@
     <Content Include="Views\Requisitions\All.cshtml" />
     <Content Include="Views\Requisitions\PDetail.cshtml" />
     <Content Include="Views\SupervisorDashboard\GenerateReport.cshtml" />
-    <Content Include="Views\SupervisorDashboard\Report.cshtml" />
-    <Content Include="Views\SupervisorDashboard\GenerateStationeryTrendAnalysis.cshtml" />
-    <Content Include="Views\SupervisorDashboard\GenerateDepartmentTrendAnalysis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -663,12 +688,21 @@
     <EmbeddedResource Include="Migrations\201801180649294_Changes.resx">
       <DependentUpon>201801180649294_Changes.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\PoCrystalReport.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>PoCrystalReport1.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RetrieveCrystalReport.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>RetrieveCrystalReport.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

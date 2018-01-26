@@ -103,8 +103,19 @@ namespace LUSSIS.Repositories
 
         }
 
+        public List<AdjVoucher> GetAllAdjVoucherSearch(string term)
+        {
+            term = term.ToLower();
+            List<AdjVoucher> adjustments = LUSSISContext.AdjVouchers.Where(r => r.RequestEmployee.FirstName.ToLower().Contains(term) || r.RequestEmployee.LastName.ToLower().Contains(term) || r.Status.ToLower().Contains(term) || r.Stationery.Description.ToLower().Contains(term) ||r.Quantity.ToString().Contains(term)||r.Reason.ToLower().Contains(term)||r.Remark.Contains(term)).ToList();
+            return adjustments;
+        }
 
 
+
+        public IEnumerable<AdjVoucher> GetApprovedAdjVoucherByItem(string id)
+        {
+            return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == id && x.Status == "approved");
+        } 
 
 
     }

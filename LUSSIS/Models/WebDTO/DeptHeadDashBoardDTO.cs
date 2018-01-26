@@ -17,6 +17,7 @@ namespace LUSSIS.Models.WebDTO
 
         public List<Employee> GetStaffRepByDepartment { get; set; }
 
-        public Delegate GetDelegateByDate { get; set; }
+        public Delegate GetTodaysDelegate { get; set; }
+        public Employee GetCurrentLoggedIn { get; set; }
     }
 }

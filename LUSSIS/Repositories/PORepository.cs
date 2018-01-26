@@ -163,12 +163,15 @@ namespace LUSSIS.Repositories
 
         public void ValidateReceiveTrans(ReceiveTran receive)
         {
+            PurchaseOrder po = GetById(receive.PoNum);
             int? totalQty = 0;
             foreach (ReceiveTransDetail rdetail in receive.ReceiveTransDetails)
             {
                 totalQty += rdetail.Quantity;
                 if (rdetail.Quantity < 0)
                     throw new Exception("Record not saved, received quantity cannot be negative");
+                if (rdetail.Quantity > po.PurchaseOrderDetails.Where(x => x.ItemNum == rdetail.ItemNum).Select(x => x.OrderQty - x.ReceiveQty).First())
+                    throw new Exception("Record not saved, received quantity cannot exceed ordered qty");
             }
             if (totalQty == 0)
                 throw new Exception("Record not saved, not receipt of goods found");
@@ -189,8 +192,7 @@ namespace LUSSIS.Repositories
                         fulfilled = false;
 
                     //get GST rate
-                    double GST_RATE = 0.07; //=po.Gst/po.totalAmt 
-
+                    double GST_RATE = po.GST/po.PurchaseOrderDetails.Sum(x=>x.OrderQty*x.UnitPrice);
                     //update stationery
                     Stationery s = sr.GetById(po.PurchaseOrderDetails.ElementAt(i).Stationery.ItemNum);
                     s.AverageCost = ((s.AverageCost * s.CurrentQty)
@@ -209,6 +211,16 @@ namespace LUSSIS.Repositories
             if (fulfilled) po.Status = "fulfilled";
             po.ReceiveTrans.Add(receive);
             Update(po);
+        }
+
+        public IEnumerable<ReceiveTransDetail> GetReceiveTransDetailByItem(string id)
+        {
+            return LUSSISContext.ReceiveTransDetails.Where(x => x.ItemNum == id);
+        }
+
+        public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsByStatus(string status)
+        {
+            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status == status);
         }
 
 

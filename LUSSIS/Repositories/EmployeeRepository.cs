@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using LUSSIS.Exceptions;
+using LUSSIS.Extensions;
 
 namespace LUSSIS.Repositories
 {
-    public class EmployeeRepository : Repository<Employee, string>
+    public class EmployeeRepository : Repository<Employee, int>
     {
         DisbursementRepository disRepo = new DisbursementRepository();
 
@@ -31,6 +32,12 @@ namespace LUSSIS.Repositories
         public Department GetDepartmentByUser(Employee employee)
         {
             return LUSSISContext.Departments.First(y => y.DeptCode == employee.DeptCode);
+        }
+
+        public Department GetDepartmentByEmpNum(int EmpNum)
+        {
+            Employee emp = GetById(EmpNum);
+            return emp.Department;
         }
 
         public List<Employee> GetAllByDepartment(Department department)
@@ -64,14 +71,14 @@ namespace LUSSIS.Repositories
         public List<Employee> GetSelectionByDepartment(string prefix, Department department)
         {
             List<Employee> employee = GetStaffRepByDepartment(department);
-            return employee.Where(x => x.FullName.Contains(prefix)).ToList();
+            return employee.Where(x => x.FullName.Contains(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
 
         public List<Employee> GetDelSelectionByDepartment(string prefix, Department department)
         {
             List<Employee> employee = GetStaffOnlyByDepartment(department);
-            return employee.Where(x => x.FullName.Contains(prefix)).ToList();
+            return employee.Where(x => x.FullName.Contains(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         public void UpdateDepartment(Department department)
@@ -94,6 +101,14 @@ namespace LUSSIS.Repositories
             department.RepEmployee.JobTitle = "rep";
             UpdateDepartment(department);
         }
+
+        public void AddRep(Department department, string repEmp)
+        {
+            department.RepEmpNum = Convert.ToInt32(repEmp);
+            UpdateDepartment(department);
+            department.RepEmployee.JobTitle = "rep";
+            Update(department.RepEmployee);
+        }
         
         public List <LUSSIS.Models.Delegate> GetAllDelegates()
         {
@@ -105,7 +120,7 @@ namespace LUSSIS.Repositories
             List<Employee> empList = GetAllByDepartment(department);
             List<Models.Delegate> delList = GetAllDelegates();
             List <Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.Where(y => y.EndDate >= dateTime).FirstOrDefault();
+            return allDel.FirstOrDefault(y => y.EndDate >= dateTime);
         }
 
         public Models.Delegate GetDelegateByDate(Department department, DateTime dateTime)
@@ -113,7 +128,7 @@ namespace LUSSIS.Repositories
             List<Employee> empList = GetAllByDepartment(department);
             List<Models.Delegate> delList = GetAllDelegates();
             List<Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.Where(k => k.StartDate <= dateTime && k.EndDate >= dateTime).FirstOrDefault();
+            return allDel.FirstOrDefault(k => k.StartDate <= dateTime && k.EndDate >= dateTime);
         }
 
         public bool CheckIfLoggedInUserIsDelegate()
@@ -164,6 +179,15 @@ namespace LUSSIS.Repositories
                 
             }
             return valueList;
+        }
+
+        public Employee GetStoreManager()
+        {
+            return LUSSISContext.Employees.Where(x => x.JobTitle == "manager").FirstOrDefault();
+        }
+        public Employee GetStoreSupervisor()
+        {
+            return LUSSISContext.Employees.Where(x => x.JobTitle == "supervisor").FirstOrDefault();
         }
         public List<String>GetAllDepartmentCode()
         {

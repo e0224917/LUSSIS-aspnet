@@ -1,74 +1,51 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Stationery>
 @using PagedList.Mvc;
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Stationery List";
 
 }
 
-<h2>Stationery</h2>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+<h2>Stationery List for Requisition</h2>
 <hr />
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between"  style="border-radius: 5px;">
     <div class="navbar-nav mr-auto"></div>
-    <div class="form-inline my-2 my-lg-0">
-        @using (Html.BeginForm())
-    {
-        <span class="d-inline nav-item nav-link">Find By Description: </span>
-        @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
-        <span class="d-inline nav-item nav-link"><input type="submit" placeholder="Search" class="btn btn-secondary my-2 my-sm-0" /></span>
+   
+    <div class="form-inline">
+        @using (Ajax.BeginForm(new AjaxOptions
+        {
+            HttpMethod = "POST",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "stationeryList"
+        }))
+        {
 
-}
-        <form action="/Requisitions/Index" method="get">
-            <span style="float:right">
+            <span class="d-inline nav-item active nav-link" style="color:whitesmoke">Find By Description </span>
+            @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
+            @*<span class="d-inline nav-item nav-link"><input type="submit" placeholder="Search" class="btn btn-secondary my-2 my-sm-0" /></span>*@
+            <button type="submit" class="btn btn-secondary my-2 my-sm-0 d-inline">Search</button>
+        }
+        @using (Ajax.BeginForm(new AjaxOptions
+        {
+            HttpMethod = "GET",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "stationeryList"
+        }))
+        {
+            <div class="nav-item active nav-link">
                 <input type="submit" value="Show All Stationeries" class="btn btn-secondary my-2 my-sm-0" />
-            </span>
-        </form>
+            </div>
+        }
 
     </div>
 </nav>
 <hr />
 
-<form action="/Requisitions/Index" method="post">   
-        <table class="table table-striped table-hover">
-            <tr>
-                <th>
-                    Description
-                </th>
-                <th>
-                    UOM
-                </th>
-                <th>
-                    Order Quantity
-                <th>
-                    Manage
-                </th>
-            </tr>
+@Html.Partial("_Index", Model)
 
-
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UnitOfMeasure)
-                    </td>
-
-                <td>
-                    <input type="number" name="qty" min="1" max="1000" step="1" value="1" id="qty-@item.ItemNum">
-                </td>
-                <td>
-                    <input type="submit" value="Add To Cart" class="AddLink btn btn-outline-success" data-id="@item.ItemNum" />
-
-                    </td>
-
-                </tr>
-            }
-        </table>
-</form>
-        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }))
 @section scripts {
+
     <script type="text/javascript">
         $(function () {
             // Document.ready -> link up remove event handler
@@ -76,26 +53,20 @@
                 // Get the id from the link
                 var stationeryToAdd = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (stationeryToAdd != '') {
-                    // Perform the ajax post
-                    $.post("/Requisitions/AddToCart", { "id": stationeryToAdd, "qty": qty },
+                if (qty <= 0)
+                {
+                    alert("Please input a valid quantity")
+                }
+                else if (stationeryToAdd !== '') {
+                    // Perform the ajax post                    
+                    $.post("@Url.Content("~/")Requisitions/AddToCart",
+                        { "id": stationeryToAdd, "qty": qty },
                         function (data) {
-                            //alert("Add to cart successfully");
-                            location.reload();
-                            // Successful requests get here
-                            // Update the page elements
-                            //alert("success");
-                            //if (data.ItemCount == 0) {
-                            //    $('#row-' + data.DeleteId).fadeOut('slow');
-                            //} else {
-                            //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
-                            //}
-                            //$('#cart-total').text(data.CartTotal);
-                            //$('#update-message').text(data.Message);
-                            //$('#cart-status').text('Cart (' + data.CartCount + ')');
+                            $("a#cart-number").text("My Cart (" + data + ")");
                         });
                 }
             });
         });
     </script>
+
 }

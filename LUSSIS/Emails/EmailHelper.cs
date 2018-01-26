@@ -12,17 +12,30 @@ namespace LUSSIS.Emails
         public static string DestinationEmail { get; set; }
         public static string Subject { get; set; }
         public static string Body { get; set; }
-        
+
         public static void SendEmail(string destinationEmail, string subject, string body)
         {
-            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
-            client.Credentials = new System.Net.NetworkCredential(@"sa45team7@gmail.com", "Password!123");
-            client.EnableSsl = true;
-            MailMessage mm = new MailMessage("sa45team7@gmail.com", destinationEmail);
-            mm.Subject = subject;
-            mm.Body = body;
+            var client = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new System.Net.NetworkCredential(@"sa45team7@gmail.com", "Password!123"),
+                EnableSsl = true
+            };
+
+            
+
+            var mm = new MailMessage("sa45team7@gmail.com", destinationEmail)
+            {
+                Subject = subject,
+                Body = body
+            };
+
             client.Send(mm);
-            }
+        }
+
+        public static void SendEmail(string subject, string body)
+        {
+            SendEmail("sa45team7@gmail.com", subject, body);
+        }
 
     }
 }

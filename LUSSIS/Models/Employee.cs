@@ -1,3 +1,5 @@
+using LUSSIS.Models.WebAPI;
+
 namespace LUSSIS.Models
 {
     using System;
@@ -34,25 +36,32 @@ namespace LUSSIS.Models
         }
 
         [Key]
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EmpNum { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string Title { get; set; }
 
+        [Required]
         [StringLength(30)]
         public string FirstName { get; set; }
 
+        [Required]
         [StringLength(30)]
         public string LastName { get; set; }
 
+        [Required]
         [StringLength(50)]
         [Display(Name = "Email Address")]
         public string EmailAddress { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string JobTitle { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string DeptCode { get; set; }
 
@@ -87,5 +96,21 @@ namespace LUSSIS.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Requisition> Requisitions1 { get; set; }
+
+        public EmployeeDTO ToApiDTO()
+        {
+            return new EmployeeDTO()
+            {
+                DeptCode = DeptCode,
+                DeptName = Department.DeptName,
+                EmailAddress = EmailAddress,
+                EmpNum = EmpNum,
+                FirstName = FirstName,
+                IsDelegated = false,
+                JobTitle = JobTitle,
+                LastName = LastName,
+                Title = Title
+            };
+        }
     }
 }

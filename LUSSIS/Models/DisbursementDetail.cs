@@ -19,20 +19,23 @@ namespace LUSSIS.Models
         [StringLength(20)]
         public string ItemNum { get; set; }
 
-        public double? UnitPrice { get; set; }
+        [Required]
+        public double UnitPrice { get; set; }
 
+        [Required]
         [Display(Name = "Requested Qty")]
-        public int? RequestedQty { get; set; }
+        public int RequestedQty { get; set; }
 
+        [Required]
         [Display(Name = "Actual Qty")]
-        public int? ActualQty { get; set; }
+        public int ActualQty { get; set; }
 
         public virtual Disbursement Disbursement { get; set; }
 
         public virtual Stationery Stationery { get; set; }
 
         public DisbursementDetail() { }
-        public DisbursementDetail(string itemNum, double? unitPrice, int? requestedQty, Stationery stationery)
+        public DisbursementDetail(string itemNum, double unitPrice, int requestedQty, Stationery stationery)
         {
             ItemNum = itemNum;
             UnitPrice = unitPrice;

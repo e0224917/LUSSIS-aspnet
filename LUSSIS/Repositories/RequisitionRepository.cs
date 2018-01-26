@@ -39,7 +39,7 @@ namespace LUSSIS.Repositories
         private void ConsolidateRequisitionQty(List<RetrievalItemDTO> itemsToRetrieve, IEnumerable<RequisitionDetail> requisitionDetailList)
         {
             //group RequisitionDetail list by item: e.g.: List<ReqDetail>-for-pen, List<ReqDetail>-for-Paper, and store these lists in List:
-            List<List<RequisitionDetail>> groupedReqListByItem = requisitionDetailList.GroupBy(rd=>rd.ItemNum).Select(grp=>grp.ToList()).ToList();
+            List<List<RequisitionDetail>> groupedReqListByItem = requisitionDetailList.GroupBy(rd => rd.ItemNum).Select(grp => grp.ToList()).ToList();
 
             //each list merge into ONE RetrievalItemDTO. e.g.: List<ReqDetail>-for-pen to be converted into ONE RetrievalItemDTO. 
             foreach (List<RequisitionDetail> reqListForOneItem in groupedReqListByItem)
@@ -51,11 +51,11 @@ namespace LUSSIS.Repositories
 
                 foreach (RequisitionDetail rd in reqListForOneItem)
                 {
-                   dto.RequestedQty += rd.Quantity;
+                    dto.RequestedQty += rd.Quantity;
                 }
             }
         }
-       
+
         /*
          * helper method to consolidate each [unfullfilled Disbursements for one item] add to / into [one RetrievalItemDTO]
         */
@@ -78,7 +78,7 @@ namespace LUSSIS.Repositories
             }
         }
 
-        
+
         /*
          * helper method
          * check if a stat's equivlent DTO exist in the target DTO list
@@ -112,62 +112,23 @@ namespace LUSSIS.Repositories
         public List<Requisition> GetPendingRequisitions()
         {
             string deptCode = er.GetCurrentUser().DeptCode;
-            int userEmpNum = er.GetCurrentUser().EmpNum;
-            List<Employee> elist = LUSSISContext.Employees.Where(e => e.DeptCode == deptCode && e.EmpNum != userEmpNum).ToList();
-            List<Requisition> req = new List<Requisition>();
-            foreach (Employee ee in elist)
-            {
-                int EmpNum = ee.EmpNum;
-                List<Requisition> req1 = LUSSISContext.Requisitions.Where(r => r.Status == "pending" && r.RequisitionEmpNum == EmpNum).ToList();
-                if (req1 != null)
-                {
-                    foreach(Requisition ree in req1)
-                    {
-                        req.Add(ree);
-                    }
-                }
-            }
+            List<Requisition> req = LUSSISContext.Requisitions.Where(r => r.Status == "pending" && r.DeptCode == deptCode).ToList();
             return req;
         }
 
         public List<Requisition> GetAllRequisitionsForCurrentUser()
         {
             string deptCode = er.GetCurrentUser().DeptCode;
-            List<Employee> elist = LUSSISContext.Employees.Where(e => e.DeptCode == deptCode).ToList();
-            List<Requisition> req = new List<Requisition>();
-            foreach (Employee ee in elist)
-            {
-                int EmpNum = ee.EmpNum;
-                List<Requisition> req1 = LUSSISContext.Requisitions.Where(r =>r.RequisitionEmpNum == EmpNum).ToList();
-                if (req1 != null)
-                {
-                    foreach (Requisition ree in req1)
-                    {
-                        req.Add(ree);
-                    }
-                }
-            }
+            List<Requisition> req = LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode).ToList();
+
             return req;
         }
 
         public List<Requisition> GetAllRequisitionsSearch(string term)
         {
             string deptCode = er.GetCurrentUser().DeptCode;
-            List<Employee> elist = LUSSISContext.Employees.Where(e => e.DeptCode == deptCode).ToList();
-            List<Requisition> req = new List<Requisition>();
-            term = term.ToLower();
-            foreach (Employee ee in elist)
-            {
-                int EmpNum = ee.EmpNum;
-                List<Requisition> req1 = LUSSISContext.Requisitions.Where(r => r.RequisitionEmpNum == EmpNum && (r.Status.ToLower().Contains(term) || r.RequisitionEmployee.FirstName.ToLower().Contains(term)|| r.RequisitionEmployee.LastName.ToLower().Contains(term) || r.RequestRemarks.ToLower().Contains(term))).ToList();
-                if (req1 != null)
-                {
-                    foreach (Requisition ree in req1)
-                    {
-                        req.Add(ree);
-                    }
-                }
-            }
+                List<Requisition> req = LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode && (r.Status.ToLower().Contains(term) || r.RequisitionEmployee.FirstName.ToLower().Contains(term) || r.RequisitionEmployee.LastName.ToLower().Contains(term) || r.RequisitionDate.ToString().Contains(term) || r.RequestRemarks.ToLower().Contains(term))).ToList();
+
             return req;
         }
 
@@ -175,7 +136,7 @@ namespace LUSSIS.Repositories
 
         public IEnumerable<RequisitionDetail> GetRequisitionDetailsByStatus(string status)
         {
-            return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status ).ToList();
+            return LUSSISContext.RequisitionDetails.Where(r => r.Requisition.Status == status).ToList();
         }
 
         /*
@@ -204,7 +165,7 @@ namespace LUSSIS.Repositories
         }
         public void AddRequisitionDetail(RequisitionDetail requisitionDetail)
         {
-             LUSSISContext.RequisitionDetails.Add(requisitionDetail);
+            LUSSISContext.RequisitionDetails.Add(requisitionDetail);
             LUSSISContext.SaveChanges();
         }
 
@@ -216,10 +177,10 @@ namespace LUSSIS.Repositories
         public IEnumerable<RetrievalItemDTO> GetRetrievalInPorcess()
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
-            
+
             //use disbursement as resource to generate retrieval in process
-            
-            var inProcessDisDetailsGroupedByItem = new DisbursementRepository().GetInProcessDisbursementDetails().GroupBy(x=>x.ItemNum).Select(grp=>grp.ToList()).ToList();
+
+            var inProcessDisDetailsGroupedByItem = new DisbursementRepository().GetInProcessDisbursementDetails().GroupBy(x => x.ItemNum).Select(grp => grp.ToList()).ToList();
 
             foreach (List<DisbursementDetail> disDetailForOneItem in inProcessDisDetailsGroupedByItem)
             {
@@ -252,5 +213,5 @@ namespace LUSSIS.Repositories
         }
     }
 
-    
+
 }

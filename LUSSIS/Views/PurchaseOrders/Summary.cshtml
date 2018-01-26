@@ -5,124 +5,152 @@
 }
 
 <h2>Purchase Order Summary</h2>
-
-<h4>Items Below Reorder Level</h4>
-@if (ViewBag.OutstandingStationeryList.Count == 0)
-{
-    <h6>There are no stationeries recommended for purchase</h6>
-}
-else
-{
-    foreach (KeyValuePair<Supplier, List<Stationery>> entry in @ViewBag.OutstandingStationeryList)
-    {
-        @entry.Key.SupplierName;
-
-        <table class="table">
-            <tr>
-                <th>No</th>
-                <th>Item Description</th>
-                <th>Quantity</th>
-                <th>Reorder Level</th>
-                <th>Reorder Quantity</th>
-            </tr>
-            @for (int i = 0; i < entry.Value.Count; i++)
-            {
-                <tr>
-                    <td>@(i + 1)</td>
-                    <td>@entry.Value[i].Description</td>
-                    <td>@entry.Value[i].CurrentQty</td>
-                    <td>@entry.Value[i].ReorderLevel</td>
-                    <td>@entry.Value[i].ReorderQty</td>
-                </tr>
-            }
-        </table>
-        <div class="text-right">
-            <a href="@Url.Action("Create", new {supplierId=entry.Key.SupplierId })" class="btn-block">Generate PO</a>
+<hr />
+<div class="card border-dark bg-transparent ">
+    <h4 class="card-header border-dark mt-0 bg-dark" style="color:whitesmoke">Items Below Reorder Level</h4>
+    <div class="card-body">
+        @if (ViewBag.OutstandingStationeryList == null || ViewBag.OutstandingStationeryList.Count == 0)
+        {
+        <div class="alert alert-dismissible alert-info">
+            There are no stationeries recommended for purchase
         </div>
-        <br />
-    }
-}
-
-    <h4>Purchase Order Pending Approval</h4>
-    @if (ViewBag.PendingApprovalPOList == null)
-    {
-        <h6>There are no Purchase Orders pending approval</h6>
-    }
-    else
-    {
-        <table class="table">
-            <tr>
-                <th>No</th>
-                <th>Purchase Order No</th>
-                <th>Supplier</th>
-                <th>Created Date</th>
-                <th>Created By</th>
-            </tr>
-            @for (int i = 0; i < ViewBag.pendingApprovalPOList.Count; i++)
+        }
+        else
+        {
+            foreach (KeyValuePair<Supplier, List<Stationery>> entry in @ViewBag.OutstandingStationeryList)
             {
-                <tr>
-                    <td>@(i + 1)</td>
-                    <td><a href="@Url.Action("Details", new {id=ViewBag.PendingApprovalPOList[i].PoNum })">@ViewBag.PendingApprovalPOList[i].PoNum</a></td>
-                    <td>@ViewBag.PendingApprovalPOList[i].Supplier.SupplierName</td>
-                    <td>@ViewBag.PendingApprovalPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
-                    <td>@ViewBag.PendingApprovalPOList[i].OrderEmployee.FullName</td>
-                </tr>
-            }
-        </table>
-    }
+                <h6 class="card-title">@entry.Key.SupplierName</h6>
 
-    <h4>Approved Purchase Order</h4>
-    @if (ViewBag.ApprovedPOList == null)
-    {
-        <h6>There are no Purchase Orders to be sent to suppliers</h6>
-    }
-    else
-    {
-        <table class="table">
-            <tr>
-                <th>No</th>
-                <th>Purchase Order No</th>
-                <th>Supplier</th>
-                <th>Created Date</th>
-                <th>Created By</th>
-            </tr>
-            @for (int i = 0; i < ViewBag.ApprovedPOList.Count; i++)
-            {
-                <tr>
-                    <td>@(i + 1)</td>
-                    <td><a href="@Url.Action("Order", new {p=ViewBag.ApprovedPOList[i].PoNum })">@ViewBag.ApprovedPOList[i].PoNum</a></td>
-                    <td>@ViewBag.ApprovedPOList[i].Supplier.SupplierName</td>
-                    <td>@ViewBag.ApprovedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
-                    <td>@ViewBag.ApprovedPOList[i].OrderEmployee.FullName</td>
-                </tr>
+                <table class="table table-hover table-striped">
+                    <tr class="table-active">
+                        <th>No</th>
+                        <th>Item Description</th>
+                        <th>Quantity</th>
+                        <th>Reorder Level</th>
+                        <th>Reorder Quantity</th>
+                    </tr>
+                    @for (int i = 0; i < entry.Value.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@entry.Value[i].Description</td>
+                            <td>@entry.Value[i].CurrentQty</td>
+                            <td>@entry.Value[i].ReorderLevel</td>
+                            <td>@entry.Value[i].ReorderQty</td>
+                        </tr>
+                    }
+                </table>
+                <div class="text-right">
+                    <a href="@Url.Action("Create", new {supplierId=entry.Key.SupplierId })" class="btn-block btn btn-success">Generate PO</a>
+                </div>
+                <br />
             }
-        </table>
-    }
+        }
+    </div>
+</div>
+<br/>
+<div class="card border-dark bg-transparent ">
+    <h4 class="card-header border-dark bg-dark" style="margin-top: auto;color:whitesmoke">Purchase Order Pending Approval</h4>
 
-    <h4>Purchase Order Awaiting Fulfilment</h4>
-    @if (ViewBag.OrderedPOList == null)
-    {
-        <h6>There are no stationeries expected to arrive</h6>
-    }
-    else
-    {
-        <table class="table">
-            <tr>
-                <th>No</th>
-                <th>Purchase Order No</th>
-                <th>Supplier</th>
-                <th>Created Date</th>
-                <th>Created By</th>
-            </tr>
-            @for (int i = 0; i < ViewBag.OrderedPOList.Count; i++)
-            {
-                <tr>
-                    <td>@(i + 1)</td>
-                    <td><a href="@Url.Action("Receive", new {id=ViewBag.OrderedPOList[i].PoNum })">@ViewBag.OrderedPOList[i].PoNum</a></td>
-                    <td>@ViewBag.OrderedPOList[i].Supplier.SupplierName</td>
-                    <td>@ViewBag.OrderedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
-                    <td>@ViewBag.OrderedPOList[i].OrderEmployee.FullName</td>
+    <div class="card-body">
+
+        @if (ViewBag.PendingApprovalPOList == null || ViewBag.PendingApprovalPOList.Count == 0)
+        {
+            <div class="alert alert-dismissible alert-info">
+                There are no Purchase Orders pending approval
+            </div>
+        }
+        else
+        {
+            <table class="table table-hover table-striped">
+                <tr class="table-active">
+                    <th>No</th>
+                    <th>Purchase Order No</th>
+                    <th>Supplier</th>
+                    <th>Created Date</th>
+                    <th>Created By</th>
                 </tr>
-            }
-        </table>
-    }
+                @for (int i = 0; i < ViewBag.pendingApprovalPOList.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                    <td><button class="btn btn-info btn-sm"><a style="color:whitesmoke" href="@Url.Action("Details", new {id=ViewBag.PendingApprovalPOList[i].PoNum })">@ViewBag.PendingApprovalPOList[i].PoNum</a></button></td>
+                        <td>@ViewBag.PendingApprovalPOList[i].Supplier.SupplierName</td>
+                        <td>@ViewBag.PendingApprovalPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
+                        <td>@ViewBag.PendingApprovalPOList[i].OrderEmployee.FullName</td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</div>
+<br />
+<div class="card border-dark bg-transparent ">
+    <h4 class="card-header border-dark bg-dark" style="margin-top: auto;color:whitesmoke">Approved Purchase Order</h4>
+
+    <div class="card-body">
+        @if (ViewBag.ApprovedPOList == null || ViewBag.ApprovedPOList.Count == 0)
+        {
+            <div class="alert alert-dismissible alert-info">
+                There are no Purchase Orders to be sent to suppliers
+            </div>
+        }
+        else
+        {
+            <table class="table table-hover table-striped">
+                <tr class="table-active">
+                    <th>No</th>
+                    <th>Purchase Order No</th>
+                    <th>Supplier</th>
+                    <th>Created Date</th>
+                    <th>Created By</th>
+                </tr>
+                @for (int i = 0; i < ViewBag.ApprovedPOList.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td><button class="btn btn-info btn-sm"><a style="color:whitesmoke" href="@Url.Action("Order", new {p=ViewBag.ApprovedPOList[i].PoNum })">@ViewBag.ApprovedPOList[i].PoNum</a></button></td>
+                        <td>@ViewBag.ApprovedPOList[i].Supplier.SupplierName</td>
+                        <td>@ViewBag.ApprovedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
+                        <td>@ViewBag.ApprovedPOList[i].OrderEmployee.FullName</td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</div>
+<br />
+<div class="card border-dark bg-transparent ">
+    <h4 class="card-header border-dark bg-dark" style="margin-top: auto;color:whitesmoke">Purchase Order Awaiting Fulfilment</h4>
+
+    <div class="card-body">
+        @if (ViewBag.OrderedPOList == null || ViewBag.OrderedPOList.Count == 0)
+        {
+            <div class="alert alert-dismissible alert-info">
+                There are no stationeries expected to arrive
+            </div>
+        }
+        else
+        {
+            <table class="table table-hover table-striped">
+                <tr class="table-active">
+                    <th>No</th>
+                    <th>Purchase Order No</th>
+                    <th>Supplier</th>
+                    <th>Created Date</th>
+                    <th>Created By</th>
+                </tr>
+                @for (int i = 0; i < ViewBag.OrderedPOList.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td><button class="btn btn-info btn-sm"><a style="color:whitesmoke" href="@Url.Action("Receive", new {p=ViewBag.OrderedPOList[i].PoNum })">@ViewBag.OrderedPOList[i].PoNum</a> </button></td>
+                        <td>@ViewBag.OrderedPOList[i].Supplier.SupplierName</td>
+                        <td>@ViewBag.OrderedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
+                        <td>@ViewBag.OrderedPOList[i].OrderEmployee.FullName</td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</div>

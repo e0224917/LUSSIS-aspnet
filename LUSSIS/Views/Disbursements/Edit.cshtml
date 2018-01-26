@@ -42,9 +42,8 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div><div>
-                @Html.ActionLink("Back to List", "Index")
+                <input type="submit" value="Save" class="btn btn-success"/> | 
+                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
             </div>
         </div>
     </div>
@@ -52,8 +51,7 @@
 
 
 
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+@section scripts {
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
         $(function () {
@@ -65,6 +63,6 @@
                 });
         });
     </script>
-    }
+}
 
 

@@ -10,7 +10,7 @@
 @if (Model == null || !Model.Any())
 {
 <div class="alert alert-dismissible alert-info">
-    <strong> There is no retrieval in process at the moment... </strong> You could arrange one from Consolidated Requisition page
+    <br /><strong> There is no retrieval in process at the moment... </strong><br /> You could arrange one from Consolidated Requisition page<br /><br />
     </div>
 }
 else
@@ -47,7 +47,7 @@ else
                         @Html.DisplayFor(modelItem => item.AvailableQty)
                     </td>
                     <td>
-                        @Html.ActionLink("Adjust Stock", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new{ target="_blank", type="submit", @class= "btn btn-outline-success" })
+                        @Html.ActionLink("Adjust Stock", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new{ target="_blank", type="submit", @class= "btn btn-success btn-sm" })
                     </td>
                 </tr>
             }

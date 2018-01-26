@@ -163,7 +163,7 @@ namespace LUSSIS.Controllers
               //  srepo.UpdateAllStationerySupplier(list);
 
 
-                ViewBag.Success = "No error detected";
+                ViewBag.Success = "Successfully uploaded";
                 return View();
 
             }
@@ -175,22 +175,22 @@ namespace LUSSIS.Controllers
         }
 
         //GET: Suppliers/QuotationTemplate (will download Excel file directly)
-      /*  public ActionResult QuotationTemplate()
+       public ActionResult QuotationTemplate()
         {
             List<StationerySupplierQuote> slist =
-                srepo.GetStationerySupplier().Select(x => new StationerySupplierQuote
+                srepo.GetAllStationerySuppliers().Select(x => new StationerySupplierQuote
                 {
                     ItemCode = x.ItemNum,
                     ItemName = x.Stationery.Description,
                     SupplierCode = x.SupplierId,
                     SupplierName = x.Supplier.SupplierName,
-                    Rank = x.Rank ?? 0,
-                    UnitPrice = x.Price ?? 0
+                    Rank = x.Rank,
+                    UnitPrice = x.Price
                 }).ToList();
 
             byte[] filecontent = StationerySupplierQuote.ConvertListToByte(slist);
             return File(filecontent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "quotations.xlsx");
-        }*/
+        }
 
 
         //helper class to import/export from/to Excel

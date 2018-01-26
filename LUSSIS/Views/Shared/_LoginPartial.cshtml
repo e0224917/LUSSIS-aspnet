@@ -9,13 +9,13 @@
 
         <ul class="nav navbar-nav navbar-right">
 
-            @if (((Session["Roles"] as List<String>).Contains("staff") || (Session["Roles"] as List<String>).Contains("rep")) && (new EmployeeRepository().CheckIfLoggedInUserIsDelegate()!= true))
+            @if (((Session["Roles"] as List<String>).Contains("staff") || (Session["Roles"] as List<String>).Contains("rep")) && (!new EmployeeRepository().CheckIfLoggedInUserIsDelegate()))
             {
                 <li class="nav-item">
-                    @Html.ActionLink("My Cart (" + (Session["MyCart"] as ShoppingCart).GetCartItemCount() + ")", "EmpCart", "Requisitions", null, new { title = "Current Request", @class = "nav-link" })
+                    @Html.ActionLink("My Cart (" + (Session["MyCart"] as ShoppingCart).GetCartItemCount() + ")", "MyCart", "Requisitions", null, new { id="cart-number", title = "Current Request", @class = "nav-link" })
                 </li>
             }
-            <li class="nav-item">
+                <li class="nav-item">
                 @Html.ActionLink("Welcome, " + (string)Session["Name"], "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage Account", @class = "nav-link" })
             </li>
             <li class="nav-item"><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>

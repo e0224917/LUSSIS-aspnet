@@ -14,8 +14,8 @@ namespace LUSSIS.Models.WebDTO
         }
 
         public int ReceiveId { get; set; }
-        public int? PoNum { get; set; }
-        public DateTime? ReceiveDate { get; set; }
+        public int PoNum { get; set; }
+        public DateTime ReceiveDate { get; set; }
         [Required]
         public string InvoiceNum { get; set; }
         [Required]

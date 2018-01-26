@@ -78,6 +78,24 @@ body {
   text-align: left;
   background-color: #fff;
 }
+body {
+    background-image: url('/Images/images2.jpg');
+    background-size: cover;
+    background-repeat: repeat-x;
+    -webkit-background-size: cover; /* For WebKit*/
+    -moz-background-size: cover; /* Mozilla*/
+    -o-background-size: cover; /* Opera*/
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+.footer {
+    position: static;
+    bottom: 0;
+    width: 100%;
+}
+
+
 
 [tabindex="-1"]:focus {
   outline: 0 !important;
@@ -234,8 +252,8 @@ label,
 select,
 summary,
 textarea {
-  -ms-touch-action: manipulation;
-      touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
 }
 
 table {
@@ -273,10 +291,10 @@ button,
 select,
 optgroup,
 textarea {
-  margin: 0;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
 }
 
 button,
@@ -293,7 +311,8 @@ button,
 html [type="button"],
 [type="reset"],
 [type="submit"] {
-  -webkit-appearance: button;
+  /*-webkit-appearance: button;*/
+    -webkit-appearance: none;
 }
 
 button::-moz-focus-inner,
@@ -319,8 +338,10 @@ input[type="month"] {
 }
 
 textarea {
-  overflow: auto;
-  resize: vertical;
+    padding: 20px;
+    width: auto;
+    resize: both;
+    overflow: auto;
 }
 
 fieldset {
@@ -452,10 +473,10 @@ h6, .h6 {
 }
 
 hr {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 small,
@@ -633,6 +654,7 @@ pre code {
   margin-right: -15px;
   margin-left: -15px;
 }
+
 
 .no-gutters {
   margin-right: 0;
@@ -1807,7 +1829,7 @@ pre code {
 .table-dark,
 .table-dark > th,
 .table-dark > td {
-  background-color: #d9c3cf;
+    background-color: #997578;
 }
 
 .table-hover .table-dark:hover {
@@ -1835,9 +1857,9 @@ pre code {
 }
 
 .table .thead-dark th {
-  color: #fff;
-  background-color: #772953;
-  border-color: #642246;
+    color: #fff;
+    background-color: #997578;
+    border-color: #F2DCDE;
 }
 
 .table .thead-light th {
@@ -1846,20 +1868,29 @@ pre code {
   border-color: #dee2e6;
 }
 
-.table-dark {
-  color: #fff;
-  background-color: #772953;
+.table-dark,
+.table-darkheader {
+    color: #fff;
+    background-color: #705658;
 }
 
-.table-dark th,
-.table-dark td,
-.table-dark thead th {
-  border-color: #642246;
-}
+    .table-dark > th,
+    .table-dark > td {
+        background-color: #997578;
+    }
+
+    .table-dark th,
+    .table-dark td,
+    .table-dark thead th {
+        border-color: #F2DCDE;
+    }
+
+
 
 .table-dark.table-bordered {
   border: 0;
 }
+
 
 .table-dark.table-striped tbody tr:nth-of-type(odd) {
   background-color: rgba(255, 255, 255, 0.05);
@@ -2982,17 +3013,17 @@ fieldset[disabled] a.btn {
 }
 
 .btn-outline-dark {
-  color: #772953;
-  background-color: transparent;
-  background-image: none;
-  border-color: #772953;
+    color: #772953;
+    background-color: transparent;
+    background-image: none;
+    border-color: #997578;
 }
 
-.btn-outline-dark:hover {
-  color: #fff;
-  background-color: #772953;
-  border-color: #772953;
-}
+    .btn-outline-dark:hover {
+        color: #fff;
+        background-color: #997578;
+        border-color: #997578;
+    }
 
 .btn-outline-dark:focus, .btn-outline-dark.focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(119, 41, 83, 0.5);
@@ -4378,6 +4409,7 @@ tbody.collapse.show {
   color: #fff;
 }
 
+
 .card {
   position: relative;
   display: -webkit-box;
@@ -5483,12 +5515,20 @@ button.close {
 
 .modal-header {
     min-height: 16.42857143px;
-    padding: 15px;
-    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    -webkit-box-align: start;
+    align-items: flex-start;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    border-top-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
 }
 
     .modal-header .close {
-        margin-top: -2px;
+        padding: 1rem;
+        margin: -1rem -1rem -1rem auto;
     }
 
 .modal-title {
@@ -6132,13 +6172,13 @@ button.bg-light:hover {
 }
 
 .bg-dark {
-  background-color: #772953 !important;
+    background-color: #997578 !important;
 }
 
 a.bg-dark:focus, a.bg-dark:hover,
 button.bg-dark:focus,
 button.bg-dark:hover {
-  background-color: #511c39 !important;
+    background-color: #997578 !important;
 }
 
 .bg-white {

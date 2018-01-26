@@ -15,10 +15,15 @@ using LUSSIS.Emails;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
 using LUSSIS.CustomAuthority;
+using System.Text;
+using System.Data;
+using System.Data.SqlClient;
+using CrystalDecisions.CrystalReports.Engine;
+using System.IO;
 
 namespace LUSSIS.Controllers
 {
-    [Authorize(Roles = "staff, clerk, head")]
+    [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {
 
@@ -47,7 +52,7 @@ namespace LUSSIS.Controllers
         //TODO: Add authroization - DepartmentHead or Delegate only
         [CustomAuthorize("head", "staff")]
         [HttpGet]
-        public ActionResult Detail(int reqId)
+        public ActionResult Details(int reqId)
         {
 
             if (empRepo.GetCurrentUser().JobTitle == "head")
@@ -95,52 +100,70 @@ namespace LUSSIS.Controllers
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(requistions.ToPagedList(pageNumber, pageSize));
+
+            var reqAll = requistions.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_All", reqAll);
+            }
+
+            return View(reqAll);
         }
 
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         [CustomAuthorize("head", "staff")]
         [HttpPost]
-        public async Task<ActionResult> Detail([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks")] Requisition requisition, string SubmitButton)
+        public async Task<ActionResult> Details([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status,DeptCode")] Requisition requisition, string SubmitButton)
         {
             if (requisition.Status == "pending")
             {//requisition must be pending for any approval and reject
-                if ((empRepo.GetCurrentUser().JobTitle == "head" && !empRepo.CheckIfUserDepartmentHasDelegate()) || empRepo.CheckIfLoggedInUserIsDelegate())
+                Employee self = empRepo.GetCurrentUser();
+                bool hasDelegate = empRepo.CheckIfUserDepartmentHasDelegate();
+                if ((self.JobTitle == "head" && !hasDelegate) || hasDelegate)
                 {//if (user is head and there is no delegate) or (user is currently delegate)
-                    if (ModelState.IsValid)
-                    {
-                        requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
-                        requisition.ApprovalDate = DateTime.Today;
-                        if (SubmitButton == "Approve")
-                        {
-                            requisition.Status = "approved";
-                            await reqRepo.UpdateAsync(requisition);
-                            return RedirectToAction("index");
-                        }
-
-                        if (SubmitButton == "Reject")
-                        {
-                            requisition.Status = "reject";
-                            await reqRepo.UpdateAsync(requisition);
-                            return RedirectToAction("index");
-                        }
+                    if(self.DeptCode != empRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum).DeptCode)
+                    {//if user is trying to approve for other department
+                        return View("_unauthoriseAccess");
+                    }
+                    if ((self.EmpNum == requisition.RequisitionEmpNum))
+                    {//if user is trying to self approve (delegate's old requistion)
+                        return View("_unauthoriseAccess");
                     }
                     else
                     {
-                        return RedirectToAction("index");
+                        if (ModelState.IsValid)
+                        {
+                            requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                            requisition.ApprovalDate = DateTime.Today;
+                            if (SubmitButton == "Approve")
+                            {
+                                requisition.Status = "approved";
+                                await reqRepo.UpdateAsync(requisition);
+                                return RedirectToAction("Pending");
+                            }
+
+                            if (SubmitButton == "Reject")
+                            {
+                                requisition.Status = "rejected";
+                                await reqRepo.UpdateAsync(requisition);
+                                return RedirectToAction("Pending");
+                            }
+                        }
+                        else
+                        {
+                            return View(requisition);
+                        }
                     }
-
                 }
+                return View("_hasDelegate");
             }
-            return new HttpUnauthorizedResult();
+            else
+            {
+                return new HttpUnauthorizedResult();
+            }
         }
-
-
-
-
-
-
 
 
         //TODO: return create page, only showing necessary fields
@@ -154,7 +177,7 @@ namespace LUSSIS.Controllers
 
         // TODO: 1. create new requisition, 2. it's status set to pending, 3. send notification to departmenthead
         // [employee page] POST: Requisition/Create
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
@@ -170,7 +193,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only implement once main project is done. Enable editing if status is pending
         // [employee page]  GET: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         public ActionResult Edit(int id)
         {
             return View();
@@ -178,7 +201,7 @@ namespace LUSSIS.Controllers
 
         // TODO: only enable editing if status is pending
         // [employee page]  POST: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -217,11 +240,11 @@ namespace LUSSIS.Controllers
         private RequisitionRepository reqrepo = new RequisitionRepository();
         private StationeryRepository strepo = new StationeryRepository();
         private EmployeeRepository erepo = new EmployeeRepository();
+        
+        
+        
         // GET: DeptEmpReqs
-
-
-        //StoreClerk??
-        [Authorize(Roles = "clerk, staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
             List<Stationery> stationerys = strepo.GetAll().ToList<Stationery>();
@@ -234,39 +257,47 @@ namespace LUSSIS.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 stationerys = strepo.GetByDescription(searchString).ToList();
-                if (stationerys.Count == 0)
-                {
-                    stationerys = strepo.GetAll().ToList();
-                }
+                //if no result, display no result therefore the next 4 lines can be deleted
+                //if (stationerys.Count == 0)
+                //{
+                //    stationerys = strepo.GetAll().ToList();
+                //}
             }
             else
             {
                 stationerys = strepo.GetAll().ToList();
-
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
-            return View(stationerys.ToPagedList(pageNumber, pageSize));
+
+            var stationeryList = stationerys.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_Index", stationeryList);
+            }
+            return View(stationeryList);
         }
 
         // /Requisitions/AddToCart
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
-            Cart cart = new Cart(strepo.GetById(id), qty);
-            (Session["MyCart"] as ShoppingCart).addToCart(cart);
-            return RedirectToAction("Index");
-            //return Json("ok");
-
+            var item = strepo.GetById(id);
+            var cart = new Cart(item, qty);
+            var shoppingCart = Session["MyCart"] as ShoppingCart;
+            shoppingCart?.addToCart(cart);
+            return Json(shoppingCart?.GetCartItemCount());
         }
+
         //GET: MyRequisitions
         //public async Task<ActionResult> EmpReq(int EmpNum)
         //{
         //    return View(reqRepo.GetRequisitionByEmpNum(EmpNum));
         //}
-        [DelegateStaffCustomAuth("staff")]
-        public ActionResult EmpReq(string currentFilter, int? page)
+        [DelegateStaffCustomAuth("staff", "rep")]
+        public ActionResult MyRequisitions(string currentFilter, int? page)
         {
             int id = erepo.GetCurrentUser().EmpNum;
             List<Requisition> reqlist = reqrepo.GetRequisitionByEmpNum(id).OrderByDescending(s => s.RequisitionDate).OrderByDescending(s => s.RequisitionId).ToList();
@@ -275,14 +306,15 @@ namespace LUSSIS.Controllers
             return View(reqlist.ToPagedList(pageNumber, pageSize));
         }
         // GET: Requisitions/EmpReqDetail/5
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpGet]
-        public ActionResult EmpReqDetail(int id)
+        public ActionResult MyRequisitionDetails(int id)
         {
             List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
-        [DelegateStaffCustomAuth("staff")]
+
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult SubmitReq()
         {
@@ -293,20 +325,26 @@ namespace LUSSIS.Controllers
             DateTime reqDate = System.DateTime.Now.Date;
             string status = "pending";
             string remarks = Request["remarks"];
+            string deptCode = erepo.GetCurrentUser().DeptCode;
             if (itemNum != null)
             {
-                Requisition requisition = new Requisition();
-                requisition.RequestRemarks = remarks;
-                requisition.RequisitionDate = reqDate;
-                requisition.RequisitionEmpNum = reqEmp;
-                requisition.Status = status;
+                Requisition requisition = new Requisition()
+                {
+                    RequestRemarks = remarks,
+                    RequisitionDate = reqDate,
+                    RequisitionEmpNum = reqEmp,
+                    Status = status,
+                    DeptCode = deptCode
+                };
                 reqrepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
                 {
-                    RequisitionDetail requisitionDetail = new RequisitionDetail();
-                    requisitionDetail.RequisitionId = requisition.RequisitionId;
-                    requisitionDetail.ItemNum = itemNum[i];
-                    requisitionDetail.Quantity = itemQty[i];
+                    RequisitionDetail requisitionDetail = new RequisitionDetail()
+                    {
+                        RequisitionId = requisition.RequisitionId,
+                        ItemNum = itemNum[i],
+                        Quantity = itemQty[i]
+                    };
                     reqrepo.AddRequisitionDetail(requisitionDetail);
                     body += strepo.GetById(requisitionDetail.ItemNum).Description.PadRight(30, ' ') + "\t\t" + strepo.GetById(requisitionDetail.ItemNum).UnitOfMeasure.PadRight(30, ' ') + "\t\t" + requisitionDetail.Quantity.ToString().PadRight(30, ' ') + "\n";
                 }
@@ -320,45 +358,50 @@ namespace LUSSIS.Controllers
                 string destinationEmail = "cuirunzesg@gmail.com";
                 string subject = erepo.GetCurrentUser().FullName + " requested stationeries";
                 EmailHelper.SendEmail(destinationEmail, subject, body);
-                return RedirectToAction("EmpReq");
+                return RedirectToAction("MyRequisitions");
             }
-            else
-            {
-                return RedirectToAction("EmpCart");
-            }
+
+            return RedirectToAction("MyCart");
         }
 
-        [DelegateStaffCustomAuth("staff")]
-        public ActionResult EmpCart()
+        [DelegateStaffCustomAuth("staff", "rep")]
+        public ActionResult MyCart()
         {
             ShoppingCart mycart = (ShoppingCart)Session["MyCart"];
             return View(mycart.GetAllCartItem());
         }
 
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult DeleteCartItem(string id, int qty)
         {
+            var myCart = Session["MyCart"] as ShoppingCart;
+            myCart?.deleteCart(id);
 
-            ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
-            mycart.deleteCart(id);
-            return RedirectToAction("EmpCart");
+            return Json(id);
         }
 
-        [DelegateStaffCustomAuth("staff")]
+        [DelegateStaffCustomAuth("staff", "rep")]
         [HttpPost]
         public ActionResult UpdateCartItem(string id, int qty)
         {
 
             ShoppingCart mycart = Session["MyCart"] as ShoppingCart;
+            Cart c = new Cart();
             foreach (Cart cart in mycart.shoppingCart)
             {
                 if (cart.stationery.ItemNum == id)
                 {
+                     c = cart;
                     cart.quantity = qty;
+                    break;
                 }
             }
-            return RedirectToAction("EmpCart");
+            if (c.quantity<=0)
+            {
+                mycart.shoppingCart.Remove(c);
+            }
+            return RedirectToAction("MyCart");
         }
         //Stock Clerk's page
         [Authorize(Roles = "clerk")]
@@ -426,25 +469,102 @@ namespace LUSSIS.Controllers
         {
 
             Requisition req = reqRepo.GetById(RADTO.RequisitionId);
-            if (req.Status == "pending")
-            {//must be pending for approval and reject
-                if ((empRepo.GetCurrentUser().JobTitle == "head" && !empRepo.CheckIfUserDepartmentHasDelegate()) || empRepo.CheckIfLoggedInUserIsDelegate())
-                {//if (user is head and there is no delegate) or (user is currently delegate)
-                    if (ModelState.IsValid)
-                    {
-                        req.Status = RADTO.Status;
-                        req.ApprovalRemarks = RADTO.ApprovalRemarks;
-                        req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
-                        req.ApprovalDate = DateTime.Today;
-                        reqRepo.Update(req);
-                        return PartialView();
-                    }
-                    else { return PartialView(RADTO); } //invalid modelstate
+            if (req != null)
+            {
+                if (req.Status == "pending")
+                {//must be pending for approval and reject
+                    Employee self = empRepo.GetCurrentUser();
+                    bool hasDelegate = empRepo.CheckIfUserDepartmentHasDelegate();
+                    if ((self.JobTitle == "head" && !hasDelegate) || hasDelegate)
+                    {//if (user is head and there is no delegate) or (user is currently delegate)
+                        if (self.DeptCode != empRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum).DeptCode)
+                        {//if user is trying to approve for other department
+                            return PartialView("_unauthoriseAccess");
+                        }
+                        if ((self.EmpNum == req.RequisitionEmpNum))
+                        {//if user is trying to self approve 
+                            return PartialView("_unauthoriseAccess");
+                        }
+                        if (ModelState.IsValid)
+                        {
+                            if (req.ApprovalEmpNum == empRepo.GetCurrentUser().EmpNum)
+                            {
 
+                                return PartialView("_unuthoriseAccess");
+                            }
+                            else
+                            {
+                                req.Status = RADTO.Status;
+                                req.ApprovalRemarks = RADTO.ApprovalRemarks;
+                                req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                                req.ApprovalDate = DateTime.Today;
+                                reqRepo.Update(req);
+
+                                string destinationEmail = req.RequisitionEmployee.EmailAddress;         
+                                string subject = "Requistion " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status;
+                                StringBuilder body = new StringBuilder("Your Requisition " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status + " by " + req.ApprovalEmployee.FullName);
+                                body.AppendLine("Requested: ");
+                                List<RequisitionDetail> rd = reqRepo.GetRequisitionDetail(RADTO.RequisitionId).ToList();
+                                if (rd != null)
+                                {
+                                    foreach (RequisitionDetail r in rd)
+                                    {
+                                        body.AppendLine("Item: " +r.Stationery.Description);
+                                        body.AppendLine("Quantity: "+ r.Quantity.ToString());
+                                        body.AppendLine("");
+                                    }
+                                }
+                                else
+                                {
+                                    body.AppendLine("Nothing found");
+                                }
+                                EmailHelper.SendEmail(destinationEmail, subject, body.ToString());
+
+
+                                return PartialView();
+
+
+                            }
+                        }
+                        else { return PartialView(RADTO); } //invalid modelstate
+
+                    }
+                    else { return PartialView("_hasDelegate"); }
                 }
-                else { return PartialView("_hasDelegate"); } //user is head and there is delegate case 
+                else { return PartialView("_unuthoriseAccess"); }
             }
-            return PartialView("_unuthoriseAccess"); //cannot edit a non pending requisition
+            return PartialView("_unuthoriseAccess");
         }
+
+        public ActionResult PrintRetrieval()
+        {
+            DataSet ds = new DataSet();
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Path.Combine(Server.MapPath("~/Reports/RetrieveCrystalReport.rpt")));
+            rd.SetDataSource(reqRepo.GetRetrievalInPorcess()
+                .Select(x=>new RetrievalItemDTO
+                {
+                    BinNum=x.BinNum,
+                    Description=x.Description,
+                    UnitOfMeasure=x.UnitOfMeasure,
+                    RequestedQty= x.RequestedQty??0,
+                    AvailableQty=x.AvailableQty??0})
+                .ToList());
+            Response.Buffer = false;
+            Response.ClearContent();
+            Response.ClearHeaders();
+            Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+            stream.Seek(0, SeekOrigin.Begin);
+            return File(stream, "application/pdf");
+        }
+        private class RetrievalItemDTO
+        {
+            public string BinNum { get; set; }
+            public string Description { get; set; }
+            public string UnitOfMeasure { get; set; }
+            public int RequestedQty { get; set; }
+            public int AvailableQty{ get; set; }
+
+    }
     }
 }
