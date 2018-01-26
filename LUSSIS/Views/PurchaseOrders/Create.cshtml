@@ -57,7 +57,7 @@
                         <p></p>
                         <label class="control-label col-md-12">GST Registration No</label>
                         <div class="col-md-12">
-                            <input class="form-control" value="@ViewBag.Supplier.GstRegistration" />
+                            <input class="form-control" value="@ViewBag.Supplier.GstRegistration" disabled/>
                         </div>
                     </div>
 
@@ -91,7 +91,7 @@
                             string itemNum = Model.PurchaseOrderDetailsDTO[i].ItemNum;
                         }
                         <td style="width:5%">@(i + 1)</td>
-                        <td style="width:33%">@Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].ItemNum, new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.Description", itemNum), new { @class = "line_item form-control" })</td>
+                        <td style="width:33%">@Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].ItemNum, new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.Description", itemNum), new { @class = "line_item form-control"})</td>
                         <td style="width:7%">@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { htmlAttributes = new { @class = "line_qty form-control", @min = "0" } })</td>
                         <td style="width:15%">@Html.DropDownList("unit_of_measure", new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.UnitOfMeasure", itemNum), new { @class = "unit_of_measure form-control", @disabled = true })</td>
                         <td style="width:20%">
