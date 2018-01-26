@@ -34,7 +34,7 @@ namespace LUSSIS.Controllers
             dbdto.GetDelegate = employeeRepo.GetFutureDelegate(dbdto.Department, DateTime.Now.Date);
             dbdto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(dbdto.Department);
             dbdto.GetRequisitionListCount = reqRepo.GetPendingListForHead(dbdto.Department.DeptCode).Count();
-            dbdto.GetDelegateByDate = employeeRepo.GetDelegateByDate(dbdto.Department, DateTime.Now.Date);
+            dbdto.GetTodaysDelegate = employeeRepo.GetDelegateByDate(dbdto.Department, DateTime.Now.Date);
 
             return View(dbdto);
         }
@@ -121,7 +121,7 @@ namespace LUSSIS.Controllers
                 del.EndDate = endDate;
                 delegateRepo.Add(del);      
             }
-            return RedirectToAction("DeptDelegate");
+            return RedirectToAction("MyDelegate");
         }
 
         [CustomAuthorize("head")]
@@ -134,7 +134,7 @@ namespace LUSSIS.Controllers
                 Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
                 employeeRepo.DeleteDelegate(department);
             }
-            return RedirectToAction("DeptDelegate");
+            return RedirectToAction("MyDelegate");
         }
 
         [CustomAuthorize("head")]
@@ -151,7 +151,7 @@ namespace LUSSIS.Controllers
         }
 
         [CustomAuthorize("head")]
-        public ActionResult DeptDelegate()
+        public ActionResult MyDelegate()
         {
             raddto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
             raddto.GetDelegate = employeeRepo.GetFutureDelegate(raddto.Department, DateTime.Now.Date);

@@ -114,7 +114,7 @@ namespace LUSSIS.Repositories
             List<Employee> empList = GetAllByDepartment(department);
             List<Models.Delegate> delList = GetAllDelegates();
             List <Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.Where(y => y.EndDate >= dateTime).FirstOrDefault();
+            return allDel.FirstOrDefault(y => y.EndDate >= dateTime);
         }
 
         public Models.Delegate GetDelegateByDate(Department department, DateTime dateTime)
@@ -122,7 +122,7 @@ namespace LUSSIS.Repositories
             List<Employee> empList = GetAllByDepartment(department);
             List<Models.Delegate> delList = GetAllDelegates();
             List<Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.Where(k => k.StartDate <= dateTime && k.EndDate >= dateTime).FirstOrDefault();
+            return allDel.FirstOrDefault(k => k.StartDate <= dateTime && k.EndDate >= dateTime);
         }
 
         public bool CheckIfLoggedInUserIsDelegate()
