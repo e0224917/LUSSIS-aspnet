@@ -171,7 +171,8 @@ namespace LUSSIS.Controllers
                 PurchaseOrder purchaseOrder = new PurchaseOrder();
 
                 //set PO values
-                purchaseOrder.OrderEmpNum = er.GetCurrentUser().EmpNum;
+                var CurrentUser = er.GetCurrentUser();
+                purchaseOrder.OrderEmpNum = CurrentUser.EmpNum;
                 if (purchaseOrderDTO.CreateDate == null)
                     purchaseOrder.CreateDate = DateTime.Today;
                 else
@@ -206,10 +207,19 @@ namespace LUSSIS.Controllers
 
                 //save to database
                 pr.Add(purchaseOrder);
-
+                
+                //send email to supervisor
+                StringBuilder emailForSupervisor = new StringBuilder("New Purchase Order Created");
+                emailForSupervisor.AppendLine("This email is automatically generated and requires no reply to the sender.");
+                emailForSupervisor.AppendLine("Purchase Order No " + purchaseOrder.PoNum);
+                emailForSupervisor.AppendLine("Created By "+ CurrentUser.FullName);
+                emailForSupervisor.AppendLine("Created On " + purchaseOrder.CreateDate.ToString("dd-MM-yyyy"));
+                string subject = "New Purchase Order";
+                Emails.EmailHelper.SendEmail(subject, emailForSupervisor.ToString());
 
                 //send email if using non=primary supplier
                 StringBuilder emailBody = new StringBuilder("Non-Primary Suppliers in Purchase Order "+ purchaseOrder.PoNum);
+                emailForSupervisor.AppendLine("This email is automatically generated and requires no reply to the sender.");
                 emailBody.AppendLine("Created for Supplier: "+sur.GetById(purchaseOrder.SupplierId).SupplierName);
                 int index = 0;
                 foreach (PurchaseOrderDetail pdetail in purchaseOrder.PurchaseOrderDetails)
@@ -227,9 +237,8 @@ namespace LUSSIS.Controllers
                 }
                 if(index>0)
                 {
-                    string destination = "purchasing_dept@logicunversity.edu";
-                    string subject = "Purchasing from Non-Primary Supplier";
-                    //Emails.EmailHelper.SendEmail(destination,subject,emailBody.ToString());
+                    subject = "Purchasing from Non-Primary Supplier";
+                    Emails.EmailHelper.SendEmail(subject,emailBody.ToString());
                 }
 
                 return RedirectToAction("Summary");
