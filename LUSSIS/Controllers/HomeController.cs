@@ -63,5 +63,15 @@ namespace LUSSIS.Controllers
 
             return View();
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _delegateRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

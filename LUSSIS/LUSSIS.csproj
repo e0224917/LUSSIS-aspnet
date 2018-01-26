@@ -362,6 +362,7 @@
       <DependentUpon>RetrieveCrystalReport.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Repositories\CategoryRepository.cs" />
     <Compile Include="Repositories\CollectionRepository.cs" />
     <Compile Include="Repositories\DelegateRepository.cs" />
     <Compile Include="Repositories\DepartmentRepository.cs" />

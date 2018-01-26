@@ -57,17 +57,6 @@ namespace LUSSIS.Repositories
             && y.JobTitle == "staff").ToList();
         }
 
-        public List<Employee> GetStaffByDepartmentCode(String deptCode)
-        {
-            return LUSSISContext.Employees.Where(y => y.DeptCode == deptCode
-                                                      && y.JobTitle == "staff").ToList();
-        }
-
-        public List<Employee> GetAllStoreClerk()
-        {
-            return GetStaffByDepartmentCode("STNR").Where(x => x.JobTitle == "clerk").ToList();
-        }
-
         public List<Employee> GetSelectionByDepartment(string prefix, Department department)
         {
             List<Employee> employee = GetStaffRepByDepartment(department);

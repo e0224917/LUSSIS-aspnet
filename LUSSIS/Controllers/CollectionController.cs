@@ -48,5 +48,17 @@ namespace LUSSIS.Controllers
 
             return RedirectToAction("SetCollection");
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _disbursementRepo.Dispose();
+                _collectionRepo.Dispose();
+                _departmentRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

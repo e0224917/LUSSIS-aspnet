@@ -9,9 +9,6 @@ namespace LUSSIS.Repositories
 {
     public class StationeryRepository : Repository<Stationery, string>, IStationeryRepository
     {
-        public StationeryRepository()
-        {
-        }
         public IEnumerable<Category> GetAllCategories()
         {
             return LUSSISContext.Categories.ToList();
@@ -26,13 +23,6 @@ namespace LUSSIS.Repositories
             });
         }
 
-        public String GetCategoryInitial(string categoryId)
-        {
-            int catId = Int32.Parse(categoryId);   
-            Category cat = LUSSISContext.Categories.Where(x => x.CategoryId == catId).First();
-            return cat.CategoryName.Substring(0, 1);
-        }
-
         public int GetLastRunningPlusOne(string initial)
         {
             List<Stationery> st = LUSSISContext.Stationeries.Where(x => x.ItemNum.StartsWith(initial)).ToList();
@@ -45,7 +35,7 @@ namespace LUSSIS.Repositories
             return (haha.Last() + 1);
         }
 
-        public void AddSS(StationerySupplier stationerySupplier)
+        public void AddStationerySupplier(StationerySupplier stationerySupplier)
         {
             LUSSISContext.Set<StationerySupplier>().Add(stationerySupplier);
             LUSSISContext.SaveChanges();
@@ -53,7 +43,7 @@ namespace LUSSIS.Repositories
 
         public StationerySupplier GetSSByIdRank(string id, int rank)
         {
-            return LUSSISContext.StationerySuppliers.Where(x => x.ItemNum == id && x.Rank == rank).FirstOrDefault();
+            return LUSSISContext.StationerySuppliers.FirstOrDefault(x => x.ItemNum == id && x.Rank == rank);
         }
 
         

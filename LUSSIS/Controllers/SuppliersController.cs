@@ -17,13 +17,13 @@ namespace LUSSIS.Controllers
     [Authorize(Roles = "clerk")]
     public class SuppliersController : Controller
     {
-        private SupplierRepository repo = new SupplierRepository();
-        private StationeryRepository srepo = new StationeryRepository();
+        private readonly SupplierRepository _supplierRepo = new SupplierRepository();
+        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
 
         // GET: Suppliers
         public async Task<ActionResult> Index()
         {
-            return View(await repo.GetAllAsync());
+            return View(await _supplierRepo.GetAllAsync());
         }
 
         // GET: Suppliers/Details/5
@@ -33,11 +33,13 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier supplier = await repo.GetByIdAsync((int)id);
+
+            var supplier = await _supplierRepo.GetByIdAsync((int) id);
             if (supplier == null)
             {
                 return HttpNotFound();
             }
+
             return View(supplier);
         }
 
@@ -52,15 +54,14 @@ namespace LUSSIS.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")] Supplier supplier)
+        public async Task<ActionResult> Create(
+            [Bind(Include = "SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")]
+            Supplier supplier)
         {
-            if (ModelState.IsValid)
-            {
-                await repo.AddAsync(supplier);
-                return RedirectToAction("Index");
-            }
+            if (!ModelState.IsValid) return View(supplier);
 
-            return View(supplier);
+            await _supplierRepo.AddAsync(supplier);
+            return RedirectToAction("Index");
         }
 
         // GET: Suppliers/Edit/5
@@ -70,11 +71,13 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier supplier = await repo.GetByIdAsync((int)id);
+
+            var supplier = await _supplierRepo.GetByIdAsync((int) id);
             if (supplier == null)
             {
                 return HttpNotFound();
             }
+
             return View(supplier);
         }
 
@@ -83,14 +86,14 @@ namespace LUSSIS.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "SupplierId,SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")] Supplier supplier)
+        public async Task<ActionResult> Edit(
+            [Bind(Include = "SupplierId,SupplierName,ContactName,TelephoneNum,FaxNum,Address,GstRegistration")]
+            Supplier supplier)
         {
-            if (ModelState.IsValid)
-            {
-                await repo.UpdateAsync(supplier);
-                return RedirectToAction("Index");
-            }
-            return View(supplier);
+            if (!ModelState.IsValid) return View(supplier);
+
+            await _supplierRepo.UpdateAsync(supplier);
+            return RedirectToAction("Index");
         }
 
         // GET: Suppliers/Delete/5
@@ -100,11 +103,13 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier supplier = await repo.GetByIdAsync((int)id);
+
+            var supplier = await _supplierRepo.GetByIdAsync((int) id);
             if (supplier == null)
             {
                 return HttpNotFound();
             }
+
             return View(supplier);
         }
 
@@ -113,13 +118,13 @@ namespace LUSSIS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Supplier supplier = await repo.GetByIdAsync(id);
+            var supplier = await _supplierRepo.GetByIdAsync(id);
             try
             {
-                await repo.DeleteAsync(supplier);
+                await _supplierRepo.DeleteAsync(supplier);
                 return RedirectToAction("Index");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 ModelState.AddModelError("", "This supplier has existed stationeries.");
                 return View(supplier);
@@ -130,13 +135,16 @@ namespace LUSSIS.Controllers
         {
             if (disposing)
             {
-                repo.Dispose();
+                _supplierRepo.Dispose();
+                _stationeryRepo.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
 
         #region Quotations
+
         //GET: Suppliers/Quotation
         [HttpGet]
         public ActionResult Quotation()
@@ -160,12 +168,11 @@ namespace LUSSIS.Controllers
                 StationerySupplierQuote.ValidateData(list);
 
                 //upload data
-              //  srepo.UpdateAllStationerySupplier(list);
+                //  _stationeryRepo.UpdateAllStationerySupplier(list);
 
 
                 ViewBag.Success = "Successfully uploaded";
                 return View();
-
             }
             catch (Exception e)
             {
@@ -175,10 +182,10 @@ namespace LUSSIS.Controllers
         }
 
         //GET: Suppliers/QuotationTemplate (will download Excel file directly)
-       public ActionResult QuotationTemplate()
+        public ActionResult QuotationTemplate()
         {
             List<StationerySupplierQuote> slist =
-                srepo.GetAllStationerySuppliers().Select(x => new StationerySupplierQuote
+                _stationeryRepo.GetAllStationerySuppliers().Select(x => new StationerySupplierQuote
                 {
                     ItemCode = x.ItemNum,
                     ItemName = x.Stationery.Description,
@@ -189,7 +196,8 @@ namespace LUSSIS.Controllers
                 }).ToList();
 
             byte[] filecontent = StationerySupplierQuote.ConvertListToByte(slist);
-            return File(filecontent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "quotations.xlsx");
+            return File(filecontent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "quotations.xlsx");
         }
 
 
@@ -204,7 +212,6 @@ namespace LUSSIS.Controllers
             public string SupplierName { get; set; }
 
 
-
             public static byte[] ConvertListToByte(IEnumerable<StationerySupplierQuote> slist)
             {
                 byte[] filecontent = null;
@@ -212,11 +219,13 @@ namespace LUSSIS.Controllers
                 {
                     ExcelWorksheet ws = pk.Workbook.Worksheets.Add("quotations");
                     //fill header
-                    string[] headerString = new string[] { "Item Code", "Item Name", "Unit Price", "Rank", "Supplier Code", "Supplier Name" };
+                    string[] headerString = new string[]
+                        {"Item Code", "Item Name", "Unit Price", "Rank", "Supplier Code", "Supplier Name"};
                     for (int i = 1; i < 6; i++)
                     {
                         ws.Cells[1, i].Value = headerString[i - 1];
                     }
+
                     //fill data
                     ws.Cells["A2"].LoadFromCollection(slist);
                     filecontent = pk.GetAsByteArray();
@@ -224,6 +233,7 @@ namespace LUSSIS.Controllers
 
                 return filecontent;
             }
+
             public static List<StationerySupplier> ConvertToList(Stream stream)
             {
                 List<StationerySupplier> list = new List<StationerySupplier>();
@@ -235,7 +245,7 @@ namespace LUSSIS.Controllers
                     while (ws.Cells[currentRow, 1].Value != null)
                     {
                         StationerySupplier ss = new StationerySupplier();
-                        ss.ItemNum = (string)ws.Cells[currentRow, 1].Value;
+                        ss.ItemNum = (string) ws.Cells[currentRow, 1].Value;
                         ss.Rank = Convert.ToInt32(ws.Cells[currentRow, 4].Value);
                         ss.Price = Convert.ToDouble(ws.Cells[currentRow, 3].Value);
                         ss.SupplierId = Convert.ToInt32(ws.Cells[currentRow, 5].Value);
@@ -244,7 +254,10 @@ namespace LUSSIS.Controllers
                     }
                 }
                 catch (Exception e)
-                { throw new Exception("Problems reading uploaded file, please follow template provided"); }
+                {
+                    throw new Exception("Problems reading uploaded file, please follow template provided");
+                }
+
                 return list;
             }
 
@@ -253,20 +266,23 @@ namespace LUSSIS.Controllers
                 StationeryRepository srepo = new StationeryRepository();
                 SupplierRepository repo = new SupplierRepository();
 
-               // IEnumerable<StationerySupplier> originalList = srepo.GetStationerySupplier();
+                // IEnumerable<StationerySupplier> originalList = _stationeryRepo.GetStationerySupplier();
                 //check that all supplier id is valid
                 if (list.Select(x => x.SupplierId).Distinct().Except(repo.GetAll().Select(x => x.SupplierId)).Any())
                     throw new Exception("Supplier Code is not valid");
                 List<string> itemlist = srepo.GetAll().Select(x => x.ItemNum).ToList();
-                if (list.Select(x => x.ItemNum).Distinct().Except(itemlist).Any() || itemlist.Except(list.Select(x => x.ItemNum).Distinct()).Any())
+                if (list.Select(x => x.ItemNum).Distinct().Except(itemlist).Any() ||
+                    itemlist.Except(list.Select(x => x.ItemNum).Distinct()).Any())
                     throw new Exception("Stationery in the file does not match database");
                 List<string> itemlist2 = list.Where(x => x.Rank == 1).Select(x => x.ItemNum).Distinct().ToList();
-                if (list.Where(x => x.Rank == 1).Select(x => x.ItemNum).Distinct().Count() != (srepo.GetAll().Select(x => x.ItemNum).Count()))
+                if (list.Where(x => x.Rank == 1).Select(x => x.ItemNum).Distinct().Count() !=
+                    (srepo.GetAll().Select(x => x.ItemNum).Count()))
                     throw new Exception("Each stationery should have at least one primary supplier");
-                if (list.Select(x => new { x.ItemNum, x.Rank }).Distinct().Count() > list.Count)
+                if (list.Select(x => new {x.ItemNum, x.Rank}).Distinct().Count() > list.Count)
                     throw new Exception("Stationery with duplicated supplier/ranks detected");
             }
         }
+
         #endregion
     }
 }

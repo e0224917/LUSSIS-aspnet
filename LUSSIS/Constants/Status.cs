@@ -20,4 +20,11 @@
         public const string Approved = "approved";
         public const string Rejected = "rejected";
     }
+
+    public class POStatus
+    {
+        public const string Pending = "pending";
+        public const string Ordered = "ordered";
+        public const string Approved = "approved";
+    }
 }
