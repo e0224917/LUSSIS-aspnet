@@ -3,7 +3,7 @@
 
 <div id="stationeryList">
     <table class="table table-striped table-hover">
-            <tr>
+            <tr class="table-active">
                 <th>
                     #Bin
                 </th>
@@ -45,10 +45,10 @@
                 @Html.DisplayFor(modelItem => item.CurrentQty)
             </td>
 
-            <td>
+            <td class="btn-group">
 
-                @Html.ActionLink("View Details", "Details", new { id = item.ItemNum }, new { @class = "btn btn-sm btn-outline-info" })
-                @Html.ActionLink("Adjust", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new { @class = "btn btn-sm btn-outline-primary" })
+                @Html.ActionLink("View Details", "Details", new { id = item.ItemNum }, new { @class = "btn btn-sm btn-info d-inline" })&nbsp;
+                @Html.ActionLink("Adjust", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new { @class = "btn btn-sm btn-primary d-inline" })
 
             </td>
         </tr>
