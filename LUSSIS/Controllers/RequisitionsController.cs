@@ -114,10 +114,16 @@ namespace LUSSIS.Controllers
         {
             if (requisition.Status == "pending")
             {//requisition must be pending for any approval and reject
-                if ((empRepo.GetCurrentUser().JobTitle == "head" && !empRepo.CheckIfUserDepartmentHasDelegate()) || empRepo.CheckIfLoggedInUserIsDelegate())
+                Employee self = empRepo.GetCurrentUser();
+                bool hasDelegate = empRepo.CheckIfUserDepartmentHasDelegate();
+                if ((self.JobTitle == "head" && !hasDelegate) || hasDelegate)
                 {//if (user is head and there is no delegate) or (user is currently delegate)
-                    if ((empRepo.GetCurrentUser().EmpNum == requisition.RequisitionEmpNum))
-                    {
+                    if(self.DeptCode != empRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum.ToString()).DeptCode)
+                    {//if user is trying to approve for other department
+                        return View("_unauthoriseAccess");
+                    }
+                    if ((self.EmpNum == requisition.RequisitionEmpNum))
+                    {//if user is trying to self approve 
                         return View("_unauthoriseAccess");
                     }
                     else
@@ -458,33 +464,56 @@ namespace LUSSIS.Controllers
         {
 
             Requisition req = reqRepo.GetById(RADTO.RequisitionId);
-            if (req.Status == "pending")
-            {//must be pending for approval and reject
-                if ((empRepo.GetCurrentUser().JobTitle == "head" && !empRepo.CheckIfUserDepartmentHasDelegate()) || empRepo.CheckIfLoggedInUserIsDelegate())
-                {//if (user is head and there is no delegate) or (user is currently delegate)
-                    if (ModelState.IsValid)
-                    {
-                        if (req.ApprovalEmpNum == empRepo.GetCurrentUser().EmpNum)
+            if (req != null)
+            {
+                if (req.Status == "pending")
+                {//must be pending for approval and reject
+                    Employee self = empRepo.GetCurrentUser();
+                    bool hasDelegate = empRepo.CheckIfUserDepartmentHasDelegate();
+                    if ((self.JobTitle == "head" && !hasDelegate) || hasDelegate)
+                    {//if (user is head and there is no delegate) or (user is currently delegate)
+                        if (self.DeptCode != empRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum.ToString()).DeptCode)
+                        {//if user is trying to approve for other department
+                            return PartialView("_unauthoriseAccess");
+                        }
+                        if ((self.EmpNum == req.RequisitionEmpNum))
+                        {//if user is trying to self approve 
+                            return PartialView("_unauthoriseAccess");
+                        }
+                        if (ModelState.IsValid)
                         {
+                            if (req.ApprovalEmpNum == empRepo.GetCurrentUser().EmpNum)
+                            {
 
-                            return PartialView("_unuthoriseAccess");
+                                return PartialView("_unuthoriseAccess");
+                            }
+                            else
+                            {
+                                req.Status = RADTO.Status;
+                                req.ApprovalRemarks = RADTO.ApprovalRemarks;
+                                req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                                req.ApprovalDate = DateTime.Today;
+                                reqRepo.Update(req);
+
+                                string destinationEmail = "cuirunzesg@gmail.com"; //req.RequisitionEmployee.EmailAddress;         
+                                string subject = "Your Requisition " + req.RequisitionId + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status;
+                                string body = "Your Requisition " + req.RequisitionId + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status + " by " + req.ApprovalEmployee.FullName;
+
+                                EmailHelper.SendEmail(destinationEmail, subject, body);
+
+
+                                return PartialView();
+
+
+                            }
                         }
-                        else
-                        {
-                            req.Status = RADTO.Status;
-                            req.ApprovalRemarks = RADTO.ApprovalRemarks;
-                            req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
-                            req.ApprovalDate = DateTime.Today;
-                            reqRepo.Update(req);
-                            return PartialView();
-                        }
+                        else { return PartialView(RADTO); } //invalid modelstate
+
                     }
-                    else { return PartialView(RADTO); } //invalid modelstate
-
+                    else { return PartialView("_hasDelegate"); }
                 }
-                else { return PartialView("_hasDelegate"); }
+                else { return PartialView("_unuthoriseAccess"); }
             }
-
             return PartialView("_unuthoriseAccess");
         }
     }
