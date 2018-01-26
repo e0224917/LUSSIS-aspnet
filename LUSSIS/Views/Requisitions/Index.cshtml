@@ -57,8 +57,12 @@
                 // Get the id from the link
                 var stationeryToAdd = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (stationeryToAdd !== '') {
-                    // Perform the ajax post
+                if (qty <= 0)
+                {
+                    alert("Please input a valid quantity")
+                }
+                else if (stationeryToAdd !== '') {
+                    // Perform the ajax post                    
                     $.post("@Url.Content("~/")Requisitions/AddToCart",
                         { "id": stationeryToAdd, "qty": qty },
                         function (data) {
