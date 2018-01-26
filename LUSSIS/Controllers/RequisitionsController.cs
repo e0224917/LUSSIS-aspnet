@@ -496,11 +496,25 @@ namespace LUSSIS.Controllers
                                 req.ApprovalDate = DateTime.Today;
                                 reqRepo.Update(req);
 
-                                string destinationEmail = "cuirunzesg@gmail.com"; //req.RequisitionEmployee.EmailAddress;         
+                                string destinationEmail = req.RequisitionEmployee.EmailAddress;         
                                 string subject = "Requistion " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status;
-                                //StringBuilder body = new StringBuilder("Your Requisition " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status + " by " + req.ApprovalEmployee.FullName);
-                                //List<RequisitionDetail> rd = 
-                                //EmailHelper.SendEmail(destinationEmail, subject, body);
+                                StringBuilder body = new StringBuilder("Your Requisition " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status + " by " + req.ApprovalEmployee.FullName);
+                                body.AppendLine("Requested: ");
+                                List<RequisitionDetail> rd = reqRepo.GetRequisitionDetail(RADTO.RequisitionId).ToList();
+                                if (rd != null)
+                                {
+                                    foreach (RequisitionDetail r in rd)
+                                    {
+                                        body.AppendLine("Item: " +r.Stationery.Description);
+                                        body.AppendLine("Quantity: "+ r.Quantity.ToString());
+                                        body.AppendLine("");
+                                    }
+                                }
+                                else
+                                {
+                                    body.AppendLine("Nothing found");
+                                }
+                                EmailHelper.SendEmail(destinationEmail, subject, body.ToString());
 
 
                                 return PartialView();
