@@ -183,6 +183,10 @@ namespace LUSSIS.Controllers
             else
             {
                 Stationery st = strepo.GetById(id);
+                if (st == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
                 StationerynDTO nDTO = new StationerynDTO
                 {
                     SupplierList = srepo.GetSupplierList(),
