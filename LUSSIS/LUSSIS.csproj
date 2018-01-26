@@ -364,6 +364,7 @@
     </Compile>
     <Compile Include="Repositories\CollectionRepository.cs" />
     <Compile Include="Repositories\DelegateRepository.cs" />
+    <Compile Include="Repositories\DepartmentRepository.cs" />
     <Compile Include="Repositories\DisbursementRepository.cs" />
     <Compile Include="Emails\EmailHelper.cs" />
     <Compile Include="Repositories\EmployeeRepository.cs" />

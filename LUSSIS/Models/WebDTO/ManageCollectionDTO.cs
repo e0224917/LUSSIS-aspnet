@@ -17,9 +17,9 @@ namespace LUSSIS.Models.WebDTO
             }
         }
 
-        public int DeptCollectionPointID { get; set; }
+        public int DeptCollectionPointId { get; set; }
 
-        public IEnumerable<CollectionPoint> GetAll { get; set; }
+        public IEnumerable<CollectionPoint> CollectionPoints { get; set; }
 
     }
 }

@@ -1,7 +1,5 @@
-﻿using LUSSIS.Models;
-using LUSSIS.Models.WebDTO;
+﻿using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
-using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,107 +8,45 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Controllers
 {
-
-[Authorize(Roles = "rep")]
+    [Authorize(Roles = "rep")]
     public class CollectionController : Controller
     {
-        DisbursementRepository disbursementRepo = new DisbursementRepository();
-        EmployeeRepository employeeRepo = new EmployeeRepository();
-        CollectionRepository collectionRepo = new CollectionRepository();
- 
-        ManageCollectionDTO mcdto = new ManageCollectionDTO();
+        private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
+        private readonly CollectionRepository _collectionRepo = new CollectionRepository();
+        private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
 
+        // GET: /Collection/
         public ActionResult Index()
         {
-            string employeeDept = employeeRepo.GetCurrentUser().DeptCode;          
-            Disbursement disbursement = disbursementRepo.GetByDateAndDeptCode(DateTime.Now, employeeDept);
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+            var disbursement = _disbursementRepo.GetByDateAndDeptCode(DateTime.Now, deptCode);
             return View(disbursement);
         }
 
+        // GET: /Collection/SetCollection
         public ActionResult SetCollection()
         {
-            string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
-            mcdto.CollectionPoint = disbursementRepo.GetCollectionPointByDeptCode(employeeDept);
-            mcdto.GetAll = collectionRepo.GetAll();
+            var manageCollectionDto = new ManageCollectionDTO();
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+            manageCollectionDto.CollectionPoint = _disbursementRepo.GetCollectionPointByDeptCode(deptCode);
+            manageCollectionDto.CollectionPoints = _collectionRepo.GetAll();
 
-            return View(mcdto);
+            return View(manageCollectionDto);
         }
 
-
-
+        // POST: /Collection/UpdateCollection
         [HttpPost]
-        public ActionResult UpdateCollection(ManageCollectionDTO mcdto)
+        public ActionResult UpdateCollection(ManageCollectionDTO manageCollectionDto)
         {
-            if (ModelState.IsValid)
-            {
-                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
-                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                department.CollectionPointId = mcdto.DeptCollectionPointID;
-                employeeRepo.UpdateDepartment(department);
-            }
-            
+            if (!ModelState.IsValid) return RedirectToAction("SetCollection");
+
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+            var department = _departmentRepo.GetById(deptCode);
+
+            department.CollectionPointId = manageCollectionDto.DeptCollectionPointId;
+            _departmentRepo.Update(department);
+
             return RedirectToAction("SetCollection");
-        }
-
-
-        // POST: Collection/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Collection/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Collection/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Collection/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Collection/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }
