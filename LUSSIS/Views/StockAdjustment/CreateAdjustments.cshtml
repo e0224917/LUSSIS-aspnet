@@ -16,7 +16,7 @@
 {
     @Html.AntiForgeryToken()
     <Table class="table table-striped table-hover">
-        <tr>
+        <tr class="table-active">
             <th>@Html.LabelFor(model => model.MyList.First().ItemNum, "Item Code")</th>
             <th>@Html.LabelFor(model => model.MyList.First().Sign)</th>
             <th>@Html.LabelFor(model => model.MyList.First().Quantity)</th>
@@ -51,7 +51,7 @@
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script type="text/javascript">
-        $(document).on("click", ".deleteContact", function () {
+        $(document).on("click", ".deleteEntry", function () {
             $(this).closest("tr").remove();
         });
         $(document).ready(function () {

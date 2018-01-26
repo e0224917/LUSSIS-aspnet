@@ -109,13 +109,7 @@ namespace LUSSIS.Controllers
             ViewBag.disburse = disburse;
             if (disburse == null)
             {
-                List<SelectListItem> datePeriod = new List<SelectListItem>() {
-                    new SelectListItem() { Value="Last Month",Text="Last Month",Selected=true},
-                    new SelectListItem() { Value="Past 3 Months",Text="Past 3 Months"},
-                    new SelectListItem() { Value="Past 6 Months",Text="Past 6 Months"},
-                    new SelectListItem() { Value="Past 12 Months",Text="Past 12 Months"},
-                };
-                ViewBag.DatePeriod = new List<string>() { "Last Month", "Past 3 Months", "Past 6 Months", "Past 12 Months" };
+                ViewBag.ChartType = new string[] { "bar chart","stacked bar chart","stack bar chart 2"};
                 ViewBag.Suppliers = sur.GetAll().Select(x => new SelectListItem { Value = x.SupplierId.ToString(), Text = x.SupplierName }).ToList();
                 ViewBag.Categories = sr.GetAllCategories().Select(x => new SelectListItem { Value = x.CategoryId.ToString(), Text = x.CategoryName }).ToList();
                 ViewBag.Departments = er.GetDepartmentAll().Select(x => new SelectListItem { Value = x.DeptCode, Text = x.DeptName }).ToList();
@@ -129,11 +123,16 @@ namespace LUSSIS.Controllers
             //get filters
             Request.InputStream.Position = 0;
             var input = new StreamReader(Request.InputStream).ReadToEnd();
-            string suppliers= new Regex(@"suppliers=([^ ]+), ").Match(input).Groups[0].Value;
+            string startdate = new Regex(@"startdate=([^ ]+), ").Match(input).Groups[0].Value;
+            DateTime startDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToInt64(startdate.Substring(10, startdate.Length - 12))).ToLocalTime();
+            string enddate = new Regex(@"enddate=([^ ]+), ").Match(input).Groups[0].Value;
+            DateTime endDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToInt64(enddate.Substring(8, enddate.Length - 10))).ToLocalTime();
+            string suppliers = new Regex(@"suppliers=([^ ]+), ").Match(input).Groups[0].Value;
             if (suppliers == "suppliers=null, ")
             {
                 suppliers = "";
-            } else
+            }
+            else
             {
                 suppliers = suppliers.Substring(10, suppliers.Length - 12);
             }
@@ -155,20 +154,124 @@ namespace LUSSIS.Controllers
             {
                 categories = categories.Substring(11, categories.Length - 13);
             }
-            bool isdisburse = new Regex(@"isdisburse=([^ ]+), ").Match(input).Groups[0].Value=="isdisburse=True, ";
-            bool iscost = new Regex(@"isdisburse=([^ ]+), ").Match(input).Groups[0].Value == "iscost=True}";
+            bool isdisburse = new Regex(@"isdisburse=([^ ]+), ").Match(input).Groups[0].Value == "isdisburse=True, ";
+            bool iscost = new Regex(@"iscost=([^ ]+), ").Match(input).Groups[0].Value == "iscost=True, ";
+            string charttype = new Regex(@"charttype=([^ ]+), ").Match(input).Groups[0].Value;
+
+            //initialize data
+            string[] labels;
+            double[] data;
+            string[] backgroundcolor;
 
 
-            var disburse = disRepo.GetDisbursementDetailsByStatus("fulfilled")
-                .GroupBy(x => x.Disbursement.DeptCode)
-                .Select(x => new {DeptCode=x.Key, Qty=x.Sum(a=>a.ActualQty) })
-                .OrderByDescending(x=>x.Qty);
+            //get data
+            double[] dataArr;
+            string[] labelArr;
+            
+            if (isdisburse)
+            {
+                IEnumerable<DisbursementDetail> disburseData = disRepo.GetDisbursementDetailsByStatus("fulfilled")
+                    .Where(x=>x.Disbursement.CollectionDate>=startDate && x.Disbursement.CollectionDate<=endDate);
+                disburseData = FilterDisbursementDetailByDepartment(disburseData, departments);
+                disburseData = FilterDisbursementDetailByCategory(disburseData, categories);
+                var disburse = disburseData.GroupBy(x => x.Disbursement.CollectionDate.ToString("yyyy-MM"));
+                if (iscost) {
+                    var dataSetArr = disburse.Select(x => new { Key = x.Key, Cost = x.Sum(a => a.UnitPrice*a.ActualQty) }).OrderBy(x => x.Key);
+                    dataArr = dataSetArr.Select(x => x.Cost).ToArray();
+                    labelArr = dataSetArr.Select(x => x.Key).ToArray();
+                }
+                else
+                {
+                var dataSetArr=disburse.Select(x => new { Key = x.Key, Qty = x.Sum(a => a.ActualQty) }).OrderBy(x => x.Key);
+                    dataArr = dataSetArr.Select(x => Convert.ToDouble(x.Qty)).ToArray();
+                    labelArr = dataSetArr.Select(x => x.Key).ToArray();
+                }                
+            }
+            else
+            {
+                IEnumerable<PurchaseOrderDetail> poData = pr.GetPurchaseOrderDetailsByStatus("fulfilled")
+                    .Where(x => x.PurchaseOrder.CreateDate >= startDate && x.PurchaseOrder.CreateDate <= endDate);
+                poData = FilterPurchaseOrderDetailBySupplier(poData, suppliers);
+                poData = FilterPurchaseOrderDetailByCategory(poData, categories);
+                var purchase = poData.GroupBy(x => x.PurchaseOrder.CreateDate.ToString("yyyy-MM"));
+                if (iscost)
+                {
+                    var dataSetArr = purchase.Select(x => new { Key = x.Key, Cost = x.Sum(a => a.UnitPrice * a.OrderQty) }).OrderBy(x => x.Key);
+                    dataArr = dataSetArr.Select(x => x.Cost).ToArray();
+                    labelArr = dataSetArr.Select(x => x.Key).ToArray();
+                }
+                else
+                {
+                    var dataSetArr = purchase.Select(x => new { Key = x.Key, Qty = x.Sum(a => a.OrderQty) }).OrderBy(x => x.Key);
+                    dataArr = dataSetArr.Select(x => Convert.ToDouble(x.Qty)).ToArray();
+                    labelArr = dataSetArr.Select(x => x.Key).ToArray();
+                }
+            }
+            return Json(new { Data = dataArr, Label = labelArr }, JsonRequestBehavior.AllowGet);
+        }
 
 
-            int[] dataArr = disburse.Select(x => x.Qty).ToArray();
-            string[] labelArr = disburse.Select(x=>x.DeptCode).ToArray();
+        public List<DisbursementDetail> FilterDisbursementDetailByDepartment(IEnumerable<DisbursementDetail> data, string departments)
+        {
+            IEnumerable<DisbursementDetail> result = data.ToList();
+            if (departments != "")
+            {
+                string[] deptArr = departments.Split(',');
+                List<DisbursementDetail> newResult = new List<DisbursementDetail>();
+                foreach (string deptCode in deptArr)
+                {
+                    newResult.AddRange(result.Where(x => x.Disbursement.DeptCode == deptCode));
+                }
+                return newResult;
+            }
+            return result.ToList();
+        }
 
-            return Json(new {Data = dataArr, Label = labelArr }, JsonRequestBehavior.AllowGet);
+        public List<DisbursementDetail> FilterDisbursementDetailByCategory(IEnumerable<DisbursementDetail> data, string categories)
+        {
+            IEnumerable<DisbursementDetail> result = data.ToList();
+            if (categories != "")
+            {
+                string[] catArr = categories.Split(',');
+                List<DisbursementDetail> newResult = new List<DisbursementDetail>();
+                foreach (string catId in catArr)
+                {
+                    newResult.AddRange(result.Where(x => x.Stationery.CategoryId == Convert.ToInt32(catId)));
+                }
+                return newResult;
+            }
+            return result.ToList();
+        }
+        public List<PurchaseOrderDetail> FilterPurchaseOrderDetailBySupplier(IEnumerable<PurchaseOrderDetail> data, string departments)
+        {
+            IEnumerable<PurchaseOrderDetail> result = data.ToList();
+            if (departments != "")
+            {
+                string[] deptArr = departments.Split(',');
+                List<PurchaseOrderDetail> newResult = new List<PurchaseOrderDetail>();
+                foreach (string supplierId in deptArr)
+                {
+                    newResult.AddRange(result.Where(x => x.PurchaseOrder.SupplierId == Convert.ToInt32(supplierId)));
+                }
+                return newResult;
+            }
+            return result.ToList();
+        }
+
+        public List<PurchaseOrderDetail> FilterPurchaseOrderDetailByCategory(IEnumerable<PurchaseOrderDetail> data, string categories)
+        {
+            IEnumerable<PurchaseOrderDetail> result = data.ToList();
+            if (categories != "")
+            {
+                string[] catArr = categories.Split(',');
+                List<PurchaseOrderDetail> newResult = new List<PurchaseOrderDetail>();
+                foreach (string catId in catArr)
+                {
+                    newResult.AddRange(result.Where(x => x.Stationery.CategoryId == Convert.ToInt32(catId)));
+                }
+                return newResult;
+            }
+            return result.ToList();
         }
 
     }

@@ -34,6 +34,12 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Departments.First(y => y.DeptCode == employee.DeptCode);
         }
 
+        public Department GetDepartmentByEmpNum(string EmpNum)
+        {
+            Employee emp = GetById(EmpNum);
+            return emp.Department;
+        }
+
         public List<Employee> GetAllByDepartment(Department department)
         {
             return LUSSISContext.Employees.Where(k => k.DeptCode == department.DeptCode).ToList();

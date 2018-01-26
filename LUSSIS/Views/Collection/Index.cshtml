@@ -5,84 +5,75 @@
 }
 
 <h2>Upcoming Collection</h2>
+<hr />
 
-<table class="table table-hover">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.CollectionDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
-        </th>
-    </tr>
-    @if (Model != null)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(model => model.CollectionDate)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
-                &nbsp;&nbsp;@Html.DisplayFor(model => model.CollectionPoint.Time)
-            </td>
-        </tr>
-    }
-
-</table>
-@if (Model == null)
+@if (@Model == null || @Model.DisbursementDetails.Count == 0)
 {
-<table class="table table-hover">
-    <tr>
-        No disbursement to be collected at the moment.
-    </tr>
-</table>
+    <div class="alert alert-dismissible alert-info"><br/>
+        <strong>No disbursement to be collected at the moment.</strong> <br/><br/>
+    </div>
 }
-
-<table class="table table-hover">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.DisbursementDetails.First().Stationery.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DisbursementDetails.First().Stationery.UnitOfMeasure)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DisbursementDetails.First().RequestedQty)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DisbursementDetails.First().ActualQty)
-        </th>
-    </tr>
-
-    @if (Model != null)
-    {
-        foreach (var item in Model.DisbursementDetails)
-        {
-            <tr>
-
+else
+{
+    <table class="table table-dark">
+        <tr class="table-active">
+            <th>
+                @Html.DisplayNameFor(model => model.CollectionDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
+            </th>
+        </tr>
+         <tr class="table-dark">
                 <td>
-                    @Html.DisplayFor(modelItem => item.Stationery.Description)
+                    @Html.DisplayFor(model => model.CollectionDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RequestedQty)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ActualQty)
+                    @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
+                    &nbsp;&nbsp;@Html.DisplayFor(model => model.CollectionPoint.Time)
                 </td>
             </tr>
-        }
-    }
-</table>
-@if (Model == null)
-{
-    <table class="table">
-        <tr>
-            No records found.
-        </tr>
+        
     </table>
-}
+ 
+    <h5>Items to be collected</h5>
+    <table class="table table-hover">
+        <tr class="table-active">
+            <th>
+                @Html.DisplayNameFor(model => model.DisbursementDetails.First().Stationery.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisbursementDetails.First().Stationery.UnitOfMeasure)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisbursementDetails.First().RequestedQty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisbursementDetails.First().ActualQty)
+            </th>
+        </tr>
 
+            @foreach (var item in Model.DisbursementDetails)
+            {
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Stationery.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RequestedQty)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ActualQty)
+                    </td>
+                </tr>
+  
+        }
+    </table>
+
+
+}
 

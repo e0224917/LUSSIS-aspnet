@@ -159,7 +159,7 @@ namespace LUSSIS.Repositories
             foreach (Employee ee in elist)
             {
                 int EmpNum = ee.EmpNum;
-                List<Requisition> req1 = LUSSISContext.Requisitions.Where(r => r.RequisitionEmpNum == EmpNum && (r.Status.ToLower().Contains(term) || r.RequisitionEmployee.FirstName.ToLower().Contains(term)|| r.RequisitionEmployee.LastName.ToLower().Contains(term) || r.RequestRemarks.ToLower().Contains(term))).ToList();
+                List<Requisition> req1 = LUSSISContext.Requisitions.Where(r => r.RequisitionEmpNum == EmpNum && (r.Status.ToLower().Contains(term) || r.RequisitionEmployee.FirstName.ToLower().Contains(term)|| r.RequisitionEmployee.LastName.ToLower().Contains(term) || r.RequisitionDate.ToString().Contains(term) || r.RequestRemarks.ToLower().Contains(term))).ToList();
                 if (req1 != null)
                 {
                     foreach (Requisition ree in req1)
