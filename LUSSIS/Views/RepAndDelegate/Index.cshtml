@@ -90,7 +90,7 @@
                         }
                         @if (@Model.GetDelegate.StartDate>DateTime.Today)
                         {
-                            <h6 class="text-muted">Activated in @((int)(Model.GetDelegate.StartDate.Subtract(DateTime.Now)).TotalDays) days</h6>
+                            <h6 class="text-muted">Starting in @((int)(Model.GetDelegate.StartDate.Subtract(DateTime.Now)).TotalDays) days</h6>
                         }
                         
                     </div> <div class="card-footer text-center">
@@ -132,9 +132,7 @@
         <input type="submit" class="btn btn-secondary" value="Revoke Delegate" style="width: 100%" disabled=""/>
 }
         </div>
-
-
-        </div>
+         </div>
         </div>
     }
     <div class="col-lg-4 col-md-4 text-center">

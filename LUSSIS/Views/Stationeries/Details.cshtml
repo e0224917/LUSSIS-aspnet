@@ -6,7 +6,7 @@
 @{ int balance = ViewBag.InitBal;}
 <div>
     <div class="row">
-        <div class="card col-lg-4">
+        <div class="card col-lg-4 border-dark">
             <div class="card-body">
                 <div class="form-group">
                     <label class="control-label col-md-12"><strong>Stationery Name</strong></label>
@@ -21,15 +21,13 @@
                     </div>
                 </div>
                 <br />
-                <div class="form-group">
-                    <div>@Html.ActionLink("Edit", "Edit", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-warning btn-sm" })</div>
-                </div>
-                <div class="form-group">
-                    <div>@Html.ActionLink("Stock Adjustment","CreateAdjustment", "StockAdjustment",  new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-primary btn-sm" })</div>
+                <div class="row ml-3">
+                    <div>@Html.ActionLink("Edit", "Edit", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-warning d-inline mr-2" })</div>
+                    <div>@Html.ActionLink("Stock Adjustment","CreateAdjustment", "StockAdjustment",  new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-primary d-inline" })</div>
                 </div>
             </div>
         </div>
-        <div class="card col-lg-4">
+        <div class="card col-lg-4 border-dark">
             <div class="card-body">
                 <div class="form-group">
                     <label class="control-label col-md-12"><strong>1st Supplier</strong></label>
@@ -53,7 +51,7 @@
 
             </div>
         </div>
-        <div class="card col-lg-4">
+        <div class="card col-lg-4 border-dark">
             <div class="card-body">
                 <div class="form-group">
                     <label class="control-label col-md-12"><strong>Reorder Level</strong></label>
