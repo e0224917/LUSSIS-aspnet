@@ -12,6 +12,8 @@ using LUSSIS.Repositories;
 using LUSSIS.Models.WebDTO;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace LUSSIS.Controllers
 {
@@ -101,11 +103,82 @@ namespace LUSSIS.Controllers
             return Json(new { firstList = Name, secondList = Value }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public ActionResult TrendAnalysis(bool? disburse)
+        {
+            ViewBag.disburse = disburse;
+            if (disburse == null)
+            {
+                List<SelectListItem> datePeriod = new List<SelectListItem>() {
+                    new SelectListItem() { Value="Last Month",Text="Last Month",Selected=true},
+                    new SelectListItem() { Value="Past 3 Months",Text="Past 3 Months"},
+                    new SelectListItem() { Value="Past 6 Months",Text="Past 6 Months"},
+                    new SelectListItem() { Value="Past 12 Months",Text="Past 12 Months"},
+                };
+                ViewBag.DatePeriod = new List<string>() { "Last Month", "Past 3 Months", "Past 6 Months", "Past 12 Months" };
+                ViewBag.Suppliers = sur.GetAll().Select(x => new SelectListItem { Value = x.SupplierId.ToString(), Text = x.SupplierName }).ToList();
+                ViewBag.Categories = sr.GetAllCategories().Select(x => new SelectListItem { Value = x.CategoryId.ToString(), Text = x.CategoryName }).ToList();
+                ViewBag.Departments = er.GetDepartmentAll().Select(x => new SelectListItem { Value = x.DeptCode, Text = x.DeptName }).ToList();
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult TrendAnalysisJSON()
+        {
+            //get filters
+            Request.InputStream.Position = 0;
+            var input = new StreamReader(Request.InputStream).ReadToEnd();
+            string suppliers= new Regex(@"suppliers=([^ ]+), ").Match(input).Groups[0].Value;
+            if (suppliers == "suppliers=null, ")
+            {
+                suppliers = "";
+            } else
+            {
+                suppliers = suppliers.Substring(10, suppliers.Length - 12);
+            }
+            string departments = new Regex(@"departments=([^ ]+), ").Match(input).Groups[0].Value;
+            if (departments == "departments=null, ")
+            {
+                departments = "";
+            }
+            else
+            {
+                departments = departments.Substring(12, departments.Length - 14);
+            }
+            string categories = new Regex(@"categories=([^ ]+), ").Match(input).Groups[0].Value;
+            if (categories == "categories=null, ")
+            {
+                categories = "";
+            }
+            else
+            {
+                categories = categories.Substring(11, categories.Length - 13);
+            }
+            bool isdisburse = new Regex(@"isdisburse=([^ ]+), ").Match(input).Groups[0].Value=="isdisburse=True, ";
+            bool iscost = new Regex(@"isdisburse=([^ ]+), ").Match(input).Groups[0].Value == "iscost=True}";
 
 
+            var disburse = disRepo.GetDisbursementDetailsByStatus("fulfilled")
+                .GroupBy(x => x.Disbursement.DeptCode)
+                .Select(x => new {DeptCode=x.Key, Qty=x.Sum(a=>a.ActualQty) })
+                .OrderByDescending(x=>x.Qty);
 
 
+            int[] dataArr = disburse.Select(x => x.Qty).ToArray();
+            string[] labelArr = disburse.Select(x=>x.DeptCode).ToArray();
+
+            return Json(new {Data = dataArr, Label = labelArr }, JsonRequestBehavior.AllowGet);
+        }
 
     }
-
+    public class TrendAnalysisDTO
+    {
+        public List<string> Suppliers { get; set; }
+        public List<string> Categories { get; set; }
+        public List<string> Departments { get; set; }
+        public string DatePeriod { get; set; }
+        public bool IsDisburse { get; set; }
+        public bool IsCost { get; set; }
+    }
 }

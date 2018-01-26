@@ -178,31 +178,38 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            Stationery st = strepo.GetById(id);
-            StationeryDTO nDTO = new StationeryDTO
+            else
             {
-                SupplierList = srepo.GetSupplierList(),
-                CategoryList = strepo.GetCategories(),
-                ItemNum = id,
-                BinNum = st.BinNum,
-                CategoryId = st.CategoryId.ToString(),
-                Description = st.Description,
-                ReorderLevel = st.ReorderLevel,
-                ReorderQty = st.ReorderQty,
-                UnitOfMeasure = st.UnitOfMeasure
-            };
-            StationerySupplier ss1 = strepo.GetSSByIdRank(id,1);
-            nDTO.SupplierName1 = ss1.SupplierId.ToString();
-            nDTO.Price1 = ss1.Price;
-            StationerySupplier ss2 = strepo.GetSSByIdRank(id,2);
-            nDTO.SupplierName2 = ss2.SupplierId.ToString();
-            nDTO.Price2 = ss2.Price;
-            StationerySupplier ss3 = strepo.GetSSByIdRank(id, 3);
-            nDTO.SupplierName3 = ss3.SupplierId.ToString();
-            nDTO.Price3 = ss3.Price;
 
-            return View(nDTO);
+                Stationery st = strepo.GetById(id);
+                if (st == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                StationeryDTO nDTO = new StationeryDTO
+                {
+                    SupplierList = srepo.GetSupplierList(),
+                    CategoryList = strepo.GetCategories(),
+                    ItemNum = id,
+                    BinNum = st.BinNum,
+                    CategoryId = st.CategoryId.ToString(),
+                    Description = st.Description,
+                    ReorderLevel = st.ReorderLevel,
+                    ReorderQty = st.ReorderQty,
+                    UnitOfMeasure = st.UnitOfMeasure
+                };
+                StationerySupplier ss1 = strepo.GetSSByIdRank(id, 1);
+                nDTO.SupplierName1 = ss1.SupplierId.ToString();
+                nDTO.Price1 = ss1.Price;
+                StationerySupplier ss2 = strepo.GetSSByIdRank(id, 2);
+                nDTO.SupplierName2 = ss2.SupplierId.ToString();
+                nDTO.Price2 = ss2.Price;
+                StationerySupplier ss3 = strepo.GetSSByIdRank(id, 3);
+                nDTO.SupplierName3 = ss3.SupplierId.ToString();
+                nDTO.Price3 = ss3.Price;
+
+                return View(nDTO);
+            }
         }
 
         [HttpPost]
