@@ -648,6 +648,7 @@
     <Content Include="Views\StockAdjustment\_History.cshtml" />
     <Content Include="Views\Stationeries\Create1.cshtml" />
     <Content Include="Views\Stationeries\Edit1.cshtml" />
+    <Content Include="Views\SupervisorDashboard\TrendAnalysis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

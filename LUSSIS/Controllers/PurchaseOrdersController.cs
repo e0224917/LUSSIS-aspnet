@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Helpers;
@@ -105,7 +106,7 @@ namespace LUSSIS.Controllers
 
             //get list of recommended for purchase stationery and put in purchase order details
             var a = sr.GetOutstandingStationeryByAllSupplier();
-            foreach(KeyValuePair<Supplier,List<Stationery>> kvp in a)
+            foreach (KeyValuePair<Supplier, List<Stationery>> kvp in a)
             {
                 if (kvp.Key.SupplierId == supplier.SupplierId)
                 {
@@ -195,7 +196,7 @@ namespace LUSSIS.Controllers
                         newPdetail.ReceiveQty = 0;
                         purchaseOrder.PurchaseOrderDetails.Add(newPdetail);
                     }
-                    else if(pdetail.OrderQty < 0)
+                    else if (pdetail.OrderQty < 0)
                         throw new Exception("Purchase Order was not created, ordered quantity cannot be negative");
                 }
                 if (purchaseOrder.PurchaseOrderDetails.Count == 0)
@@ -205,6 +206,32 @@ namespace LUSSIS.Controllers
 
                 //save to database
                 pr.Add(purchaseOrder);
+
+
+                //send email if using non=primary supplier
+                StringBuilder emailBody = new StringBuilder("Non-Primary Suppliers in Purchase Order "+ purchaseOrder.PoNum);
+                emailBody.AppendLine("Created for Supplier: "+sur.GetById(purchaseOrder.SupplierId).SupplierName);
+                int index = 0;
+                foreach (PurchaseOrderDetail pdetail in purchaseOrder.PurchaseOrderDetails)
+                {
+                    Stationery s = sr.GetById(pdetail.ItemNum);
+                    if (s.PrimarySupplier().SupplierId != purchaseOrder.SupplierId)
+                    {
+                        index++;
+                        emailBody.AppendLine("Index: "+index);
+                        emailBody.AppendLine("Stationery: "+s.Description);
+                        emailBody.AppendLine("Primary Supplier: "+s.PrimarySupplier().SupplierName);
+                        emailBody.AppendLine();
+                    }
+
+                }
+                if(index>0)
+                {
+                    string destination = "purchasing_dept@logicunversity.edu";
+                    string subject = "Purchasing from Non-Primary Supplier";
+                    //uncomment to use
+                    //Emails.EmailHelper.SendEmail(destination,subject,emailBody.ToString());
+                }
 
                 return RedirectToAction("Summary");
             }
@@ -394,8 +421,9 @@ public static class StationeryExtension
         double price = 0;
         foreach (StationerySupplier ss in s.StationerySuppliers)
         {
-            if (ss.SupplierId == supplierId) {
-                price=ss.Price;
+            if (ss.SupplierId == supplierId)
+            {
+                price = ss.Price;
                 break;
             }
         }

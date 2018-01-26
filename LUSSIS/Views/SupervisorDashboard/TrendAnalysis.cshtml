@@ -1,0 +1,156 @@
+﻿@model LUSSIS.Controllers.TrendAnalysisDTO
+@{
+    Layout = null;
+    ViewBag.Title = "TrendAnalysis1";
+}
+
+
+
+<div class="container">
+    <div class="row bg-primary">
+        <h4 class="text-center">Trend Analysis Chart Builder</h4>
+    </div>
+    <br />
+    <div class="row">
+        <div class="card-body col-lg-3">
+            <label type="text" class="control-label col-md-12"><strong>Date Range</strong></label>
+            <input name="DateRange" />
+        </div>
+        <div class="card-body col-lg-3">
+            <label type="text" class="control-label col-md-12"><strong>Chart Type</strong></label>
+            <label>@Html.RadioButtonFor(model => model.IsDisburse, true, new { Checked = "checked" }) View Disbursement</label><br />
+            <label>@Html.RadioButtonFor(model => model.IsDisburse, false) View Purchase Receipt</label>
+        </div>
+        <div class="card-body col-lg-3">
+            <label type="text" class="control-label col-md-12"><strong>Chart Unit</strong></label>
+            <label>@Html.RadioButtonFor(model => model.IsCost, true, new { Checked = "checked" }) View Quantity </label> <br />
+            <label>@Html.RadioButtonFor(model => model.IsCost, false) View Cost Value </label>
+        </div>
+        <div class="card-body col-lg-3">
+            <label type="text" class="control-label col-md-12"><strong>Departments</strong></label>
+            @Html.ListBoxFor(model => model.Departments, new SelectList(ViewBag.Departments, "Value", "Text"), new { size = 7, @style = "width:100%;" })
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="card-body col-lg-9">
+            <canvas id="myChart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-lg-3">
+            <div class="card-body">
+                <label type="text" class="control-label col-md-12"><strong>Suppliers</strong></label>
+                @Html.ListBoxFor(model => model.Suppliers, new SelectList(ViewBag.Suppliers, "Value", "Text"), new { size = 8, @style = "width:100%;" })
+            </div>
+            <br />
+            <div class="card-body">
+                <label type="text" class="control-label col-md-12"><strong>Stationery Category</strong></label>
+                @Html.ListBoxFor(model => model.Categories, new SelectList(ViewBag.Categories, "Value", "Text"), new { size = 11, @style = "width:100%;" })
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+
+</script>
+
+
+<!-- Include Required Prerequisites -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/3/css/bootstrap.css" />
+
+<!-- Include Date Range Picker -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+<script>
+    $(document).ready(function () {
+        $('#Departments').on('change', function () { UpdateChart(); });
+        $('#Categories').on('change', function () { UpdateChart(); });
+        $('#Suppliers').on("change", function () { UpdateChart(); });
+        $('#IsDisburse').on('change', function () { UpdateChart(); });
+        $('#IsCost').on("change", function () { UpdateChart(); });
+        $('input[name="DateRange"]').on("change", function () { UpdateChart(); });
+    })
+
+    $('input[name="DateRange"]').daterangepicker();
+    $('input[name="DateRange"]').daterangepicker(
+        {
+            locale: {
+                format: 'YYYY-MM-DD'
+            },
+            startDate: '2013-01-01',
+            endDate: '2013-12-31'
+        },
+        function (start, end, label) {
+            alert("A new date range was chosen: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        });
+
+
+    var previous_data;
+    function UpdateChart() {
+        var posted_data= '{departments=' + $('#Departments').val() +
+            ', suppliers=' + $('#Suppliers').val() +
+            ', categories=' + $('#Categories').val() +
+            ', isdisburse=' + $('#IsDisburse').val() +
+            ', isCost=' + $('#IsCost').val() + '}';
+        if (posted_data != previous_data) {
+            $.ajax({
+                url: 'https://localhost:44303/SupervisorDashboard/TrendAnalysisJSON',
+                type: 'POST',
+                data: posted_data,
+                dataType: 'json',
+                success: function (d) {
+                    alert(d[0]);
+                    var ctx = document.getElementById("myChart").getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: d.Label,
+                            datasets: [{
+                                label: "Hello",
+                                data: d.Data,
+                                //backgroundColor: [
+                                //    'rgba(255, 99, 132, 0.2)',
+                                //    'rgba(54, 162, 235, 0.2)',
+                                //    'rgba(255, 206, 86, 0.2)',
+                                //    'rgba(75, 192, 192, 0.2)',
+                                //    'rgba(153, 102, 255, 0.2)',
+                                //    'rgba(255, 159, 64, 0.2)'
+                                //],
+                                //borderColor: [
+                                //    'rgba(255,99,132,1)',
+                                //    'rgba(54, 162, 235, 1)',
+                                //    'rgba(255, 206, 86, 1)',
+                                //    'rgba(75, 192, 192, 1)',
+                                //    'rgba(153, 102, 255, 1)',
+                                //    'rgba(255, 159, 64, 1)'
+                                //],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                xAxes: [{
+                                    stacked: true
+                                }],
+                                yAxes: [{
+                                    stacked: true
+                                }]
+                            }
+                        }
+                    });
+                }
+            });
+            previous_data = posted_data;
+        }
+    }
+
+
+</script>
