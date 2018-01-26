@@ -5,73 +5,54 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <h2>My Delegate</h2>
 <hr />
-
-@if (Model.GetDelegate != null)
-{
-    <table class="table table-hover">
-        <tr>
-
-            <th>
-                My Delegate
-            </th>
-            <th>
-                From
-            </th>
-            <th>
-                To
-            </th>
-        </tr>
-        <tr>
-
-            <td>
+<div class="jumbotron">
+    @if (Model.GetDelegate != null)
+    {
+        <h2 class="mt-4 mb-5 text-info">
+            <strong>
                 @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.GetDelegate.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.GetDelegate.EndDate)
-            </td>
-        </tr>
-    </table>
-    using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
-    {
-        <input type="submit" class="btn btn-success" value="Revoke Delegate" />
+            </strong>
+        </h2>
+        <h4 class="mb-5">@Html.DisplayFor(model => model.GetDelegate.StartDate) - @Html.DisplayFor(model => model.GetDelegate.EndDate)</h4>
+        <h5 class="mt-4 mb-5 text-muted">
+            @((Model.GetDelegate.StartDate>DateTime.Today)?
+            "Starting in " + (((int)(Model.GetDelegate.StartDate.Subtract(DateTime.Now)).TotalDays)+1)+" day(s)":
+                  "Ending in "+(((int)(Model.GetDelegate.EndDate.Subtract(DateTime.Now)).TotalDays)+1)+" day(s)")
+        </h5>
+        using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
+        {
+            <input type="submit" class="btn btn-success btn-lg" value="Revoke Delegate" />
+        }<br/>
     }
-}
-else
-{
-        <div class="jumbotron">
-
-            <h2 class="mt-4 mb-5 text-info"><strong>You have not set any delegate at the moment</strong></h2>
-
-            <hr />
-            <h3 class="mt-4 mb-5">Set delegate:</h3>
-
-
-            @using (Html.BeginForm("AddDelegate", "RepAndDelegate", FormMethod.Post))
+    else
     {
-        <h5>Select Date:</h5>
-        <div class="row m-2 mb-5">
-            <div class="col-lg-6">From &nbsp;<input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-inline" /></div>
-            <div class="col-lg-6">To &nbsp;<input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-inline" /></div>
-        </div>
-        <h5>Find Employee:</h5>
-        <div class="row m-2">
-            <div class="col-lg-10">
-                <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" class="form-control d-inline" />
-                <input id="Submit1" type="submit" value="Set New Delegate" class="btn btn-success form-control d-inline ml-3" />
-                <input type="hidden" id="Emp2" name="DelegateEmp" />
+
+        <h2 class="mt-4 mb-5 text-info"><strong>You have not set any delegate at the moment</strong></h2>
+
+        <hr />
+        <h3 class="mt-4 mb-5">Set delegate:</h3>
+
+
+        using (Html.BeginForm("AddDelegate", "RepAndDelegate", FormMethod.Post))
+        {
+            <h5>Select Date:</h5>
+            <div class="row m-2 mb-5">
+                <div class="col-lg-6">From &nbsp;<input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-inline" /></div>
+                <div class="col-lg-6">To &nbsp;<input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-inline" /></div>
             </div>
-            </div> 
-        <h5 id="tagsname" class="text-info m-3"></h5>
-        <br/>
+            <h5>Find Employee:</h5>
+            <div class="row m-2">
+                <div class="col-lg-10">
+                    <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" class="form-control d-inline" />
+                    <input id="Submit1" type="submit" value="Set New Delegate" class="btn btn-success form-control d-inline ml-3" />
+                    <input type="hidden" id="Emp2" name="DelegateEmp" />
+                </div>
+            </div>
+            <h5 id="tagsname" class="text-info m-3"></h5>
+            <br />
+        }
     }
-
-
-
-        </div>
-}
+</div>
 @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {
