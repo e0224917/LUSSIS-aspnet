@@ -1,10 +1,8 @@
 ﻿@model LUSSIS.Models.WebDTO.PurchaseOrderDTO
-@using LUSSIS.Controllers;
 
 @{
     ViewBag.Title = "Create";
 }
-@Scripts.Render("~/bundles/jquery")
 
 <h2>Create New Purchase Order</h2>
 
@@ -45,7 +43,7 @@
         </div>
         @if (ViewBag.Supplier.SupplierId > -1)
         {
-            <div class="card col-lg-12">
+            <div class="card border-dark col-lg-12">
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-md-3 col-sm-3 col-lg-3"><p></p>
@@ -103,9 +101,9 @@
                 }
             </table>
             <div class="text-right">
-                <input type="button" value="Add Row" id="btn_add_row" class="btn btn-outline-primary" />
+                <input type="button" value="Add Row" id="btn_add_row" class="btn btn-primary" />
             </div><br />
-            <div class="card col-lg-12">
+            <div class="card border-dark col-lg-12">
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-md-3">
@@ -141,15 +139,16 @@
             </div>
             <br />
             <div class="text-right">
-                <input type="submit" value="Create" class="btn btn-outline-success btn-lg" style="width:40%" />
+                <input type="submit" value="Create" class="btn btn-success btn-lg" style="width:40%" />
             </div>
 
         }
     </div>
 }
 
-
-<script>
+@section scripts
+{
+    <script>
     var cindex = @lineNo;
     var GST = @GST;
     var supplierId = @supplierId;
@@ -157,11 +156,11 @@
     //redirect page if supplier is changed
     $(document).on('change', '#SupplierId', function () {
         if (supplierId == -1) {
-            var newLink = "/PurchaseOrders/Create?supplierId=" + $(this).val();
+            var newLink = "@Url.Content("~/")PurchaseOrders/Create?supplierId=" + $(this).val();
             window.location.replace(newLink);
         }
         else if (confirm('Switch Supplier?')) {
-            var newLink = "/PurchaseOrders/Create?supplierId=" + $(this).val();
+            var newLink = "@Url.Content("~/")PurchaseOrders/Create?supplierId=" + $(this).val();
             window.location.replace(newLink);
         }
         else { $(this).val(supplierId) }
@@ -263,4 +262,6 @@
     });
     */
 
-</script>
+    </script>
+}
+

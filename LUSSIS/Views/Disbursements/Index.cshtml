@@ -50,8 +50,8 @@ else
                 @Html.DisplayFor(modelItem=>item.CollectionPoint.InChargeEmployee.FullName)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.DisbursementId}, new{ @class= "btn btn-outline-warning btn-sm" })
-                @Html.ActionLink("Details", "Details", new { id = item.DisbursementId }, new { @class = "btn btn-outline-success btn-sm" })
+                @Html.ActionLink("Edit", "Edit", new { id = item.DisbursementId}, new{ @class= "btn btn-warning btn-sm" })
+                @Html.ActionLink("View Details", "Details", new { id = item.DisbursementId }, new { @class = "btn btn-info btn-sm" })
             </td>
         </tr>
         }

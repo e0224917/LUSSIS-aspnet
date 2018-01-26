@@ -42,7 +42,7 @@
                 @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
             </td>
             <td>
-                @Html.ActionLink("Details", "Detail", "Requisitions", new { reqId = item.RequisitionId }, new { @class = "btn btn-sm btn-outline-success" })
+                @Html.ActionLink("View Details", "Details", "Requisitions", new { reqId = item.RequisitionId }, new { @class = "btn btn-sm btn-info" })
             </td>
             @if (ViewBag.Message != "Delegate")
             {
@@ -67,7 +67,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div @*class="modal-body"*@ id="myApproveModalBodyDiv">
+            <div id="myApproveModalBodyDiv">
                
             </div>
         </div>
@@ -75,21 +75,26 @@
 </div>
 
 
-<script>
-    var ApproveReq = function (RequisitionId) {
-        document.getElementById("ApprovalTitle").textContent = "Approve Requisition:"
-        var url = "/Requisitions/_ApproveReq?Id=" + RequisitionId + "&Status=approved";
+@section scripts
+{
+    <script>
+        var ApproveReq = function (RequisitionId) {
+            document.getElementById("ApprovalTitle").textContent = "Approve";
+            var url = "@Url.Content("~/")Requisitions/_ApproveReq?Id=" + RequisitionId + "&Status=approved";
 
-        $("#myApproveModalBodyDiv").load(url, function () {
-            $("#myApproveModal").modal("show");
-        })
-    }
-    var RejectReq = function (RequisitionId) {
-        document.getElementById("ApprovalTitle").textContent = "Reject  Requisition"
-        var url = "/Requisitions/_ApproveReq?Id=" + RequisitionId + "&Status=rejected";
+            $("#myApproveModalBodyDiv").load(url,
+                function() {
+                    $("#myApproveModal").modal("show");
+                });
+        }
+        var RejectReq = function (RequisitionId) {
+            document.getElementById("ApprovalTitle").textContent = "Reject";
+            var url = "@Url.Content("~/")Requisitions/_ApproveReq?Id=" + RequisitionId + "&Status=rejected";
 
-        $("#myApproveModalBodyDiv").load(url, function () {
-            $("#myApproveModal").modal("show");
-        })
-    }
-</script>
+            $("#myApproveModalBodyDiv").load(url,
+                function() {
+                    $("#myApproveModal").modal("show");
+                });
+        }
+    </script>
+}

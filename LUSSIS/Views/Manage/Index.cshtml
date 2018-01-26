@@ -15,11 +15,11 @@
             
             @if (Model.HasPassword)
             {
-                @Html.ActionLink("Change your password", "ChangePassword",null, new{@class="btn btn-outline-primary"})
+                @Html.ActionLink("Change your password", "ChangePassword",null, new{@class="btn btn-primary"})
             }
             else
             {
-                @Html.ActionLink("Create", "SetPassword",null,  new { @class = "btn btn-outline-success"} )
+                @Html.ActionLink("Create", "SetPassword",null,  new { @class = "btn btn-success"} )
             }
             
         </dd>

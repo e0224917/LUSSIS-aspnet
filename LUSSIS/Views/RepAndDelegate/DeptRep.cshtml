@@ -63,7 +63,7 @@ else
             $("#Emp").autocomplete({
                 source: function (request, response) {
                     $.ajax({
-                        url: "/RepAndDelegate/GetEmpJson",
+                        url: "@Url.Content("~/")RepAndDelegate/GetEmpJson",
                         type: "GET",
                         dataType: "json",
                         data: { prefix: request.term },

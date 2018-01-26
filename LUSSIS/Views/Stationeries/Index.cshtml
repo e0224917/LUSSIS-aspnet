@@ -61,8 +61,8 @@
 
             <td>
 
-                @Html.ActionLink("Details", "Details", new { id = item.ItemNum }, new { @class = "btn btn-sm btn-success" }) 
-                @Html.ActionLink("Adjust", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new{@class="btn btn-sm btn-primary"})
+                @Html.ActionLink("View Details", "Details", new { id = item.ItemNum }, new { @class = "btn btn-sm btn-outline-info" }) 
+                @Html.ActionLink("Adjust", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new{@class="btn btn-sm btn-outline-primary"})
                 
             </td>
         </tr>

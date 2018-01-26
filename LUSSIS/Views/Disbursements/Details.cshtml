@@ -50,8 +50,8 @@
 
         <button type="button" class="btn btn-success" onclick="GenerateQR(@Model.CurrentDisbursement.DisbursementId)">Generate QR Code</button>
         <span style="float:right;">
-            @Html.ActionLink("Edit", "Edit", new { id = Model.CurrentDisbursement.DisbursementId }, new { @class = "btn btn-outline-warning" }) |
-            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-outline-secondary" })
+            @Html.ActionLink("Edit", "Edit", new { id = Model.CurrentDisbursement.DisbursementId }, new { @class = "btn btn-warning" }) |
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
         </span>
     </div>
     <hr />
@@ -88,7 +88,7 @@
                     @Html.HiddenFor(modelItem => Model.DisDetailList[i].RequestedQty)
                 </td>
                 <td>
-                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @class = "form-control", @value = Model.DisDetailList[i].ActualQty, @min = "0", @max = @Model.DisDetailList[i].RequestedQty} })
+                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @class = "form-control", @value = Model.DisDetailList[i].ActualQty,  @min = "0", @max = @Model.DisDetailList[i].RequestedQty} })
                     @Html.ValidationMessageFor(model => Model.DisDetailList[i].ActualQty, "", new { @class = "text-danger" })
 
                 </td>
@@ -111,13 +111,13 @@
     </div>
 </div>
 
-
-
-<script>
-    var GenerateQR = function (DisbursementId) {
-        var url = "/Disbursements/_QR?Id=" + DisbursementId;
-        $("#QRBody").load(url, function () {
-            $("#QRModal").modal("show");
-        })
-    }
-</script>
+@section scripts{
+    <script>
+        var GenerateQR = function (DisbursementId) {
+            var url = "@Url.Content("~/")Disbursements/_QR?Id=" + DisbursementId;
+            $("#QRBody").load(url, function () {
+                $("#QRModal").modal("show");
+            })
+        }
+    </script>
+}
