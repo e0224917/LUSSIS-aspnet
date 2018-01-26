@@ -163,7 +163,7 @@ namespace LUSSIS.Controllers
               //  srepo.UpdateAllStationerySupplier(list);
 
 
-                ViewBag.Success = "No error detected";
+                ViewBag.Success = "Successfully uploaded";
                 return View();
 
             }
