@@ -4,8 +4,6 @@
     ViewBag.Title = "_CreateAdjustments";
 }
 
-@*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
-
 <tr>
     @using (Html.BeginCollectionItem("MyList"))
     {
@@ -16,11 +14,11 @@
         </td>
         <td>
             <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-outline-warning" style="width:4rem">
+                <label class="btn btn-outline-info" style="width:4rem">
                     @Html.RadioButtonFor(model => model.Sign, false) -
                 </label>
 
-                <label class="btn btn-outline-warning" style="width:4rem">
+                <label class="btn btn-outline-info" style="width:4rem">
                     @Html.RadioButtonFor(model => model.Sign, true) +
                 </label>
             </div>
@@ -34,7 +32,7 @@
             @Html.EditorFor(model => model.Reason, new { htmlAttributes = new { @class = "form-control" } }) <br /><span style="font-size:0">a </span>
         </td>
         <td>
-            <input type="button" value="Delete" class="deleteEntry btn btn-outline-danger" />
+            <input type="button" value="Delete" class="deleteEntry btn btn-danger" />
             <br /><span style="font-size:0">a </span>
         </td>
 
@@ -42,9 +40,13 @@
 </tr>
 
 
-<script type="text/javascript">
-    $(document).on("click", ".deleteEntry", function () {
-        $(this).closest("tr").remove();
-    });
-</script>
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).on("click", ".deleteEntry", function () {
+            $(this).closest("tr").remove();
+        });
+    </script>
+}
+
 

@@ -151,18 +151,22 @@ else
             </table>
 
         <div class="text-right">
-            <input type="submit" value="Confirm Receive" class="btn btn-outline-success btn-lg" style="width:40%" />
+            <input type="submit" value="Confirm Receive" class="btn btn-success btn-lg" style="width:40%" />
         </div>
     
             }
             }
 
-            <script>
-                //redirect page if PO selected from no-PO page
-                $(document).on('change', '#select_PO', function () {
-                    if ($(this).val() != 0) {
-                        var newLink = "/PurchaseOrders/Receive?p=" + $(this).val();
-                        window.location.replace(newLink);
-                    }
-                });
-            </script>
+@section scripts
+{
+    <script>
+        //redirect page if PO selected from no-PO page
+        $(document).on('change', '#select_PO', function () {
+            if ($(this).val() != 0) {
+                var newLink = "@Url.Content("~/")PurchaseOrders/Receive?p=" + $(this).val();
+                window.location.replace(newLink);
+            }
+        });
+    </script>
+}
+

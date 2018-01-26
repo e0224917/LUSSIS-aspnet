@@ -118,20 +118,24 @@
         }
         @if (Model.Status == "ordered")
         {
-            @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum }, new { @class = "btn btn-outline-success" })
+            @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum }, new { @class = "btn btn-success" })
         }
     </p>
 
+@section scripts
+{
     <script>
-    var details=@Model.PoNum;
+        var details=@Model.PoNum;
 
-    $(document).on('change', '#PoNum', function () {
-        if (confirm('Navigate from page?')) {
-            var newLink = "/PurchaseOrders/Details/" + $(this).val();
-            window.location.replace(newLink);
-        }
-        else { $(this).val(details) }
-    });
+        $(document).on('change', '#PoNum', function () {
+            if (confirm('Navigate from page?')) {
+                var newLink = "@Url.Content("~/")PurchaseOrders/Details/" + $(this).val();
+                window.location.replace(newLink);
+            }
+            else { $(this).val(details) }
+        });
     </script>
+}
+
 
 

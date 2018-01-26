@@ -72,8 +72,14 @@
         <tr>
 
             <td>
-
-                <input class="chk" id=@item.PoNum value="@item.PoNum" type="checkbox" />
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input class="chk" class="custom-control-input"  id="@item.PoNum customCheck1"  value="@item.PoNum" type="checkbox" />
+                        <label class="custom-control-label" for="customCheck1"> </label>
+                    </div>
+                
+                </div>
+               
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PoNum)
@@ -91,7 +97,7 @@
                 $ @Html.DisplayFor(modelItem => item.TotalCost)
             </td>
             <td>
-                @Html.ActionLink("View Details", "Details", new { id = item.PoNum }, new { @class = "btn btn-sm btn-outline-info" })
+                @Html.ActionLink("View Details", "Details", new { id = item.PoNum }, new { @class = "btn btn-sm btn-info" })
             </td>
         </tr>
     }
@@ -119,34 +125,37 @@
 </div>
 
 
-<script>
+@section scripts
+{
+    <script>
 
-    var ApproveReject = function (CheckList) {
-        if (CheckList < 1) {
-            $("#showError").show();
+        var ApproveReject = function (CheckList) {
+            if (CheckList < 1) {
+                $("#showError").show();
+            }
+            else {
+                $("#showError").hide();
+                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Approve";
+
+                $("#myApproveModalBodyDiv").load(url, function () {
+                    $("#myApproveModal").modal("show");
+                })
+            }
+
         }
-        else {
-            $("#showError").hide();
-            var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Approve";
+        var RejectReject = function (CheckList) {
+            if (CheckList.length < 1) {
+                $("#showError").show();
+            }
+            else {
+                $("#showError").hide();
+                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Reject";
 
-            $("#myApproveModalBodyDiv").load(url, function () {
-                $("#myApproveModal").modal("show");
-            })
+                $("#myApproveModalBodyDiv").load(url, function () {
+                    $("#myApproveModal").modal("show");
+                })
+            }
+
         }
-
-    }
-    var RejectReject = function (CheckList) {
-        if (CheckList.length < 1) {
-            $("#showError").show();
-        }
-        else {
-            $("#showError").hide();
-            var url = "/PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Reject";
-
-            $("#myApproveModalBodyDiv").load(url, function () {
-                $("#myApproveModal").modal("show");
-            })
-        }
-
-    }
-</script>
+    </script>
+}

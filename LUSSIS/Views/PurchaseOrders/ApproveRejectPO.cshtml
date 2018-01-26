@@ -33,25 +33,27 @@
     </div>
 </form>
 
-
+@section scripts {
     <script>
         $(document).ready(function () {
-            $("#ok").click(function () {
+            $("#ok").click(function() {
                 var formdata = $("#confirmForm").serialize();
 
                 $.ajax({
                     type: "POST",
-                    url: "/PurchaseOrders/ApproveRejectPO",
+                    url: "@Url.Content("~/")PurchaseOrders/ApproveRejectPO",
                     data: formdata,
-                    success: function () {
+                    success: function() {
                         $("#myApproveModal").modal("hide");
 
                     }
-                })
-                location.reload()
-            })
+                });
+                location.reload();
+            });
         })
     </script>
+}
+
 
 
 

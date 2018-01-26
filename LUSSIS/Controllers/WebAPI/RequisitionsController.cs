@@ -26,14 +26,14 @@ namespace LUSSIS.Controllers.WebAPI
                 RequisitionId = item.RequisitionId,
                 RequisitionEmp = item.RequisitionEmployee.ToApiDTO(),
                 RequisitionDate = (DateTime) item.RequisitionDate,
-                ApprovalEmp = item.ApprovalEmployee.ToApiDTO(),
-                ApprovalRemarks = item.ApprovalRemarks != null ? item.ApprovalRemarks : "",
-                RequestRemarks = item.RequestRemarks != null ? item.RequestRemarks : "",
+                ApprovalEmp = null,
+                ApprovalRemarks = item.ApprovalRemarks ?? "",
+                RequestRemarks = item.RequestRemarks ?? "",
                 RequisitionDetails = item.RequisitionDetails.Select(detail => new RequisitionDetailDTO()
                 {
                     Description = detail.Stationery.Description,
                     UnitOfMeasure = detail.Stationery.UnitOfMeasure,
-                    Quantity = (int) detail.Quantity
+                    Quantity = detail.Quantity
                 })
             });
 
