@@ -329,7 +329,7 @@ namespace LUSSIS.Controllers
                     RequisitionDate = reqDate,
                     RequisitionEmpNum = reqEmp,
                     Status = status,
-                    //DeptCode = deptCode
+                    DeptCode = deptCode
                 };
                 reqrepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
