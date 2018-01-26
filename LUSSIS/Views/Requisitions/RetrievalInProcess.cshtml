@@ -47,7 +47,7 @@ else
                         @Html.DisplayFor(modelItem => item.AvailableQty)
                     </td>
                     <td>
-                        @Html.ActionLink("Adjust Stock", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new{ target="_blank", type="submit", @class= "btn btn-outline-success btn-sm" })
+                        @Html.ActionLink("Adjust Stock", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new{ target="_blank", type="submit", @class= "btn btn-success btn-sm" })
                     </td>
                 </tr>
             }

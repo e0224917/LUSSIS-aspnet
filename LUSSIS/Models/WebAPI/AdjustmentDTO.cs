@@ -15,7 +15,7 @@ namespace LUSSIS.Models.WebAPI
 
         public int RequestEmpNum { get; set; }
 
-        public int ApprovalEmpnum { get; set; }
+        public int ApprovalEmpNum { get; set; }
 
         public string Remark { get; set; }
     }

@@ -5,8 +5,9 @@
 @Scripts.Render("~/bundles/jquery")
 <h2>Purchase Order Details</h2>
 <hr />
+
     <div class="card border-dark col-lg-12 col-sm-12 col-md-12">
-   
+
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-4 col-sm-4 col-md-4">
@@ -61,22 +62,22 @@
                         </div>
                     </div>
                     @if (Model.ApprovalEmpNum != null)
-            {
-                <div class="form-group">
-                    <label class="control-label col-md-12"><strong>Approved By</strong></label>
-                    <div class="col-md-12">
-                        @Html.HiddenFor(model => model.ApprovalEmpNum)
-                        <input type="text" class="form-control" value="@(Model.ApprovalEmployee == null ? "" : Model.ApprovalEmployee.FullName)" disabled />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-12"><strong>Approved On</strong></label>
-                    <div class="col-md-12">
-                        @Html.HiddenFor(model => model.ApprovalDate)
-                        <input type="date" class="form-control" value="@(Model.ApprovalDate == null ? "" : Model.ApprovalDate.Value.ToString("yyyy-MM-dd"))" disabled />
-                    </div>
-                </div>
-    }
+                    {
+                        <div class="form-group">
+                            <label class="control-label col-md-12"><strong>Approved By</strong></label>
+                            <div class="col-md-12">
+                                @Html.HiddenFor(model => model.ApprovalEmpNum)
+                                <input type="text" class="form-control" value="@(Model.ApprovalEmployee == null ? "" : Model.ApprovalEmployee.FullName)" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-12"><strong>Approved On</strong></label>
+                            <div class="col-md-12">
+                                @Html.HiddenFor(model => model.ApprovalDate)
+                                <input type="date" class="form-control" value="@(Model.ApprovalDate == null ? "" : Model.ApprovalDate.Value.ToString("yyyy-MM-dd"))" disabled />
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -84,18 +85,18 @@
 
     </div>      <br />
 
-        <table class="table table-hover table-striped">
-            <tr>
-                <th>No</th>
-                <th>Product</th>
-                <th>Item No</th>
-                <th>Unit of Measure</th>
-                <th>Unit Price</th>
-                <th>Ordered Qty</th>
-                <th>Total Price</th>
-                <th>Status</th>
-            </tr>
-            @for (int i = 0; i < Model.PurchaseOrderDetails.Count; i++)
+    <table class="table table-hover table-striped">
+        <tr>
+            <th>No</th>
+            <th>Product</th>
+            <th>Item No</th>
+            <th>Unit of Measure</th>
+            <th>Unit Price</th>
+            <th>Ordered Qty</th>
+            <th>Total Price</th>
+            <th>Status</th>
+        </tr>
+        @for (int i = 0; i < Model.PurchaseOrderDetails.Count; i++)
         {
             <tr>
                 <td>@(i + 1)</td>
@@ -107,31 +108,34 @@
                 <td>@(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
                 <td>@(Model.PurchaseOrderDetails[i].ReceiveQty > 0 ? "Delivered" : "Not Delivered")</td>
             </tr>
-    }
-        </table>
-
-<p>
-    @if (Model.Status == "approved")
-    {
-        @Html.ActionLink("Order", "Order", new { p = Model.PoNum })
-    }
-    @if (Model.Status == "ordered")
-    {
-        @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum }, new { @class = "btn btn-outline-success" }) 
-    }
-    @Html.ActionLink("Back to List", "ViewPendingPOList", null, new { @class = "btn btn-outline-secondary" })
-</p>
-
-<script>
-    var details=@Model.PoNum;
-
-    $(document).on('change', '#PoNum', function () {
-        if (confirm('Navigate from page?')) {
-            var newLink = "/PurchaseOrders/Details/" + $(this).val();
-            window.location.replace(newLink);
         }
-        else { $(this).val(details) }
-    });
-</script>
+    </table>
+
+    <p>
+        @if (Model.Status == "approved")
+        {
+            @Html.ActionLink("Order", "Order", new { p = Model.PoNum })
+        }
+        @if (Model.Status == "ordered")
+        {
+            @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum }, new { @class = "btn btn-success" })
+        }
+    </p>
+
+@section scripts
+{
+    <script>
+        var details=@Model.PoNum;
+
+        $(document).on('change', '#PoNum', function () {
+            if (confirm('Navigate from page?')) {
+                var newLink = "@Url.Content("~/")PurchaseOrders/Details/" + $(this).val();
+                window.location.replace(newLink);
+            }
+            else { $(this).val(details) }
+        });
+    </script>
+}
+
 
 
