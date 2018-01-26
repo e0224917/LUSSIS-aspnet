@@ -22,7 +22,7 @@ namespace LUSSIS.Models
         [Required]
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
-        public DateTime? RequisitionDate { get; set; }
+        public DateTime RequisitionDate { get; set; }
 
         public int? ApprovalEmpNum { get; set; }
         //[Required]
@@ -37,7 +37,8 @@ namespace LUSSIS.Models
         [Required]
         [StringLength(20)]
         public string Status { get; set; }
-
+        [Required]
+        public string DeptCode { get; set; }
         public virtual Employee ApprovalEmployee { get; set; }
 
         public virtual Employee RequisitionEmployee { get; set; }

@@ -12,7 +12,7 @@
         <span>P.O.</span>
     </button>
     <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
-        <li class="dropdown-item"><a href="@Url.Action("ViewPendingPOList", "PurchaseOrders")"><span>Pending P.O.</span></a></li>
+        <li class="dropdown-item"><a href="@Url.Action("PendingPO", "PurchaseOrders")"><span>Pending P.O.</span></a></li>
         <li class="dropdown-item"><a href="@Url.Action("Index", "PurchaseOrders")"><span>P.O. History</span></a></li>
     </ul>
 </div>
@@ -22,7 +22,7 @@
     </button>
     <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
         <li class="dropdown-item"><a href="@Url.Action("Index", "Disbursements")"><span>Stationery Purchase Trend(N.A)</span></a></li>
-        <li class="dropdown-item"><a href="@Url.Action("History", "Requisitions")"><span>Requisition Request Trend(N.A)</span></a></li>
+        <li class="dropdown-item"><a href="@Url.Action("All", "Requisitions")"><span>Requisition Request Trend(N.A)</span></a></li>
     </ul>
 </div>
 

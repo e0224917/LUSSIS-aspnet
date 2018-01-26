@@ -35,7 +35,7 @@
         <hr />
         <div>
             <div class="form-group">
-                <label type="text" class="control-label col-md-12">Please select a supplier</label>
+                <label type="text" class="control-label col-md-12"><strong>Please select a supplier</strong></label>
                 <div class="col-md-12">
                     @Html.DropDownListFor(model => model.SupplierId, new SelectList(ViewBag.Suppliers, "SupplierId", "SupplierName", ViewBag.Supplier.SupplierId), htmlAttributes: new { @class = "form-control" })
                 </div>
@@ -43,37 +43,39 @@
         </div>
         @if (ViewBag.Supplier.SupplierId > -1)
         {
-            <div class="card border-dark col-lg-12">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="form-group col-md-3 col-sm-3 col-lg-3"><p></p>
-                            <label class="control-label col-md-12">Contact Name</label>
-                            <div class="col-md-12">
-                                @Html.EditorFor(model => model.SupplierContact, new { htmlAttributes = new { @class = "form-control" } })
-                            </div>
+        <div class="card border-dark bg-transparent col-lg-12">
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group col-md-3 col-sm-3 col-lg-3">
+                        <p></p>
+                        <label class="control-label col-md-12">Contact Name</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SupplierContact, new { htmlAttributes = new { @class = "form-control" } })
                         </div>
-                        <div class="form-group col-md-3 col-sm-3 col-lg-3"><p></p>
-                            <label class="control-label col-md-12">GST Registration No</label>
-                            <div class="col-md-12">
-                                <input class="form-control" value="@ViewBag.Supplier.GstRegistration" />
-                            </div>
+                    </div>
+                    <div class="form-group col-md-3 col-sm-3 col-lg-3">
+                        <p></p>
+                        <label class="control-label col-md-12">GST Registration No</label>
+                        <div class="col-md-12">
+                            <input class="form-control" value="@ViewBag.Supplier.GstRegistration" />
                         </div>
+                    </div>
 
-                        <div class="form-group col-md-6 col-sm-6 col-lg-6">
-                            <label class="control-label col-md-12">Supplier Address</label>
-                            <div class="col-md-12">
-                                @Html.TextAreaFor(model => model.SupplierAddress, 3, 40, new { @class = "form-control", style="width: 800px"})
-                            </div>
+                    <div class="form-group col-md-6 col-sm-6 col-lg-6">
+                        <label class="control-label col-md-12">Supplier Address</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.SupplierAddress, 3, 40, new { @class = "form-control"})
                         </div>
                     </div>
                 </div>
-
             </div>
+
+        </div>
             <br />
             <hr />
 
             <table id="details" class="table table-hover table-striped">
-                <tr>
+                <tr class="table-active">
                     <th>No</th>
                     <th>Item</th>
                     <th>Quantity</th>
@@ -101,9 +103,9 @@
                 }
             </table>
             <div class="text-right">
-                <input type="button" value="Add Row" id="btn_add_row" class="btn btn-primary" />
+                <input type="button" value="Add Row" id="btn_add_row" class="btn btn-info" />
             </div><br />
-            <div class="card border-dark col-lg-12">
+            <div class="card border-dark bg-transparent col-lg-12">
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-md-3">

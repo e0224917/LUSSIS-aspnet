@@ -41,11 +41,11 @@
                 <td>
                     <div class="row">
                         <input type="number" class="form-control form-control-sm col-md-6" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
-                        <input type="submit" value="Update" id="UpdateLink" class="btn btn-warning btn-sm" data-id="@item.stationery.ItemNum" />
+                        <input type="submit" value="Update" class="UpdateLink btn btn-warning btn-sm" data-id="@item.stationery.ItemNum" />
                     </div>
                 </td>
                 <td>
-                    <input type="submit" value="Delete" id ="RemoveLink" class="btn btn-danger btn-sm" data-id="@item.stationery.ItemNum" />
+                    <input type="submit" value="Delete" class="RemoveLink btn btn-danger btn-sm" data-id="@item.stationery.ItemNum" />
                 </td>
             </tr>
             {
@@ -56,26 +56,27 @@
             }
         }
     </table>
-    
+
     using (Html.BeginForm("SubmitReq", "Requisitions"))
     {
-    <div class="row">
-        <div class="form-group col-md-6">
-            Remarks:<textarea class="form-control" rows="3" id="remarks" name="remarks"></textarea>
+        <div class="row">
+            <div class="form-group col-md-6">
+                Remarks:<textarea class="form-control" rows="3" id="remarks" name="remarks"></textarea>
+            </div>
+            <div class="form-group col-md-6">
+                <br />
+                <input type="submit" name="button" class="btn btn-success btn-lg btn-block" value="Submit Requisition" style="float: right;" />
+            </div>
         </div>
-        <div class="form-group col-md-6">
-            <br/>
-            <input type="submit" name="button" class="btn btn-success btn-lg btn-block" value="Submit Requisition" style="float: right;"/>
-        </div>
-    </div>
-    } }
+    }
+}
 
 else
 {
-    <div class="alert alert-dismissible alert-danger">
+    <div class="alert alert-dismissible alert-warning">
         <br />
-        <div class="alert-danger"><strong>Your cart is empty, please add items to cart</strong></div>
-        <br />
+        <strong>Your cart is empty, please add items to cart</strong>
+        <br /><br />
     </div>
 }
 
@@ -86,7 +87,7 @@ else
     <script type="text/javascript">
         $(function () {
             // Document.ready -> link up remove event handler
-            $("#RemoveLink").click(function () {
+            $(".RemoveLink").click(function () {
                 // Get the id from the link
                 var stationeryToDelete = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
@@ -114,11 +115,18 @@ else
     <script type="text/javascript">
         $(function () {
             // Document.ready -> link up remove event handler
-            $("#UpdateLink").click(function () {
+            $(".UpdateLink").click(function ()
+            {
                 // Get the id from the link
                 var stationeryToUpdate = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (stationeryToUpdate != '') {
+                if (qty <= 0)
+                {
+                    alert("Please input a valid quantity");
+                }
+                //if (stationeryToUpdate != '')
+                else
+                {
                     // Perform the ajax post
                     $.post("@Url.Content("~/")Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
                         function (data) {

@@ -1,7 +1,7 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Stationery>
 @using PagedList.Mvc;
 @{
-    ViewBag.Title = "Stationery List for Requisition";
+    ViewBag.Title = "Stationery List";
 
 }
 <style>
@@ -13,11 +13,12 @@
 </style>
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
-<h2>Stationery List</h2>
+<h2>Stationery List for Requisition</h2>
 <hr />
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between"  style="border-radius: 5px;">
     <div class="navbar-nav mr-auto"></div>
-    <div class="form-inline my-2 my-lg-0">
+   
+    <div class="form-inline">
         @using (Ajax.BeginForm(new AjaxOptions
         {
             HttpMethod = "POST",
@@ -25,10 +26,11 @@
             UpdateTargetId = "stationeryList"
         }))
         {
-            <span class="d-inline nav-item nav-link">Find By Description </span>
-            @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
-            <span class="d-inline nav-item nav-link"><input type="submit" placeholder="Search" class="btn btn-secondary my-2 my-sm-0" /></span>
 
+            <span class="d-inline nav-item active nav-link" style="color:whitesmoke">Find By Description </span>
+            @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
+            @*<span class="d-inline nav-item nav-link"><input type="submit" placeholder="Search" class="btn btn-secondary my-2 my-sm-0" /></span>*@
+            <button type="submit" class="btn btn-secondary my-2 my-sm-0">Search</button>
         }
         @using (Ajax.BeginForm(new AjaxOptions
         {
@@ -37,9 +39,9 @@
             UpdateTargetId = "stationeryList"
         }))
         {
-            <span style="float:right">
+            <div class="nav-item active nav-link">
                 <input type="submit" value="Show All Stationeries" class="btn btn-secondary my-2 my-sm-0" />
-            </span>
+            </div>
         }
 
     </div>
@@ -57,8 +59,12 @@
                 // Get the id from the link
                 var stationeryToAdd = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (stationeryToAdd !== '') {
-                    // Perform the ajax post
+                if (qty <= 0)
+                {
+                    alert("Please input a valid quantity")
+                }
+                else if (stationeryToAdd !== '') {
+                    // Perform the ajax post                    
                     $.post("@Url.Content("~/")Requisitions/AddToCart",
                         { "id": stationeryToAdd, "qty": qty },
                         function (data) {

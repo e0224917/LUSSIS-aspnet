@@ -6,87 +6,87 @@
 <h2>Purchase Order Details</h2>
 <hr />
 
-    <div class="card border-dark col-lg-12 col-sm-12 col-md-12">
+<div class="card border-dark bg-transparent col-lg-12 col-sm-12 col-md-12">
 
-        <div class="card-body">
-            <div class="row">
-                <div class="col-lg-4 col-sm-4 col-md-4">
-                    <div class="form-group">
-                        <label class="control-label col-md-12"><strong>Purchase Order Number</strong></label>
-                        <div class="col-md-12">
-                            <input class="form-control" type="number" value="@Model.PoNum" disabled name="PoNum" id="PoNum" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.HiddenFor(model => model.SupplierId)
-                        <label class="control-label col-md-12"><strong>Supplier Name</strong></label>
-                        <div class="col-md-12">
-                            <input type="text" class="form-control" value="@Model.Supplier.SupplierName" disabled />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-12"><strong>Supplier Contact Name</strong></label>
-                        <div class="col-md-12">
-                            <input type="text" class="form-control" value="@Model.SupplierContact" disabled />
-                        </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-4 col-sm-4 col-md-4">
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Purchase Order Number</strong></label>
+                    <div class="col-md-12">
+                        <input class="form-control" type="number" value="@Model.PoNum" disabled name="PoNum" id="PoNum" />
                     </div>
                 </div>
-                <div class="col-lg-4 col-sm-4 col-md-4">
-                    <div class="form-group">
-                        <label class="control-label col-md-12"><strong>Created By</strong></label>
-                        <div class="col-md-12">
-                            @Html.HiddenFor(model => model.OrderEmpNum)
-                            <input type="text" class="form-control" value="@Model.OrderEmployee.FullName" disabled />
-                        </div>
+                <div class="form-group">
+                    @Html.HiddenFor(model => model.SupplierId)
+                    <label class="control-label col-md-12"><strong>Supplier Name</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@Model.Supplier.SupplierName" disabled />
                     </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-12"><strong>Created On</strong></label>
-                        <div class="col-md-12">
-                            @Html.HiddenFor(model => model.CreateDate)
-                            <input type="date" class="form-control" value="@Model.CreateDate.ToString("yyyy-MM-dd")" disabled />
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Supplier Contact Name</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" value="@Model.SupplierContact" disabled />
                     </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-md-12"><strong>Order Date</strong></label>
-                        <div class="col-md-12">
-                            @Html.HiddenFor(model => model.ApprovalDate)
-                            <input type="date" class="form-control" value="@(Model.OrderDate == null ? "Order not placed" : Model.OrderDate.Value.ToString("yyyy-MM-dd"))" disabled name="OrderDate" />
-                        </div>
-                    </div>
-                </div> <div class="col-lg-4 col-sm-4 col-md-4">
-                    <div class="form-group">
-                        <label class="control-label col-md-12 text-primary"><strong>Status</strong></label>
-                        <div class="col-md-12">
-                            <input type="text" class="form-control text-primary" value="@Model.Status" disabled />
-                        </div>
-                    </div>
-                    @if (Model.ApprovalEmpNum != null)
-                    {
-                        <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Approved By</strong></label>
-                            <div class="col-md-12">
-                                @Html.HiddenFor(model => model.ApprovalEmpNum)
-                                <input type="text" class="form-control" value="@(Model.ApprovalEmployee == null ? "" : Model.ApprovalEmployee.FullName)" disabled />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Approved On</strong></label>
-                            <div class="col-md-12">
-                                @Html.HiddenFor(model => model.ApprovalDate)
-                                <input type="date" class="form-control" value="@(Model.ApprovalDate == null ? "" : Model.ApprovalDate.Value.ToString("yyyy-MM-dd"))" disabled />
-                            </div>
-                        </div>
-                    }
                 </div>
             </div>
+            <div class="col-lg-4 col-sm-4 col-md-4">
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Created By</strong></label>
+                    <div class="col-md-12">
+                        @Html.HiddenFor(model => model.OrderEmpNum)
+                        <input type="text" class="form-control" value="@Model.OrderEmployee.FullName" disabled />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Created On</strong></label>
+                    <div class="col-md-12">
+                        @Html.HiddenFor(model => model.CreateDate)
+                        <input type="date" class="form-control" value="@Model.CreateDate.ToString("yyyy-MM-dd")" disabled />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-12"><strong>Order Date</strong></label>
+                    <div class="col-md-12">
+                        @Html.HiddenFor(model => model.ApprovalDate)
+                        <input type="date" class="form-control" value="@(Model.OrderDate == null ? "Order not placed" : Model.OrderDate.Value.ToString("yyyy-MM-dd"))" disabled name="OrderDate" />
+                    </div>
+                </div>
+            </div> <div class="col-lg-4 col-sm-4 col-md-4">
+                <div class="form-group">
+                    <label class="control-label col-md-12 text-primary"><strong>Status</strong></label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control text-primary" value="@Model.Status" disabled />
+                    </div>
+                </div>
+                @if (Model.ApprovalEmpNum != null)
+                {
+                    <div class="form-group">
+                        <label class="control-label col-md-12"><strong>Approved By</strong></label>
+                        <div class="col-md-12">
+                            @Html.HiddenFor(model => model.ApprovalEmpNum)
+                            <input type="text" class="form-control" value="@(Model.ApprovalEmployee == null ? "" : Model.ApprovalEmployee.FullName)" disabled />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-12"><strong>Approved On</strong></label>
+                        <div class="col-md-12">
+                            @Html.HiddenFor(model => model.ApprovalDate)
+                            <input type="date" class="form-control" value="@(Model.ApprovalDate == null ? "" : Model.ApprovalDate.Value.ToString("yyyy-MM-dd"))" disabled />
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
+    </div>
 
 
-    </div>      <br />
+</div>      <br />
 
     <table class="table table-hover table-striped">
-        <tr>
+        <tr class="table-active">
             <th>No</th>
             <th>Product</th>
             <th>Item No</th>
