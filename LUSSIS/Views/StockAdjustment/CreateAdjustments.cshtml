@@ -16,7 +16,7 @@
 {
     @Html.AntiForgeryToken()
     <Table class="table table-striped table-hover">
-        <tr>
+        <tr class="table-active">
             <th>@Html.LabelFor(model => model.MyList.First().ItemNum, "Item Code")</th>
             <th>@Html.LabelFor(model => model.MyList.First().Sign)</th>
             <th>@Html.LabelFor(model => model.MyList.First().Quantity)</th>

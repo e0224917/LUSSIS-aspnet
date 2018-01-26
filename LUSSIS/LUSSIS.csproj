@@ -386,7 +386,11 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\calculator.svg" />
+    <Content Include="Images\chalk.svg" />
+    <Content Include="Images\compass.svg" />
     <Content Include="Images\images2.jpg" />
+    <Content Include="Images\pantone.svg" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -617,7 +621,7 @@
     <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
     <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
-    <Content Include="Views\PurchaseOrders\ViewPendingPOList.cshtml" />
+    <Content Include="Views\PurchaseOrders\PendingPO.cshtml" />
     <Content Include="Views\Shared\__ClerkMenu.cshtml" />
     <Content Include="Views\Shared\__DeptEmpMenu.cshtml" />
     <Content Include="Views\Shared\__DeptHeadMenu.cshtml" />

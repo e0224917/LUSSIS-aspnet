@@ -11,46 +11,50 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
+            <img src="~/Images/compass.svg" width="30" height="30" class="d-inline-block align-top" alt="">
             @Html.ActionLink("LUSSIS", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" style="">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                @if (User.IsInRole("head"))
-                {
-                    @Html.Partial("__DeptHeadMenu")
-                }
-                @if (User.IsInRole("clerk"))
-                {
-                    @Html.Partial("__ClerkMenu")
-                }
-                @if (User.IsInRole("manager") || User.IsInRole("supervisor"))
-                {
-                    @Html.Partial("__StoreSupMenu")
-                }
-                @if (User.IsInRole("rep"))
-                {
-                    @Html.Partial("__RepMenu")
-                }
-                @if (User.IsInRole("staff"))
-                {
-                    @Html.Partial("__DeptEmpMenu")
-                }
+
+            <div class="collapse navbar-collapse" id="navbarResponsive" style="">
+                <ul class="navbar-nav mr-auto">
+                    @if (User.IsInRole("head"))
+            {
+                @Html.Partial("__DeptHeadMenu")
+    }
+                    @if (User.IsInRole("clerk"))
+            {
+                @Html.Partial("__ClerkMenu")
+    }
+                    @if (User.IsInRole("manager") || User.IsInRole("supervisor"))
+            {
+                @Html.Partial("__StoreSupMenu")
+    }
+                    @if (User.IsInRole("rep"))
+            {
+                @Html.Partial("__RepMenu")
+    }
+                    @if (User.IsInRole("staff"))
+            {
+                @Html.Partial("__DeptEmpMenu")
+    }
+                </ul>
                 @*<div>
-                        <span>The buttons are blue as there is issue with bootstrap-united.css and dropdown list. You can disable seeing so many menu by accessing _Layout.cshtml and commenting out this section to see only your logged in role menu</span>
-                        <div>Dept Head Menu @Html.Partial("__DeptHeadMenu")</div>
-                        <div>Clerk Menu @Html.Partial("__ClerkMenu")</div>
-                        <div>Store Sup and Manager Menu @Html.Partial("__StoreSupMenu")</div>
-                        <div>Rep Menu  @Html.Partial("__RepMenu")</div>
-                        <div>Plebs Menu @Html.Partial("__DeptEmpMenu")</div>
-                    </div>*@
+                <span>The buttons are blue as there is issue with bootstrap-united.css and dropdown list. You can disable seeing so many menu by accessing _Layout.cshtml and commenting out this section to see only your logged in role menu</span>
+                <div>Dept Head Menu @Html.Partial("__DeptHeadMenu")</div>
+                <div>Clerk Menu @Html.Partial("__ClerkMenu")</div>
+                <div>Store Sup and Manager Menu @Html.Partial("__StoreSupMenu")</div>
+                <div>Rep Menu  @Html.Partial("__RepMenu")</div>
+                <div>Plebs Menu @Html.Partial("__DeptEmpMenu")</div>
+            </div>*@
                 <div class="nav navbar-nav ml-auto">@Html.Partial("_LoginPartial")</div>
             </div>
 
         </div>
-    </div>
+    </nav>
 
     <div class="container">
         @RenderBody()
