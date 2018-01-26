@@ -68,5 +68,38 @@ namespace LUSSIS.Models.WebDTO
             this.Address3 = po.Address3;
             this.PurchaseOrderDetails = po.PurchaseOrderDetails.ToList();
         }
+        public void CreatePurchaseOrder(out PurchaseOrder purchaseOrder)
+        {
+            purchaseOrder = new PurchaseOrder();
+            purchaseOrder.Status = "pending";
+            purchaseOrder.SupplierId = this.SupplierId;
+            purchaseOrder.SupplierContact = this.SupplierContact;
+            purchaseOrder.Address1 = this.Address1;
+            purchaseOrder.Address2 = this.Address2;
+            purchaseOrder.Address3 = this.Address3;
+            purchaseOrder.CreateDate = this.CreateDate;
+            purchaseOrder.OrderEmpNum = this.OrderEmpNum;
+
+            //set PO detail values
+            for (int i = this.PurchaseOrderDetailsDTO.Count - 1; i >= 0; i--)
+            {
+                PurchaseOrderDetailDTO pdetail = this.PurchaseOrderDetailsDTO.ElementAt(i);
+                if (pdetail.OrderQty > 0)
+                {
+                    PurchaseOrderDetail newPdetail = new PurchaseOrderDetail();
+                    newPdetail.ItemNum = pdetail.ItemNum;
+                    newPdetail.OrderQty = pdetail.OrderQty;
+                    newPdetail.UnitPrice = pdetail.UnitPrice;
+                    newPdetail.ReceiveQty = 0;
+                    purchaseOrder.PurchaseOrderDetails.Add(newPdetail);
+                }
+                else if (pdetail.OrderQty < 0)
+                    throw new Exception("Purchase Order was not created, ordered quantity cannot be negative");
+            }
+            if (purchaseOrder.PurchaseOrderDetails.Count == 0)
+                throw new Exception("Purchase Order was not created, no items found");
+            if (purchaseOrder.PurchaseOrderDetails.Count > purchaseOrder.PurchaseOrderDetails.Select(x => x.ItemNum).Distinct().Count())
+                throw new Exception("the same stationery cannot appear in multiple lines of the PO");
+        }
     }
 }

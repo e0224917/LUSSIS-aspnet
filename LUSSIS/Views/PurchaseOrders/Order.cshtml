@@ -1,10 +1,14 @@
 ﻿@model LUSSIS.Models.WebDTO.PurchaseOrderDTO
 @{
     ViewBag.Title = "Order";
+
 }
 
 <h2>Print Purchase Order</h2>
-<hr/>
+<hr />
+@{
+    int poNum = 0;
+}
 
 @if (ViewBag.Error != null)
 {
@@ -23,7 +27,7 @@
     {
         @Scripts.Render("~/bundles/jquery")
 
-        <h4>Select a Purchase Order to update receipt of stationery </h4>
+        <h4>Select a Purchase Order to print </h4>
         <select id="select_PO">
             <option value="0">Select a purchase order</option>
             @foreach (var po in ViewBag.ApprovedPO)
@@ -37,13 +41,13 @@
 }
 else
 {
-
+    poNum = Model.PoNum;
     using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
 
         <div class="card border-dark col-lg-12 col-sm-12 col-md-12">
-   
+
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-4 col-sm-4 col-md-4">
@@ -69,7 +73,7 @@ else
                         </div>
 
                     </div>
-               
+
                     <div class="col-lg-4 col-sm-4 col-md-4">
                         <div class="form-group">
                             <label class="control-label col-md-12"><strong>Created By</strong></label>
@@ -90,12 +94,12 @@ else
                             <label class="control-label col-md-12"><strong>Order Date</strong></label>
                             <div class="col-md-12">
                                 @Html.HiddenFor(model => model.ApprovalDate)
-                                <input type="date" class="form-control" value="@(Model.OrderDate == null ? "Order not placed" : Model.OrderDate.Value.ToString("yyyy-MM-dd"))" name="OrderDate" />
+                                <input type="date" class="form-control" value="@(Model.OrderDate == null ? "Order not placed" : Model.OrderDate.Value.ToString("yyyy-MM-dd"))" name="OrderDate" id="OrderDate" />
                             </div>
                         </div>
 
                     </div>
-               
+
                     <div class="col-lg-4 col-sm-4 col-md-4">
                         <div class="form-group">
                             <label class="control-label col-md-12 text-primary"><strong>Status</strong></label>
@@ -124,40 +128,42 @@ else
                 </div>
 
 
-            </div>  </div>    <br />
+            </div>
+        </div> <br />
 
-            <table class="table table-hover table-striped">
+        <table class="table table-hover table-striped">
+            <tr>
+                <th>No</th>
+                <th>Product</th>
+                <th>Unit of Measure</th>
+                <th>Unit Price</th>
+                <th>Ordered Qty</th>
+                <th>Total Price</th>
+            </tr>
+            @for (int i = 0; i < Model.PurchaseOrderDetails.Count; i++)
+            {
                 <tr>
-                    <th>No</th>
-                    <th>Product</th>
-                    <th>Unit of Measure</th>
-                    <th>Unit Price</th>
-                    <th>Ordered Qty</th>
-                    <th>Total Price</th>
-                </tr>
-                @for (int i = 0; i < Model.PurchaseOrderDetails.Count; i++)
-                {
-                    <tr>
-                        <td>@(i + 1)</td>
-                        <td>@Model.PurchaseOrderDetails[i].Stationery.Description</td>
-                        <td>@Model.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
-                        <td>@Model.PurchaseOrderDetails[i].UnitPrice</td>
-                        <td>@(Model.PurchaseOrderDetails[i].OrderQty)</td>
-                        <td>@(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
+                    <td>@(i + 1)</td>
+                    <td>@Model.PurchaseOrderDetails[i].Stationery.Description</td>
+                    <td>@Model.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
+                    <td>@Model.PurchaseOrderDetails[i].UnitPrice</td>
+                    <td>@(Model.PurchaseOrderDetails[i].OrderQty)</td>
+                    <td>@(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
 
-                    </tr>
-                }
-            </table>
+                </tr>
+            }
+        </table>
 
         <div class="text-right">
-            <input type="submit" value="Submit Order and Print" class="btn btn-success btn-lg" style="width:40%" />
+            <input type="submit" value="Submit Order and Print" class="btn btn-success btn-lg" style="width:40%" onclick="return printPo()" />
         </div>
     }
 }
 
 @section scripts
 {
-    <script>
+        <script>
+
         //redirect page if PO selected from no-PO page
         $(document).on('change', '#select_PO', function () {
             if ($(this).val() != 0) {
@@ -165,6 +171,12 @@ else
                 window.location.replace(newLink);
             }
         });
-    </script>
+
+        var urlToPrintPo = '@(Url.Content("~/"))PurchaseOrders/PrintPo?id=@(poNum)';
+            function printPo() {
+                var date = new Date($('#OrderDate').val());
+            window.open(urlToPrintPo + '&orderDate=' + date.getTime());
+        }
+        </script>
 }
 
