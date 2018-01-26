@@ -188,5 +188,14 @@ namespace LUSSIS.Repositories
             }
             return valueList;
         }
+
+        public Employee GetStoreManager()
+        {
+            return LUSSISContext.Employees.Where(x => x.JobTitle == "manager").FirstOrDefault();
+        }
+        public Employee GetStoreSupervisor()
+        {
+            return LUSSISContext.Employees.Where(x => x.JobTitle == "supervisor").FirstOrDefault();
+        }
     }
 }

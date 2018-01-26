@@ -13,6 +13,8 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
 using PagedList;
+using System.Text;
+using LUSSIS.Emails;
 
 namespace LUSSIS.Controllers
 {
@@ -160,12 +162,20 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult CreateAdjustments(AdjVoucherColView kk)
         {
-            int ENum = er.GetCurrentUser().EmpNum;
+            Employee self = er.GetCurrentUser();
+            int ENum = self.EmpNum;
             DateTime todayDate = DateTime.Today;
             if (ModelState.IsValid)
             {
                 if (kk.MyList != null)
                 {
+                    //Although there is a threshold of $250, both supervisor and manager will be informed of all adjustments regardless of price
+                    //If desired, the threshold can be applied by getting price * quantity and setting if (total price > 250) 
+                    string destinationEmail = er.GetStoreManager().EmailAddress;     
+                    string destinationEmail2 = er.GetStoreSupervisor().EmailAddress;
+                    string subject = "A new adjustment of stationeries has been made by " + self.FullName;
+                    StringBuilder body = new StringBuilder();
+                    body.AppendLine(self.FullName + " has made the following adjustment: ");
                     foreach (AdjustmentVoucherDTO AVDTO in kk.MyList)
                     {
                         if (AVDTO.Sign == false)
@@ -182,9 +192,20 @@ namespace LUSSIS.Controllers
                             Status = "pending"
                         };
                         sar.Add(Adj);
+                        Stationery st = sr.GetById(AVDTO.ItemNum);
+
+                        body.AppendLine("Stationery: " + st.Description);
+                        body.AppendLine("Quantity: " + AVDTO.Quantity);
+                        body.AppendLine();
+                                              
                     }
+                    body.AppendLine("by " + self.FullName + "on" + DateTime.Now.ToString());
+                    EmailHelper.SendEmail(destinationEmail, subject, body.ToString());
+                    EmailHelper.SendEmail(destinationEmail2, subject, body.ToString());
+                    return RedirectToAction("History");
                 }
-                return RedirectToAction("History");
+                else { return View(kk); }
+
             }
             return View(kk);
         }
@@ -218,11 +239,12 @@ namespace LUSSIS.Controllers
         {
             if (ModelState.IsValid)
             {
+                Employee self = er.GetCurrentUser();
                 if (adjVoucher.Sign == false)
                 { adjVoucher.Quantity = adjVoucher.Quantity * -1; }
                 var adj = new AdjVoucher
                 {
-                    RequestEmpNum = er.GetCurrentUser().EmpNum,
+                    RequestEmpNum = self.EmpNum,
                     ItemNum = adjVoucher.ItemNum,
                     CreateDate = DateTime.Today,
                     Quantity = adjVoucher.Quantity,
@@ -230,6 +252,18 @@ namespace LUSSIS.Controllers
                     Status = "pending"
                 };
                 sar.Add(adj);
+                string destinationEmail = er.GetStoreManager().EmailAddress;     
+                string destinationEmail2 = er.GetStoreSupervisor().EmailAddress;
+                string subject = "A new adjustment of stationeries has been made by " + self.FullName;
+                StringBuilder body = new StringBuilder();
+                Stationery st = sr.GetById(adjVoucher.ItemNum);
+
+                body.AppendLine(self.FullName + " has made the following adjustment: ");
+                body.AppendLine("Stationery: " + st.Description);
+                body.AppendLine("Quantity: " + adjVoucher.Quantity.ToString());
+                body.AppendLine("by " + self.FullName + " on " + DateTime.Now.ToString());
+                EmailHelper.SendEmail(destinationEmail, subject, body.ToString());
+                EmailHelper.SendEmail(destinationEmail2, subject, body.ToString());
                 return RedirectToAction("History");
             }
             else
