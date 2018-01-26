@@ -25,10 +25,9 @@ namespace LUSSIS.Controllers
         private EmployeeRepository er = new EmployeeRepository();
 
         // GET: StockAdjustment
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-
-            return View(await sar.GetAllAsync());
+            return RedirectToAction("History");
         }
 
         public ActionResult History(string searchString, string currentFilter, int? page)
@@ -89,8 +88,6 @@ namespace LUSSIS.Controllers
             {
                 return HttpNotFound();
             }
-
-
             ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.ApprovalEmpNum);
             ViewBag.RequestEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.RequestEmpNum);
             ViewBag.ItemNum = new SelectList(db.Stationeries, "ItemNum", "Description", adjVoucher.ItemNum);
@@ -106,7 +103,7 @@ namespace LUSSIS.Controllers
             {
                 db.Entry(adjVoucher).State = EntityState.Modified;
                 await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("History");
             }
             ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.ApprovalEmpNum);
             ViewBag.RequestEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.RequestEmpNum);
@@ -121,75 +118,7 @@ namespace LUSSIS.Controllers
         }
 
 
-        // GET: StockAdjustment/Create
-        [Authorize(Roles = "clerk")]
-        public ActionResult Create()
-        {
-            ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title");
-            ViewBag.RequestEmpNum = new SelectList(db.Employees, "EmpNum", "Title");
-            ViewBag.ItemNum = new SelectList(db.Stationeries, "ItemNum", "Description");
-            return View();
-        }
 
-        // POST: StockAdjustment/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "clerk")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "AdjVoucherId,ItemNum,ApprovalEmpNum,Quantity,Reason,CreateDate,ApprovalDate,RequestEmpNum,Status,Remark")] AdjVoucher adjVoucher)
-        {
-            if (ModelState.IsValid)
-            {
-                db.AdjVouchers.Add(adjVoucher);
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.ApprovalEmpNum);
-            ViewBag.RequestEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.RequestEmpNum);
-            ViewBag.ItemNum = new SelectList(db.Stationeries, "ItemNum", "Description", adjVoucher.ItemNum);
-            return View(adjVoucher);
-        }
-
-        // GET: StockAdjustment/Edit/5
-        //???? think this is autogene
-        public async Task<ActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AdjVoucher adjVoucher = await db.AdjVouchers.FindAsync(id);
-            if (adjVoucher == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.ApprovalEmpNum);
-            ViewBag.RequestEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.RequestEmpNum);
-            ViewBag.ItemNum = new SelectList(db.Stationeries, "ItemNum", "Description", adjVoucher.ItemNum);
-            return View(adjVoucher);
-        }
-
-        // POST: StockAdjustment/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        //autogen?
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "AdjVoucherId,ItemNum,ApprovalEmpNum,Quantity,Reason,CreateDate,ApprovalDate,RequestEmpNum,Status,Remark")] AdjVoucher adjVoucher)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(adjVoucher).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.ApprovalEmpNum);
-            ViewBag.RequestEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.RequestEmpNum);
-            ViewBag.ItemNum = new SelectList(db.Stationeries, "ItemNum", "Description", adjVoucher.ItemNum);
-            return View(adjVoucher);
-        }
 
         // GET: StockAdjustment/Delete/5
         //autogen?
@@ -207,17 +136,6 @@ namespace LUSSIS.Controllers
             return View(adjVoucher);
         }
 
-        // POST: StockAdjustment/Delete/5
-        //???
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
-        {
-            AdjVoucher adjVoucher = await db.AdjVouchers.FindAsync(id);
-            db.AdjVouchers.Remove(adjVoucher);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
 
         protected override void Dispose(bool disposing)
         {
@@ -234,8 +152,6 @@ namespace LUSSIS.Controllers
             AdjVoucherColView aVCV = new AdjVoucherColView();
             List<AdjustmentVoucherDTO> aVlist = new List<AdjustmentVoucherDTO>();
             AdjustmentVoucherDTO aV = new AdjustmentVoucherDTO();
-            //aV.ItemNum = "C001";
-            //aV.Quantity = 3;
             aVlist.Add(aV);
             aVCV.MyList = aVlist;
             return View("CreateAdjustments", aVCV);
@@ -252,21 +168,23 @@ namespace LUSSIS.Controllers
                 {
                     foreach (AdjustmentVoucherDTO AVDTO in kk.MyList)
                     {
-                        AdjVoucher Adj = new AdjVoucher();
                         if (AVDTO.Sign == false)
                         {
                             AVDTO.Quantity = AVDTO.Quantity * -1;
                         }
-                        Adj.ItemNum = AVDTO.ItemNum;
-                        Adj.Quantity = AVDTO.Quantity;
-                        Adj.Reason = AVDTO.Reason;
-                        Adj.RequestEmpNum = ENum;
-                        Adj.CreateDate = todayDate;
-                        Adj.Status = "pending";
+                        AdjVoucher Adj = new AdjVoucher
+                        {
+                            ItemNum = AVDTO.ItemNum,
+                            Quantity = AVDTO.Quantity,
+                            Reason = AVDTO.Reason,
+                            RequestEmpNum = ENum,
+                            CreateDate = todayDate,
+                            Status = "pending"
+                        };
                         sar.Add(Adj);
                     }
                 }
-                return RedirectToAction("index");
+                return RedirectToAction("History");
             }
             return View(kk);
         }
@@ -300,17 +218,19 @@ namespace LUSSIS.Controllers
         {
             if (ModelState.IsValid)
             {
-                var adj = new AdjVoucher();
-                adj.RequestEmpNum = er.GetCurrentUser().EmpNum;
-                adj.ItemNum = adjVoucher.ItemNum;
-                adj.CreateDate = DateTime.Today;
                 if (adjVoucher.Sign == false)
                 { adjVoucher.Quantity = adjVoucher.Quantity * -1; }
-                adj.Quantity = adjVoucher.Quantity;
-                adj.Reason = adjVoucher.Reason;
-                adj.Status = "pending";
+                var adj = new AdjVoucher
+                {
+                    RequestEmpNum = er.GetCurrentUser().EmpNum,
+                    ItemNum = adjVoucher.ItemNum,
+                    CreateDate = DateTime.Today,
+                    Quantity = adjVoucher.Quantity,
+                    Reason = adjVoucher.Reason,
+                    Status = "pending"
+                };
                 sar.Add(adj);
-                return RedirectToAction("index");
+                return RedirectToAction("History");
             }
             else
             {

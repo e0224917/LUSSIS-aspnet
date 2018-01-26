@@ -24,21 +24,37 @@ namespace LUSSIS.Controllers
         // GET: Stationeries
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
-            List<Stationery> stationerys = new List<Stationery>();
+            List<Stationery> adjustments = new List<Stationery>();
             if (searchString != null)
             { page = 1; }
             else
             {
                 searchString = currentFilter;
             }
-            if (!String.IsNullOrEmpty(searchString))
-            { stationerys = strepo.GetByDescription(searchString).ToList(); }
-            else { stationerys = strepo.GetAll().ToList(); }
-            int pageSize = 20;
-            int pageNumber = (page ?? 1);
-            return View(stationerys.ToPagedList(pageNumber, pageSize));
 
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                adjustments = strepo.GetByDescription(searchString).ToList();
+            }
+            else
+            {
+                adjustments = strepo.GetAll().ToList();
+            }
+            int pageSize = 15;
+            int pageNumber = (page ?? 1);
+
+            var stationeryAll = adjustments.ToPagedList(pageNumber, pageSize);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_Index", stationeryAll);
+            }
+
+            return View(stationeryAll);
         }
+
+
+
         
         // GET: Stationeries/Details/5
         public ActionResult Details(string id)
@@ -178,31 +194,38 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            Stationery st = strepo.GetById(id);
-            StationeryDTO nDTO = new StationeryDTO
+            else
             {
-                SupplierList = srepo.GetSupplierList(),
-                CategoryList = strepo.GetCategories(),
-                ItemNum = id,
-                BinNum = st.BinNum,
-                CategoryId = st.CategoryId.ToString(),
-                Description = st.Description,
-                ReorderLevel = st.ReorderLevel,
-                ReorderQty = st.ReorderQty,
-                UnitOfMeasure = st.UnitOfMeasure
-            };
-            StationerySupplier ss1 = strepo.GetSSByIdRank(id,1);
-            nDTO.SupplierName1 = ss1.SupplierId.ToString();
-            nDTO.Price1 = ss1.Price;
-            StationerySupplier ss2 = strepo.GetSSByIdRank(id,2);
-            nDTO.SupplierName2 = ss2.SupplierId.ToString();
-            nDTO.Price2 = ss2.Price;
-            StationerySupplier ss3 = strepo.GetSSByIdRank(id, 3);
-            nDTO.SupplierName3 = ss3.SupplierId.ToString();
-            nDTO.Price3 = ss3.Price;
 
-            return View(nDTO);
+                Stationery st = strepo.GetById(id);
+                if (st == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                StationeryDTO nDTO = new StationeryDTO
+                {
+                    SupplierList = srepo.GetSupplierList(),
+                    CategoryList = strepo.GetCategories(),
+                    ItemNum = id,
+                    BinNum = st.BinNum,
+                    CategoryId = st.CategoryId.ToString(),
+                    Description = st.Description,
+                    ReorderLevel = st.ReorderLevel,
+                    ReorderQty = st.ReorderQty,
+                    UnitOfMeasure = st.UnitOfMeasure
+                };
+                StationerySupplier ss1 = strepo.GetSSByIdRank(id, 1);
+                nDTO.SupplierName1 = ss1.SupplierId.ToString();
+                nDTO.Price1 = ss1.Price;
+                StationerySupplier ss2 = strepo.GetSSByIdRank(id, 2);
+                nDTO.SupplierName2 = ss2.SupplierId.ToString();
+                nDTO.Price2 = ss2.Price;
+                StationerySupplier ss3 = strepo.GetSSByIdRank(id, 3);
+                nDTO.SupplierName3 = ss3.SupplierId.ToString();
+                nDTO.Price3 = ss3.Price;
+
+                return View(nDTO);
+            }
         }
 
         [HttpPost]
