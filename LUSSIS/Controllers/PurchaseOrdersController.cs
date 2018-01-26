@@ -229,7 +229,6 @@ namespace LUSSIS.Controllers
                 {
                     string destination = "purchasing_dept@logicunversity.edu";
                     string subject = "Purchasing from Non-Primary Supplier";
-                    //uncomment to use
                     //Emails.EmailHelper.SendEmail(destination,subject,emailBody.ToString());
                 }
 
