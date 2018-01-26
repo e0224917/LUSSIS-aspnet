@@ -151,23 +151,15 @@ namespace LUSSIS.Repositories
             LUSSISContext.SaveChanges();
         }
 
-       
-        public List<Department> GetDepartmentAll()
-        {
-            List<Department> depList = LUSSISContext.Departments.ToList();
-
-            return depList;
-
-        }
-
-        
+        //for dashboard chart to display all depname
         public List<String> GetDepartmentNames()
         {
             return LUSSISContext.Departments.Select(x => x.DeptName).ToList();
+
         }
         public List<double> GetDepartmentValue()
         {
-            List<Department> depList = GetDepartmentAll();
+            List<Department> depList = LUSSISContext.Departments.ToList();
             List<double> valueList = new List<double>();
             foreach (Department e in depList)
             {
@@ -186,5 +178,14 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Employees.Where(x => x.JobTitle == "supervisor").FirstOrDefault();
         }
+        public List<String>GetAllDepartmentCode()
+        {
+            return LUSSISContext.Departments.Select(x => x.DeptCode).ToList();
+        }
+        public List<Department>GetAllDepartment()
+        {
+            return LUSSISContext.Departments.ToList();
+        }
+      
     }
 }

@@ -15,7 +15,7 @@ namespace LUSSIS.Repositories
     {
         public PORepository() { }
         StationeryRepository sr = new StationeryRepository();
-       
+
         public List<PurchaseOrder> GetPendingApprovalPO()
         {
             IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == "pending");
@@ -34,7 +34,7 @@ namespace LUSSIS.Repositories
             return list.ToList();
         }
 
-       
+
 
         public int GetPendingPOCount()
         {
@@ -62,15 +62,15 @@ namespace LUSSIS.Repositories
             return poDTOList;
         }
 
-        
+
 
         public double GetPOAmountByPoNum(int poNum)
         {
-            List<PurchaseOrderDetail> pd_list =LUSSISContext.PurchaseOrderDetails.Where(x=>x.PoNum==poNum).ToList();
+            List<PurchaseOrderDetail> pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.PoNum == poNum).ToList();
             double total = 0;
             foreach (PurchaseOrderDetail pod in pd_list)
             {
-               
+
 
                 int qty = (int)pod.OrderQty;
                 double unit_price = (double)pod.UnitPrice;
@@ -116,7 +116,7 @@ namespace LUSSIS.Repositories
             return result;
         }
 
-      
+
         public void UpDatePOStatus(int i, String status)
         {
             PurchaseOrder p = GetById(i);
@@ -124,26 +124,26 @@ namespace LUSSIS.Repositories
             p.ApprovalDate = DateTime.Today;
             Update(p);
         }
-       
-       public double GetPOAmountByCategory(int categoryId)
-             {
+
+        public double GetPOAmountByCategory(int categoryId)
+        {
             double total = 0;
             List<String> ItemList = new List<String>();
             ItemList = sr.GetItembyCategory(categoryId);
             List<PurchaseOrderDetail> pd_list = new List<PurchaseOrderDetail>();
             foreach (String e in ItemList)
             {
-              pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList<PurchaseOrderDetail>();
+                pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList<PurchaseOrderDetail>();
                 foreach (PurchaseOrderDetail pod in pd_list)
                 {
-                    int qty =(int)pod.OrderQty;
-                    double unit_price =(double)pod.UnitPrice;
+                    int qty = (int)pod.OrderQty;
+                    double unit_price = (double)pod.UnitPrice;
                     total += qty * unit_price;
 
 
                 }
             }
-           
+
             return total;
 
 
@@ -151,14 +151,14 @@ namespace LUSSIS.Repositories
         public List<double> GetPOByCategory()
         {
             List<double> list = new List<double>();
-            List<int> Cat =LUSSISContext.Categories.Select(x=>x.CategoryId).ToList() ;
+            List<int> Cat = LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
 
-            foreach(int i in Cat)
+            foreach (int i in Cat)
             {
                 list.Add(GetPOAmountByCategory(i));
             }
             return list;
-           
+
         }
 
         public void ValidateReceiveTrans(ReceiveTran receive)
@@ -196,7 +196,7 @@ namespace LUSSIS.Repositories
                     //update stationery
                     Stationery s = sr.GetById(po.PurchaseOrderDetails.ElementAt(i).Stationery.ItemNum);
                     s.AverageCost = ((s.AverageCost * s.CurrentQty)
-                                    + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1+GST_RATE))
+                                    + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + GST_RATE))
                                     / (s.CurrentQty + receiveQty);
                     s.CurrentQty += receiveQty;
                     s.AvailableQty += receiveQty;
@@ -221,6 +221,87 @@ namespace LUSSIS.Repositories
         public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsByStatus(string status)
         {
             return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status == status);
+        }
+
+
+        public List<double> GetAmountByCategoryList(List<String> categoryId, String supId, String from, String to)
+        {
+            DateTime fromDate = Convert.ToDateTime(from).Date;
+            DateTime toDate = Convert.ToDateTime(to).Date;
+            double total = 0;
+
+            List<double> result = new List<double>();
+            foreach (String id in categoryId)
+            {
+                List<String> itemList = sr.GetItembyCategory(Convert.ToInt32(id));
+                int supplierId = Convert.ToInt32(supId);
+                total = 0;
+                foreach (String item in itemList)
+                {
+                    var s = from t1 in LUSSISContext.Disbursements
+                            join t2 in LUSSISContext.DisbursementDetails
+                            on t1.DisbursementId equals t2.DisbursementId
+                            join t3 in LUSSISContext.StationerySuppliers
+                            on t2.ItemNum equals t3.ItemNum
+                            where t2.Stationery.ItemNum == item &&
+                            t3.SupplierId == supplierId &&
+                            (t1.CollectionDate >= fromDate && t1.CollectionDate <= toDate)
+                            select new
+                            {
+                                price = (int)t2.Stationery.AverageCost,
+                                Qty = (double)t2.ActualQty
+                            };
+                    foreach (var a in s)
+                    {
+                        total += a.Qty;
+                    }
+                }
+
+                result.Add(total);
+
+            }
+
+            return result;
+        }
+
+        public List<double> GetAmountBySupplierList(List<String> supplierIds, String category, String from, String to)
+        {
+            DateTime fromDate = Convert.ToDateTime(from).Date;
+            DateTime toDate = Convert.ToDateTime(to).Date;
+            double total = 0;
+
+            List<double> resultList = new List<double>();
+            int catId = Convert.ToInt32(category);
+            foreach (String sup in supplierIds)
+            {
+                int supId = Convert.ToInt32(sup);
+
+                total = 0;
+                var q = from t1 in LUSSISContext.Disbursements
+                        join t2 in LUSSISContext.DisbursementDetails
+                        on t1.DisbursementId equals t2.DisbursementId
+                        join t3 in LUSSISContext.StationerySuppliers
+                        on t2.ItemNum equals t3.ItemNum
+                        join t4 in LUSSISContext.Stationeries
+                        on t2.ItemNum equals t4.ItemNum
+                        where t3.SupplierId == supId
+                        && t4.CategoryId == catId
+                        && (t1.CollectionDate >= fromDate && t1.CollectionDate <= toDate)
+                        select new
+                        {
+                            price = (int)t2.Stationery.AverageCost,
+                            Qty = (double)t2.ActualQty
+                        };
+                foreach (var a in q)
+                {
+                    total += a.price * a.Qty;
+                }
+                resultList.Add(total);
+            }
+
+            return resultList;
+
+
         }
     }
 }

@@ -14,8 +14,7 @@ namespace LUSSIS.Models.WebDTO
         public DateTime ToDate { get; set; }
         public bool IsChart { get; set; }
 
-        public List<SelectListItem> SelectedSupplier { get; set; }
-        public List<SelectListItem> SelectedCategory { get; set; }
+        public List<Department> Department { get; set; }
         
     }
 }

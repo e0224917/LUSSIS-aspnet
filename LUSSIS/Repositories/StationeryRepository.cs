@@ -68,15 +68,9 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Stationeries.Where(s => s.Description.Contains(Description));
         }
-        public IEnumerable<String> GetAllCategory()
+        public IEnumerable<String> GetAllCategoryName()
         {
-            List<String> slist = new List<string>();
-            List<Category> clist = LUSSISContext.Categories.ToList();
-            foreach (Category c in clist)
-            {
-                slist.Add(c.CategoryName);
-            }
-            return slist;
+           return LUSSISContext.Categories.Select(x => x.CategoryName);
         }
 
         public IEnumerable<StationerySupplier> GetAllStationerySuppliers()
@@ -177,10 +171,58 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Categories.ToList();
         }
+      
+        public List<Category> GetCategoryBySupplier(String supplier)
+        {
+            List<Category> cat = new List<Category>();
+            int id =Convert.ToInt32(supplier);
+            var q = (from t1 in LUSSISContext.Stationeries
+                    join t2 in LUSSISContext.StationerySuppliers
+                    on t1.ItemNum equals t2.ItemNum
+                    where t2.Supplier.SupplierId == id
+                    select new {categoryId= t1.CategoryId}).Distinct();
+           
+            foreach(var a in q)
+            {
+                
+                int catid=(int)a.categoryId;
+                cat.Add(LUSSISContext.Categories.Where(x => x.CategoryId == catid).FirstOrDefault());
+            }
+            return cat;
+        }
+        public List<Supplier> GetSupplierByCategory(String category)
+        {
+            List<Supplier> supList = new List<Supplier>();
+            int id = Convert.ToInt32(category);
+            var q= (from t1 in LUSSISContext.Stationeries
+                    join t2 in LUSSISContext.StationerySuppliers
+                    on t1.ItemNum equals t2.ItemNum
+                    where t1.CategoryId == id
+                    select new { supplierId = t2.SupplierId }).Distinct();
 
+            foreach(var a in q)
+            {
+                int supId = (int)a.supplierId;
+                supList.Add(LUSSISContext.Suppliers.Where(x => x.SupplierId == supId).FirstOrDefault());
+            }
+            return supList;
+        }
+        public List<String>GetCategoryNamebyId(List<String> ids)
+        {
+            List<String> list = new List<String>();
+            foreach (String id in ids)
+            {
+                int idCat = Convert.ToInt32(id);
+                Category c = (LUSSISContext.Categories.Where(x => x.CategoryId == idCat).FirstOrDefault());
+                list.Add(c.CategoryName);
+            }
+            return list;
+        }
+        public List<int>GetAllCategoryIds()
+        {
+            return LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
+        }
 
-
-
-
+      
     }
 }

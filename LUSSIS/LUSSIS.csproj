@@ -396,6 +396,8 @@
     <Compile Include="Validations\CollectionDateAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\datepicker.css" />
+    <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-reboot.css" />
@@ -661,18 +663,8 @@
     <Content Include="Views\Requisitions\_unauthoriseAccess.cshtml" />
     <Content Include="Views\Disbursements\_QR.cshtml" />
     <Content Include="Views\Requisitions\All.cshtml" />
-    <Content Include="Views\Stationeries\Delete.cshtml" />
-    <Content Include="Views\Stationeries\Details.cshtml" />
-    <Content Include="Views\Disbursements\_History.cshtml" />
-    <Content Include="Views\Requisitions\_Index.cshtml" />
-    <Content Include="Views\Requisitions\_All.cshtml" />
-    <Content Include="Views\Account\NotAuthorized.cshtml" />
-    <Content Include="Views\StockAdjustment\_History.cshtml" />
-    <Content Include="Views\Stationeries\Create.cshtml" />
-    <Content Include="Views\Stationeries\Edit.cshtml" />
-    <Content Include="Views\SupervisorDashboard\Report.cshtml" />
-    <Content Include="Views\Stationeries\_Index.cshtml" />
-    <Content Include="Views\Stationeries\Index.cshtml" />
+    <Content Include="Views\Requisitions\PDetail.cshtml" />
+    <Content Include="Views\SupervisorDashboard\GenerateReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

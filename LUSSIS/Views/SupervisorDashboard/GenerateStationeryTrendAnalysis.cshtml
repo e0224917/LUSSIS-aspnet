@@ -1,0 +1,382 @@
+﻿@model LUSSIS.Models.WebDTO.SupervisorReportDTO
+
+@{
+    ViewBag.Title = "GenerateReport";
+}
+
+
+<h2>GenerateReport</h2>
+<script>
+
+    window.onload = function ()
+    {
+        var flag = @Html.Raw(Json.Encode(ViewBag.flag));
+        var selected =@Html.Raw(Json.Encode(ViewBag.selected));
+
+        document.getElementById(flag).checked = true;
+
+        if (flag == "One_supplier") {
+            $('#hid_supplier').val(selected);
+            document.getElementById("notshowCategory").style.display = "none";
+            document.getElementById("notshowSupplier").style.display = "block";
+        }
+        else {
+            $('#hid_category').val(selected);
+            document.getElementById("notshowCategory").style.display = "block";
+            document.getElementById("notshowSupplier").style.display = "none";
+        }
+    }
+
+
+
+</script>
+
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="bs-component">
+            <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                <div class="col-xs-12 text-left">
+                    <div class="card text-black">
+                        <div class="card-body">
+                            <input type="radio" id="One_supplier" name="supplier_or_category" value="One_supplier" onclick="handleClick(this)" /><label for="One_supplier">supplier</label>
+                            <br />
+                            <input type="radio" id="One_category" name="supplier_or_category" value="One_category" onclick="handleClick(this)" /><label for="One_category">category</label>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="bs-component">
+            <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                <div class="col-xs-12 text-left">
+                    <div class="card text-black">
+
+                        <div class="card-body">
+
+                            <input type="radio" id="This_month" value="This_month" name="date_range" onclick="handleClick(this)" /><label for="This_month">This Month</label>
+                            <br />
+                            <input type="radio" id="This_year" value="This_year" name="date_range" onclick="handleClick(this)" /><label for="This_year">This Year</label>
+                            <br />
+                            <input type="radio" id="Past_Three_Months" value="Past_Three_Months" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Past Three Months</label>
+                            <br />
+                            <input type="radio" id="Past_Six_Months" value="Past_Six_Months" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Past six Months</label>
+                            <br />
+                            <input type="radio" id="Custom_Range" value="Custom_Range" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Custom Range</label>
+                            <br />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="bs-component">
+            <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+                <div class="col-xs-12 text-left">
+                    <div class="card text-black">
+
+                        <div class="card-body">
+
+                            <input type="checkbox" name="chart_or_table" id="BarChart" value="BarChart" onclick="handleClick(this)" /><label for="BarChart">Barchart</label><br />
+
+                            <input type="checkbox" name="chart_or_table" id="Table" value="Table" onclick="handleClick(this)" /><label for="Table">Table</label><br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-6" id="notshowSupplier" style="display:none;">
+                <h6>Select Supplier</h6>
+                <select id="select_supplier" size="8" onchange="supplierChange()">
+                    <option value="0">All</option>
+                    @foreach (var sup in Model.Suppliers)
+            {
+                <option value="@sup.SupplierId">
+                    @sup.SupplierName
+                </option>
+    }
+                </select>
+                <br />
+                <br />
+                @if (ViewBag.category == null)
+        {
+        }
+        else
+        {
+            <script>    document.getElementById("notshowCategory").style.display = "none";</script>
+    foreach (var cat in ViewBag.category)
+    {
+        <input type="checkbox" class="chk_category" id="@cat.CategoryId" value="@cat.CategoryId" />
+        @cat.CategoryName
+        <br />
+}
+}
+
+            </div>
+            <div class="col-md-6" id="notshowCategory" style="display:none;">
+                <h6>Select Category</h6>
+
+                <select id="select_category" size="8" onchange="categoryChange()">
+                    <option value="0">All</option>
+                    @foreach (var cat in Model.Categories)
+            {
+                <option value="@cat.CategoryId">
+                    @cat.CategoryName
+                </option>
+    }
+                </select>
+
+                <br />
+                @if (ViewBag.supplier == null)
+        {
+        }
+        else
+        {
+            <script>    document.getElementById("notshowSupplier").style.display = "none";</script>
+
+    foreach (var sup in ViewBag.supplier)
+    {
+        <input type="checkbox" class="chk_supplier" id="@sup.SupplierId" value="@sup.SupplierId" />
+        @sup.SupplierName
+        <br />
+}
+}
+
+
+            </div>
+            <input type="text" name="birthdate" value="10/24/1984" />
+
+
+
+            <script type="text/javascript">
+
+                $(function () {
+
+                    $('input[name="birthdate"]').daterangepicker({
+
+                        singleDatePicker: true,
+
+                        showDropdowns: true
+
+                    },
+
+                        function (start, end, label) {
+
+                            var years = moment().diff(start, 'years');
+
+                            alert("You are " + years + " years old.");
+
+                        });
+
+                });
+
+            </script>
+        </div>
+
+    </div>
+</div>
+<input type="hidden" id="hid_supplier" name="supplier" />
+<input type="hidden" id="hid_category" name="category" />
+<input type="hidden" id="hid_date" name="date" />
+<input type="submit" value="Generate" id="Generate" onclick="Generate_click()" />
+<input type="hidden" id="barchart" name="barchart" />
+<input type="hidden" id="table" name="table" />
+
+<div class="row">
+    <div class="col-md-6">
+        <div id="chart_div"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="bar_div"></div>
+    </div>
+</div>
+
+
+@Scripts.Render("https://www.gstatic.com/charts/loader.js")
+<script>
+
+    function supplierChange() {
+        var values = $('#select_supplier').val();
+        $('#hid_supplier').val($("#select_supplier :selected").text());
+        if (values != '0') {
+            var newLink = '/SupervisorDashboard/GenerateStationeryTrendAnalysis?supplier=' + values + '&&category=a&&flag=One_supplier';
+            window.location.replace(newLink);
+        }
+
+
+    }
+    function categoryChange() {
+        var value = $('#select_category').val();
+
+        if (value != '0') {
+            var newLink = '/SupervisorDashboard/GenerateStationeryTrendAnalysis?supplier=a&&category=' + value + '&&flag=One_category';
+            window.location.replace(newLink);
+        }
+
+
+    }
+
+    function handleClick(myRadio) {
+        var check = $(myRadio).val();
+
+        if (check == "One_supplier") {
+            document.getElementById("notshowSupplier").style.display = "block";
+            document.getElementById("notshowCategory").style.display = "none";
+        }
+        if (check == "One_category") {
+            document.getElementById("notshowSupplier").style.display = "none";
+            document.getElementById("notshowCategory").style.display = "block";
+        }
+        if (check == "Custom_Range") {
+            document.getElementById("notshowDate").style.display = "block";
+
+        }
+        if (check == "This_month" || check == "This_year" || check == "Past_Three_Months" || check == "Past_Six_Months") {
+            $('#hid_date').val(check);
+            document.getElementById("notshowDate").style.display = "none";
+
+        }
+        if (check == "BarChart") {
+            $('#barchart').val(true);
+        }
+        if (check == "Table") {
+            $('#table').val(true);
+        }
+
+    }
+    function getSupplierCheckList() {
+        var chkArray = [];
+        $(".chk_supplier:checked").each(function () {
+            chkArray.push($(this).val());
+
+        });
+
+        return chkArray.join(',');
+    }
+    function getCategoryCheckList() {
+        var chkCategory = [];
+        $(".chk_category:checked").each(function () {
+            chkCategory.push($(this).val());
+
+        });
+
+        return chkCategory.join(',');
+    }
+
+    function Generate_click() {
+
+        var supplier_values = $('#hid_supplier').val();
+        var category_values = $('#hid_category').val();
+
+        var date = $('#hid_date').val();
+        var barchart = $('#barchart').val();
+        var table = $('#table').val();
+        var selected_supplier = getSupplierCheckList();
+        var selected_category = getCategoryCheckList();
+
+
+
+
+        var input1;
+        var input2;
+
+        if (supplier_values == null) {
+            input1 = selected_supplier;
+            input2 = category_values;
+        }
+        else {
+            input1 = supplier_values;
+            input2 = selected_category
+        }
+
+        alert(input1);
+        alert(input2);
+        alert(date);
+        alert(barchart);
+        alert(table);
+        getData(input1, input2, date, barchart, table);
+
+    }
+    function getData(input_supplier, input_category, date, barchart, table) {
+        $.ajax({
+            type: 'GET',
+            url: '/SupervisorDashboard/GetStationeryReportJSON?supplier_values=' + input_supplier + '&&category_values=' + input_category + '&&date=' + date,
+            success: function (chartsdata) {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(function () {
+                    DrawPieChartLoad(chartsdata)
+
+
+                });
+
+            },
+            error: function () {
+                alert("Error loading data! Please try again.");
+            }
+        });
+    }
+
+
+    function DrawPieChartLoad(chartsdata) {
+        var first = chartsdata.ListOne;
+        var second = chartsdata.ListTwo;
+
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('string', 'CategoryName');
+        data.addColumn('number', 'PostCount');
+
+        //Loop through each list data
+
+        for (var i = 0; i < first.length; i++) {
+            if (second[i] != 0) {
+                data.addRow([first[i], second[i]]);
+            }
+
+        }
+
+        // Instantiate and draw our chart, passing in some options
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+
+        //Draw pie chart command with data and chart options
+        chart.draw(data,
+            {
+                title: "Stationery Trend Analysis",
+                position: "top",
+                fontsize: "25px",
+                width: "600",
+                height: "600",
+            });
+
+    }
+
+
+
+
+
+</script>
+<script>
+    var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    $('#startDate').datepicker({
+        uiLibrary: 'bootstrap4',
+        iconsLibrary: 'fontawesome',
+        minDate: today,
+        maxDate: function () {
+            return $('#endDate').val();
+        }
+    });
+    $('#endDate').datepicker({
+        uiLibrary: 'bootstrap4',
+        iconsLibrary: 'fontawesome',
+        minDate: function () {
+            return $('#startDate').val();
+        }
+    });
+</script>
