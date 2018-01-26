@@ -25,7 +25,6 @@ namespace LUSSIS.Controllers
         {
         }
 
-
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
@@ -73,10 +72,10 @@ namespace LUSSIS.Controllers
                 case SignInStatus.Success:
                     var context = new LUSSISContext();
                     var emp = context.Employees.FirstOrDefault(e => e.EmailAddress == model.Email);
-                    //Session["Name"] = emp.FullName;
                     var cookie = new HttpCookie("Employee");
                     cookie["Name"] = emp.FullName;
                     cookie["DeptCode"] = emp.DeptCode;
+                    cookie["EmpNum"] = emp.EmpNum.ToString();
                     Response.Cookies.Add(cookie);
                     
                     //return RedirectToLocal(returnUrl);
@@ -135,9 +134,8 @@ namespace LUSSIS.Controllers
 
         private bool IsEmailExist(string email)
         {
-            LUSSISContext context = new LUSSISContext();
-            List<Employee> empList = context.Employees.Where(e => e.EmailAddress == email).ToList();            
-            return empList.Count > 0 ? true : false;
+            var emp = _empRepo.GetEmployeeByEmail(email);
+            return emp != null;
         }
 
         //

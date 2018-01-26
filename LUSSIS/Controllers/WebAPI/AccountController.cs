@@ -43,7 +43,7 @@ namespace LUSSIS.Controllers.WebAPI
 
                 if (emp.JobTitle.Equals("staff"))
                 {
-                    var delegateEmp = _dRepo.CheckDelegate(emp.EmpNum);
+                    var delegateEmp = _dRepo.FindByEmpNum(emp.EmpNum);
                     if (delegateEmp != null)
                         isDelegated = DateTime.Today >= delegateEmp.StartDate 
                                       && DateTime.Today <= delegateEmp.EndDate;

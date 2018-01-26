@@ -5,7 +5,7 @@ using LUSSIS.Models;
 
 namespace LUSSIS.Repositories
 {
-    public class DelegateRepository : Repository<Models.Delegate, int>
+    public class DelegateRepository : Repository<Delegate, int>
     {
         public void DeleteByDeptCode(string deptCode)
         {
@@ -18,7 +18,7 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Delegates.FirstOrDefault(d => d.Employee.DeptCode == deptCode);
         }
 
-        public Delegate CheckDelegate(int empNum)
+        public Delegate FindByEmpNum(int empNum)
         {
             return LUSSISContext.Delegates.FirstOrDefault(d => d.EmpNum == empNum);
         }
