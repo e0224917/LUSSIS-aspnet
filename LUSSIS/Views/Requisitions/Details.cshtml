@@ -18,8 +18,10 @@
     @Html.HiddenFor(model => model.RequestRemarks)
     @Html.HiddenFor(model => model.RequisitionDate)
     @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.DeptCode)
 
-    
+
+
     <table class="table table-striped table-dark">
         <tr class="table-active">
             <th>
@@ -50,14 +52,15 @@
             </td>
             @if (ViewBag.Pending != "Pending")
             {
-                <td><span class="text-warning lead">
-    @Html.DisplayFor(model => model.Status)
-</span>
+                <td>
+                    <span class="text-warning lead">
+                        @Html.DisplayFor(model => model.Status)
+                    </span>
                 </td>
             }
         </tr>
     </table>
-    <br/>
+    <br />
     if (ViewBag.Message != "Delegate" && ViewBag.Pending == "Pending")
     {
         <div class="row">

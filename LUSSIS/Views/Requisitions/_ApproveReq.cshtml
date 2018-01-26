@@ -32,24 +32,21 @@
 </form>
 
 
-@section scripts
-{
-    <script>
+@*putting section script annotations here will break the js*@
+<script>
         $(document).ready(function () {
-            $("#approve").click(function() {
+            $("#approve").click(function () {
                 var formdata = $("#approveForm").serialize();
 
                 $.ajax({
                     type: "POST",
                     url: "@Url.Content("~/")Requisitions/_ApproveReq",
                     data: formdata,
-                    success: function() {
+                    success: function () {
                         $("#myApproveModal").modal("hide");
                     }
                 });
                 location.reload();
             });
         })
-    </script>
-}
-
+</script>

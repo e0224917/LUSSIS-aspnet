@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 using System.Web.Http.Description;
 using LUSSIS.Emails;
 using LUSSIS.Models.WebAPI;
+using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers.WebAPI
 {
     public class AccountController : ApiController
     {
-        private LUSSISContext db = new LUSSISContext();
+        private readonly EmployeeRepository _eRepo = new EmployeeRepository();
+        private readonly DelegateRepository _dRepo = new DelegateRepository();
 
         [HttpGet]
         [AllowAnonymous]
@@ -37,13 +39,17 @@ namespace LUSSIS.Controllers.WebAPI
 
                 if (result != SignInStatus.Success) return BadRequest("Wrong email or password. Please try again.");
 
-                var emp = await db.Employees.FirstOrDefaultAsync(em => em.EmailAddress == model.Email);
-                int num = emp.EmpNum;
-                var delegateEmp = db.Delegates.AsEnumerable().LastOrDefault(d => d.EmpNum == num);
+                var emp = _eRepo.GetEmployeeByEmail(model.Email);
 
-                bool isDelegated = false;
-                if (delegateEmp != null)
-                    isDelegated = DateTime.Today >= delegateEmp.StartDate && DateTime.Today <= delegateEmp.EndDate;
+                var isDelegated = false;
+
+                if (emp.JobTitle.Equals("staff"))
+                {
+                    var delegateEmp = _dRepo.CheckDelegate(emp.EmpNum);
+                    if (delegateEmp != null)
+                        isDelegated = DateTime.Today >= delegateEmp.StartDate 
+                                      && DateTime.Today <= delegateEmp.EndDate;
+                }
 
                 var e = new EmployeeDTO
                 {
@@ -61,7 +67,7 @@ namespace LUSSIS.Controllers.WebAPI
             }
             catch (Exception e)
             {
-                return Ok(e);
+                return BadRequest(e.Message);
             }
         }
 
@@ -83,7 +89,7 @@ namespace LUSSIS.Controllers.WebAPI
                     // Send an email with this link
                     string code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Link("Default",
-                        new { controller = "Account", action = "ResetPassword", userId = user.Id, code = code });
+                        new { controller = "Account", action = "ResetPassword", userId = user.Id, code });
                     // await userManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     string subject = "Reset password for " + model.Email;

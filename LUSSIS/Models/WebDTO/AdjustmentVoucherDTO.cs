@@ -20,6 +20,7 @@ namespace LUSSIS.Models.WebDTO
         public int Quantity { get; set; }
 
 
+        [Required(ErrorMessage = "This field is required")]
         [StringLength(50)]
         public string Reason { get; set; }
 

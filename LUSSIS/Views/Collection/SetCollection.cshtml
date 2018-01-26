@@ -5,50 +5,52 @@
 }
 
 <h2>Manage Collection Point</h2>
-
-<table class="table table-hover">
-    <tr>
-        <th>
-            @*@Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)*@
-            Current Collection Point and Time
-        </th>
-    </tr>
-    <tr>
-
-        <td>
-
-            @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
+<hr/>
+<div class="card border-dark mb-3 bg-transparent ">
+    <h5 class="card-header bg-dark" style="margin-top: 0; color:whitesmoke">
+        Current Collection Point and Time
+    </h5>
+    <div class="card-body">
+        <h4 class="card-title">@Html.DisplayFor(model => model.CollectionPoint.CollectionName)</h4>
+        <h5 class="card-subtitle text-muted">
 
             @Html.DisplayFor(model => model.CollectionPoint.Time)
+        </h5>
 
-        </td>
-    </tr>
-</table>
-<hr />
-<nav class="navbar navbar-light bg-light">
-    <div class="navbar-nav mr-auto">
-        @using (Html.BeginForm("UpdateCollection", "Collection", FormMethod.Post))
-        {
-
-            foreach (var item in Model.GetAll)
+    </div>
+</div>
+<div class="card border-dark mb-3 bg-transparent ">
+    <h5 class="card-header bg-dark" style="margin-top: 0; color:whitesmoke">
+        Set New Collection Point
+    </h5>
+    <div class="card-body">
+        <small class="card-subtitle text-muted">New collection point is effective from the next upcoming collection<br /> (current upcoming collection will not be affected)</small>
+    </div>@using (Html.BeginForm("UpdateCollection", "Collection", FormMethod.Post))
+    {
+        <ul class="list-group list-group-flush bg-transparent">
+            @foreach (var item in Model.GetAll)
             {
-                @Html.RadioButtonFor(model => model.DeptCollectionPointID, item.CollectionPointId, 
-                               item.CollectionName == Model.CollectionPoint.CollectionName ? new { @checked = "checked" } : null)
-                @item.CollectionName
-                <text>  </text>
-                @item.Time
+            
+                <label class="btn btn-outline-dark text-left">
+                    @Html.RadioButtonFor(model => model.DeptCollectionPointID, item.CollectionPointId,
+                 item.CollectionName == Model.CollectionPoint.CollectionName ? new { @checked = "checked", @class="btn btn-primary"} : null)
 
-                <br />
+                    @item.CollectionName
+                    &nbsp; &nbsp;
+                    @item.Time</label>
+          
+
             }
 
-            <br />
-            <input type="submit" value="Set New Collection Point" class="btn btn-success my-2 my-sm-0" />
-
-        }
+            <li class="list-group-item bg-transparent">
+                <input type="submit" value="Set New Collection Point" class="btn btn-success" style="padding: 0.5rem 3rem" />
+            </li>
+        </ul>
+    }
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe src="https://snazzymaps.com/embed/41737" width="1200" height="500" style="border:none;"></iframe>
     </div>
-</nav>
-<br />
+</div>
 
-<iframe src="https://snazzymaps.com/embed/41737" width="1200" height="500" style="border:none;"></iframe>
 
 

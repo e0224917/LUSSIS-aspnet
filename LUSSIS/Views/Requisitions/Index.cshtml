@@ -4,13 +4,7 @@
     ViewBag.Title = "Stationery List";
 
 }
-<style>
-    body {
-        background-image: url('/Images/images2.jpg');
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-    }
-</style>
+
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 <h2>Stationery List for Requisition</h2>
@@ -30,7 +24,7 @@
             <span class="d-inline nav-item active nav-link" style="color:whitesmoke">Find By Description </span>
             @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
             @*<span class="d-inline nav-item nav-link"><input type="submit" placeholder="Search" class="btn btn-secondary my-2 my-sm-0" /></span>*@
-            <button type="submit" class="btn btn-secondary my-2 my-sm-0">Search</button>
+            <button type="submit" class="btn btn-secondary my-2 my-sm-0 d-inline">Search</button>
         }
         @using (Ajax.BeginForm(new AjaxOptions
         {

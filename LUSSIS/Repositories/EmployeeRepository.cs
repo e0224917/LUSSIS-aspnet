@@ -9,7 +9,7 @@ using LUSSIS.Extensions;
 
 namespace LUSSIS.Repositories
 {
-    public class EmployeeRepository : Repository<Employee, string>
+    public class EmployeeRepository : Repository<Employee, int>
     {
         DisbursementRepository disRepo = new DisbursementRepository();
 
@@ -32,6 +32,12 @@ namespace LUSSIS.Repositories
         public Department GetDepartmentByUser(Employee employee)
         {
             return LUSSISContext.Departments.First(y => y.DeptCode == employee.DeptCode);
+        }
+
+        public Department GetDepartmentByEmpNum(int EmpNum)
+        {
+            Employee emp = GetById(EmpNum);
+            return emp.Department;
         }
 
         public List<Employee> GetAllByDepartment(Department department)
@@ -114,7 +120,7 @@ namespace LUSSIS.Repositories
             List<Employee> empList = GetAllByDepartment(department);
             List<Models.Delegate> delList = GetAllDelegates();
             List <Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.Where(y => y.EndDate >= dateTime).FirstOrDefault();
+            return allDel.FirstOrDefault(y => y.EndDate >= dateTime);
         }
 
         public Models.Delegate GetDelegateByDate(Department department, DateTime dateTime)
@@ -122,7 +128,7 @@ namespace LUSSIS.Repositories
             List<Employee> empList = GetAllByDepartment(department);
             List<Models.Delegate> delList = GetAllDelegates();
             List<Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.Where(k => k.StartDate <= dateTime && k.EndDate >= dateTime).FirstOrDefault();
+            return allDel.FirstOrDefault(k => k.StartDate <= dateTime && k.EndDate >= dateTime);
         }
 
         public bool CheckIfLoggedInUserIsDelegate()
@@ -181,6 +187,15 @@ namespace LUSSIS.Repositories
                 
             }
             return valueList;
+        }
+
+        public Employee GetStoreManager()
+        {
+            return LUSSISContext.Employees.Where(x => x.JobTitle == "manager").FirstOrDefault();
+        }
+        public Employee GetStoreSupervisor()
+        {
+            return LUSSISContext.Employees.Where(x => x.JobTitle == "supervisor").FirstOrDefault();
         }
     }
 }

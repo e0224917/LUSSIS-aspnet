@@ -4,51 +4,39 @@
 }
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <h2>Department Representative</h2>
-@if (Model.Department.RepEmployee != null)
-{
-    <table class="table table-hover">
-        <tr>
-            <th>
-                Current Department Representative
-            </th>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
-            </td>
-        </tr>
-    </table>
-}
-else
-{
-    <div class="alert alert-dismissible alert-info">
-        There is no department representative at the moment.
-    </div>
-}
-<nav class="navbar navbar-light bg-light">
-    <div class="navbar-nav mr-auto">
-        <table class="table table-hover">
-            <tr>
-                <th>
-                    Set New Representative
-                </th>
-            </tr>
-        </table>
+<hr/>
+<div class="jumbotron">
 
-        @using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
-        {
-            <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" />
-            <input type="submit" value="Set New Department Rep" class="btn btn-success my-2 my-sm-0" />
-            <input type="hidden" id="Emp2" name="RepEmp" />
-            <br />
-            <label id="tagsname" style="color:red" />
-        }
-    </div>
-</nav>
+    <h5 class="mt-4 mb-5 text-info">
+        Current Department Representative
+    </h5>
+    <h2 class="mt-4 mb-5 text-info">
+        <strong>
+            @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
+        </strong>
+    </h2>
 
-@section scripts {
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <script type="text/javascript">
+    <hr />
+    <h3 class="mt-4 mb-5">Set representative:</h3>
+
+    @using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
+    {
+        <h5>Find Employee:</h5>
+        <div class="row m-2">
+            <div class="col-lg-10">
+                <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" class="form-control d-inline" />
+                <input type="submit" value="Set New Department Rep" class="btn btn-success form-control d-inline ml-3" />
+                <input type="hidden" id="Emp2" name="RepEmp" />
+            </div>
+        </div>
+        <h5 id="tagsname" class="text-info m-3"></h5>
+        <br />
+    }
+</div>
+
+        @section scripts {
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+            <script type="text/javascript">
         $(document).ready(function () {
             $(':input[type="submit"]').prop('disabled', true);
             $('input[type="text"]').keyup(function () {
@@ -110,8 +98,8 @@ else
                 //}
             });;
         })
-    </script>
-}
+            </script>
+        }
 
 
 
