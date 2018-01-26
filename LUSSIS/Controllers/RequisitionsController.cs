@@ -498,9 +498,9 @@ namespace LUSSIS.Controllers
 
                                 string destinationEmail = "cuirunzesg@gmail.com"; //req.RequisitionEmployee.EmailAddress;         
                                 string subject = "Requistion " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status;
-                                StringBuilder body = new StringBuilder("Your Requisition " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status + " by " + req.ApprovalEmployee.FullName);
-                                List<RequisitionDetail> rd = 
-                                EmailHelper.SendEmail(destinationEmail, subject, body);
+                                //StringBuilder body = new StringBuilder("Your Requisition " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status + " by " + req.ApprovalEmployee.FullName);
+                                //List<RequisitionDetail> rd = 
+                                //EmailHelper.SendEmail(destinationEmail, subject, body);
 
 
                                 return PartialView();
