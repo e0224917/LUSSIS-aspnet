@@ -21,6 +21,8 @@ namespace LUSSIS.Emails
                 EnableSsl = true
             };
 
+            
+
             var mm = new MailMessage("sa45team7@gmail.com", destinationEmail)
             {
                 Subject = subject,
@@ -29,5 +31,11 @@ namespace LUSSIS.Emails
 
             client.Send(mm);
         }
+
+        public static void SendEmail(string subject, string body)
+        {
+            SendEmail("sa45team7@gmail.com", subject, body);
+        }
+
     }
 }
