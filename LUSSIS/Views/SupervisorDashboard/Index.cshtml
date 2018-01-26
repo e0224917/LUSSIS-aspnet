@@ -33,18 +33,9 @@
         $(function () {
             $.ajax({
                 type: 'GET',
-                url: '/SupervisorDashboard/GetPiechartJSON',
+                url: '/SupervisorDashboard/GetPiechartJSON?List=aaa&date=bbbb&&e=cdefe',
                 success: function (chartsdata) {
-                    // Callback that creates and populates a data table,
-                    // instantiates the pie chart, passes in the data and
-                    // draws it
-
-                    //get JSONList from Object
-
-
-                    // alert(result.FirstList[x].Name);
-                    //alert(result.SecondList[x].Name);
-
+                    
                     var first = chartsdata.ListOne;
                     var second = chartsdata.ListTwo;
 

@@ -409,5 +409,121 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements
                 .FirstOrDefault(d => d.Status == "inprocess" && d.DeptCode == deptCode);
         }
-    }
+        public List<double> GetAmountByDepAndCatList(String depCode,List<String> catId,String from,String to)
+        {
+            DateTime fromDate = Convert.ToDateTime(from).Date;
+            DateTime toDate = Convert.ToDateTime(to).Date;
+            double total = 0;
+           
+            List<double> result= new List<double>();
+            foreach (String id in catId)
+            {
+                List<String>itemList=statRepo.GetItembyCategory(Convert.ToInt32(id));
+                //int Id= Convert.ToInt32(id);
+                total = 0;
+                foreach(String item in itemList)
+                {
+                    var s = from t1 in LUSSISContext.Disbursements
+                            join t2 in LUSSISContext.DisbursementDetails
+                            on t1.DisbursementId equals t2.DisbursementId
+                            where t2.Stationery.ItemNum == item &&
+                            t1.DeptCode == depCode &&
+                            (t1.CollectionDate >= fromDate && t1.CollectionDate <= toDate)
+                            select new
+                            {
+                                price = (int)t2.Stationery.AverageCost,
+                                Qty = (double)t2.ActualQty
+                            };
+                    foreach (var a in s)
+                    {
+                        total += a.Qty;
+                    }
+                }
+               
+                result.Add(total);
+
+            }
+
+            return result;
+        }
+
+        public List<double> GetAmoutByCatAndDepList(String cat,List<String>depList,String from,String to)
+        {
+            DateTime fromDate = Convert.ToDateTime(from).Date;
+            DateTime toDate = Convert.ToDateTime(to).Date;
+            double total = 0;
+            
+            List<double> resultList = new List<double>();
+            int catId = Convert.ToInt32(cat);
+            foreach (String dep in depList)
+            {
+                total = 0;
+                    var q = from t1 in LUSSISContext.Disbursements
+                            join t2 in LUSSISContext.DisbursementDetails
+                            on t1.DisbursementId equals t2.DisbursementId
+                            join t3 in LUSSISContext.Stationeries
+                            on t2.ItemNum equals t3.ItemNum
+                            where t3.CategoryId==catId &&
+                            t1.DeptCode == dep &&
+                            (t1.CollectionDate >= fromDate && t1.CollectionDate <= toDate)
+                            select new
+                            {
+                                price = (int)t2.Stationery.AverageCost,
+                                Qty = (double)t2.ActualQty
+                            };
+                    foreach (var a in q)
+                    {
+                        total += a.price * a.Qty;
+                    }
+                resultList.Add(total);
+            }
+               
+            return resultList;
+        }
+        public List<double> GetMaxCategoryAmountByDep(List<String>catList, List<String> depList,String from,String to)
+        {
+            DateTime fromDate = Convert.ToDateTime(from).Date;
+            DateTime toDate = Convert.ToDateTime(to).Date;
+            
+           
+            List<double> resultList = new List<double>();
+            List<double> findMax=new List<double>();
+            foreach (String dep in depList)
+            {
+                double total = 0;
+                foreach (String cat in catList)
+                {
+                    
+                    int catId = Convert.ToInt32(cat);
+                   findMax = new List<double>();
+                    var q = from t1 in LUSSISContext.Disbursements
+                            join t2 in LUSSISContext.DisbursementDetails
+                            on t1.DisbursementId equals t2.DisbursementId
+                            join t3 in LUSSISContext.Stationeries
+                            on t2.ItemNum equals t3.ItemNum
+                            where t3.CategoryId == catId &&
+                            t1.DeptCode == dep 
+                          
+                            select new
+                            {
+                                price = (int)t2.Stationery.AverageCost,
+                                Qty = (double)t2.ActualQty
+                            };
+                    foreach (var a in q)
+                    {
+                        total += a.Qty;
+                    }
+                    
+                }
+               
+                resultList.Add(total);
+            }
+           
+            return resultList;
+        }
+
+
+     }
+
+    
 }
