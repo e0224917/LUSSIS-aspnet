@@ -41,11 +41,11 @@
                 <td>
                     <div class="row">
                         <input type="number" class="form-control form-control-sm col-md-6" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
-                        <input type="submit" value="Update" id="UpdateLink" class="btn btn-warning btn-sm" data-id="@item.stationery.ItemNum" />
+                        <input type="submit" value="Update"  class="UpdateLink btn btn-warning btn-sm" data-id="@item.stationery.ItemNum" />
                     </div>
                 </td>
                 <td>
-                    <input type="submit" value="Delete" id ="RemoveLink" class="btn btn-danger btn-sm" data-id="@item.stationery.ItemNum" />
+                    <input type="submit" value="Delete"  class="RemoveLink btn btn-danger btn-sm" data-id="@item.stationery.ItemNum" />
                 </td>
             </tr>
             {
@@ -86,7 +86,7 @@ else
     <script type="text/javascript">
         $(function () {
             // Document.ready -> link up remove event handler
-            $("#RemoveLink").click(function () {
+            $(".RemoveLink").click(function () {
                 // Get the id from the link
                 var stationeryToDelete = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
@@ -114,7 +114,7 @@ else
     <script type="text/javascript">
         $(function () {
             // Document.ready -> link up remove event handler
-            $("#UpdateLink").click(function () {
+            $(".UpdateLink").click(function () {
                 // Get the id from the link
                 var stationeryToUpdate = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
