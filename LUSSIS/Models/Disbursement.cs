@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using System.Linq;
+using LUSSIS.Models.WebAPI;
 using LUSSIS.Validations;
 
 namespace LUSSIS.Models
@@ -52,5 +54,24 @@ namespace LUSSIS.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DisbursementDetail> DisbursementDetails { get; set; }
+
+        public DisbursementDTO ToApiDTO()
+        {
+            return new DisbursementDTO()
+            {
+                DisbursementId = DisbursementId,
+                CollectionDate = CollectionDate,
+                CollectionPoint = CollectionPoint.CollectionName,
+                CollectionPointId = (int)CollectionPointId,
+                CollectionTime = CollectionPoint.Time,
+                DepartmentName = Department.DeptName,
+                DisbursementDetails = DisbursementDetails.Select(details => new RequisitionDetailDTO()
+                {
+                    Description = details.Stationery.Description,
+                    Quantity = details.ActualQty,
+                    UnitOfMeasure = details.Stationery.UnitOfMeasure
+                })
+            };
+        }
     }
 }

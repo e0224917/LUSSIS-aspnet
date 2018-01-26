@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Helpers;
 using System.Web.Http;
 using System.Web.Http.Description;
 using LUSSIS.Models.WebAPI;
@@ -31,14 +27,14 @@ namespace LUSSIS.Controllers.WebAPI
             var result = new DelegateDTO()
             {
                 DelegateId = d.DelegateId,
-                StartDate = (DateTime) d.StartDate,
-                EndDate = (DateTime) d.EndDate,
+                StartDate = d.StartDate,
+                EndDate = d.EndDate,
                 Employee = new EmployeeDTO()
                 {
                     DeptCode = d.Employee.DeptCode,
                     DeptName = d.Employee.Department.DeptName,
                     EmailAddress = d.Employee.EmailAddress,
-                    EmpNum = (int) d.EmpNum,
+                    EmpNum = d.EmpNum,
                     FirstName = d.Employee.FirstName,
                     LastName = d.Employee.LastName,
                     IsDelegated = true,

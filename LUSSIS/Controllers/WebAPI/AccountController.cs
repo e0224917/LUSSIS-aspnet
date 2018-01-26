@@ -1,7 +1,5 @@
 ﻿using LUSSIS.Models;
 using System;
-using System.Data.Entity;
-using System.Linq;
 using System.Web;
 using System.Web.Http;
 using Microsoft.AspNet.Identity.Owin;

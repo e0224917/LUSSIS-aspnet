@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using LUSSIS.Models;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
 
@@ -17,12 +11,12 @@ namespace LUSSIS.Controllers.WebAPI
 {
     public class StationeriesController : ApiController
     {
-        private StationeryRepository repo = new StationeryRepository();
+        private readonly StationeryRepository _repo = new StationeryRepository();
 
         // GET: api/Stationeries
         public IEnumerable<StationeryDTO> GetStationeries()
         {
-            return repo.GetAll().Select(item => new StationeryDTO()
+            return _repo.GetAll().Select(item => new StationeryDTO()
                 {
                     ItemNum = item.ItemNum,
                     Category = item.Category.CategoryName,
@@ -40,7 +34,7 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(StationeryDTO))]
         public async Task<IHttpActionResult> GetStationery(string id)
         {
-            var stationery = await repo.GetByIdAsync(id);
+            var stationery = await _repo.GetByIdAsync(id);
             if (stationery == null)
             {
                 return NotFound();
@@ -54,7 +48,7 @@ namespace LUSSIS.Controllers.WebAPI
                 Category = stationery.Category.CategoryName,
                 ItemNum = stationery.ItemNum,
                 ReorderLevel = stationery.ReorderLevel,
-                ReorderQty = stationery.ReorderLevel,
+                ReorderQty = stationery.ReorderQty,
                 UnitOfMeasure = stationery.UnitOfMeasure
             };
 
@@ -75,11 +69,11 @@ namespace LUSSIS.Controllers.WebAPI
                 return BadRequest();
             }
 
-            var s = repo.GetById(id);
+            var s = _repo.GetById(id);
 
             s.Description = stationery.Description;
             s.ReorderLevel = stationery.ReorderLevel;
-            s.ReorderQty = stationery.ReorderLevel;
+            s.ReorderQty = stationery.ReorderQty;
             if (s.AvailableQty != stationery.AvailableQty)
             {
                 //TODO: create adjustment voucher
@@ -88,7 +82,7 @@ namespace LUSSIS.Controllers.WebAPI
 
             s.BinNum = stationery.BinNum;
 
-            await repo.UpdateAsync(s);
+            await _repo.UpdateAsync(s);
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -143,7 +137,7 @@ namespace LUSSIS.Controllers.WebAPI
         {
             if (disposing)
             {
-                repo.Dispose();
+                _repo.Dispose();
             }
             base.Dispose(disposing);
         }

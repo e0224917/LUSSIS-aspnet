@@ -1,0 +1,23 @@
+﻿namespace LUSSIS.Constants
+{
+    public class RequisitionStatus
+    {
+        public const string InProgress = "inprogress";
+        public const string Approved = "approved";
+        public const string Rejected = "rejected";
+    }
+
+    public class DisbursementStatus
+    {
+        public const string Fulfilled = "fulfilled";
+        public const string Unfulfilled = "unfulfilled";
+
+    }
+
+    public class AdjustmentVoucherStatus
+    {
+        public const string Pending = "pending";
+        public const string Approved = "approved";
+        public const string Rejected = "rejected";
+    }
+}
