@@ -81,12 +81,19 @@ body {
 body {
     background-image: url('/Images/images2.jpg');
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: repeat-x;
     -webkit-background-size: cover; /* For WebKit*/
     -moz-background-size: cover; /* Mozilla*/
     -o-background-size: cover; /* Opera*/
+    background-position: center center;
+    background-attachment: fixed;
 }
 
+.footer {
+    position: static;
+    bottom: 0;
+    width: 100%;
+}
 
 
 
