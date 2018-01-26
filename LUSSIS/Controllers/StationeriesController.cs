@@ -182,7 +182,7 @@ namespace LUSSIS.Controllers
             {
 
                 Stationery st = strepo.GetById(id);
-                if (st = null)
+                if (st == null)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
