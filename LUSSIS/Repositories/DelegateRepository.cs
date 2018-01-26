@@ -17,5 +17,10 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Delegates.FirstOrDefault(d => d.Employee.DeptCode == deptCode);
         }
+
+        public Delegate CheckDelegate(int empNum)
+        {
+            return LUSSISContext.Delegates.FirstOrDefault(d => d.EmpNum == empNum);
+        }
     }
 }

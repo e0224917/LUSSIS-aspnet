@@ -189,7 +189,7 @@ namespace LUSSIS.Repositories
                         fulfilled = false;
 
                     //get GST rate
-                    double GST_RATE = 0.07; //=po.Gst/po.totalAmt 
+                    double GST_RATE = po.GST/po.PurchaseOrderDetails.Sum(x=>x.OrderQty*x.UnitPrice);
 
                     //update stationery
                     Stationery s = sr.GetById(po.PurchaseOrderDetails.ElementAt(i).Stationery.ItemNum);
