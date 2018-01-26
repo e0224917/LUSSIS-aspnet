@@ -93,7 +93,8 @@ namespace LUSSIS.Controllers
                         .AuthenticationResponseGrant.Identity.GetUserId();
                     Session["Roles"] = userManager.GetRoles(id);
 
-                    return RedirectToLocal(returnUrl);
+                    //return RedirectToLocal(returnUrl);
+                    return RedirectToAction("Index","Home");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
