@@ -110,7 +110,7 @@ namespace LUSSIS.Controllers
         //TODO: Add authroization - DepartmentHead or Delegate only
         [CustomAuthorize("head", "staff")]
         [HttpPost]
-        public async Task<ActionResult> Details([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status")] Requisition requisition, string SubmitButton)
+        public async Task<ActionResult> Details([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status,DeptCode")] Requisition requisition, string SubmitButton)
         {
             if (requisition.Status == "pending")
             {//requisition must be pending for any approval and reject
@@ -118,7 +118,7 @@ namespace LUSSIS.Controllers
                 bool hasDelegate = empRepo.CheckIfUserDepartmentHasDelegate();
                 if ((self.JobTitle == "head" && !hasDelegate) || hasDelegate)
                 {//if (user is head and there is no delegate) or (user is currently delegate)
-                    if(self.DeptCode != empRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum.ToString()).DeptCode)
+                    if(self.DeptCode != empRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum).DeptCode)
                     {//if user is trying to approve for other department
                         return View("_unauthoriseAccess");
                     }
@@ -472,7 +472,7 @@ namespace LUSSIS.Controllers
                     bool hasDelegate = empRepo.CheckIfUserDepartmentHasDelegate();
                     if ((self.JobTitle == "head" && !hasDelegate) || hasDelegate)
                     {//if (user is head and there is no delegate) or (user is currently delegate)
-                        if (self.DeptCode != empRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum.ToString()).DeptCode)
+                        if (self.DeptCode != empRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum).DeptCode)
                         {//if user is trying to approve for other department
                             return PartialView("_unauthoriseAccess");
                         }

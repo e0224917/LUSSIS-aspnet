@@ -9,7 +9,7 @@ using LUSSIS.Extensions;
 
 namespace LUSSIS.Repositories
 {
-    public class EmployeeRepository : Repository<Employee, string>
+    public class EmployeeRepository : Repository<Employee, int>
     {
         DisbursementRepository disRepo = new DisbursementRepository();
 
@@ -34,7 +34,7 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Departments.First(y => y.DeptCode == employee.DeptCode);
         }
 
-        public Department GetDepartmentByEmpNum(string EmpNum)
+        public Department GetDepartmentByEmpNum(int EmpNum)
         {
             Employee emp = GetById(EmpNum);
             return emp.Department;
