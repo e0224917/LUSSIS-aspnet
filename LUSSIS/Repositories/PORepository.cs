@@ -215,5 +215,10 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.ReceiveTransDetails.Where(x => x.ItemNum == id);
         }
+
+        public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsByStatus(string status)
+        {
+            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status == status);
+        }
     }
 }

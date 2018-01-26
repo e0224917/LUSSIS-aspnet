@@ -651,6 +651,7 @@
     <Content Include="Views\Stationeries\Create.cshtml" />
     <Content Include="Views\Stationeries\Edit.cshtml" />
     <Content Include="Views\SupervisorDashboard\Report.cshtml" />
+    <Content Include="Views\SupervisorDashboard\TrendAnalysis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
