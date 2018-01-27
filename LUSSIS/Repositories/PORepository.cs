@@ -50,12 +50,14 @@ namespace LUSSIS.Repositories
             List<PendingPurchaseOrderDTO> poDTOList = new List<PendingPurchaseOrderDTO>();
             foreach (PurchaseOrder po in list)
             {
-                poDTO = new PendingPurchaseOrderDTO();
-                poDTO.PoNum = po.PoNum;
-                poDTO.OrderEmp = po.OrderEmployee.FirstName;
-                poDTO.Supplier = po.Supplier.SupplierName;
-                poDTO.CreateDate = po.CreateDate;
-                poDTO.TotalCost = GetPOAmountByPoNum(po.PoNum);
+                poDTO = new PendingPurchaseOrderDTO
+                {
+                    PoNum = po.PoNum,
+                    OrderEmp = po.OrderEmployee.FirstName,
+                    Supplier = po.Supplier.SupplierName,
+                    CreateDate = po.CreateDate,
+                    TotalCost = GetPOAmountByPoNum(po.PoNum)
+                };
                 poDTOList.Add(poDTO);
 
             }
@@ -125,11 +127,9 @@ namespace LUSSIS.Repositories
             Update(p);
         }
 
-        public double GetPOAmountByCategory(int categoryId)
+        public double GetPOAmountByCategory(int categoryId, List<String>ItemList)
         {
             double total = 0;
-            List<String> ItemList = new List<String>();
-            ItemList = sr.GetItembyCategory(categoryId);
             List<PurchaseOrderDetail> pd_list = new List<PurchaseOrderDetail>();
             foreach (String e in ItemList)
             {
@@ -152,10 +152,12 @@ namespace LUSSIS.Repositories
         {
             List<double> list = new List<double>();
             List<int> Cat = LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
+            
 
             foreach (int i in Cat)
             {
-                list.Add(GetPOAmountByCategory(i));
+                List<String> itemList = LUSSISContext.Stationeries.Where(x => x.CategoryId == i).Select(x => x.ItemNum).ToList();
+                list.Add(GetPOAmountByCategory(i, itemList));
             }
             return list;
 
@@ -233,7 +235,8 @@ namespace LUSSIS.Repositories
             List<double> result = new List<double>();
             foreach (String id in categoryId)
             {
-                List<String> itemList = sr.GetItembyCategory(Convert.ToInt32(id));
+                int id2 = Int32.Parse(id);
+                List<String> itemList = LUSSISContext.Stationeries.Where(x=>x.CategoryId == id2).Select(x=>x.ItemNum).ToList();
                 int supplierId = Convert.ToInt32(supId);
                 total = 0;
                 foreach (String item in itemList)

@@ -14,7 +14,7 @@ namespace LUSSIS.CustomAuthority
 {
     public class CustomAuthorizeAttribute : AuthorizeAttribute
     {
-        EmployeeRepository empRepo = new EmployeeRepository();
+        private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         private readonly string[] allowedRoles;
 
@@ -25,20 +25,14 @@ namespace LUSSIS.CustomAuthority
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {     
-            var user = System.Web.HttpContext.Current.User.Identity.GetUserId();
-            var userManager = httpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var roles = userManager.GetRoles(user);
-            if (roles.Contains("head"))
+            var email = httpContext.User.Identity.Name;
+            var isDelegate = _delegateRepo.FindCurrentByEmail(email) != null;
+
+            if (httpContext.User.IsInRole("head") || httpContext.User.IsInRole("staff") && isDelegate)
             {
                     return true;
             }
-            else if(roles.Contains("staff"))
-            {
-                if(empRepo.CheckIfLoggedInUserIsDelegate())
-                {
-                    return true;
-                }
-            }
+
             return false;     
         }
 

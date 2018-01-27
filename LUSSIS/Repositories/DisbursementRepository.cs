@@ -321,21 +321,19 @@ namespace LUSSIS.Repositories
         public double GetDisbursementTotalAmount()
         {
             double result = 0;
-            List<Disbursement> list = new List<Disbursement>();
-            List<DisbursementDetail> detailList = new List<DisbursementDetail>();
-            list = GetAll().Where(x => x.Status != "unprocessed").ToList();
+            var list = GetAll().Where(x => x.Status != "unprocessed").ToList();
             foreach (Disbursement d in list)
             {
                 result += GetAmountByDisbursement(d);
             }
             return result;
         }
-        public double GetDisbursementByDepCode(String depcode)
+
+        public double GetDisbursementTotalAmountOfDept(string deptCode)
         {
             double result = 0;
-            List<Disbursement> list = new List<Disbursement>();
-            List<DisbursementDetail> detailList = new List<DisbursementDetail>();
-            list = GetAll().Where(x => x.Status != "unprocessed" && x.DeptCode.Equals(depcode)).ToList();
+
+            var list = GetAll().Where(x => x.Status != "unprocessed" && x.DeptCode.Equals(deptCode)).ToList();
             foreach (Disbursement d in list)
             {
                 result += GetAmountByDisbursement(d);
@@ -378,13 +376,13 @@ namespace LUSSIS.Repositories
         public double GetAmountByDisbursement(Disbursement d)
         {
             double result = 0;
-            List<DisbursementDetail> detailList = d.DisbursementDetails.ToList();
+            var detailList = d.DisbursementDetails.ToList();
             foreach (DisbursementDetail f in detailList)
             {
 
-                int qty = (int)f.ActualQty;
-                double unit_price = (double)f.UnitPrice;
-                result += (qty * unit_price);
+                int qty = f.ActualQty;
+                double unitPrice = f.UnitPrice;
+                result += (qty * unitPrice);
             }
             return result;
         }

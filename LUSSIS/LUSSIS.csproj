@@ -329,7 +329,6 @@
     <Compile Include="Models\ReceiveTransDetail.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\RequisitionDetail.cs" />
-    <Compile Include="Models\WebDTO\DelegateStaffDTO.cs" />
     <Compile Include="Models\WebDTO\DeptHeadDashBoardDTO.cs" />
     <Compile Include="Models\WebDTO\DisbursementDetailDTO.cs" />
     <Compile Include="Models\WebDTO\PendingPurchaseOrderDTO.cs" />

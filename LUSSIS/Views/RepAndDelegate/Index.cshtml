@@ -5,14 +5,14 @@
 }
 
 <h2>My DashBoard</h2>
-<hr />
+<hr/>
 <div class="row">
     <div class="col-lg-4 col-md-4 text-center">
         <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem;">
             <h4 class="card-header mt-0">Pending Requisitions</h4>
             <div class="card-body">
 
-                @if (Model.GetRequisitionListCount != 0)
+                @if (Model.RequisitionListCount != 0)
                 {
                     <table class="table mt-3">
                         <tr>
@@ -23,7 +23,7 @@
                         <tr>
                             <td>
                                 <h3 class="mt-0 mb-0">
-                                    @Html.DisplayFor(Model => Model.GetRequisitionListCount)
+                                    @Html.DisplayFor(model => model.RequisitionListCount)
                                 </h3>
 
                             </td>
@@ -39,23 +39,23 @@
 
             </div>
             <div class="card-footer text-center">
-                @if (Model.GetRequisitionListCount != 0)
+                @if (Model.RequisitionListCount != 0)
                 {
                     using (Html.BeginForm("Pending", "Requisitions", FormMethod.Post))
                     {
-                        <input type="submit" class="btn btn-success" value="View All" style="width:100%" />
+                        <input type="submit" class="btn btn-success" value="View All" style="width: 100%"/>
                     }
                 }
             </div>
         </div>
     </div>
-    @if (Model.GetCurrentLoggedIn.JobTitle == "head")
+    @if (User.IsInRole("head"))
     {
         <div class="col-lg-4 col-md-4 text-center">
             <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem;">
-                <h4 class="card-header mt-0">My @((Model.GetDelegate!=null&& Model.GetDelegate.StartDate<DateTime.Today)?"Current":null) Delegate</h4>
+                <h4 class="card-header mt-0">My @((Model.CurrentDelegate != null && Model.CurrentDelegate.StartDate < DateTime.Today) ? "Current" : null) Delegate</h4>
 
-                @if (Model.GetDelegate == null)
+                @if (Model.CurrentDelegate == null)
                 {
                     <div class="card-body">
                         <div class="alert alert-dismissible alert-info p-4">
@@ -65,38 +65,38 @@
                     <div class="card-footer text-center">
                         @using (Html.BeginForm("MyDelegate", "RepAndDelegate", FormMethod.Post))
                         {
-                            <input type="submit" class="btn btn-success" value="Set My Delegate" style="width: 100%" />
+                            <input type="submit" class="btn btn-success" value="Set My Delegate" style="width: 100%"/>
                         }
                     </div>
                 }
                 else
                 {
                     <div class="card-body">
-                        @if (Model.GetDelegate != null)
-                        {
+
                         <table class="table mt-2">
                             <tr>
-                                <th>@Html.DisplayFor(model => model.GetDelegate.StartDate) - @Html.DisplayFor(model => model.GetDelegate.EndDate)</th>
+                                <th>@Html.DisplayFor(model => model.CurrentDelegate.StartDate) - @Html.DisplayFor(model => model.CurrentDelegate.EndDate)</th>
                             </tr>
 
                             <tr>
                                 <td>
-                                    <h3 class="mt-0 mb-0">@Html.DisplayFor(model => model.GetDelegate.Employee.FullName)</h3>
+                                    <h3 class="mt-0 mb-0">@Html.DisplayFor(model => model.CurrentDelegate.Employee.FullName)</h3>
                                 </td>
 
                             </tr>
 
                         </table>
-                        }
-                        @if (@Model.GetDelegate.StartDate>DateTime.Today)
+
+                        @if (@Model.CurrentDelegate.StartDate > DateTime.Today)
                         {
-                            <h6 class="text-muted">Starting in @((int)(Model.GetDelegate.StartDate.Subtract(DateTime.Now)).TotalDays) days</h6>
+                            <h6 class="text-muted">Starting in @((int) (Model.CurrentDelegate.StartDate.Subtract(DateTime.Now)).TotalDays) days</h6>
                         }
-                        
-                    </div> <div class="card-footer text-center">
-                        @using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
+
+                    </div>
+                    <div class="card-footer text-center">
+                        @using (Html.BeginForm("DeleteDelegate", "RepAndDelegate", FormMethod.Post))
                         {
-                            <input type="submit" class="btn btn-success" value="Revoke Delegate" style="width: 100%" />
+                            <input type="submit" class="btn btn-success" value="Revoke Delegate" style="width: 100%"/>
                         }
                     </div>
                 }
@@ -108,31 +108,31 @@
         <div class="col-lg-4 col-md-4">
             <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem;">
                 <h4 class="card-header mt-0">Your Delegation period</h4>
-        <div class="card-body">
-            
-        <table class="table mt-2">
-            <tr>
-                <th>@Html.DisplayFor(model => model.GetDelegate.StartDate) - @Html.DisplayFor(model => model.GetDelegate.EndDate)</th>
-            </tr>
+                <div class="card-body">
 
-            <tr>
-                <td>
-                    <h3 class="mt-2 mb-0 text-muted">Ending in @((int)(Model.GetDelegate.EndDate.Subtract(DateTime.Now)).TotalDays) days</h3>
-                </td>
+                    <table class="table mt-2">
+                        <tr>
+                            <th>@Html.DisplayFor(model => model.CurrentDelegate.StartDate) - @Html.DisplayFor(model => model.CurrentDelegate.EndDate)</th>
+                        </tr>
 
-            </tr>
+                        <tr>
+                            <td>
+                                <h3 class="mt-2 mb-0 text-muted">Ending in @((int) (Model.CurrentDelegate.EndDate.Subtract(DateTime.Now)).TotalDays) days</h3>
+                            </td>
 
-        </table>
+                        </tr>
+
+                    </table>
 
 
-
-        </div> <div class="card-footer text-center">
-            @using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
-    {
-        <input type="submit" class="btn btn-secondary" value="Revoke Delegate" style="width: 100%" disabled=""/>
-}
-        </div>
-         </div>
+                </div>
+                <div class="card-footer text-center">
+                    @using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
+                    {
+                        <input type="submit" class="btn btn-secondary" value="Revoke Delegate" style="width: 100%" disabled=""/>
+                    }
+                </div>
+            </div>
         </div>
     }
     <div class="col-lg-4 col-md-4 text-center">
@@ -149,7 +149,8 @@
                         </tr>
 
                         <tr>
-                            <td><h3 class="mt-0 mb-0">
+                            <td>
+                                <h3 class="mt-0 mb-0">
                                     @Html.DisplayFor(model => model.Department.RepEmployee.FullName)</h3>
                             </td>
                         </tr>
@@ -163,25 +164,24 @@
                 }
 
 
-                
+
             </div>
             <div class="card-footer text-center">
                 @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
-    {
-        if ((User.IsInRole("head") && Model.GetTodaysDelegate == null) || (User.IsInRole("staff") && Model.GetTodaysDelegate != null))
-        {
-            <input type="submit" class="btn btn-success" value="Change Rep" style="width: 100%" />
+                {
+                    
+                    if (User.IsInRole("head") && !Model.HaveDelegateToday 
+                        || User.IsInRole("staff") && Model.HaveDelegateToday)
+                    {
+                        <input type="submit" class="btn btn-success" value="Change Rep" style="width: 100%"/>
                     }
-        else
-        {
-            <input type="submit" class="btn btn-secondary" value="Change Rep" style="width: 100%" disabled=""/>
-        }
-
+                    else
+                    {
+                        <input type="submit" class="btn btn-secondary" value="Change Rep" style="width: 100%" disabled=""/>
+                    }
                 }
 
             </div>
         </div>
     </div>
 </div>
-
-

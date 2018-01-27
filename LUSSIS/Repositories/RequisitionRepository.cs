@@ -16,7 +16,7 @@ namespace LUSSIS.Repositories
 
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
-        EmployeeRepository er = new EmployeeRepository();
+
         public IEnumerable<RetrievalItemDTO> GetConsolidatedRequisition()
         {
             List<RetrievalItemDTO> itemsToRetrieve = new List<RetrievalItemDTO>();
@@ -109,24 +109,24 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Requisitions.Where(r => r.Status == status).ToList();
         }
 
-        public List<Requisition> GetPendingRequisitions()
+        public List<Requisition> GetPendingRequisitions(Employee self)
         {
-            string deptCode = er.GetCurrentUser().DeptCode;
+            string deptCode = self.DeptCode;
             List<Requisition> req = LUSSISContext.Requisitions.Where(r => r.Status == "pending" && r.DeptCode == deptCode).ToList();
             return req;
         }
 
-        public List<Requisition> GetAllRequisitionsForCurrentUser()
+        public List<Requisition> GetAllRequisitionsForCurrentUser(Employee self)
         {
-            string deptCode = er.GetCurrentUser().DeptCode;
+            string deptCode = self.DeptCode;
             List<Requisition> req = LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode).ToList();
 
             return req;
         }
 
-        public List<Requisition> GetAllRequisitionsSearch(string term)
+        public List<Requisition> GetAllRequisitionsSearch(string term, Employee self)
         {
-            string deptCode = er.GetCurrentUser().DeptCode;
+            string deptCode = self.DeptCode;
                 List<Requisition> req = LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode && (r.Status.ToLower().Contains(term) || r.RequisitionEmployee.FirstName.ToLower().Contains(term) || r.RequisitionEmployee.LastName.ToLower().Contains(term) || r.RequisitionDate.ToString().Contains(term) || r.RequestRemarks.ToLower().Contains(term))).ToList();
 
             return req;
