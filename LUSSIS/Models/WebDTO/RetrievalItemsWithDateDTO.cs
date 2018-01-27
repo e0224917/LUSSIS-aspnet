@@ -10,6 +10,7 @@ namespace LUSSIS.Models.WebDTO
     {
         public List<RetrievalItemDTO> retrievalItems { get; set; }
 
+        
         public string collectionDate { get; set; }    
 
         public bool hasInprocessDisbursement { get; set; }

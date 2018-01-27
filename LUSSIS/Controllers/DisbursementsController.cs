@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
@@ -78,6 +79,21 @@ namespace LUSSIS.Controllers
             }
             ViewBag.CollectionPointId = new SelectList(disRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateActualQty(int disId, string itemNum, int qty)
+        {
+            try
+            {
+                disRepo.GetById(disId).DisbursementDetails.FirstOrDefault(dd => dd.ItemNum == itemNum).ActualQty = qty;
+                return RedirectToAction("Details", new { id = disId });
+            }
+            catch (NullReferenceException e)
+            {
+                return RedirectToAction("Details", new { id=disId });
+            }
+
         }
 
 
