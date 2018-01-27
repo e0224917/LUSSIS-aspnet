@@ -23,7 +23,7 @@ namespace LUSSIS.Models
 
         [Required]
         [StringLength(50)]
-        [Display(Name = "Department Name")]
+        [Display(Name = "Department")]
         public string DeptName { get; set; }
 
         [Required]

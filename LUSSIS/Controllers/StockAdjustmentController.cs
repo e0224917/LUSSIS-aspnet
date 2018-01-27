@@ -182,15 +182,9 @@ namespace LUSSIS.Controllers
                         {
                             AVDTO.Quantity = AVDTO.Quantity * -1;
                         }
-                        AdjVoucher Adj = new AdjVoucher
-                        {
-                            ItemNum = AVDTO.ItemNum,
-                            Quantity = AVDTO.Quantity,
-                            Reason = AVDTO.Reason,
-                            RequestEmpNum = ENum,
-                            CreateDate = todayDate,
-                            Status = "pending"
-                        };
+                        AdjVoucher Adj = sar.ConvertDTOAdjVoucher(AVDTO);
+                        Adj.RequestEmpNum = ENum;
+                        Adj.CreateDate = todayDate;
                         sar.Add(Adj);
                         Stationery st = sr.GetById(AVDTO.ItemNum);
 
@@ -242,15 +236,9 @@ namespace LUSSIS.Controllers
                 Employee self = er.GetCurrentUser();
                 if (adjVoucher.Sign == false)
                 { adjVoucher.Quantity = adjVoucher.Quantity * -1; }
-                var adj = new AdjVoucher
-                {
-                    RequestEmpNum = self.EmpNum,
-                    ItemNum = adjVoucher.ItemNum,
-                    CreateDate = DateTime.Today,
-                    Quantity = adjVoucher.Quantity,
-                    Reason = adjVoucher.Reason,
-                    Status = "pending"
-                };
+                AdjVoucher adj = sar.ConvertDTOAdjVoucher(adjVoucher);
+                adj.CreateDate = DateTime.Today;
+                adj.RequestEmpNum = self.EmpNum;
                 sar.Add(adj);
                 string destinationEmail = er.GetStoreManager().EmailAddress;     
                 string destinationEmail2 = er.GetStoreSupervisor().EmailAddress;

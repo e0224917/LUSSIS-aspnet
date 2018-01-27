@@ -90,6 +90,7 @@ namespace LUSSIS.Controllers
         public ActionResult All(string searchString, string currentFilter, int? page)
         {
             List<Requisition> requistions = new List<Requisition>();
+            Employee self = empRepo.GetCurrentUser();
             if (searchString != null)
             { page = 1; }
             else
@@ -99,11 +100,11 @@ namespace LUSSIS.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                requistions = reqRepo.GetAllRequisitionsSearch(searchString);
+                requistions = reqRepo.GetAllRequisitionsSearch(searchString, self);
             }
             else
             {
-                requistions = reqRepo.GetAllRequisitionsForCurrentUser();
+                requistions = reqRepo.GetAllRequisitionsForCurrentUser(self);
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
@@ -244,9 +245,7 @@ namespace LUSSIS.Controllers
                 return View();
             }
         }
-        private RequisitionRepository reqrepo = new RequisitionRepository();
-        private StationeryRepository strepo = new StationeryRepository();
-        private EmployeeRepository erepo = new EmployeeRepository();
+
         
         
         
@@ -306,8 +305,8 @@ namespace LUSSIS.Controllers
         [DelegateStaffCustomAuth("staff", "rep")]
         public ActionResult MyRequisitions(string currentFilter, int? page)
         {
-            int id = erepo.GetCurrentUser().EmpNum;
-            List<Requisition> reqlist = reqrepo.GetRequisitionByEmpNum(id).OrderByDescending(s => s.RequisitionDate).OrderByDescending(s => s.RequisitionId).ToList();
+            int id = empRepo.GetCurrentUser().EmpNum;
+            List<Requisition> reqlist = reqRepo.GetRequisitionByEmpNum(id).OrderByDescending(s => s.RequisitionDate).OrderByDescending(s => s.RequisitionId).ToList();
             int pageSize = 15;
             int pageNumber = (page ?? 1);
             return View(reqlist.ToPagedList(pageNumber, pageSize));
@@ -327,12 +326,13 @@ namespace LUSSIS.Controllers
         {
             var itemNum = (List<string>)Session["itemNub"];
             var itemQty = (List<int>)Session["itemQty"];
-            int reqEmp = erepo.GetCurrentUser().EmpNum;
+            Employee self = empRepo.GetCurrentUser();
+            int reqEmp = self.EmpNum;
             string body = "Description".PadRight(30, ' ') + "\t\t" + "UOM".PadRight(30, ' ') + "\t\t" + "Quantity".PadRight(30, ' ') + "\n";
             DateTime reqDate = System.DateTime.Now.Date;
             string status = "pending";
             string remarks = Request["remarks"];
-            string deptCode = erepo.GetCurrentUser().DeptCode;
+            string deptCode = self.DeptCode;
             if (itemNum != null)
             {
                 Requisition requisition = new Requisition()
@@ -343,7 +343,7 @@ namespace LUSSIS.Controllers
                     Status = status,
                     DeptCode = deptCode
                 };
-                reqrepo.Add(requisition);
+                reqRepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
                 {
                     RequisitionDetail requisitionDetail = new RequisitionDetail()
@@ -352,7 +352,7 @@ namespace LUSSIS.Controllers
                         ItemNum = itemNum[i],
                         Quantity = itemQty[i]
                     };
-                    reqrepo.AddRequisitionDetail(requisitionDetail);
+                    reqRepo.AddRequisitionDetail(requisitionDetail);
                     body += strepo.GetById(requisitionDetail.ItemNum).Description.PadRight(30, ' ') + "\t\t" + strepo.GetById(requisitionDetail.ItemNum).UnitOfMeasure.PadRight(30, ' ') + "\t\t" + requisitionDetail.Quantity.ToString().PadRight(30, ' ') + "\n";
                 }
                 Session["itemNub"] = null;
@@ -363,7 +363,7 @@ namespace LUSSIS.Controllers
                 //invalid email address
                 //string destinationEmail = erepo.GetById(erepo.GetDepartmentByUser(erepo.GetCurrentUser()).DeptHeadNum.ToString().ToString()).EmailAddress;
                 string destinationEmail = "cuirunzesg@gmail.com";
-                string subject = erepo.GetCurrentUser().FullName + " requested stationeries";
+                string subject = self.FullName + " requested stationeries";
                 EmailHelper.SendEmail(destinationEmail, subject, body);
                 return RedirectToAction("MyRequisitions");
             }

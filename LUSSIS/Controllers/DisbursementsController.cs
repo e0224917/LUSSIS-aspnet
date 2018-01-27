@@ -123,7 +123,6 @@ namespace LUSSIS.Controllers
             return PartialView();
         }
 
-        // GET: All Disbursements
         public ActionResult History(string searchString, string currentFilter, int? page)
         {
             List<Disbursement> disbursements = new List<Disbursement>();
@@ -140,7 +139,7 @@ namespace LUSSIS.Controllers
             }
             else
             {
-                disbursements = disRepo.GetAll().ToList();
+                disbursements = disRepo.GetAll().OrderByDescending(d=>d.CollectionDate).ToList();
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
@@ -156,7 +155,7 @@ namespace LUSSIS.Controllers
             //return View(disRepo.GetAll());
         }
 
-        public ActionResult ViewDetails(int? id)
+        public ActionResult HistoryDetails(int? id)
         {
             if (id == null)
             {

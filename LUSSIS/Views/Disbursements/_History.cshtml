@@ -3,7 +3,7 @@
 
 <div id="disHistory">
     <table class="table table-striped table-hover">
-        <tr>
+        <tr class="table-active">
             <th>
                 Department
             </th>
@@ -40,8 +40,8 @@
                 </td>
                 <td>
                     <span>
-                        <a href="@Url.Action("ViewDetails")/@item.DisbursementId" class="btn btn-success btn-sm">
-                            <span class="glyphicon glyphicon-plus-sign"></span>
+                        <a href="@Url.Action("HistoryDetails")/@item.DisbursementId" class="btn btn-info btn-sm">
+                            
                             View Details
                         </a>
                     </span>
