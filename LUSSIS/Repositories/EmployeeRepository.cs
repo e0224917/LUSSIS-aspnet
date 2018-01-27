@@ -28,56 +28,9 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Employees.First(x => x.EmailAddress == email);
         }
 
-        public Department GetDepartmentByUser(Employee employee)
-        {
-            return LUSSISContext.Departments.First(y => y.DeptCode == employee.DeptCode);
-        }
-
         public Department GetDepartmentByEmpNum(int empNum)
         {
-            Employee emp = GetById(empNum);
-            return emp.Department;
-        }
-
-        public List<Employee> GetAllByDepartment(Department department)
-        {
-            return LUSSISContext.Employees.Where(k => k.DeptCode == department.DeptCode).ToList();
-        }
-        
-        public List <LUSSIS.Models.Delegate> GetAllDelegates()
-        {
-            return LUSSISContext.Delegates.ToList();
-        }
-
-        public Models.Delegate GetDelegateByDate(Department department, DateTime dateTime)
-        {
-            List<Employee> empList = GetAllByDepartment(department);
-            List<Models.Delegate> delList = GetAllDelegates();
-            List<Models.Delegate> allDel = delList.Where(x => empList.Any(y => y.EmpNum == x.EmpNum)).ToList();
-            return allDel.FirstOrDefault(k => k.StartDate <= dateTime && k.EndDate >= dateTime);
-        }
-
-        public bool CheckIfLoggedInUserIsDelegate()
-        {
-            int employeeNum = GetCurrentUser().EmpNum;
-            DateTime dateTime = DateTime.Today.Date;
-            Models.Delegate meDelegate = GetAllDelegates().FirstOrDefault(x => x.EmpNum == employeeNum && x.StartDate <= dateTime && x.EndDate >= dateTime);
-            if (meDelegate == null)
-            {
-                return false;
-            }
-            else { return true; }
-        }
-
-        public bool CheckIfUserDepartmentHasDelegate()
-        {
-            Department meDept = GetCurrentUser().Department;
-            Models.Delegate meDeptDelegate = GetDelegateByDate(meDept, DateTime.Today.Date);
-            if (meDeptDelegate == null)
-            {
-                return false;
-            }
-            else { return true; }
+            return GetById(empNum).Department;
         }
 
         public Employee GetStoreManager()

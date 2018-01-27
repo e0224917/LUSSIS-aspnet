@@ -30,14 +30,15 @@ namespace LUSSIS.Controllers
         private RequisitionRepository reqRepo = new RequisitionRepository();
         private EmployeeRepository empRepo = new EmployeeRepository();
         private DisbursementRepository disRepo = new DisbursementRepository();
-        private readonly DelegateRepository _delegateRepository = new DelegateRepository();
+        private StationeryRepository strepo = new StationeryRepository();
+        private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         private bool HasDelegate
         {
             get
             {
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-                var current = _delegateRepository.FindCurrentByDeptCode(deptCode);
+                var current = _delegateRepo.FindCurrentByDeptCode(deptCode);
                 return current != null;
             }
         }
@@ -47,7 +48,8 @@ namespace LUSSIS.Controllers
         [CustomAuthorize("head", "staff")]
         public ActionResult Pending()
         {
-            var req = reqRepo.GetPendingRequisitions();
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+            var req = reqRepo.GetPendingListForHead(deptCode);
 
             //If user is head and there is delegate
             if (empRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
@@ -128,8 +130,8 @@ namespace LUSSIS.Controllers
             if (requisition.Status == "pending")
             {//requisition must be pending for any approval and reject
                 Employee self = empRepo.GetCurrentUser();
-                bool hasDelegate = empRepo.CheckIfUserDepartmentHasDelegate();
-                if ((self.JobTitle == "head" && !hasDelegate) || hasDelegate)
+
+                if ((self.JobTitle == "head" && !HasDelegate) || HasDelegate)
                 {//if (user is head and there is no delegate) or (user is currently delegate)
                     if(self.DeptCode != empRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum).DeptCode)
                     {//if user is trying to approve for other department
@@ -462,7 +464,9 @@ namespace LUSSIS.Controllers
                 RequisitionId = Id,
                 Status = Status
             };
-            if ((empRepo.GetCurrentUser().JobTitle == "head" && !empRepo.CheckIfUserDepartmentHasDelegate()) || empRepo.CheckIfLoggedInUserIsDelegate())
+            var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+            var isDelegated = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
+            if ((empRepo.GetCurrentUser().JobTitle == "head" && !HasDelegate) || isDelegated)
             {
                 return PartialView("_ApproveReq", reqDTO);
             }
@@ -481,8 +485,7 @@ namespace LUSSIS.Controllers
                 if (req.Status == "pending")
                 {//must be pending for approval and reject
                     Employee self = empRepo.GetCurrentUser();
-                    bool hasDelegate = empRepo.CheckIfUserDepartmentHasDelegate();
-                    if ((self.JobTitle == "head" && !hasDelegate) || hasDelegate)
+                    if ((self.JobTitle == "head" && !HasDelegate) || HasDelegate)
                     {//if (user is head and there is no delegate) or (user is currently delegate)
                         if (self.DeptCode != empRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum).DeptCode)
                         {//if user is trying to approve for other department

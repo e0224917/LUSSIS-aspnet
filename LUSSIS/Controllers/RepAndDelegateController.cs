@@ -161,14 +161,17 @@ namespace LUSSIS.Controllers
         {
             if (ModelState.IsValid)
             {
-                string employeeDept = _employeeRepo.GetCurrentUser().DeptCode;
-                Department department = _employeeRepo.GetDepartmentByUser(_employeeRepo.GetCurrentUser());
-                Models.Delegate del = new Models.Delegate();
-                del.EmpNum = Convert.ToInt32(delegateEmp);
+                var empNum = Convert.ToInt32(delegateEmp);
                 var startDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 var endDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                del.StartDate = startDate;
-                del.EndDate = endDate;
+
+                var del = new Models.Delegate()
+                {
+                    EmpNum = empNum,
+                    StartDate = startDate,
+                    EndDate = endDate
+                };
+
                 _delegateRepo.Add(del);
             }
 
