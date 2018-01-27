@@ -91,8 +91,9 @@
                     @Html.HiddenFor(modelItem => Model.DisDetailList[i].RequestedQty)
                 </td>
                 <td>
-                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @class = "form-control", @value = Model.DisDetailList[i].ActualQty,  @min = "0", @max = @Model.DisDetailList[i].RequestedQty} })
+                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @class = "form-control", @value = Model.DisDetailList[i].ActualQty, @min = "0", @max = @Model.DisDetailList[i].RequestedQty, id="qty-"+@i } })
                     @Html.ValidationMessageFor(model => Model.DisDetailList[i].ActualQty, "", new { @class = "text-danger" })
+                    <input type="submit" value="Update" class="btn btn-warning btn-sm" id="btn-updateQty" data-id="@i" onclick="UpdateQty(@Model.DisDetailList[i])"/>
 
                 </td>
 
@@ -116,8 +117,8 @@
 
 @section scripts{
 <script>
-        var GenerateQR = function (DisbursementId) {
-            var url = "@Url.Content("~/")Disbursements/_QR?Id=" + DisbursementId;
+        var GenerateQR = function (disbursementId) {
+            var url = "@Url.Content("~/")Disbursements/_QR?Id=" + disbursementId;
             $("#QRBody").load(url,
                 function() {
                     $("#QRModal").modal("show");
@@ -129,6 +130,26 @@
             ) {
                 return false;
             }
-        });
+        }
+    );
+        $("#btn-updateQty").click(function () {
+
+                var disDetailsToUpdate = $(this).attr("data-id");
+                var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
+                var maxQty = document.getElementById('qty-' + $(this).attr("data-id")).attr("max").value;
+                if (qty > 0 && qty<maxQty)
+                {
+                    $.post("@Url.Content("~/")Disbursements/Details", { "id": disDetailsToUpdate, "qty": qty },
+                        function (data) {
+                            location.reload();
+                        });
+                }
+                else
+                {
+                    alert("Please input a valid quantity");
+                }
+        }
+        );
+
 </script>
 }

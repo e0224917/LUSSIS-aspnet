@@ -94,56 +94,28 @@ else
                 if (stationeryToDelete != '') {
                     // Perform the ajax post
                     $.post("@Url.Content("~/")Requisitions/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
-                        function (data) {
-                            // Successful requests get here
-                            // Update the page elements
-                            //confirm("Delete from cart successfully");
+                        function () {
                             location.reload();
-                            //if (data.ItemCount == 0) {
-                            //    $('#row-' + data.DeleteId).fadeOut('slow');
-                            //} else {
-                            //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
-                            //}
-                            //$('#cart-total').text(data.CartTotal);
-                            //$('#update-message').text(data.Message);
-                            //$('#cart-status').text('Cart (' + data.CartCount + ')');
                         });
                 }
             });
         });
-    </script>
-    <script type="text/javascript">
         $(function () {
-            // Document.ready -> link up remove event handler
             $(".UpdateLink").click(function ()
             {
-                // Get the id from the link
                 var stationeryToUpdate = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (qty <= 0)
+                
+                if(qty > 0)
                 {
-                    alert("Please input a valid quantity");
+                    $.post("@Url.Content("~/")Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
+                        function () {
+                            location.reload();
+                        });
                 }
-                //if (stationeryToUpdate != '')
                 else
                 {
-                    // Perform the ajax post
-                    $.post("@Url.Content("~/")Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
-                        function (data) {
-                            // Successful requests get here
-                            // Update the page elements
-                            //alert("Update cart successfully");
-                            //if (qty != 0) { alert("Update cart successfully");}
-                            location.reload();
-                            //if (data.ItemCount == 0) {
-                            //    $('#row-' + data.DeleteId).fadeOut('slow');
-                            //} else {
-                            //    $('#item-count-' + data.DeleteId).text(data.ItemCount);
-                            //}
-                            //$('#cart-total').text(data.CartTotal);
-                            //$('#update-message').text(data.Message);
-                            //$('#cart-status').text('Cart (' + data.CartCount + ')');
-                        });
+                    alert("Please input a valid quantity");
                 }
             });
         });
