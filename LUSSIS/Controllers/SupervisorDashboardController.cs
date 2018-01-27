@@ -52,6 +52,7 @@ namespace LUSSIS.Controllers
             List<String> pileName = sr.GetAllCategoryName().ToList();
             List<double> pileValue = pr.GetPOByCategory();
 
+
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }
         public JsonResult GetBarchartJSON()

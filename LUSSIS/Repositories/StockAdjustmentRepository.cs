@@ -1,4 +1,5 @@
 ﻿using LUSSIS.Models;
+using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories.Interface;
 using System;
 using System.Collections.Generic;
@@ -117,6 +118,18 @@ namespace LUSSIS.Repositories
             return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == id && x.Status == "approved");
         } 
 
+
+        public AdjVoucher ConvertDTOAdjVoucher (AdjustmentVoucherDTO AVDTO)
+        {
+            AdjVoucher av = new AdjVoucher
+            {
+                ItemNum = AVDTO.ItemNum,
+                Quantity = AVDTO.Quantity,
+                Reason = AVDTO.Reason,
+                Status = "pending"
+            };
+            return av;
+        }
 
     }
 }
