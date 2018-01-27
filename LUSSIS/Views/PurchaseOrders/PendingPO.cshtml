@@ -135,7 +135,7 @@
             }
             else {
                 $("#showError").hide();
-                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Approve";
+                var url = "@Url.Content("~/")PurchaseOrders/_ApproveRejectPO?List=" + CheckList + "&Status=Approve";
 
                 $("#myApproveModalBodyDiv").load(url, function () {
                     $("#myApproveModal").modal("show");
@@ -149,7 +149,7 @@
             }
             else {
                 $("#showError").hide();
-                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?List=" + CheckList + "&Status=Reject";
+                var url = "@Url.Content("~/")PurchaseOrders/_ApproveRejectPO?List=" + CheckList + "&Status=Reject";
 
                 $("#myApproveModalBodyDiv").load(url, function () {
                     $("#myApproveModal").modal("show");

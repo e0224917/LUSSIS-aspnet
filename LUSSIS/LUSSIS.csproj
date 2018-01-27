@@ -642,7 +642,7 @@
     <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
     <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
-    <Content Include="Views\PurchaseOrders\ApproveRejectPO.cshtml" />
+    <Content Include="Views\PurchaseOrders\_ApproveRejectPO.cshtml" />
     <Content Include="Views\PurchaseOrders\PendingPO.cshtml" />
     <Content Include="Views\Shared\__ClerkMenu.cshtml" />
     <Content Include="Views\Shared\__DeptEmpMenu.cshtml" />
@@ -657,7 +657,7 @@
     <Content Include="Views\Suppliers\Quotation.cshtml" />
     <Content Include="Views\SupervisorDashboard\Index.cshtml" />
     <Content Include="Views\Disbursements\History.cshtml" />
-    <Content Include="Views\Disbursements\ViewDetails.cshtml" />
+    <Content Include="Views\Disbursements\HistoryDetails.cshtml" />
     <Content Include="Views\Requisitions\_hasDelegate.cshtml" />
     <Content Include="Views\Requisitions\_unauthoriseAccess.cshtml" />
     <Content Include="Views\Disbursements\_QR.cshtml" />
