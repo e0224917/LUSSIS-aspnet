@@ -17,7 +17,7 @@ namespace LUSSIS.Controllers
             if (User.IsInRole("staff"))
             {
                 var empNum = Int32.Parse(Request.Cookies["Employee"]?["EmpNum"] ?? throw new FormatException());
-                var isDelegate = _delegateRepo.FindByEmpNum(empNum) != null;
+                var isDelegate = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
                 return RedirectToAction("Index",
                     isDelegate ? "RepAndDelegate" : "Requisitions");
             }

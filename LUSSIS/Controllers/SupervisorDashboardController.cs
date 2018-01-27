@@ -26,7 +26,7 @@ namespace LUSSIS.Controllers
         private StationeryRepository sr = new StationeryRepository();
         private EmployeeRepository er = new EmployeeRepository();
         private SupplierRepository sur = new SupplierRepository();
-
+        private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
 
 
         
@@ -54,14 +54,21 @@ namespace LUSSIS.Controllers
 
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetBarchartJSON()
+
+        public JsonResult GetBarchartJson()
         {
-            List<String> Name = er.GetDepartmentNames();
-            List<double> Value = er.GetDepartmentValue();
+            var deptNames = _departmentRepo.GetAll().Select(item => item.DeptName).ToList();
+            var deptCodes = _departmentRepo.GetAll().Select(item => item.DeptCode).ToList();
+            
+            var deptValues = new List<double>();
+            foreach (var deptCode in deptCodes)
+            {
+                deptValues.Add(disRepo.GetDisbursementTotalAmountOfDept(deptCode));
+            }
 
-            return Json(new { firstList = Name, secondList = Value }, JsonRequestBehavior.AllowGet);
+            return Json(new { firstList = deptNames, secondList = deptValues }, 
+                JsonRequestBehavior.AllowGet);
         }
-
 
 
         [HttpGet]

@@ -16,7 +16,7 @@
         </strong>
     </h2>
 
-    <hr />
+    <hr/>
     <h3 class="mt-4 mb-5">Set representative:</h3>
 
     @using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
@@ -24,82 +24,76 @@
         <h5>Find Employee:</h5>
         <div class="row m-2">
             <div class="col-lg-10">
-                <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" class="form-control d-inline" />
-                <input type="submit" value="Set New Department Rep" class="btn btn-success form-control d-inline ml-3" />
-                <input type="hidden" id="Emp2" name="RepEmp" />
+                <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" class="form-control d-inline"/>
+                <input type="submit" value="Set New Department Rep" class="btn btn-success form-control d-inline ml-3"/>
+                <input type="hidden" id="Emp2" name="RepEmp"/>
             </div>
         </div>
         <h5 id="tagsname" class="text-info m-3"></h5>
-        <br />
+        <br/>
     }
 </div>
 
-        @section scripts {
-            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-            <script type="text/javascript">
-        $(document).ready(function () {
+@section scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
             $(':input[type="submit"]').prop('disabled', true);
-            $('input[type="text"]').keyup(function () {
-                if ($(this).val() == '') {
+            $('input[type="text"]').keyup(function() {
+                if ($(this).val() === '') {
                     $(':input[type="submit"]').prop('disabled', true);
                     $('#tagsname').html('You selected none ');
-                }
-                else {
+                } else {
                     $(':input[type="submit"]').prop('disabled', false);
                 }
             });
             $("#Emp").autocomplete({
-                source: function (request, response) {
+                source: function(request, response) {
                     $.ajax({
                         url: "@Url.Content("~/")RepAndDelegate/GetEmpJson",
                         type: "GET",
                         dataType: "json",
                         data: { prefix: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return { label: item.FullName, value: item.EmpNum };
-                            }))
+                        success: function(data) {
+                            response($.map(data,
+                                function(item) {
+                                    return { label: item.FullName, value: item.EmpNum };
+                                }));
                         }
-                    })
+                    });
                 },
-                select: function (event, ui) {
+                select: function(event, ui) {
                     event.preventDefault();
                     $('#Emp2').val(ui.item.value);
                     $(this).val(ui.item.label);
                     if (ui.item == null) {
                         $("#Emp").val('');
                         $(':input[type="submit"]').prop('disabled', true);
-                    }
-                    else {
+                    } else {
                         $('#tagsname').html('You selected: ' + ui.item.label);
                     }
                 },
-                change: function (event, ui) {
+                change: function(event, ui) {
                     if (ui.item == null) {
                         $("#Emp").val('');
                         $(':input[type="submit"]').prop('disabled', true);
-                    }
-                    else {
+                    } else {
                         $(':input[type="submit"]').prop('disabled', false);
                     }
                 },
-                focus: function (event, ui) {
+                focus: function(event, ui) {
                     $(this).val(ui.item.label);
                     if (ui.item == null) {
                         $("#Emp").val('');
                         $(':input[type="submit"]').prop('disabled', true);
-                    }
-                    else {
+                    } else {
                         $(':input[type="submit"]').prop('disabled', false);
                     }
-                },
+                }
                 //messages: {
                 //    noResults: "", results: ""
                 //}
             });;
         })
-            </script>
-        }
-
-
-
+    </script>
+}

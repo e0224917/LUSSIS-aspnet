@@ -14,94 +14,144 @@ using Microsoft.AspNet.Identity;
 using System.Web.Security;
 using LUSSIS.DAL;
 using LUSSIS.CustomAuthority;
+using LUSSIS.Extensions;
 
 namespace LUSSIS.Controllers
 {
     [CustomAuthorize("head", "staff")]
     public class RepAndDelegateController : Controller
     {
-        EmployeeRepository employeeRepo = new EmployeeRepository();
-        RepAndDelegateDTO radDto = new RepAndDelegateDTO();
-        DelegateRepository delegateRepo = new DelegateRepository();
-        DeptHeadDashBoardDTO dbDto = new DeptHeadDashBoardDTO();
-        RequisitionRepository reqRepo = new RequisitionRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private readonly DelegateRepository _delegateRepo = new DelegateRepository();
+        private readonly RequisitionRepository _requisitionRepo = new RequisitionRepository();
+        private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
 
         //for delegate and head only
+        // GET: /RepAndDelegate/
         public ActionResult Index()
         {
-            dbDto.GetCurrentLoggedIn = employeeRepo.GetCurrentUser();
-            dbDto.Department = employeeRepo.GetDepartmentByUser(dbDto.GetCurrentLoggedIn);
-            dbDto.GetDelegate = employeeRepo.GetFutureDelegate(dbDto.Department, DateTime.Now.Date);
-            dbDto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(dbDto.Department);
-            dbDto.GetRequisitionListCount = reqRepo.GetPendingListForHead(dbDto.Department.DeptCode).Count();
-            dbDto.GetTodaysDelegate = employeeRepo.GetDelegateByDate(dbDto.Department, DateTime.Now.Date);
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+
+            var department = _departmentRepo.GetById(deptCode);
+            var currentDelegate = _delegateRepo.FindAllByDeptCode(deptCode);
+            var staffAndRepList = department.Employees
+                .Where(e => e.JobTitle == "staff" || e.JobTitle == "rep").ToList();
+            var reqListCount = _requisitionRepo.GetPendingListForHead(deptCode).Count();
+            var haveDelegateToday = currentDelegate.StartDate <= DateTime.Today;
+
+            var dbDto = new DeptHeadDashBoardDTO
+            {
+                Department = department,
+                CurrentDelegate = currentDelegate,
+                StaffRepByDepartment = staffAndRepList,
+                RequisitionListCount = reqListCount,
+                HaveDelegateToday = haveDelegateToday
+            };
 
             return View(dbDto);
         }
 
+        // GET: /RepAndDelegate/DeptRep
         [HeadWithDelegateAuth("head", "staff")]
         public ActionResult DeptRep()
         {
-            radDto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            radDto.GetStaffRepByDepartment = employeeRepo.GetStaffRepByDepartment(radDto.Department);
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+            var department = _departmentRepo.GetById(deptCode);
+            var staffAndRepList = department.Employees
+                .Where(e => e.JobTitle == "staff" || e.JobTitle == "rep").ToList();
+
+            var radDto = new RepAndDelegateDTO
+            {
+                Department = department,
+                StaffAndRepList = staffAndRepList,
+            };
+
             return View(radDto);
         }
 
+        // GET: /RepAndDelegate/GetEmpJson
         [HttpGet]
         public JsonResult GetEmpJson(string prefix)
         {
-            radDto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            var selectedlist = employeeRepo.GetSelectionByDepartment(prefix, radDto.Department);
-            var selectedEmp = selectedlist.Select(x => new
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+            var department = _departmentRepo.GetById(deptCode);
+            var staffAndRepList = department.Employees
+                .Where(e => e.JobTitle == "staff" || e.JobTitle == "rep").ToList();
+            var selectedList = staffAndRepList
+                .Where(e => e.FullName.Contains(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            var selectedEmps = selectedList.Select(x => new
             {
-                FullName = x.FullName,
-                EmpNum = x.EmpNum
-            });   
-            
-            return Json(selectedEmp, JsonRequestBehavior.AllowGet);
+                x.FullName,
+                x.EmpNum
+            });
+
+            return Json(selectedEmps, JsonRequestBehavior.AllowGet);
         }
 
         [CustomAuthorize("head")]
         [HttpGet]
         public JsonResult GetEmpForDelJson(string prefix)
         {
-            radDto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            var selectedlist = employeeRepo.GetDelSelectionByDepartment(prefix, radDto.Department);
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+            var department = _departmentRepo.GetById(deptCode);
+            var staffList = department.Employees
+                .Where(e => e.JobTitle == "staff").ToList();
+            var selectedlist = staffList
+                .Where(e => e.FullName.Contains(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
+
             var selectedEmp = selectedlist.Select(x => new
             {
-                FullName = x.FullName,
-                EmpNum = x.EmpNum
+                x.FullName,
+                x.EmpNum
             });
+
             return Json(selectedEmp, JsonRequestBehavior.AllowGet);
         }
 
+        // POST: /RepAndDelegate/UpdateRep
         [HeadWithDelegateAuth("head", "staff")]
         [HttpPost]
         public ActionResult UpdateRep(string repEmp)
         {
             if (ModelState.IsValid)
             {
-                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
-                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                if (department.RepEmployee == null)
+                var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+                var department = _departmentRepo.GetById(deptCode);
+
+                var repEmpNum = Convert.ToInt32(repEmp);
+                var newRep = _employeeRepo.GetById(repEmpNum);
+                newRep.JobTitle = "rep";
+
+                var oldRep = department.RepEmployee;
+
+
+                if (oldRep == null)
                 {
-                    employeeRepo.AddRep(department, repEmp);
+                    _employeeRepo.Update(newRep);
+                    _departmentRepo.Update(department);
                 }
                 else
                 {
-                    string emailRepOld = department.RepEmployee.EmailAddress;
                     var context = new ApplicationDbContext();
-                    var user = context.Users.FirstOrDefault(u => u.Email == emailRepOld);
                     var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                    userManager.RemoveFromRole(user.Id, "rep");
-                    userManager.AddToRole(user.Id, "staff");
-                    employeeRepo.ChangeRep(department, repEmp);
-                    string emailRepNew = department.RepEmployee.EmailAddress;
-                    var user2 = context.Users.FirstOrDefault(u => u.Email == emailRepNew);
-                    userManager.RemoveFromRole(user2.Id, "staff");
-                    userManager.AddToRole(user2.Id, "rep");
+
+                    oldRep.JobTitle = "staff";
+
+                    var oldRepUser = context.Users.FirstOrDefault(u => u.Email == oldRep.EmailAddress);
+                    userManager.RemoveFromRole(oldRepUser?.Id, "rep");
+                    userManager.AddToRole(oldRepUser?.Id, "staff");
+
+                    _employeeRepo.Update(newRep);
+                    _employeeRepo.Update(oldRep);
+                    _departmentRepo.Update(department);
+
+                    var newRepUser = context.Users.FirstOrDefault(u => u.Email == newRep.EmailAddress);
+                    userManager.RemoveFromRole(newRepUser?.Id, "staff");
+                    userManager.AddToRole(newRepUser?.Id, "rep");
                 }
             }
+
             return RedirectToAction("DeptRep");
         }
 
@@ -111,16 +161,17 @@ namespace LUSSIS.Controllers
         {
             if (ModelState.IsValid)
             {
-                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
-                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
+                string employeeDept = _employeeRepo.GetCurrentUser().DeptCode;
+                Department department = _employeeRepo.GetDepartmentByUser(_employeeRepo.GetCurrentUser());
                 Models.Delegate del = new Models.Delegate();
                 del.EmpNum = Convert.ToInt32(delegateEmp);
                 var startDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 var endDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 del.StartDate = startDate;
                 del.EndDate = endDate;
-                delegateRepo.Add(del);      
+                _delegateRepo.Add(del);
             }
+
             return RedirectToAction("MyDelegate");
         }
 
@@ -128,33 +179,29 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult DeleteDelegate()
         {
-            if(ModelState.IsValid)
-            {
-                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
-                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                employeeRepo.DeleteDelegate(department);
-            }
-            return RedirectToAction("MyDelegate");
-        }
-
-        [CustomAuthorize("head")]
-        [HttpPost]
-        public ActionResult DeleteDelegateFromDB()
-        {
             if (ModelState.IsValid)
             {
-                string employeeDept = employeeRepo.GetCurrentUser().DeptCode;
-                Department department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-                employeeRepo.DeleteDelegate(department);
+                var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+                _delegateRepo.DeleteByDeptCode(deptCode);
             }
-            return RedirectToAction("Index");
+            var actionName = ControllerContext.RouteData.Values["action"].ToString();
+
+            return RedirectToAction(actionName);
         }
 
         [CustomAuthorize("head")]
         public ActionResult MyDelegate()
         {
-            radDto.Department = employeeRepo.GetDepartmentByUser(employeeRepo.GetCurrentUser());
-            radDto.GetDelegate = employeeRepo.GetFutureDelegate(radDto.Department, DateTime.Now.Date);
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+            var department = _departmentRepo.GetById(deptCode);
+            var myDelegate = _delegateRepo.FindAllByDeptCode(deptCode);
+
+            var radDto = new RepAndDelegateDTO
+            {
+                Department = department,
+                MyDelegate = myDelegate
+            };
+
             return View(radDto);
         }
 
@@ -164,76 +211,17 @@ namespace LUSSIS.Controllers
             return RedirectToAction("_ApproveReq", "Requisitions");
         }
 
-        // GET: RepAndDelegate/Details/5
-        public ActionResult Details(int id)
+        protected override void Dispose(bool disposing)
         {
-            return View();
-        }
-
-        // GET: RepAndDelegate/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: RepAndDelegate/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
+            if (disposing)
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
+                _employeeRepo.Dispose();
+                _delegateRepo.Dispose();
+                _departmentRepo.Dispose();
+                _requisitionRepo.Dispose();
             }
-            catch
-            {
-                return View();
-            }
-        }
 
-        // GET: RepAndDelegate/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: RepAndDelegate/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: RepAndDelegate/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: RepAndDelegate/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            base.Dispose(disposing);
         }
     }
 }

@@ -29,23 +29,32 @@ namespace LUSSIS.Controllers
 
         private RequisitionRepository reqRepo = new RequisitionRepository();
         private EmployeeRepository empRepo = new EmployeeRepository();
-        private StationeryRepository statRepo = new StationeryRepository();
         private DisbursementRepository disRepo = new DisbursementRepository();
+        private readonly DelegateRepository _delegateRepository = new DelegateRepository();
+
+        private bool HasDelegate
+        {
+            get
+            {
+                var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+                var current = _delegateRepository.FindCurrentByDeptCode(deptCode);
+                return current != null;
+            }
+        }
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
         [CustomAuthorize("head", "staff")]
         public ActionResult Pending()
         {
-            List<Requisition> req = reqRepo.GetPendingRequisitions();
-            if (empRepo.GetCurrentUser().JobTitle == "head")
+            var req = reqRepo.GetPendingRequisitions();
+
+            //If user is head and there is delegate
+            if (empRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
             {
-                if (empRepo.CheckIfUserDepartmentHasDelegate())
-                {
-                    //If user is head and there is delegate
-                    ViewBag.Message = "Delegate";
-                }
+                ViewBag.HasDelegate = HasDelegate;
             }
+
             return View(req);
         }
 
@@ -55,14 +64,12 @@ namespace LUSSIS.Controllers
         public ActionResult Details(int reqId)
         {
 
-            if (empRepo.GetCurrentUser().JobTitle == "head")
+            //If user is head and there is delegate
+            if (empRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
             {
-                if (empRepo.CheckIfUserDepartmentHasDelegate())
-                {
-                    //If user is head and there is delegate
-                    ViewBag.Message = "Delegate";
-                }
+                ViewBag.HasDelegate = HasDelegate;
             }
+
             var req = reqRepo.GetById(reqId);
             if (req != null)
             {
