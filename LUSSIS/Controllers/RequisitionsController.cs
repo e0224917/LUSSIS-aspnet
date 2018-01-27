@@ -52,7 +52,7 @@ namespace LUSSIS.Controllers
             var req = reqRepo.GetPendingListForHead(deptCode);
 
             //If user is head and there is delegate
-            if (empRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
+            if (User.IsInRole("head") && HasDelegate)
             {
                 ViewBag.HasDelegate = HasDelegate;
             }
@@ -67,7 +67,7 @@ namespace LUSSIS.Controllers
         {
 
             //If user is head and there is delegate
-            if (empRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
+            if (User.IsInRole("head") && HasDelegate)
             {
                 ViewBag.HasDelegate = HasDelegate;
             }
@@ -122,7 +122,7 @@ namespace LUSSIS.Controllers
         }
 
 
-        //TODO: Add authroization - DepartmentHead or Delegate only
+        //TODO: Add authorization - DepartmentHead or Delegate only
         [CustomAuthorize("head", "staff")]
         [HttpPost]
         public async Task<ActionResult> Details([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status,DeptCode")] Requisition requisition, string SubmitButton)
@@ -466,11 +466,12 @@ namespace LUSSIS.Controllers
             };
             var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
             var isDelegated = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
-            if ((empRepo.GetCurrentUser().JobTitle == "head" && !HasDelegate) || isDelegated)
+            if ((User.IsInRole("head") && !HasDelegate) || isDelegated)
             {
                 return PartialView("_ApproveReq", reqDTO);
             }
-            else { return PartialView("_hasDelegate"); }
+
+            return PartialView("_hasDelegate");
         }
 
 

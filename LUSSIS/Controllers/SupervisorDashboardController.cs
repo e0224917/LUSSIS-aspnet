@@ -41,7 +41,7 @@ namespace LUSSIS.Controllers
             dash.POTotalAmount = pr.GetPOTotalAmount();
             dash.PendingStockAdjAddQty = stockRepo.GetPendingStockAddQty();
             dash.PendingStockAdjSubtractQty = stockRepo.GetPendingStockSubtractQty();
-            dash.PendingStockAdjCount = stockRepo.GetPendingStockCount();
+            dash.PendingStockAdjCount = stockRepo.GetPendingAdjustmentList().Count;
             dash.TotalDisbursementAmount = disRepo.GetDisbursementTotalAmount();
 
             return View(dash);
