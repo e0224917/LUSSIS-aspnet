@@ -6,18 +6,18 @@
 <h2>My Delegate</h2>
 <hr />
 <div class="jumbotron">
-    @if (Model.GetDelegate != null)
+    @if (Model.MyDelegate != null)
     {
         <h2 class="mt-4 mb-5 text-info">
             <strong>
-                @Html.DisplayFor(model => model.GetDelegate.Employee.FullName)
+                @Html.DisplayFor(model => model.MyDelegate.Employee.FullName)
             </strong>
         </h2>
-        <h4 class="mb-5">@Html.DisplayFor(model => model.GetDelegate.StartDate) - @Html.DisplayFor(model => model.GetDelegate.EndDate)</h4>
+        <h4 class="mb-5">@Html.DisplayFor(model => model.MyDelegate.StartDate) - @Html.DisplayFor(model => model.MyDelegate.EndDate)</h4>
         <h5 class="mt-4 mb-5 text-muted">
-            @((Model.GetDelegate.StartDate>DateTime.Today)?
-            "Starting in " + (((int)(Model.GetDelegate.StartDate.Subtract(DateTime.Now)).TotalDays)+1)+" day(s)":
-                  "Ending in "+(((int)(Model.GetDelegate.EndDate.Subtract(DateTime.Now)).TotalDays)+1)+" day(s)")
+            @((Model.MyDelegate.StartDate>DateTime.Today)?
+            "Starting in " + (((int)(Model.MyDelegate.StartDate.Subtract(DateTime.Now)).TotalDays)+1)+" day(s)":
+                  "Ending in "+(((int)(Model.MyDelegate.EndDate.Subtract(DateTime.Now)).TotalDays)+1)+" day(s)")
         </h5>
         using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
         {

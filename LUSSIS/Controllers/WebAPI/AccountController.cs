@@ -1,7 +1,5 @@
 ﻿using LUSSIS.Models;
 using System;
-using System.Data.Entity;
-using System.Linq;
 using System.Web;
 using System.Web.Http;
 using Microsoft.AspNet.Identity.Owin;
@@ -16,7 +14,7 @@ namespace LUSSIS.Controllers.WebAPI
     public class AccountController : ApiController
     {
         private readonly EmployeeRepository _eRepo = new EmployeeRepository();
-        private readonly DelegateRepository _dRepo = new DelegateRepository();
+        private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         [HttpGet]
         [AllowAnonymous]
@@ -45,10 +43,7 @@ namespace LUSSIS.Controllers.WebAPI
 
                 if (emp.JobTitle.Equals("staff"))
                 {
-                    var delegateEmp = _dRepo.CheckDelegate(emp.EmpNum);
-                    if (delegateEmp != null)
-                        isDelegated = DateTime.Today >= delegateEmp.StartDate 
-                                      && DateTime.Today <= delegateEmp.EndDate;
+                    isDelegated = _delegateRepo.FindCurrentByEmpNum(emp.EmpNum) != null;
                 }
 
                 var e = new EmployeeDTO

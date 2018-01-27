@@ -13,7 +13,7 @@ namespace LUSSIS.Models.WebDTO
 
         [Required(ErrorMessage ="Please choose a category")]
         [Display(Name = "Category")]
-        public string CategoryId { get; set; }
+        public int CategoryId { get; set; }
         public IEnumerable<SelectListItem> CategoryList { get; set; }
 
         [Required(ErrorMessage ="Reorder Level is required")]

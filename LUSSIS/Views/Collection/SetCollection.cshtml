@@ -28,11 +28,11 @@
     </div>@using (Html.BeginForm("UpdateCollection", "Collection", FormMethod.Post))
     {
         <ul class="list-group list-group-flush bg-transparent">
-            @foreach (var item in Model.GetAll)
+            @foreach (var item in Model.CollectionPoints)
             {
             
                 <label class="btn btn-outline-dark text-left">
-                    @Html.RadioButtonFor(model => model.DeptCollectionPointID, item.CollectionPointId,
+                    @Html.RadioButtonFor(model => model.DeptCollectionPointId, item.CollectionPointId,
                  item.CollectionName == Model.CollectionPoint.CollectionName ? new { @checked = "checked", @class="btn btn-primary"} : null)
 
                     @item.CollectionName

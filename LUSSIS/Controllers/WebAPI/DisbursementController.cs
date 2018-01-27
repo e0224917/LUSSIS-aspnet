@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
+using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers.WebAPI
 {
@@ -20,21 +17,7 @@ namespace LUSSIS.Controllers.WebAPI
         public IHttpActionResult Get()
         {
             var list = _repo.GetDisbursementByStatus("inprocess");
-            var result = list.Select(item => new DisbursementDTO()
-            {
-                CollectionDate = item.CollectionDate,
-                CollectionPoint = item.CollectionPoint.CollectionName,
-                CollectionPointId = (int) item.CollectionPointId,
-                CollectionTime = item.CollectionPoint.Time,
-                DepartmentName = item.Department.DeptName,
-                DisbursementId = item.DisbursementId,
-                DisbursementDetails = item.DisbursementDetails.Select(detail => new RequisitionDetailDTO()
-                {
-                    Description = detail.Stationery.Description,
-                    Quantity = detail.ActualQty,
-                    UnitOfMeasure = detail.Stationery.UnitOfMeasure
-                })
-            });
+            var result = list.Select(item => item.ToApiDTO());
 
             return Ok(result);
         }
@@ -44,21 +27,7 @@ namespace LUSSIS.Controllers.WebAPI
         public async Task<DisbursementDTO> Get(int id)
         {
             var item = await _repo.GetByIdAsync(id);
-            return new DisbursementDTO()
-            {
-                CollectionDate = item.CollectionDate,
-                CollectionPoint = item.CollectionPoint.CollectionName,
-                CollectionPointId = (int) item.CollectionPointId,
-                CollectionTime = item.CollectionPoint.Time,
-                DepartmentName = item.Department.DeptName,
-                DisbursementId = item.DisbursementId,
-                DisbursementDetails = item.DisbursementDetails.Select(detail => new RequisitionDetailDTO()
-                {
-                    Description = detail.Stationery.Description,
-                    Quantity = detail.ActualQty,
-                    UnitOfMeasure = detail.Stationery.UnitOfMeasure
-                })
-            };
+            return item.ToApiDTO();
         } 
 
         [HttpGet]
@@ -69,22 +38,7 @@ namespace LUSSIS.Controllers.WebAPI
             var d = _repo.GetUpcomingDisbursement(dept);
             if (d == null) return NotFound();
 
-            var result = new DisbursementDTO()
-            {
-                DisbursementId = d.DisbursementId,
-                CollectionDate = d.CollectionDate,
-                CollectionPoint = d.CollectionPoint.CollectionName,
-                CollectionPointId = (int) d.CollectionPointId,
-                CollectionTime = d.CollectionPoint.Time,
-                DepartmentName = d.Department.DeptName,
-                DisbursementDetails = d.DisbursementDetails.Select(details => new RequisitionDetailDTO()
-                {
-                    Description = details.Stationery.Description,
-                    Quantity = details.ActualQty,
-                    UnitOfMeasure = details.Stationery.UnitOfMeasure
-                })
-            };
-            return Ok(result);
+            return Ok(d.ToApiDTO());
         }
 
         // POST api/<controller>
@@ -95,13 +49,12 @@ namespace LUSSIS.Controllers.WebAPI
 
             var isFulfilled = disbursement.DisbursementDetails.All(item => item.ActualQty == item.RequestedQty);
 
-            disbursement.Status = isFulfilled ? "fulfilled" : "unfulfilled";
+            disbursement.Status = isFulfilled ? Fulfilled : Unfulfilled;
 
             disbursement.AcknowledgeEmpNum = empnum;
 
             return Ok(new {Message = "Acknowledged"});
         }
 
-        
     }
 }

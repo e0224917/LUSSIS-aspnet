@@ -10,9 +10,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Helpers;
 using System.Web.Mvc;
-
+using CrystalDecisions.CrystalReports.Engine;
+using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
@@ -23,21 +23,20 @@ namespace LUSSIS.Controllers
     [Authorize(Roles = "clerk, supervisor")]
     public class PurchaseOrdersController : Controller
     {
-        private PORepository pr = new PORepository();
-        private DisbursementRepository disRepo = new DisbursementRepository();
-        private StockAdjustmentRepository stockRepo = new StockAdjustmentRepository();
-        private StationeryRepository sr = new StationeryRepository();
-        private EmployeeRepository er = new EmployeeRepository();
-        private SupplierRepository sur = new SupplierRepository();
-        public const double GST_RATE = 0.07;
+        private readonly PORepository _poRepo = new PORepository();
+        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
+        private readonly SupplierRepository _supplierRepo = new SupplierRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
+
+        public const double GstRate = 0.07;
 
         // GET: PurchaseOrders
         public ActionResult Index(int? page = 1)
         {
-            var purchaseOrders = pr.GetAll();
-            int pageSize = 15;
+            var purchaseOrders = _poRepo.GetAll();
             ViewBag.page = page;
-            return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate).ToPagedList(Convert.ToInt32(page), pageSize));
+            return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate)
+                .ToPagedList(pageNumber: Convert.ToInt32(page), pageSize: 15));
         }
 
         // GET: PurchaseOrders/Details/10005
@@ -47,12 +46,14 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PurchaseOrder purchaseOrder = pr.GetById(Convert.ToInt32(id));
+
+            var purchaseOrder = _poRepo.GetById(Convert.ToInt32(id));
             if (purchaseOrder == null)
             {
                 return HttpNotFound();
             }
-            PurchaseOrderDTO po = new PurchaseOrderDTO(purchaseOrder);
+
+            var po = new PurchaseOrderDTO(purchaseOrder);
 
             //ViewBag.PurchaseOrder = po;
             return View(po);
@@ -63,10 +64,10 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = "clerk")]
         public ActionResult Summary()
         {
-            ViewBag.OutstandingStationeryList = sr.GetOutstandingStationeryByAllSupplier();
-            ViewBag.PendingApprovalPOList = pr.GetPOByStatus("pending");
-            ViewBag.OrderedPOList = pr.GetPOByStatus("ordered");
-            ViewBag.ApprovedPOList = pr.GetPOByStatus("approved");
+            ViewBag.OutstandingStationeryList = _stationeryRepo.GetOutstandingStationeryByAllSupplier();
+            ViewBag.PendingApprovalPOList = _poRepo.GetPOByStatus("pending");
+            ViewBag.OrderedPOList = _poRepo.GetPOByStatus("ordered");
+            ViewBag.ApprovedPOList = _poRepo.GetPOByStatus("approved");
             return View();
         }
 
@@ -78,84 +79,100 @@ namespace LUSSIS.Controllers
             //catch error from redirect
             ViewBag.Error = error;
 
-            PurchaseOrderDTO po = new PurchaseOrderDTO(); //view model
-            int countOfLines = 1; //no of purchase detail lines to show
-            int countOfStationery = 0; //no ofstationery that belong to supplier
+            var po = new PurchaseOrderDTO(); //view model
 
             if (supplierId == null) //select supplier if non-chosen yet
             {
-                Supplier selectASupplier = new Supplier();
-                selectASupplier.SupplierId = -1;
-                selectASupplier.SupplierName = "Select a Supplier";
-                ViewBag.Suppliers = sur.GetAll().Concat(new Supplier[] { selectASupplier });
-                ViewBag.Supplier = selectASupplier;
-                PurchaseOrderDTO nothingToShow = new PurchaseOrderDTO();
-                nothingToShow.SupplierId = -1;
-                return View(nothingToShow);
+                var emptySupplier = new Supplier
+                {
+                    SupplierId = -1,
+                    SupplierName = "Select a Supplier"
+                };
+
+                ViewBag.Suppliers = _supplierRepo.GetAll().Concat(new [] {emptySupplier});
+                ViewBag.Supplier = emptySupplier;
+
+                var emptyPo = new PurchaseOrderDTO {SupplierId = -1};
+                return View(emptyPo);
             }
 
             //get supplier
-            Supplier supplier = sur.GetById(Convert.ToInt32(supplierId));
+            var supplier = _supplierRepo.GetById(Convert.ToInt32(supplierId));
             po.Supplier = supplier;
             po.SupplierId = supplier.SupplierId;
             po.CreateDate = DateTime.Today;
-            po.SupplierAddress = supplier.Address1 + Environment.NewLine + supplier.Address2 + Environment.NewLine + supplier.Address3;
+            po.SupplierAddress = supplier.Address1 + Environment.NewLine + supplier.Address2 + Environment.NewLine +
+                                 supplier.Address3;
             po.SupplierContact = supplier.ContactName;
 
             //set empty Stationery template for dropdown
-            Stationery emptyStationery = new Stationery();
-            emptyStationery.ItemNum = "select a stationery";
-            emptyStationery.Description = "select a stationery";
-            emptyStationery.UnitOfMeasure = "-";
-            emptyStationery.AverageCost = 0.00;
+            var emptyStationery = new Stationery
+            {
+                ItemNum = "select a stationery",
+                Description = "select a stationery",
+                UnitOfMeasure = "-",
+                AverageCost = 0.00
+            };
 
             //get list of recommended for purchase stationery and put in purchase order details
-            var a = sr.GetOutstandingStationeryByAllSupplier();
+            var a = _stationeryRepo.GetOutstandingStationeryByAllSupplier();
             foreach (KeyValuePair<Supplier, List<Stationery>> kvp in a)
             {
                 if (kvp.Key.SupplierId == supplier.SupplierId)
                 {
                     foreach (Stationery stationery in kvp.Value)
                     {
-                        if (stationery.CurrentQty < stationery.ReorderLevel && stationery.PrimarySupplier().SupplierId == supplierId)
+                        if (stationery.CurrentQty < stationery.ReorderLevel &&
+                            stationery.PrimarySupplier().SupplierId == supplierId)
                         {
                             PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
-                            pdetails.OrderQty = Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty), Convert.ToInt32(stationery.ReorderQty));
+                            pdetails.OrderQty =
+                                Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty),
+                                    Convert.ToInt32(stationery.ReorderQty));
                             pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
                             pdetails.ItemNum = stationery.ItemNum;
                             po.PurchaseOrderDetailsDTO.Add(pdetails);
                         }
                     }
+
                     break;
                 }
             }
-            countOfLines = Math.Max(po.PurchaseOrderDetailsDTO.Count, 1);
-            countOfStationery = Math.Max(po.PurchaseOrderDetailsDTO.Count, 0);
+
+            //no of purchase detail lines to show
+            var countOfLines = Math.Max(po.PurchaseOrderDetailsDTO.Count, 1);
+            //no ofstationery that belong to supplier
+            var countOfStationery = Math.Max(po.PurchaseOrderDetailsDTO.Count, 0);
 
 
             //create empty puchase details so user can add up to 100 line items per PO
             for (int i = countOfLines; i < 100; i++)
             {
-                PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
-                pdetails.OrderQty = 0;
-                pdetails.UnitPrice = emptyStationery.AverageCost;
-                pdetails.ItemNum = emptyStationery.ItemNum;
+                var pdetails = new PurchaseOrderDetailDTO
+                {
+                    OrderQty = 0,
+                    UnitPrice = emptyStationery.AverageCost,
+                    ItemNum = emptyStationery.ItemNum
+                };
                 po.PurchaseOrderDetailsDTO.Add(pdetails);
             }
 
             //fill ViewBag to populate stationery dropdown lists
-            StationerySupplier ss = new StationerySupplier();
-            ss.ItemNum = emptyStationery.ItemNum;
-            ss.Price = emptyStationery.AverageCost;
-            ss.Stationery = emptyStationery;
-            List<StationerySupplier> sslist = new List<StationerySupplier>() { ss };
-            sslist.AddRange(sr.GetStationerySupplierBySupplierId(supplierId).ToList());
+            var stationerySupplier = new StationerySupplier
+            {
+                ItemNum = emptyStationery.ItemNum,
+                Price = emptyStationery.AverageCost,
+                Stationery = emptyStationery
+            };
+
+            var sslist = new List<StationerySupplier> {stationerySupplier};
+            sslist.AddRange(_stationeryRepo.GetStationerySupplierBySupplierId(supplierId).ToList());
             ViewBag.Stationery = sslist;
-            ViewBag.Suppliers = sur.GetAll();
+            ViewBag.Suppliers = _supplierRepo.GetAll();
             ViewBag.Supplier = supplier;
             ViewBag.countOfStationery = countOfStationery;
             ViewBag.countOfLines = countOfLines;
-            ViewBag.GST_RATE = GST_RATE;
+            ViewBag.GST_RATE = GstRate;
 
             return View(po);
         }
@@ -167,65 +184,51 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = "clerk")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PurchaseOrderDTO purchaseOrderDTO)
+        public ActionResult Create(PurchaseOrderDTO purchaseOrderDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
 
-                //create PO
-                PurchaseOrder purchaseOrder = null;
-
                 //fill default values
-                var CurrentUser = er.GetCurrentUser();
-                purchaseOrderDTO.OrderEmpNum = CurrentUser.EmpNum;
-                if (purchaseOrderDTO.CreateDate == null)
-                    purchaseOrderDTO.CreateDate = DateTime.Today;
+                var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var fullName = Request.Cookies["Employee"]?["Name"];
+                purchaseOrderDto.OrderEmpNum = empNum;
+                if (purchaseOrderDto.CreateDate == new DateTime())
+                    purchaseOrderDto.CreateDate = DateTime.Today;
 
                 //create PO
-                purchaseOrderDTO.CreatePurchaseOrder(out purchaseOrder);
+                purchaseOrderDto.CreatePurchaseOrder(out var purchaseOrder);
 
                 //save to database
-                pr.Add(purchaseOrder);
+                _poRepo.Add(purchaseOrder);
 
                 //send email to supervisor
-                StringBuilder emailForSupervisor = new StringBuilder("New Purchase Order Created");
-                emailForSupervisor.AppendLine("This email is automatically generated and requires no reply to the sender.");
-                emailForSupervisor.AppendLine("Purchase Order No " + purchaseOrder.PoNum);
-                emailForSupervisor.AppendLine("Created By " + CurrentUser.FullName);
-                emailForSupervisor.AppendLine("Created On " + purchaseOrder.CreateDate.ToString("dd-MM-yyyy"));
-                string subject = "New Purchase Order";
-                Emails.EmailHelper.SendEmail(subject, emailForSupervisor.ToString());
+                var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
+                var email = new LUSSISEmail.Builder().From(User.Identity.Name)
+                    .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
+                EmailHelper.SendEmail(email);
 
                 //send email if using non=primary supplier
-                StringBuilder emailBody = new StringBuilder("Non-Primary Suppliers in Purchase Order " + purchaseOrder.PoNum);
-                emailForSupervisor.AppendLine("This email is automatically generated and requires no reply to the sender.");
-                emailBody.AppendLine("Created for Supplier: " + sur.GetById(purchaseOrder.SupplierId).SupplierName);
-                int index = 0;
-                foreach (PurchaseOrderDetail pdetail in purchaseOrder.PurchaseOrderDetails)
+                var stationerys = purchaseOrder.PurchaseOrderDetails
+                    .Select(orderDetail => _stationeryRepo.GetById(orderDetail.ItemNum))
+                    .Where(stationery => stationery.PrimarySupplier().SupplierId != purchaseOrder.SupplierId).ToList();
+
+                if (stationerys.Count > 0)
                 {
-                    Stationery s = sr.GetById(pdetail.ItemNum);
-                    if (s.PrimarySupplier().SupplierId != purchaseOrder.SupplierId)
-                    {
-                        index++;
-                        emailBody.AppendLine("Index: " + index);
-                        emailBody.AppendLine("Stationery: " + s.Description);
-                        emailBody.AppendLine("Primary Supplier: " + s.PrimarySupplier().SupplierName);
-                        emailBody.AppendLine();
-                    }
-                }
-                if (index > 0)
-                {
-                    subject = "Purchasing from Non-Primary Supplier";
-                    Emails.EmailHelper.SendEmail(subject, emailBody.ToString());
+                    var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
+                    var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
+                        .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
+                    EmailHelper.SendEmail(email2);
                 }
 
                 return RedirectToAction("Summary");
             }
             catch (Exception e)
             {
-                return RedirectToAction("Create", new { supplierId = purchaseOrderDTO.SupplierId.ToString(), error = e.Message });
+                return RedirectToAction("Create",
+                    new {supplierId = purchaseOrderDto.SupplierId.ToString(), error = e.Message});
             }
         }
 
@@ -238,26 +241,28 @@ namespace LUSSIS.Controllers
             //catch error from redirect
             ViewBag.Error = error;
 
-            PurchaseOrderDTO po = null;    //to be put in ViewBag to display
-            ReceiveTransDTO receive = new ReceiveTransDTO();    //model to bind data
+            var receive = new ReceiveTransDTO(); //model to bind data
 
             if (p == null)
             {
-                ViewBag.OrderedPO = pr.GetPOByStatus("ordered");
+                ViewBag.OrderedPO = _poRepo.GetPOByStatus("ordered");
                 return View();
             }
 
             //populate PO and ReceiveTrans if PO number is given
-            po = new PurchaseOrderDTO(pr.GetById(Convert.ToInt32(p)));
+            var po = new PurchaseOrderDTO(_poRepo.GetById(Convert.ToInt32(p)));
             if (po.Status != "ordered")
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             for (int i = 0; i < po.PurchaseOrderDetails.Count; i++)
             {
-                ReceiveTransDetail rdetail = new ReceiveTransDetail();
-                rdetail.ItemNum = po.PurchaseOrderDetails.Skip(i).First().ItemNum;
-                rdetail.Quantity = 0;
+                var rdetail = new ReceiveTransDetail
+                {
+                    ItemNum = po.PurchaseOrderDetails.Skip(i).First().ItemNum,
+                    Quantity = 0
+                };
                 receive.ReceiveTransDetails.Add(rdetail);
             }
+
             receive.ReceiveDate = DateTime.Today;
 
             ViewBag.PurchaseOrder = po;
@@ -278,20 +283,20 @@ namespace LUSSIS.Controllers
                     throw new Exception("IT Error: please contact your administrator");
 
                 //set date if null
-                ReceiveTran receive = receiveModel.ConvertToReceiveTran();
-                if (receive.ReceiveDate == null) receive.ReceiveDate = DateTime.Today;
+                var receive = receiveModel.ConvertToReceiveTran();
+                if (receive.ReceiveDate == new DateTime()) receive.ReceiveDate = DateTime.Today;
 
                 //check validity
-                pr.ValidateReceiveTrans(receive);
+                ValidateReceiveTrans(receive);
 
                 //create receive trans, update PO and stationery
-                pr.CreateReceiveTrans(receive);
+                CreateReceiveTrans(receive);
 
                 return RedirectToAction("Summary");
             }
             catch (Exception e)
             {
-                return RedirectToAction("Receive", new { p = receiveModel.PoNum.ToString(), error = e.Message });
+                return RedirectToAction("Receive", new {p = receiveModel.PoNum.ToString(), error = e.Message});
             }
         }
 
@@ -301,26 +306,27 @@ namespace LUSSIS.Controllers
             DateTime OrderDate;
             
             DataSet ds = new DataSet();
-            //ReportDocument rd = new ReportDocument();
-            //rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
             if (orderDate != null)
             {
-                OrderDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(orderDate)).ToLocalTime();
-                ds.Tables.Add(GetPo(id, OrderDate));
+                var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                    .AddMilliseconds(Convert.ToDouble(orderDate)).ToLocalTime();
+                ds.Tables.Add(GetPo(id, date));
             }
             else
             {
                 ds.Tables.Add(GetPo(id));
             }
+
             rd.SetDataSource(ds);
             Response.Buffer = false;
             Response.ClearContent();
             Response.ClearHeaders();
-            Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+            var stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
             stream.Seek(0, SeekOrigin.Begin);
             return File(stream, "application/pdf");
         }*/
-
 
 
         //GET: PurchaseOrders/Order?p=10001
@@ -330,19 +336,17 @@ namespace LUSSIS.Controllers
             //catch error from redirect
             ViewBag.Error = error;
 
-            PurchaseOrderDTO po = null;
             if (p == null)
             {
-                ViewBag.ApprovedPO = pr.GetPOByStatus("approved");
+                ViewBag.ApprovedPO = _poRepo.GetPOByStatus("approved");
                 return View();
             }
 
             //populate PO DTO if PO number is given
-            PurchaseOrder purchaseOrder = await pr.GetByIdAsync(Convert.ToInt32(p));
+            var purchaseOrder = await _poRepo.GetByIdAsync(Convert.ToInt32(p));
             if (purchaseOrder.Status != "approved")
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            po = new PurchaseOrderDTO(purchaseOrder);
-            po.OrderDate = DateTime.Today;
+            var po = new PurchaseOrderDTO(purchaseOrder) {OrderDate = DateTime.Today};
 
             return View(po);
         }
@@ -356,64 +360,134 @@ namespace LUSSIS.Controllers
             {
                 if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
-                PurchaseOrder purchaseorder = pr.GetById(po.PoNum);
+                var purchaseorder = _poRepo.GetById(po.PoNum);
                 purchaseorder.Status = "ordered";
                 purchaseorder.OrderDate = po.OrderDate;
                 if (po.OrderDate < po.CreateDate)
                     throw new Exception("Record not saved, ordered date cannot be before created date");
-                pr.Update(purchaseorder);
+                _poRepo.Update(purchaseorder);
                 return RedirectToAction("Summary");
             }
             catch (Exception e)
             {
-                return RedirectToAction("Order", new { p = po.PoNum.ToString(), error = e.Message });
+                return RedirectToAction("Order", new {p = po.PoNum.ToString(), error = e.Message});
             }
         }
+
         [Authorize(Roles = "supervisor")]
         public ActionResult PendingPO()
         {
-
-            return View(pr.GetPendingApprovalPODTO());
-
+            return View(_poRepo.GetPendingApprovalPODTO());
         }
+
         [Authorize(Roles = "supervisor")]
         [HttpGet]
-        public ActionResult ApproveRejectPO(String List, String Status)
+        public ActionResult ApproveRejectPO(string list, string status)
         {
-
-            ViewBag.checkList = List;
-            ViewBag.status = Status;
-            return PartialView("ApproveRejectPO");
+            ViewBag.checkList = list;
+            ViewBag.status = status;
+            return PartialView("_ApproveRejectPO");
         }
+
         [Authorize(Roles = "supervisor")]
         [HttpPost]
-        public ActionResult ApproveRejectPO(String checkList, String status, String a)
+        public ActionResult ApproveRejectPO(string checkList, string status, string a)
         {
-            String[] list = checkList.Split(',');
-            int[] idList = new int[list.Length];
+            var list = checkList.Split(',');
+            var idList = new int[list.Length];
             for (int i = 0; i < idList.Length; i++)
             {
-                idList[i] = Int32.Parse(list[i]);
+                idList[i] = int.Parse(list[i]);
             }
-            foreach (int i in idList)
+
+            foreach (var id in idList)
             {
-                pr.UpDatePOStatus(i, status);
+                _poRepo.UpDatePOStatus(id, status);
             }
-            return PartialView();
+
+            return PartialView("_ApproveRejectPO");
         }
 
-        DataTable GetPo(int id, DateTime? orderDate=null)
+        protected override void Dispose(bool disposing)
         {
-            string orderdatequery = "p.orderdate";
+            if (disposing)
+            {
+                _poRepo.Dispose();
+                _stationeryRepo.Dispose();
+                _supplierRepo.Dispose();
+                _employeeRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        public void ValidateReceiveTrans(ReceiveTran receive)
+        {
+            var po = _poRepo.GetById(receive.PoNum);
+            int? totalQty = 0;
+            foreach (var receiveTransDetail in receive.ReceiveTransDetails)
+            {
+                totalQty += receiveTransDetail.Quantity;
+                if (receiveTransDetail.Quantity < 0)
+                    throw new Exception("Record not saved, received quantity cannot be negative");
+                if (receiveTransDetail.Quantity > po.PurchaseOrderDetails
+                        .Where(x => x.ItemNum == receiveTransDetail.ItemNum)
+                        .Select(x => x.OrderQty - x.ReceiveQty).First())
+                    throw new Exception("Record not saved, received quantity cannot exceed ordered qty");
+            }
+            if (totalQty == 0)
+                throw new Exception("Record not saved, not receipt of goods found");
+        }
+
+        public void CreateReceiveTrans(ReceiveTran receive)
+        {
+            var po = _poRepo.GetById(Convert.ToInt32(receive.PoNum));
+            var fulfilled = true;
+            for (var i = po.PurchaseOrderDetails.Count - 1; i >= 0; i--)
+            {
+                var receiveQty = Convert.ToInt32(receive.ReceiveTransDetails.ElementAt(i).Quantity);
+                if (receiveQty > 0)
+                {
+                    //update po received qty
+                    po.PurchaseOrderDetails.ElementAt(i).ReceiveQty += receiveQty;
+                    if (po.PurchaseOrderDetails.ElementAt(i).ReceiveQty < po.PurchaseOrderDetails.ElementAt(i).OrderQty)
+                        fulfilled = false;
+
+                    //get GST rate
+                    var gstRate = po.GST / po.PurchaseOrderDetails.Sum(x => x.OrderQty * x.UnitPrice);
+                    //update stationery
+                    var stationery = _stationeryRepo.GetById(po.PurchaseOrderDetails.ElementAt(i).Stationery.ItemNum);
+                    stationery.AverageCost = ((stationery.AverageCost * stationery.CurrentQty)
+                                              + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + gstRate))
+                                             / (stationery.CurrentQty + receiveQty);
+                    stationery.CurrentQty += receiveQty;
+                    stationery.AvailableQty += receiveQty;
+                    _stationeryRepo.Update(stationery);   //persist stationery data here
+                }
+                else if (receiveQty == 0)
+                    //keep only the receive transactions details with non-zero quantity
+                    receive.ReceiveTransDetails.Remove(receive.ReceiveTransDetails.ElementAt(i));
+            }
+
+            //update purchase order and create receive trans
+            if (fulfilled) po.Status = "fulfilled";
+            po.ReceiveTrans.Add(receive);
+            _poRepo.Update(po);
+        }
+
+        private static DataTable GetPo(int id, DateTime? orderDate = null)
+        {
+            var orderdatequery = "p.orderdate";
             //handle orderdate
             if (orderDate >= new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc).ToLocalTime())
-                orderdatequery = "'"+Convert.ToDateTime(orderDate).ToString("yyyy/MM/dd") + "'as orderdate";
-            string connString = System.Configuration.ConfigurationManager.ConnectionStrings["LUSSISContext"].ConnectionString;
-            DataTable table = new DataTable();
+                orderdatequery = "'" + Convert.ToDateTime(orderDate).ToString("yyyy/MM/dd") + "'as orderdate";
+            var connString = System.Configuration.ConfigurationManager.ConnectionStrings["LUSSISContext"]
+                .ConnectionString;
+            var table = new DataTable();
             //get sql
-            using (SqlConnection sqlConn = new SqlConnection(connString))
+            using (var sqlConn = new SqlConnection(connString))
             {
-                string sqlQuery =
+                var sqlQuery =
                     "select p.ponum,"
                     + orderdatequery +
                     ",p.approvaldate,s.suppliername,p.suppliercontact, p.address1,p.address2,p.address3 " +
@@ -425,58 +499,37 @@ namespace LUSSIS.Controllers
                     "inner join employee e on e.empnum=p.orderempnum " +
                     "inner join employee f on f.empnum=p.approvalempnum " +
                     "where p.ponum=@id";
-                using (SqlCommand cmd = new SqlCommand(sqlQuery, sqlConn))
+                using (var cmd = new SqlCommand(sqlQuery, sqlConn))
                 {
                     cmd.Parameters.Add("@id", SqlDbType.Int);
                     cmd.Parameters["@id"].Value = id;
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    var da = new SqlDataAdapter(cmd);
                     da.Fill(table);
                 }
             }
+
             table.TableName = "PurchaseOrder";
             return table;
         }
-
-
     }
 }
-
 
 
 public static class StationeryExtension
 {
     public static double UnitPrice(this Stationery s, int supplierId)
     {
-        double price = 0;
-        foreach (StationerySupplier ss in s.StationerySuppliers)
-        {
-            if (ss.SupplierId == supplierId)
-            {
-                price = ss.Price;
-                break;
-            }
-        }
         //return null;
-        return price;
+        return (from ss in s.StationerySuppliers where ss.SupplierId == supplierId select ss.Price).FirstOrDefault();
     }
 
     public static double LinePrice(this Stationery s, int supplierId, int? qty)
     {
-        foreach (StationerySupplier ss in s.StationerySuppliers)
-        {
-            if (ss.SupplierId == supplierId) return Convert.ToDouble(ss.Price * qty);
-        }
-        return 0;
+        return (from ss in s.StationerySuppliers where ss.SupplierId == supplierId select Convert.ToDouble(ss.Price * qty)).FirstOrDefault();
     }
 
     public static Supplier PrimarySupplier(this Stationery s)
     {
-        foreach (StationerySupplier ss in s.StationerySuppliers)
-        {
-            if (ss.Rank == 1) return ss.Supplier;
-        }
-        return null;
+        return (from ss in s.StationerySuppliers where ss.Rank == 1 select ss.Supplier).FirstOrDefault();
     }
-
 }
-

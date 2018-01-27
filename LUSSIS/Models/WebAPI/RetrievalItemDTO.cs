@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace LUSSIS.Models.WebAPI
+﻿namespace LUSSIS.Models.WebAPI
 {
     public class RetrievalItemDTO
     {

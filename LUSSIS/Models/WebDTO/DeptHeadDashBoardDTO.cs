@@ -7,17 +7,16 @@ namespace LUSSIS.Models.WebDTO
 {
     public class DeptHeadDashBoardDTO
     {
-        public int GetRequisitionListCount { get; set; }
+        public int RequisitionListCount { get; set; }
 
-        public Delegate GetDelegate { get; set; }
+        public Delegate CurrentDelegate { get; set; }
 
-        public Employee GetRep { get; set; }
+        public Employee CurrentRep { get; set; }
 
         public Department Department { get; set; }
 
-        public List<Employee> GetStaffRepByDepartment { get; set; }
+        public IEnumerable<Employee> StaffRepByDepartment { get; set; }
 
-        public Delegate GetTodaysDelegate { get; set; }
-        public Employee GetCurrentLoggedIn { get; set; }
+        public bool HaveDelegateToday { get; set; }
     }
 }

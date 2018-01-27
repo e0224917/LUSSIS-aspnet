@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Helpers;
 using System.Web.Http;
 using System.Web.Http.Description;
 using LUSSIS.Models.WebAPI;
@@ -15,8 +11,8 @@ namespace LUSSIS.Controllers.WebAPI
 {
     public class DelegateController : ApiController
     {
-        private readonly DelegateRepository _repo = new DelegateRepository();
-        private readonly EmployeeRepository _eRepo = new EmployeeRepository();
+        private readonly DelegateRepository _delegateRepo = new DelegateRepository();
+        private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
 
         // GET api/Delegate/COMM
         [HttpGet]
@@ -24,21 +20,21 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(DelegateDTO))]
         public IHttpActionResult Get([FromUri] string dept)
         {
-            var d = _repo.GetAll().LastOrDefault(de => de.Employee.DeptCode == dept);
+            var d = _delegateRepo.GetAll().LastOrDefault(de => de.Employee.DeptCode == dept);
 
             if (d == null) return BadRequest("No delegate available.");
 
             var result = new DelegateDTO()
             {
                 DelegateId = d.DelegateId,
-                StartDate = (DateTime) d.StartDate,
-                EndDate = (DateTime) d.EndDate,
+                StartDate = d.StartDate,
+                EndDate = d.EndDate,
                 Employee = new EmployeeDTO()
                 {
                     DeptCode = d.Employee.DeptCode,
                     DeptName = d.Employee.Department.DeptName,
                     EmailAddress = d.Employee.EmailAddress,
-                    EmpNum = (int) d.EmpNum,
+                    EmpNum = d.EmpNum,
                     FirstName = d.Employee.FirstName,
                     LastName = d.Employee.LastName,
                     IsDelegated = true,
@@ -61,9 +57,9 @@ namespace LUSSIS.Controllers.WebAPI
                 EmpNum = del.Employee.EmpNum
             };
 
-            await _repo.AddAsync(d);
+            await _delegateRepo.AddAsync(d);
 
-            var id = _repo.GetByDeptCode(dept).DelegateId;
+            var id = _delegateRepo.GetByDeptCode(dept).DelegateId;
             del.DelegateId = id;
 
             return Ok(del);
@@ -73,12 +69,12 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Delegate/{dept}")]
         public IHttpActionResult Put(string dept, [FromBody] DelegateDTO del)
         {
-            var d = _repo.GetByDeptCode(dept);
+            var d = _delegateRepo.GetByDeptCode(dept);
             d.EmpNum = del.Employee.EmpNum;
             d.StartDate = del.StartDate;
             d.EndDate = del.EndDate;
 
-            _repo.Update(d);
+            _delegateRepo.Update(d);
 
             return Ok(new {Message = "Editted delegate"});
         }
@@ -88,16 +84,16 @@ namespace LUSSIS.Controllers.WebAPI
         // DELETE api/Delegate/COMM
         public IHttpActionResult Delete(string dept)
         {
-            _repo.DeleteByDeptCode(dept);
+            _delegateRepo.DeleteByDeptCode(dept);
 
             return Ok(new {Message = "Revoked delegate"});
         }
 
         [HttpGet]
         [Route("api/Delegate/Employee/{dept}")]
-        public IEnumerable<EmployeeDTO> GetEmployeeList(string dept)
+        public IEnumerable<EmployeeDTO> GetEmployeeList(string deptCode)
         {
-            var list = _eRepo.GetStaffByDepartmentCode(dept);
+            var list = _departmentRepo.GetById(deptCode).Employees;
 
             return list.Select(item => new EmployeeDTO()
             {

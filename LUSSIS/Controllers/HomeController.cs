@@ -1,49 +1,50 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Repositories;
-using LUSSIS.Models;
-using LUSSIS.Controllers;
 
 namespace LUSSIS.Controllers
 {
     [RequireHttps]
     public class HomeController : Controller
     {
-
-        EmployeeRepository employeeRepo = new EmployeeRepository();
+        private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         public ActionResult Index()
         {
-            //var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            //ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
-            string justARole = employeeRepo.GetCurrentUser().JobTitle;
-            switch (justARole)
+            if (User.IsInRole("staff"))
             {
-                case "rep":
-                    return RedirectToAction("Index", "Collection");
-                case "head":
-                    return RedirectToAction("Index", "RepAndDelegate");   
-                case "staff":
-                    if (employeeRepo.CheckIfLoggedInUserIsDelegate())
-                    {
-                        return RedirectToAction("Index", "RepAndDelegate");
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Requisitions");
-                    }
-                   
-                case "manager":
-                    return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
-                case "supervisor":
-                    return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
-                case "clerk":
-                    return RedirectToAction("Consolidated", "Requisitions");
+                var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var isDelegate = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
+                return RedirectToAction("Index",
+                    isDelegate ? "RepAndDelegate" : "Requisitions");
+            }
+
+            if (User.IsInRole("rep"))
+            {
+                return RedirectToAction("Index", "Collection");
+            }
+
+            if (User.IsInRole("head"))
+            {
+                return RedirectToAction("Index", "RepAndDelegate");
+            }
+
+            if (User.IsInRole("clerk"))
+            {
+                return RedirectToAction("Consolidated", "Requisitions");
+            }
+
+            if (User.IsInRole("supervisor"))
+            {
+                return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
+            }
+
+            if (User.IsInRole("manager"))
+            {
+                return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
             }
 
             return View();
@@ -61,6 +62,16 @@ namespace LUSSIS.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _delegateRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

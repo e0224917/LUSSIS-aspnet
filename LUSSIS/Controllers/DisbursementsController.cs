@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
@@ -80,6 +81,21 @@ namespace LUSSIS.Controllers
             return View(disbursement);
         }
 
+        [HttpPost]
+        public ActionResult UpdateActualQty(int disId, string itemNum, int qty)
+        {
+            try
+            {
+                disRepo.GetById(disId).DisbursementDetails.FirstOrDefault(dd => dd.ItemNum == itemNum).ActualQty = qty;
+                return RedirectToAction("Details", new { id = disId });
+            }
+            catch (NullReferenceException e)
+            {
+                return RedirectToAction("Details", new { id=disId });
+            }
+
+        }
+
 
         [OverrideAuthorization]
         [Authorize(Roles = "clerk, rep")]
@@ -123,7 +139,6 @@ namespace LUSSIS.Controllers
             return PartialView();
         }
 
-        // GET: All Disbursements
         public ActionResult History(string searchString, string currentFilter, int? page)
         {
             List<Disbursement> disbursements = new List<Disbursement>();
@@ -140,7 +155,7 @@ namespace LUSSIS.Controllers
             }
             else
             {
-                disbursements = disRepo.GetAll().ToList();
+                disbursements = disRepo.GetAll().OrderByDescending(d=>d.CollectionDate).ToList();
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
@@ -156,7 +171,7 @@ namespace LUSSIS.Controllers
             //return View(disRepo.GetAll());
         }
 
-        public ActionResult ViewDetails(int? id)
+        public ActionResult HistoryDetails(int? id)
         {
             if (id == null)
             {

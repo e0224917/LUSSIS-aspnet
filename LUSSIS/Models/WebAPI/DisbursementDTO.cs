@@ -11,7 +11,7 @@ namespace LUSSIS.Models.WebAPI
 
         public int CollectionPointId { get; set; }
 
-        public String CollectionPoint { get; set; }
+        public string CollectionPoint { get; set; }
 
         public DateTime CollectionDate { get; set; }
 

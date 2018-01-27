@@ -12,30 +12,24 @@ namespace LUSSIS.CustomAuthority
 {
     public class HeadWithDelegateAuthAttribute : AuthorizeAttribute
     {
-        EmployeeRepository empRepo = new EmployeeRepository();
+        private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         private readonly string[] allowedRoles;
 
         public HeadWithDelegateAuthAttribute(params string[] roles)
         {
-            this.allowedRoles = roles;
+            allowedRoles = roles;
         }
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            var user = System.Web.HttpContext.Current.User.Identity.GetUserId();
-            var userManager = httpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var roles = userManager.GetRoles(user);
-            if (roles.Contains("head") && !empRepo.CheckIfUserDepartmentHasDelegate())
+            var email = httpContext.User.Identity.Name;
+            var isDelegate = _delegateRepo.FindCurrentByEmail(email) != null;
+
+            if (httpContext.User.IsInRole("head") && !isDelegate
+                || httpContext.User.IsInRole("staff") && isDelegate)
             {
                 return true;
-            }
-            else if (roles.Contains("staff"))
-            {
-                if (empRepo.CheckIfLoggedInUserIsDelegate())
-                {
-                    return true;
-                }
             }
 
             return false;
@@ -46,14 +40,14 @@ namespace LUSSIS.CustomAuthority
             if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
             {
                 filterContext.Result = new RedirectToRouteResult(
-                        new RouteValueDictionary(new { controller = "Account", action = "Login" })
+                    new RouteValueDictionary(new {controller = "Account", action = "Login"})
                 );
             }
             //User is logged in but has no access
             else
             {
                 filterContext.Result = new RedirectToRouteResult(
-                        new RouteValueDictionary(new { controller = "Account", action = "NotAuthorized" })
+                    new RouteValueDictionary(new {controller = "Account", action = "NotAuthorized"})
                 );
             }
         }

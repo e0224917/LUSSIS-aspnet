@@ -20,7 +20,7 @@
         <th>
             @Html.DisplayName("View")
         </th>
-        @if (ViewBag.Message != "Delegate")
+        @if (ViewBag.HasDelegate == true)
         {
             <th>
                 @Html.DisplayName("Manage")
