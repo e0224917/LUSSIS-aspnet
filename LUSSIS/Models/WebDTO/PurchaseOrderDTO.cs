@@ -35,10 +35,10 @@ namespace LUSSIS.Models.WebDTO
         public string Address3 { get; set; }
         public string SupplierAddress
         {
-            get { return Address1 + Environment.NewLine + Address2 + Environment.NewLine + Address3; }
+            get => Address1 + Environment.NewLine + Address2 + Environment.NewLine + Address3;
             set
             {
-                string[] addressArr = value.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                var addressArr = value.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                 Address1 = addressArr[0];
                 if (addressArr.Length > 1)
                     Address2 = addressArr[1];
@@ -51,46 +51,50 @@ namespace LUSSIS.Models.WebDTO
         public List<PurchaseOrderDetailDTO> PurchaseOrderDetailsDTO { get; set; }
         public PurchaseOrderDTO(PurchaseOrder po)
         {
-            this.PoNum = po.PoNum;
-            this.SupplierId = po.SupplierId;
-            this.CreateDate = po.CreateDate;
-            this.OrderDate = po.OrderDate;
-            this.Status = po.Status;
-            this.ApprovalDate = po.ApprovalDate;
-            this.OrderEmpNum = po.OrderEmpNum;
-            this.ApprovalEmpNum = po.ApprovalEmpNum;
-            this.OrderEmployee = po.OrderEmployee;
-            this.ApprovalEmployee = po.ApprovalEmployee;
-            this.Supplier = po.Supplier;
-            this.SupplierContact = po.SupplierContact;
-            this.Address1 = po.Address1;
-            this.Address2 = po.Address2;
-            this.Address3 = po.Address3;
-            this.PurchaseOrderDetails = po.PurchaseOrderDetails.ToList();
+            PoNum = po.PoNum;
+            SupplierId = po.SupplierId;
+            CreateDate = po.CreateDate;
+            OrderDate = po.OrderDate;
+            Status = po.Status;
+            ApprovalDate = po.ApprovalDate;
+            OrderEmpNum = po.OrderEmpNum;
+            ApprovalEmpNum = po.ApprovalEmpNum;
+            OrderEmployee = po.OrderEmployee;
+            ApprovalEmployee = po.ApprovalEmployee;
+            Supplier = po.Supplier;
+            SupplierContact = po.SupplierContact;
+            Address1 = po.Address1;
+            Address2 = po.Address2;
+            Address3 = po.Address3;
+            PurchaseOrderDetails = po.PurchaseOrderDetails.ToList();
         }
         public void CreatePurchaseOrder(out PurchaseOrder purchaseOrder)
         {
-            purchaseOrder = new PurchaseOrder();
-            purchaseOrder.Status = "pending";
-            purchaseOrder.SupplierId = this.SupplierId;
-            purchaseOrder.SupplierContact = this.SupplierContact;
-            purchaseOrder.Address1 = this.Address1;
-            purchaseOrder.Address2 = this.Address2;
-            purchaseOrder.Address3 = this.Address3;
-            purchaseOrder.CreateDate = this.CreateDate;
-            purchaseOrder.OrderEmpNum = this.OrderEmpNum;
+            purchaseOrder = new PurchaseOrder
+            {
+                Status = "pending",
+                SupplierId = SupplierId,
+                SupplierContact = SupplierContact,
+                Address1 = Address1,
+                Address2 = Address2,
+                Address3 = Address3,
+                CreateDate = CreateDate,
+                OrderEmpNum = OrderEmpNum
+            };
 
             //set PO detail values
-            for (int i = this.PurchaseOrderDetailsDTO.Count - 1; i >= 0; i--)
+            for (int i = PurchaseOrderDetailsDTO.Count - 1; i >= 0; i--)
             {
-                PurchaseOrderDetailDTO pdetail = this.PurchaseOrderDetailsDTO.ElementAt(i);
+                var pdetail = PurchaseOrderDetailsDTO.ElementAt(i);
                 if (pdetail.OrderQty > 0)
                 {
-                    PurchaseOrderDetail newPdetail = new PurchaseOrderDetail();
-                    newPdetail.ItemNum = pdetail.ItemNum;
-                    newPdetail.OrderQty = pdetail.OrderQty;
-                    newPdetail.UnitPrice = pdetail.UnitPrice;
-                    newPdetail.ReceiveQty = 0;
+                    PurchaseOrderDetail newPdetail = new PurchaseOrderDetail
+                    {
+                        ItemNum = pdetail.ItemNum,
+                        OrderQty = pdetail.OrderQty,
+                        UnitPrice = pdetail.UnitPrice,
+                        ReceiveQty = 0
+                    };
                     purchaseOrder.PurchaseOrderDetails.Add(newPdetail);
                 }
                 else if (pdetail.OrderQty < 0)

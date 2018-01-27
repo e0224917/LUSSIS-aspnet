@@ -13,9 +13,6 @@ namespace LUSSIS.Repositories
 
     public class PORepository : Repository<PurchaseOrder, int>, IPORepository
     {
-        public PORepository() { }
-        StationeryRepository sr = new StationeryRepository();
-
         public List<PurchaseOrder> GetPendingApprovalPO()
         {
             IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == "pending");
@@ -24,17 +21,15 @@ namespace LUSSIS.Repositories
 
         public List<PurchaseOrder> GetApprovedPO()
         {
-            IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == "approved");
+            var list = GetAll().Where(x => x.Status == "approved");
             return list.ToList();
         }
 
         public List<PurchaseOrder> GetPOByStatus(string status)
         {
-            IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == status);
+            var list = GetAll().Where(x => x.Status == status);
             return list.ToList();
         }
-
-
 
         public int GetPendingPOCount()
         {
@@ -45,12 +40,11 @@ namespace LUSSIS.Repositories
 
         public List<PendingPurchaseOrderDTO> GetPendingApprovalPODTO()
         {
-            PendingPurchaseOrderDTO poDTO;
-            List<PurchaseOrder> list = GetPendingApprovalPO();
-            List<PendingPurchaseOrderDTO> poDTOList = new List<PendingPurchaseOrderDTO>();
-            foreach (PurchaseOrder po in list)
+            var list = GetPendingApprovalPO();
+            var poDtoList = new List<PendingPurchaseOrderDTO>();
+            foreach (var po in list)
             {
-                poDTO = new PendingPurchaseOrderDTO
+                var poDto = new PendingPurchaseOrderDTO
                 {
                     PoNum = po.PoNum,
                     OrderEmp = po.OrderEmployee.FirstName,
@@ -58,41 +52,34 @@ namespace LUSSIS.Repositories
                     CreateDate = po.CreateDate,
                     TotalCost = GetPOAmountByPoNum(po.PoNum)
                 };
-                poDTOList.Add(poDTO);
-
+                poDtoList.Add(poDto);
             }
-            return poDTOList;
+            return poDtoList;
         }
 
 
 
         public double GetPOAmountByPoNum(int poNum)
         {
-            List<PurchaseOrderDetail> pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.PoNum == poNum).ToList();
+            var pdList = LUSSISContext.PurchaseOrderDetails.Where(x => x.PoNum == poNum).ToList();
             double total = 0;
-            foreach (PurchaseOrderDetail pod in pd_list)
+            foreach (var pod in pdList)
             {
-
-
-                int qty = (int)pod.OrderQty;
-                double unit_price = (double)pod.UnitPrice;
-                total += qty * unit_price;
-
-
+                var qty = pod.OrderQty;
+                var unitPrice = pod.UnitPrice;
+                total += qty * unitPrice;
             }
+
             return total;
-
-
         }
+
         public double GetPendingPOTotalAmount()
         {
             double result = 0;
-            List<PurchaseOrder> list = new List<PurchaseOrder>();
-            list = GetPendingApprovalPO();
+            var list = GetPendingApprovalPO();
 
-            foreach (PurchaseOrder po in list)
+            foreach (var po in list)
             {
-
                 result += GetPOAmountByPoNum(po.PoNum);
             }
             return result;
@@ -102,14 +89,13 @@ namespace LUSSIS.Repositories
         public double GetPOTotalAmount()
         {
             double result = 0;
-            List<PurchaseOrder> list = new List<PurchaseOrder>();
-            list = GetPOByStatus("fulfilled").ToList<PurchaseOrder>();
+            var list = GetPOByStatus("fulfilled").ToList();
 
-            foreach (PurchaseOrder po in list)
+            foreach (var po in list)
             {
-                List<PurchaseOrderDetail> pd_list = po.PurchaseOrderDetails.ToList();
+                var pdList = po.PurchaseOrderDetails.ToList();
 
-                foreach (PurchaseOrderDetail pod in pd_list)
+                foreach (var pod in pdList)
                 {
                     result += GetPOAmountByPoNum(pod.PoNum);
                 }
@@ -118,101 +104,45 @@ namespace LUSSIS.Repositories
             return result;
         }
 
-
         public void UpDatePOStatus(int i, String status)
         {
-            PurchaseOrder p = GetById(i);
+            var p = GetById(i);
             p.Status = status;
             p.ApprovalDate = DateTime.Today;
             Update(p);
         }
 
-        public double GetPOAmountByCategory(int categoryId, List<String>ItemList)
+        public double GetPOAmountByCategory(int categoryId, List<String>itemList)
         {
             double total = 0;
-            List<PurchaseOrderDetail> pd_list = new List<PurchaseOrderDetail>();
-            foreach (String e in ItemList)
+            foreach (var e in itemList)
             {
-                pd_list = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList<PurchaseOrderDetail>();
-                foreach (PurchaseOrderDetail pod in pd_list)
+                var pdList = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList();
+                foreach (var pod in pdList)
                 {
-                    int qty = (int)pod.OrderQty;
-                    double unit_price = (double)pod.UnitPrice;
-                    total += qty * unit_price;
-
+                    var qty = pod.OrderQty;
+                    var unitPrice = pod.UnitPrice;
+                    total += qty * unitPrice;
 
                 }
             }
 
             return total;
-
-
         }
+
         public List<double> GetPOByCategory()
         {
-            List<double> list = new List<double>();
-            List<int> Cat = LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
-            
+            var list = new List<double>();
+            var categoryIds = LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
 
-            foreach (int i in Cat)
+            foreach (var id in categoryIds)
             {
-                List<String> itemList = LUSSISContext.Stationeries.Where(x => x.CategoryId == i).Select(x => x.ItemNum).ToList();
-                list.Add(GetPOAmountByCategory(i, itemList));
+                var itemList = LUSSISContext.Stationeries.Where(x => x.CategoryId == id)
+                    .Select(x => x.ItemNum).ToList();
+                list.Add(GetPOAmountByCategory(id, itemList));
             }
+
             return list;
-
-        }
-
-        public void ValidateReceiveTrans(ReceiveTran receive)
-        {
-            PurchaseOrder po = GetById(receive.PoNum);
-            int? totalQty = 0;
-            foreach (ReceiveTransDetail rdetail in receive.ReceiveTransDetails)
-            {
-                totalQty += rdetail.Quantity;
-                if (rdetail.Quantity < 0)
-                    throw new Exception("Record not saved, received quantity cannot be negative");
-                if (rdetail.Quantity > po.PurchaseOrderDetails.Where(x => x.ItemNum == rdetail.ItemNum).Select(x => x.OrderQty - x.ReceiveQty).First())
-                    throw new Exception("Record not saved, received quantity cannot exceed ordered qty");
-            }
-            if (totalQty == 0)
-                throw new Exception("Record not saved, not receipt of goods found");
-        }
-
-        public void CreateReceiveTrans(ReceiveTran receive)
-        {
-            PurchaseOrder po = GetById(Convert.ToInt32(receive.PoNum));
-            bool fulfilled = true;
-            for (int i = po.PurchaseOrderDetails.Count - 1; i >= 0; i--)
-            {
-                int receiveQty = Convert.ToInt32(receive.ReceiveTransDetails.ElementAt(i).Quantity);
-                if (receiveQty > 0)
-                {
-                    //update po received qty
-                    po.PurchaseOrderDetails.ElementAt(i).ReceiveQty += receiveQty;
-                    if (po.PurchaseOrderDetails.ElementAt(i).ReceiveQty < po.PurchaseOrderDetails.ElementAt(i).OrderQty)
-                        fulfilled = false;
-
-                    //get GST rate
-                    double GST_RATE = po.GST/po.PurchaseOrderDetails.Sum(x=>x.OrderQty*x.UnitPrice);
-                    //update stationery
-                    Stationery s = sr.GetById(po.PurchaseOrderDetails.ElementAt(i).Stationery.ItemNum);
-                    s.AverageCost = ((s.AverageCost * s.CurrentQty)
-                                    + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + GST_RATE))
-                                    / (s.CurrentQty + receiveQty);
-                    s.CurrentQty += receiveQty;
-                    s.AvailableQty += receiveQty;
-                    sr.Update(s);   //persist stationery data here
-                }
-                else if (receiveQty == 0)
-                    //keep only the receive transactions details with non-zero quantity
-                    receive.ReceiveTransDetails.Remove(receive.ReceiveTransDetails.ElementAt(i));
-            }
-
-            //update purchase order and create receive trans
-            if (fulfilled) po.Status = "fulfilled";
-            po.ReceiveTrans.Add(receive);
-            Update(po);
         }
 
         public IEnumerable<ReceiveTransDetail> GetReceiveTransDetailByItem(string id)
@@ -225,21 +155,21 @@ namespace LUSSIS.Repositories
             return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status == status);
         }
 
-
-        public List<double> GetAmountByCategoryList(List<String> categoryId, String supId, String from, String to)
+        public List<double> GetAmountByCategoryList(List<string> categoryIds, string supId, string from, string to)
         {
-            DateTime fromDate = Convert.ToDateTime(from).Date;
-            DateTime toDate = Convert.ToDateTime(to).Date;
-            double total = 0;
+            var fromDate = Convert.ToDateTime(from).Date;
+            var toDate = Convert.ToDateTime(to).Date;
 
-            List<double> result = new List<double>();
-            foreach (String id in categoryId)
+            var result = new List<double>();
+
+            foreach (var id in categoryIds)
             {
-                int id2 = Int32.Parse(id);
-                List<String> itemList = LUSSISContext.Stationeries.Where(x=>x.CategoryId == id2).Select(x=>x.ItemNum).ToList();
-                int supplierId = Convert.ToInt32(supId);
-                total = 0;
-                foreach (String item in itemList)
+                var categotyId = int.Parse(id);
+                var itemList = LUSSISContext.Stationeries
+                    .Where(x=>x.CategoryId == categotyId).Select(x=>x.ItemNum).ToList();
+                var supplierId = Convert.ToInt32(supId);
+                double total = 0;
+                foreach (var item in itemList)
                 {
                     var s = from t1 in LUSSISContext.Disbursements
                             join t2 in LUSSISContext.DisbursementDetails
@@ -269,17 +199,16 @@ namespace LUSSIS.Repositories
 
         public List<double> GetAmountBySupplierList(List<String> supplierIds, String category, String from, String to)
         {
-            DateTime fromDate = Convert.ToDateTime(from).Date;
-            DateTime toDate = Convert.ToDateTime(to).Date;
-            double total = 0;
+            var fromDate = Convert.ToDateTime(from).Date;
+            var toDate = Convert.ToDateTime(to).Date;
 
-            List<double> resultList = new List<double>();
-            int catId = Convert.ToInt32(category);
-            foreach (String sup in supplierIds)
+            var resultList = new List<double>();
+            var catId = Convert.ToInt32(category);
+            foreach (var sup in supplierIds)
             {
-                int supId = Convert.ToInt32(sup);
+                var supId = Convert.ToInt32(sup);
 
-                total = 0;
+                double total = 0;
                 var q = from t1 in LUSSISContext.Disbursements
                         join t2 in LUSSISContext.DisbursementDetails
                         on t1.DisbursementId equals t2.DisbursementId
@@ -303,8 +232,6 @@ namespace LUSSIS.Repositories
             }
 
             return resultList;
-
-
         }
     }
 }
