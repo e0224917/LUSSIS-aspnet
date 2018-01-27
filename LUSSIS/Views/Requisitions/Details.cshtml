@@ -61,7 +61,7 @@
         </tr>
     </table>
     <br />
-    if (ViewBag.HasDelegate && ViewBag.Pending == "Pending")
+    if (ViewBag.HasDelegate == true && ViewBag.Pending == "Pending")
     {
         <div class="row">
             <div class="form-group col-md-6">
@@ -77,7 +77,7 @@
     else
     {
         <div class="card border-dark col-sm-12 col-lg-12" style="padding:0">
-            <div class="card-header"> @(Model.Status == "rejected" ? "Rejection" : "Approval") Comments from <strong>@(Model.ApprovalEmployee.FullName)</strong>: </div>
+            <div class="card-header"> @(Model.Status == "rejected" ? "Rejection" : "Approval") Comments from <strong>@(Model.ApprovalEmployee == null ? "" : Model.ApprovalEmployee.FullName)</strong>: </div>
             <div class="card-body">
                 @Html.DisplayFor(model => model.ApprovalRemarks, new { @class = "card-text", @readonly = "readonly" })
             </div>

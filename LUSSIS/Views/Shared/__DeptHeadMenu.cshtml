@@ -14,7 +14,11 @@
 <div class="nav navbar-nav">
     <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("MyDelegate", "RepAndDelegate")"><span>My Delegate</span></a>
 </div>
-@if (!new EmployeeRepository().CheckIfUserDepartmentHasDelegate())
+@{
+    var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+    var isDelegate = new DelegateRepository().FindCurrentByEmpNum(empNum) != null;
+}
+@if (!isDelegate)
 {
     <div class="nav navbar-nav">
         <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")"><span>Department Rep</span></a>

@@ -37,7 +37,9 @@ namespace LUSSIS.Controllers
             var staffAndRepList = department.Employees
                 .Where(e => e.JobTitle == "staff" || e.JobTitle == "rep").ToList();
             var reqListCount = _requisitionRepo.GetPendingListForHead(deptCode).Count();
-            var haveDelegateToday = currentDelegate.StartDate <= DateTime.Today;
+            var haveDelegateToday = false;
+            if (currentDelegate != null)
+                haveDelegateToday = currentDelegate.StartDate <= DateTime.Today;
 
             var dbDto = new DeptHeadDashBoardDTO
             {
