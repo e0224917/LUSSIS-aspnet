@@ -147,14 +147,15 @@ ViewBag.Message
                     }
                 </select>
             </div>
-            <div class="col-md-4" id="notshowDate" style="display:none;">
-                <h6> Select Date</h6>
-                <br />
-                <label for="from">From</label>
-                <input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" />
-                <label for="to">&nbsp;&nbsp;To</label>
-                <input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" />
-                <br /><br />
+            <div class="col-md-3" id="notshowDate" style="display:none">
+
+                <div style="width:150px;margin-left:50px;margin-right:50px">
+                    <p>  Select date </p>
+                    From &nbsp;<input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-in" />
+                    <br />
+                    To &nbsp;<input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-inline" />
+
+                </div>
             </div>
         </div>
 
@@ -247,8 +248,7 @@ ViewBag.Message
         }
 
     }
-    function Generate_click()
-    {
+    function Generate_click() {
 
         var supplier_values = $('#hid_supplier').val();
         var category_values = $('#hid_category').val();

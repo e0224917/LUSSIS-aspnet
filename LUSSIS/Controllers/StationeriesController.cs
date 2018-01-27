@@ -57,7 +57,7 @@ namespace LUSSIS.Controllers
 
         
         // GET: Stationeries/Details/5
-        public ActionResult Details(string id)
+       /* public ActionResult Details(string id)
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -100,7 +100,7 @@ namespace LUSSIS.Controllers
 
             return View();
 
-        }
+        }*/
         [HttpGet]
         public ActionResult Create()
         {

@@ -18,7 +18,7 @@ using LUSSIS.CustomAuthority;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using CrystalDecisions.CrystalReports.Engine;
+
 using System.IO;
 
 namespace LUSSIS.Controllers
@@ -536,27 +536,7 @@ namespace LUSSIS.Controllers
             return PartialView("_unuthoriseAccess");
         }
 
-        public ActionResult PrintRetrieval()
-        {
-            DataSet ds = new DataSet();
-            ReportDocument rd = new ReportDocument();
-            rd.Load(Path.Combine(Server.MapPath("~/Reports/RetrieveCrystalReport.rpt")));
-            rd.SetDataSource(reqRepo.GetRetrievalInPorcess()
-                .Select(x=>new RetrievalItemDTO
-                {
-                    BinNum=x.BinNum,
-                    Description=x.Description,
-                    UnitOfMeasure=x.UnitOfMeasure,
-                    RequestedQty= x.RequestedQty??0,
-                    AvailableQty=x.AvailableQty??0})
-                .ToList());
-            Response.Buffer = false;
-            Response.ClearContent();
-            Response.ClearHeaders();
-            Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-            stream.Seek(0, SeekOrigin.Begin);
-            return File(stream, "application/pdf");
-        }
+       
         private class RetrievalItemDTO
         {
             public string BinNum { get; set; }

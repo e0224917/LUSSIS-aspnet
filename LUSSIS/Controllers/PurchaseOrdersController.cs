@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
-using CrystalDecisions.CrystalReports.Engine;
+
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
@@ -295,14 +295,14 @@ namespace LUSSIS.Controllers
             }
         }
 
-        public ActionResult PrintPo(int id, double? orderDate)
+       /* public ActionResult PrintPo(int id, double? orderDate)
         {
 
             DateTime OrderDate;
             
             DataSet ds = new DataSet();
-            ReportDocument rd = new ReportDocument();
-            rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
+            //ReportDocument rd = new ReportDocument();
+            //rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
             if (orderDate != null)
             {
                 OrderDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(orderDate)).ToLocalTime();
@@ -319,7 +319,7 @@ namespace LUSSIS.Controllers
             Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
             stream.Seek(0, SeekOrigin.Begin);
             return File(stream, "application/pdf");
-        }
+        }*/
 
 
 

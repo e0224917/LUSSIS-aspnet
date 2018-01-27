@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -401,8 +402,8 @@ namespace LUSSIS.Repositories
         }
         public List<double> GetAmountByDepAndCatList(String depCode,List<String> catId,String from,String to)
         {
-            DateTime fromDate = Convert.ToDateTime(from).Date;
-            DateTime toDate = Convert.ToDateTime(to).Date;
+            DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            DateTime toDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             double total = 0;
            
             List<double> result= new List<double>();
@@ -439,8 +440,8 @@ namespace LUSSIS.Repositories
 
         public List<double> GetAmoutByCatAndDepList(String cat,List<String>depList,String from,String to)
         {
-            DateTime fromDate = Convert.ToDateTime(from).Date;
-            DateTime toDate = Convert.ToDateTime(to).Date;
+            DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            DateTime toDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             double total = 0;
             
             List<double> resultList = new List<double>();
@@ -472,10 +473,9 @@ namespace LUSSIS.Repositories
         }
         public List<double> GetMaxCategoryAmountByDep(List<String>catList, List<String> depList,String from,String to)
         {
-            DateTime fromDate = Convert.ToDateTime(from).Date;
-            DateTime toDate = Convert.ToDateTime(to).Date;
+            DateTime fromDate =  DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            DateTime toDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             
-           
             List<double> resultList = new List<double>();
             List<double> findMax=new List<double>();
             foreach (String dep in depList)
@@ -511,6 +511,7 @@ namespace LUSSIS.Repositories
            
             return resultList;
         }
+       
 
 
      }
