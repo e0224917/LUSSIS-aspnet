@@ -199,7 +199,6 @@ namespace LUSSIS.Controllers
             }
 
             return RedirectToAction("Index");
-                   
         }
 
         [CustomAuthorize("head")]
