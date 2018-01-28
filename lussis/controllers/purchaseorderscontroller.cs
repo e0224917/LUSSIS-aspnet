@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using CrystalDecisions.CrystalReports.Engine;
+using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
@@ -26,6 +27,8 @@ namespace LUSSIS.Controllers
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
         private readonly SupplierRepository _supplierRepo = new SupplierRepository();
         private const double GstRate = 0.07;
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
+
 
         // GET: PurchaseOrders
         public ActionResult Index(int? page = 1)
@@ -202,40 +205,22 @@ namespace LUSSIS.Controllers
                 _poRepo.Add(purchaseOrder);
 
                 //send email to supervisor
-                var emailForSupervisor = new StringBuilder("New Purchase Order Created");
-                emailForSupervisor.AppendLine(
-                    "This email is automatically generated and requires no reply to the sender.");
-                emailForSupervisor.AppendLine("Purchase Order No " + purchaseOrder.PoNum);
-                emailForSupervisor.AppendLine("Created By " + fullName);
-                emailForSupervisor.AppendLine("Created On " + purchaseOrder.CreateDate.ToString("dd-MM-yyyy"));
-                var subject = "New Purchase Order";
-                Emails.EmailHelper.SendEmail(subject, emailForSupervisor.ToString());
+                var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
+                var email = new LUSSISEmail.Builder().From(User.Identity.Name)
+                    .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
+                EmailHelper.SendEmail(email);
 
                 //send email if using non=primary supplier
-                var emailBody =
-                    new StringBuilder("Non-Primary Suppliers in Purchase Order " + purchaseOrder.PoNum);
-                emailForSupervisor.AppendLine(
-                    "This email is automatically generated and requires no reply to the sender.");
-                emailBody.AppendLine("Created for Supplier: " +
-                                     _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName);
-                int index = 0;
-                foreach (var orderDetail in purchaseOrder.PurchaseOrderDetails)
-                {
-                    var s = _stationeryRepo.GetById(orderDetail.ItemNum);
-                    if (s.PrimarySupplier().SupplierId != purchaseOrder.SupplierId)
-                    {
-                        index++;
-                        emailBody.AppendLine("Index: " + index);
-                        emailBody.AppendLine("Stationery: " + s.Description);
-                        emailBody.AppendLine("Primary Supplier: " + s.PrimarySupplier().SupplierName);
-                        emailBody.AppendLine();
-                    }
-                }
+                var stationerys = purchaseOrder.PurchaseOrderDetails
+                    .Select(orderDetail => _stationeryRepo.GetById(orderDetail.ItemNum))
+                    .Where(stationery => stationery.PrimarySupplier().SupplierId != purchaseOrder.SupplierId).ToList();
 
-                if (index > 0)
+                if (stationerys.Count > 0)
                 {
-                    subject = "Purchasing from Non-Primary Supplier";
-                    Emails.EmailHelper.SendEmail(subject, emailBody.ToString());
+                    var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
+                    var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
+                        .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
+                    EmailHelper.SendEmail(email2);
                 }
 
                 return RedirectToAction("Summary");
@@ -315,11 +300,13 @@ namespace LUSSIS.Controllers
             }
         }
 
-        public ActionResult PrintPo(int id, double? orderDate)
+       /* public ActionResult PrintPo(int id, double? orderDate)
         {
 
-            var ds = new DataSet();
-            var rd = new ReportDocument();
+            DateTime OrderDate;
+            
+            DataSet ds = new DataSet();
+            ReportDocument rd = new ReportDocument();
             rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
             if (orderDate != null)
             {
@@ -339,7 +326,7 @@ namespace LUSSIS.Controllers
             var stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
             stream.Seek(0, SeekOrigin.Begin);
             return File(stream, "application/pdf");
-        }
+        }*/
 
 
         //GET: PurchaseOrders/Order?p=10001
@@ -428,6 +415,7 @@ namespace LUSSIS.Controllers
                 _poRepo.Dispose();
                 _stationeryRepo.Dispose();
                 _supplierRepo.Dispose();
+                _employeeRepo.Dispose();
             }
 
             base.Dispose(disposing);
