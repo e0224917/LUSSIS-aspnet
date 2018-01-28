@@ -135,7 +135,6 @@ namespace LUSSIS.Controllers
                     _employeeRepo.Update(newRep);
                     department.RepEmpNum = newRepEmpNum;
                     _departmentRepo.Update(department);
-
                     
                     var newRepUser = context.Users.FirstOrDefault(u => u.Email == newRep.EmailAddress);
                     userManager.RemoveFromRole(newRepUser?.Id, "staff");
@@ -196,12 +195,11 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-                _delegateRepo.DeleteByDeptCode(deptCode);
-                return RedirectToAction("Index");
+                _delegateRepo.DeleteByDeptCode(deptCode);             
             }
-            var actionName = ControllerContext.RouteData.Values["action"].ToString();
 
-            return RedirectToAction(actionName);
+            return RedirectToAction("Index");
+                   
         }
 
         [CustomAuthorize("head")]

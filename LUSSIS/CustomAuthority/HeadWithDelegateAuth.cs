@@ -24,9 +24,11 @@ namespace LUSSIS.CustomAuthority
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
             var email = httpContext.User.Identity.Name;
+            var deptCode = httpContext.Request.Cookies["Employee"]?["DeptCode"];
             var isDelegate = _delegateRepo.FindCurrentByEmail(email) != null;
+            var hasDelegate = _delegateRepo.FindCurrentByDeptCode(deptCode) != null;
 
-            if (httpContext.User.IsInRole("head") && !isDelegate
+            if (httpContext.User.IsInRole("head") && !hasDelegate
                 || httpContext.User.IsInRole("staff") && isDelegate)
             {
                 return true;
