@@ -33,18 +33,18 @@ namespace LUSSIS.Controllers
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
 
             var department = _departmentRepo.GetById(deptCode);
-            var currentDelegate = _delegateRepo.FindAllByDeptCode(deptCode);
+            var existingDelegate = _delegateRepo.FindExistingByDeptCode(deptCode);
             var staffAndRepList = department.Employees
                 .Where(e => e.JobTitle == "staff" || e.JobTitle == "rep").ToList();
             var reqListCount = _requisitionRepo.GetPendingListForHead(deptCode).Count();
             var haveDelegateToday = false;
-            if (currentDelegate != null)
-                haveDelegateToday = currentDelegate.StartDate <= DateTime.Today;
+            if (existingDelegate != null)
+                haveDelegateToday = existingDelegate.StartDate <= DateTime.Today;
 
             var dbDto = new DeptHeadDashBoardDTO
             {
                 Department = department,
-                CurrentDelegate = currentDelegate,
+                CurrentDelegate = existingDelegate,
                 StaffRepByDepartment = staffAndRepList,
                 RequisitionListCount = reqListCount,
                 HaveDelegateToday = haveDelegateToday
@@ -188,6 +188,7 @@ namespace LUSSIS.Controllers
             {
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
                 _delegateRepo.DeleteByDeptCode(deptCode);
+                return RedirectToAction("Index");
             }
             var actionName = ControllerContext.RouteData.Values["action"].ToString();
 
@@ -199,7 +200,7 @@ namespace LUSSIS.Controllers
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var department = _departmentRepo.GetById(deptCode);
-            var myDelegate = _delegateRepo.FindAllByDeptCode(deptCode);
+            var myDelegate = _delegateRepo.FindExistingByDeptCode(deptCode);
 
             var radDto = new RepAndDelegateDTO
             {
