@@ -28,6 +28,7 @@ namespace LUSSIS.Controllers
         private readonly SupplierRepository _supplierRepo = new SupplierRepository();
         private const double GstRate = 0.07;
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private readonly StationerySupplierRepository _stationerySupplierRepo = new StationerySupplierRepository();
 
 
         // GET: PurchaseOrders
@@ -166,7 +167,7 @@ namespace LUSSIS.Controllers
             };
 
             var sslist = new List<StationerySupplier> {stationerySupplier};
-            sslist.AddRange(_stationeryRepo.GetStationerySupplierBySupplierId(supplierId).ToList());
+            sslist.AddRange(_stationerySupplierRepo.GetStationerySupplierBySupplierId(supplierId).ToList());
             ViewBag.Stationery = sslist;
             ViewBag.Suppliers = _supplierRepo.GetAll();
             ViewBag.Supplier = supplier;
