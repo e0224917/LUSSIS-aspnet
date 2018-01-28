@@ -118,27 +118,33 @@ namespace LUSSIS.Controllers
         {
             if (ModelState.IsValid)
             {
+                var context = new ApplicationDbContext();
+                var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
                 var department = _departmentRepo.GetById(deptCode);
-                var oldRepEmpNum = department.RepEmpNum;
-                var oldRep = _employeeRepo.GetById((int)oldRepEmpNum);
+                var oldRepEmpNum = department.RepEmpNum != null;
 
                 var newRepEmpNum = Convert.ToInt32(repEmp);
                 var newRep = _employeeRepo.GetById(newRepEmpNum);
                 newRep.JobTitle = "rep";
 
-                if (oldRep == null)
+                if (!oldRepEmpNum)
                 {
                     //update two tables: Employee and Department
                     _employeeRepo.Update(newRep);
                     department.RepEmpNum = newRepEmpNum;
                     _departmentRepo.Update(department);
+
+                    
+                    var newRepUser = context.Users.FirstOrDefault(u => u.Email == newRep.EmailAddress);
+                    userManager.RemoveFromRole(newRepUser?.Id, "staff");
+                    userManager.AddToRole(newRepUser?.Id, "rep");
                 }
                 else
                 {
-                    var context = new ApplicationDbContext();
-                    var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-
+                    var oldEmpNum = department.RepEmpNum;
+                    var oldRep = _employeeRepo.GetById((int)oldEmpNum);
                     oldRep.JobTitle = "staff";
 
                     var oldRepUser = context.Users.FirstOrDefault(u => u.Email == oldRep.EmailAddress);
