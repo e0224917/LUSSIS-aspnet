@@ -23,7 +23,7 @@ namespace LUSSIS.Controllers
     {
         private LUSSISContext db = new LUSSISContext();
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
-        private readonly StockAdjustmentRepository _adjustmentRepo = new StockAdjustmentRepository();
+        private readonly StockAdjustmentRepository _stockAdjustmentRepo = new StockAdjustmentRepository();
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
 
         // GET: StockAdjustment
@@ -44,8 +44,8 @@ namespace LUSSIS.Controllers
             }
 
             var adjustments = !string.IsNullOrEmpty(searchString)
-                ? _adjustmentRepo.GetAllAdjVoucherSearch(searchString)
-                : _adjustmentRepo.GetAll().ToList();
+                ? _stockAdjustmentRepo.GetAllAdjVoucherSearch(searchString)
+                : _stockAdjustmentRepo.GetAll().ToList();
 
             var reqAll = adjustments.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
@@ -65,7 +65,7 @@ namespace LUSSIS.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            AdjVoucher adjVoucher = _adjustmentRepo.GetById((int) id);
+            AdjVoucher adjVoucher = _stockAdjustmentRepo.GetById((int) id);
             if (adjVoucher == null)
             {
                 return HttpNotFound();
@@ -102,7 +102,7 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = "supervisor, manager")]
         public ActionResult AdjustmentApproveReject()
         {
-            return View(_adjustmentRepo.GetPendingAdjustmentList());
+            return View(_stockAdjustmentRepo.GetPendingAdjustmentList());
         }
 
         [Authorize(Roles = "clerk")]
@@ -146,7 +146,7 @@ namespace LUSSIS.Controllers
                             CreateDate = DateTime.Today
                         };
 
-                        _adjustmentRepo.Add(adjustment);
+                        _stockAdjustmentRepo.Add(adjustment);
 
                         vouchers.Add(adjustment);
                     }
@@ -221,7 +221,7 @@ namespace LUSSIS.Controllers
                     CreateDate = DateTime.Today
                 };
 
-                _adjustmentRepo.Add(adjustment);
+                _stockAdjustmentRepo.Add(adjustment);
 
                 var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                 var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
@@ -265,14 +265,14 @@ namespace LUSSIS.Controllers
             var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First()
                 .ToString();
-            return View(_adjustmentRepo.ViewPendingStockAdj(ViewBag.Message));
+            return View(_stockAdjustmentRepo.ViewPendingStockAdj(ViewBag.Message));
         }
 
         [Authorize(Roles = "manager,supervisor")]
         [HttpGet]
         public ActionResult ApproveReject(String List, String Status)
         {
-            //  List<AdjVoucher> list = _adjustmentRepo.GetAdjustmentById(List);
+            //  List<AdjVoucher> list = _stockAdjustmentRepo.GetAdjustmentById(List);
             ViewBag.checkList = List;
             ViewBag.status = Status;
             return PartialView("ApproveReject");
@@ -291,7 +291,7 @@ namespace LUSSIS.Controllers
 
             foreach (int i in idList)
             {
-                _adjustmentRepo.UpDateAdjustmentStatus(i, status, comment);
+                _stockAdjustmentRepo.UpDateAdjustmentStatus(i, status, comment);
             }
 
             return PartialView();
@@ -302,7 +302,7 @@ namespace LUSSIS.Controllers
         {
             if (disposing)
             {
-                _adjustmentRepo.Dispose();
+                _stockAdjustmentRepo.Dispose();
                 _stationeryRepo.Dispose();
                 _employeeRepo.Dispose();
             }

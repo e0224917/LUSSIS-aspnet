@@ -20,12 +20,12 @@ namespace LUSSIS.Controllers
     [Authorize(Roles = "manager,supervisor")]
     public class SupervisorDashboardController : Controller
     {
-        private PORepository pr = new PORepository();
-        private DisbursementRepository disRepo = new DisbursementRepository();
-        private StockAdjustmentRepository stockRepo = new StockAdjustmentRepository();
-        private StationeryRepository sr = new StationeryRepository();
-        private EmployeeRepository er = new EmployeeRepository();
-        private SupplierRepository sur = new SupplierRepository();
+        private PORepository _poReoi = new PORepository();
+        private DisbursementRepository _disbursementRepo = new DisbursementRepository();
+        private StockAdjustmentRepository _stockAdjustmentRepo = new StockAdjustmentRepository();
+        private StationeryRepository _stationeryRepo = new StationeryRepository();
+        private EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private SupplierRepository _supplierRepo = new SupplierRepository();
         private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
 
 
@@ -37,21 +37,21 @@ namespace LUSSIS.Controllers
             ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
             SupervisorDashboardDTO dash = new SupervisorDashboardDTO();
 
-            dash.PendingPOTotalAmount = pr.GetPendingPOTotalAmount();
-            dash.PendingPOCount = pr.GetPendingPOCount();
-            dash.POTotalAmount = pr.GetPOTotalAmount();
-            dash.PendingStockAdjAddQty = stockRepo.GetPendingStockAddQty();
-            dash.PendingStockAdjSubtractQty = stockRepo.GetPendingStockSubtractQty();
-            dash.PendingStockAdjCount = stockRepo.GetPendingAdjustmentList().Count;
-            dash.TotalDisbursementAmount = disRepo.GetDisbursementTotalAmount();
+            dash.PendingPOTotalAmount = _poReoi.GetPendingPOTotalAmount();
+            dash.PendingPOCount = _poReoi.GetPendingPOCount();
+            dash.POTotalAmount = _poReoi.GetPOTotalAmount();
+            dash.PendingStockAdjAddQty = _stockAdjustmentRepo.GetPendingStockAddQty();
+            dash.PendingStockAdjSubtractQty = _stockAdjustmentRepo.GetPendingStockSubtractQty();
+            dash.PendingStockAdjCount = _stockAdjustmentRepo.GetPendingAdjustmentList().Count;
+            dash.TotalDisbursementAmount = _disbursementRepo.GetDisbursementTotalAmount();
 
             return View(dash);
         }
 
         public JsonResult GetPiechartJSON(String List, String date, String e)
         {
-            List<String> pileName = sr.GetAllCategoryName().ToList();
-            List<double> pileValue = pr.GetPOByCategory();
+            List<String> pileName = _stationeryRepo.GetAllCategoryName().ToList();
+            List<double> pileValue = _poReoi.GetPOByCategory();
 
 
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
@@ -65,7 +65,7 @@ namespace LUSSIS.Controllers
             var deptValues = new List<double>();
             foreach (var deptCode in deptCodes)
             {
-                deptValues.Add(disRepo.GetDisbursementTotalAmountOfDept(deptCode));
+                deptValues.Add(_disbursementRepo.GetDisbursementTotalAmountOfDept(deptCode));
             }
 
             return Json(new { firstList = deptNames, secondList = deptValues }, 
@@ -76,8 +76,8 @@ namespace LUSSIS.Controllers
       
         public JsonResult GetReportJSON(String supplier_values, String category_values, String date)
         {
-            List<String> pileName = sr.GetAllCategoryName().ToList();
-            List<double> pileValue = pr.GetPOByCategory();
+            List<String> pileName = _stationeryRepo.GetAllCategoryName().ToList();
+            List<double> pileValue = _poReoi.GetPOByCategory();
 
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }
@@ -88,21 +88,21 @@ namespace LUSSIS.Controllers
             SupervisorReportDTO model = new SupervisorReportDTO();
             ViewBag.flag = flag;
 
-            List<Supplier> supplierList = sur.GetAll().ToList<Supplier>();
-            List<Category> categoryList = sr.GetAllCategoryList().ToList<Category>();
+            List<Supplier> supplierList = _supplierRepo.GetAll().ToList<Supplier>();
+            List<Category> categoryList = _stationeryRepo.GetAllCategoryList().ToList<Category>();
             model.Suppliers = supplierList;
             model.Categories = categoryList;
             if (supplier != "a")
             {
                 ViewBag.selected = supplier;
-                ViewBag.category = sr.GetCategoryBySupplier(supplier);
+                ViewBag.category = _stationeryRepo.GetCategoryBySupplier(supplier);
                 ViewBag.supplier = null;
 
             }
             else if (category != "a")
             {
                 ViewBag.selected = category;
-                ViewBag.supplier = sr.GetSupplierByCategory(category);
+                ViewBag.supplier = _stationeryRepo.GetSupplierByCategory(category);
                 ViewBag.category = null;
             }
             return View(model);
@@ -123,15 +123,15 @@ namespace LUSSIS.Controllers
                 List<String> categoryList = catArray.ToList();
                 if (supplier.Length == 1)
                 {
-                    xvalue = sr.GetCategoryNamebyId(categoryList);
-                    yvalue = pr.GetAmountByCategoryList(categoryList, supplier, from, to);
+                    xvalue = _stationeryRepo.GetCategoryNamebyId(categoryList);
+                    yvalue = _poReoi.GetAmountByCategoryList(categoryList, supplier, from, to);
 
                 }
                 else if (category.Length == 1)
                 {
-                    xvalue = sur.GetSupplierNamebyId(supplierList);
+                    xvalue = _supplierRepo.GetSupplierNamebyId(supplierList);
 
-                    yvalue = pr.GetAmountBySupplierList(supplierList, category, from, to);
+                    yvalue = _poReoi.GetAmountBySupplierList(supplierList, category, from, to);
 
 
                 }
@@ -163,12 +163,12 @@ namespace LUSSIS.Controllers
                
                 if (depart.Equals("0"))
                 {
-                    depList = er.GetAllDepartmentCode();
+                    depList = _employeeRepo.GetAllDepartmentCode();
                 }
                 if (cat=="0")
                 {
                     List<String> tmpList = new List<String>();
-                    foreach (int i in sr.GetAllCategoryIds())
+                    foreach (int i in _stationeryRepo.GetAllCategoryIds())
                     {
                         tmpList.Add(Convert.ToString(i));
                     }
@@ -177,21 +177,21 @@ namespace LUSSIS.Controllers
                 }
                 if (depList.Capacity == 1 && catList.Capacity > 1)
                 {
-                    xvalue = sr.GetCategoryNamebyId(catList);
+                    xvalue = _stationeryRepo.GetCategoryNamebyId(catList);
 
-                    yvalue = disRepo.GetAmountByDepAndCatList(depart, catList, from, to);
+                    yvalue = _disbursementRepo.GetAmountByDepAndCatList(depart, catList, from, to);
                 }
                 else if (depList.Capacity > 1 && catList.Capacity == 1)
                 {
                     xvalue = depList;
 
-                    yvalue = disRepo.GetAmoutByCatAndDepList(cat, xvalue, from, to);
+                    yvalue = _disbursementRepo.GetAmoutByCatAndDepList(cat, xvalue, from, to);
                 }
                 else if (depList.Capacity > 1 && catList.Capacity > 1)
                 {
                     xvalue = depList;
 
-                    yvalue = disRepo.GetMaxCategoryAmountByDep(catList, depList, from, to);
+                    yvalue = _disbursementRepo.GetMaxCategoryAmountByDep(catList, depList, from, to);
                 }
 
 
@@ -260,12 +260,12 @@ namespace LUSSIS.Controllers
 
                 if (depart.Equals("0"))
                 {
-                    depList = er.GetAllDepartmentCode();
+                    depList = _employeeRepo.GetAllDepartmentCode();
                 }
                 if (cat.Equals("0"))
                 {
                     List<String> tmpList = new List<String>();
-                    foreach (int i in sr.GetAllCategoryIds())
+                    foreach (int i in _stationeryRepo.GetAllCategoryIds())
                     {
                         tmpList.Add(Convert.ToString(i));
                     }
@@ -276,7 +276,7 @@ namespace LUSSIS.Controllers
                 ReportTransferDTO rto = new ReportTransferDTO();
                 if (depList.Capacity == 1 && catList.Capacity > 1)
                 {
-                    titlevalue = sr.GetCategoryNamebyId(catList);
+                    titlevalue = _stationeryRepo.GetCategoryNamebyId(catList);
                     for (int j = 0; j < dateList.Capacity; j++)
                     {
                         rto = new ReportTransferDTO();
@@ -285,7 +285,7 @@ namespace LUSSIS.Controllers
                         for (int i = 0; i < fromList.Capacity - 1; i++)
                         {
 
-                            List<double> temp = disRepo.GetAmountByDepAndCatList(depart, catList, fromList[i], fromList[i + 1]);
+                            List<double> temp = _disbursementRepo.GetAmountByDepAndCatList(depart, catList, fromList[i], fromList[i + 1]);
                             rto.xvalue = temp;
                         }
                         Listone.Add(rto);
@@ -305,7 +305,7 @@ namespace LUSSIS.Controllers
                         for (int i = 0; i < dateList.Capacity - 1; i++)
                         {
 
-                            List<double> temp = disRepo.GetAmoutByCatAndDepList(cat, depList, fromList[i], toList[i + 1]);
+                            List<double> temp = _disbursementRepo.GetAmoutByCatAndDepList(cat, depList, fromList[i], toList[i + 1]);
                             rto.xvalue = temp;
                         }
                         Listone.Add(rto);
@@ -325,7 +325,7 @@ namespace LUSSIS.Controllers
                         for (int i = 0; i < fromList.Capacity - 1; i++)
                         {
 
-                            List<double> temp = disRepo.GetMaxCategoryAmountByDep(catList, depList, fromList[i], toList[i + 1]);
+                            List<double> temp = _disbursementRepo.GetMaxCategoryAmountByDep(catList, depList, fromList[i], toList[i + 1]);
                             rto.xvalue = temp;
                         }
                         Listone.Add(rto);
@@ -344,8 +344,8 @@ namespace LUSSIS.Controllers
         public async Task<ActionResult> GenerateDepartmentTrendAnalysis(String supplier, String category, String flag)
         {
             SupervisorReportDTO model = new SupervisorReportDTO();
-            List<Department> departList = er.GetAllDepartment();
-            List<Category> categoryList = sr.GetAllCategoryList().ToList<Category>();
+            List<Department> departList = _employeeRepo.GetAllDepartment();
+            List<Category> categoryList = _stationeryRepo.GetAllCategoryList().ToList<Category>();
             model.Department = departList;
             model.Categories = categoryList;
             return View(model);

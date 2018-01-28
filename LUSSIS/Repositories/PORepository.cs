@@ -210,7 +210,7 @@ namespace LUSSIS.Repositories
             {
                 var supId = Convert.ToInt32(sup);
 
-                double total = 0;
+                total = 0;
                 var q = from t1 in LUSSISContext.Disbursements
                         join t2 in LUSSISContext.DisbursementDetails
                         on t1.DisbursementId equals t2.DisbursementId

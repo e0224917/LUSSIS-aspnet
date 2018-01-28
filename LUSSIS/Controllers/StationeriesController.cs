@@ -46,7 +46,7 @@ namespace LUSSIS.Controllers
             }
 
             return View(stationeryAll);
-        }
+        } } }
 
 
         // GET: Stationeries/Details/5
@@ -77,7 +77,7 @@ namespace LUSSIS.Controllers
                     Transtype = "disburse",
                     Remarks = x.Disbursement.DeptCode
                 }).ToList();
-            var adjustList = _adjustmentRepo.GetApprovedAdjVoucherByItem(id).Select(
+            var adjustList = _stockAdjustmentRepo.GetApprovedAdjVoucherByItem(id).Select(
                 x => new StationeryTransactionDTO
                 {
                     Date = x.CreateDate,
@@ -318,7 +318,7 @@ namespace LUSSIS.Controllers
             if (disposing)
             {
                 _stationeryRepo.Dispose();
-                _adjustmentRepo.Dispose();
+                _stockAdjustmentRepo.Dispose();
                 _supplierRepo.Dispose();
                 _poRepo.Dispose();
                 _disbursementRepo.Dispose();
@@ -327,4 +327,4 @@ namespace LUSSIS.Controllers
             base.Dispose(disposing);
         }
     }
-}
+}*/

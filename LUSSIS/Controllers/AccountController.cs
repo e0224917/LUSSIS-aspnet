@@ -19,7 +19,7 @@ namespace LUSSIS.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private readonly EmployeeRepository _empRepo = new EmployeeRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
 
         public AccountController()
         {
@@ -116,7 +116,7 @@ namespace LUSSIS.Controllers
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    UserManager.AddToRole(user.Id, _empRepo.GetJobTitleByEmail(model.Email));
+                    UserManager.AddToRole(user.Id, _employeeRepo.GetJobTitleByEmail(model.Email));
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -134,7 +134,7 @@ namespace LUSSIS.Controllers
 
         private bool IsEmailExist(string email)
         {
-            var emp = _empRepo.GetEmployeeByEmail(email);
+            var emp = _employeeRepo.GetEmployeeByEmail(email);
             return emp != null;
         }
 
