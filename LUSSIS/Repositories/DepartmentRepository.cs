@@ -12,10 +12,6 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Departments.Select(x => x.DeptCode).ToList();
         }
-        public List<Department> GetAllDepartment()
-        {
-            return LUSSISContext.Departments.ToList();
-        }
 
         public Department GetDepartmentByEmpNum(int empNum)
         {

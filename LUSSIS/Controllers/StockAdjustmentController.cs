@@ -291,7 +291,7 @@ namespace LUSSIS.Controllers
 
             foreach (int i in idList)
             {
-                _stockAdjustmentRepo.UpDateAdjustmentStatus(i, status, comment);
+                _stockAdjustmentRepo.UpdateAdjustmentStatus(i, status, comment);
             }
 
             return PartialView();

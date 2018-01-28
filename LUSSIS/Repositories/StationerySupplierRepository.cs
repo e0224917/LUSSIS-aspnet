@@ -24,10 +24,16 @@ namespace LUSSIS.Repositories
 
         }
 
-        public IEnumerable<StationerySupplier> GetAllStationerySuppliers()
+        public IEnumerable<StationerySupplier> GetStationerySupplierBySupplierId(int? id)
         {
-            return LUSSISContext.StationerySuppliers;
+            var q = from t1 in LUSSISContext.Stationeries
+                    join t2 in LUSSISContext.StationerySuppliers
+                    on t1.ItemNum equals t2.ItemNum
+                    where t2.Supplier.SupplierId == id
+                    select t2;
+            return q.AsEnumerable<StationerySupplier>();
         }
+
 
     }
 }

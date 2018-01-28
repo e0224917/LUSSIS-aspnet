@@ -80,7 +80,7 @@ namespace LUSSIS.Repositories
             return total;
         }
 
-        public void UpDateAdjustmentStatus(int i, String status, String comment)
+        public void UpdateAdjustmentStatus(int i, String status, String comment)
         {
             AdjVoucher a = new AdjVoucher();
             a = GetById(i);
