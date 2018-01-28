@@ -38,13 +38,14 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult UpdateCollection(ManageCollectionDTO manageCollectionDto)
         {
-            if (!ModelState.IsValid) return RedirectToAction("SetCollection");
+            if (ModelState.IsValid)
+            {
+                var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+                var department = _departmentRepo.GetById(deptCode);
 
-            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-            var department = _departmentRepo.GetById(deptCode);
-
-            department.CollectionPointId = manageCollectionDto.DeptCollectionPointId;
-            _departmentRepo.Update(department);
+                department.CollectionPointId = manageCollectionDto.DeptCollectionPointId;
+                _departmentRepo.Update(department);
+            }
 
             return RedirectToAction("SetCollection");
         }

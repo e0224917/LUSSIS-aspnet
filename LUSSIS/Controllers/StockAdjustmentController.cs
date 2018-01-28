@@ -10,10 +10,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNet.Identity;
 using PagedList;
-using System.Text;
 using LUSSIS.Emails;
 
 namespace LUSSIS.Controllers
@@ -21,7 +18,6 @@ namespace LUSSIS.Controllers
     [Authorize(Roles = "clerk, supervisor, manager")]
     public class StockAdjustmentController : Controller
     {
-        private LUSSISContext db = new LUSSISContext();
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
         private readonly StockAdjustmentRepository _stockAdjustmentRepo = new StockAdjustmentRepository();
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
@@ -44,7 +40,7 @@ namespace LUSSIS.Controllers
             }
 
             var adjustments = !string.IsNullOrEmpty(searchString)
-                ? _stockAdjustmentRepo.GetAllAdjVoucherSearch(searchString)
+                ? _stockAdjustmentRepo.FindAdjVoucherByText(searchString)
                 : _stockAdjustmentRepo.GetAll().Reverse().ToList();
 
             var reqAll = adjustments.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
@@ -55,54 +51,6 @@ namespace LUSSIS.Controllers
             }
 
             return View(reqAll);
-        }
-
-        [Authorize(Roles = "supervisor, manager")]
-        public ActionResult Approve(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            AdjVoucher adjVoucher = _stockAdjustmentRepo.GetById((int) id);
-            if (adjVoucher == null)
-            {
-                return HttpNotFound();
-            }
-
-            ViewBag.ApprovalEmpNum =
-                new SelectList(_employeeRepo.GetAll(), "EmpNum", "Title", adjVoucher.ApprovalEmpNum);
-            ViewBag.RequestEmpNum = new SelectList(_employeeRepo.GetAll(), "EmpNum", "Title", adjVoucher.RequestEmpNum);
-            ViewBag.ItemNum = new SelectList(_employeeRepo.GetAll(), "ItemNum", "Description", adjVoucher.ItemNum);
-            return View(adjVoucher);
-        }
-
-        [Authorize(Roles = "supervisor, manager")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Approve(
-            [Bind(Include =
-                "AdjVoucherId,ItemNum,ApprovalEmpNum,Quantity,Reason,CreateDate,ApprovalDate,RequestEmpNum,Status,Remark")]
-            AdjVoucher adjVoucher)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(adjVoucher).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("History");
-            }
-
-            ViewBag.ApprovalEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.ApprovalEmpNum);
-            ViewBag.RequestEmpNum = new SelectList(db.Employees, "EmpNum", "Title", adjVoucher.RequestEmpNum);
-            ViewBag.ItemNum = new SelectList(db.Stationeries, "ItemNum", "Description", adjVoucher.ItemNum);
-            return View(adjVoucher);
-        }
-
-        [Authorize(Roles = "supervisor, manager")]
-        public ActionResult AdjustmentApproveReject()
-        {
-            return View(_stockAdjustmentRepo.GetPendingAdjustmentList());
         }
 
         [Authorize(Roles = "clerk")]
@@ -262,36 +210,39 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = "manager,supervisor")]
         public ActionResult ViewPendingStockAdj()
         {
-            var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First()
-                .ToString();
-            return View(_stockAdjustmentRepo.ViewPendingStockAdj(ViewBag.Message));
+            var role = User.IsInRole("manager") ? "manager" : "supervisor";
+            ViewBag.Message = role;
+            return View(_stockAdjustmentRepo.GetPendingAdjustmentByRole(role));
         }
 
         [Authorize(Roles = "manager,supervisor")]
         [HttpGet]
-        public ActionResult ApproveReject(String List, String Status)
+        public ActionResult ApproveReject(string list, string status)
         {
             //  List<AdjVoucher> list = _stockAdjustmentRepo.GetAdjustmentById(List);
-            ViewBag.checkList = List;
-            ViewBag.status = Status;
+            ViewBag.checkList = list;
+            ViewBag.status = status;
             return PartialView("ApproveReject");
         }
 
         [Authorize(Roles = "manager,supervisor")]
         [HttpPost]
-        public ActionResult ApproveReject(String checkList, String comment, String status)
+        public ActionResult ApproveReject(string checkList, string comment, string status)
         {
-            String[] list = checkList.Split(',');
-            int[] idList = new int[list.Length];
+            var list = checkList.Split(',');
+            var idList = new int[list.Length];
             for (int i = 0; i < idList.Length; i++)
             {
-                idList[i] = Int32.Parse(list[i]);
+                idList[i] = int.Parse(list[i]);
             }
 
-            foreach (int i in idList)
+            foreach (var id in idList)
             {
-                _stockAdjustmentRepo.UpdateAdjustmentStatus(i, status, comment);
+                var adjustment = _stockAdjustmentRepo.GetById(id);
+                adjustment.Status = status;
+                adjustment.Remark = comment;
+                adjustment.ApprovalDate = DateTime.Today;
+                _stockAdjustmentRepo.Update(adjustment);
             }
 
             return PartialView();

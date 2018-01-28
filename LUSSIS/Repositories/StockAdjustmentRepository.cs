@@ -1,5 +1,4 @@
 ﻿using LUSSIS.Models;
-using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories.Interface;
 using System;
 using System.Collections.Generic;
@@ -15,18 +14,17 @@ namespace LUSSIS.Repositories
             return GetAll().Where(x => x.Status == "pending").ToList();
         }
 
-        public List<AdjVoucher> ViewPendingStockAdj(string role)
+        public List<AdjVoucher> GetPendingAdjustmentByRole(string role)
         {
             var resultList = new List<AdjVoucher>();
-            List<AdjVoucher> list = GetPendingAdjustmentList();
-            List<double> priceList = new List<double>();
+            var list = GetPendingAdjustmentList();
             if (role.Equals("supervisor"))
             {
-                foreach (AdjVoucher ad in list)
+                foreach (var ad in list)
                 {
-                    double s = ((double) (ad.Stationery.AverageCost));
-                    int qty = (int) ad.Quantity;
-                    if ((s * qty) <= 250)
+                    var s = ad.Stationery.AverageCost;
+                    var qty = ad.Quantity;
+                    if (s * qty <= 250)
                     {
                         resultList.Add(ad);
                     }
@@ -34,11 +32,11 @@ namespace LUSSIS.Repositories
             }
             else if (role.Equals("manager"))
             {
-                foreach (AdjVoucher ad in list)
+                foreach (var ad in list)
                 {
-                    double s = ((double) (ad.Stationery.AverageCost));
-                    int qty = (int) ad.Quantity;
-                    if ((s * qty) > 250)
+                    var s = ad.Stationery.AverageCost;
+                    var qty = ad.Quantity;
+                    if (s * qty > 250)
                     {
                         resultList.Add(ad);
                     }
@@ -48,52 +46,23 @@ namespace LUSSIS.Repositories
             return resultList;
         }
 
-        public int GetPendingStockAddQty()
+        public List<AdjVoucher> GetPendingAdjustmentByType(string type)
         {
-            List<AdjVoucher> list = GetPendingAdjustmentList();
-            int total = 0;
-            foreach (AdjVoucher adj in list)
+            switch (type)
             {
-                int Quantity = (int) LUSSISContext.AdjVouchers.Select(x => x.Quantity).ToList()[0];
-                if (Quantity > 0)
-                {
-                    total += Quantity;
-                }
+                case "add":
+                    return GetPendingAdjustmentList().Where(a => a.Quantity > 0).ToList();
+                case "subtract":
+                    return GetPendingAdjustmentList().Where(a => a.Quantity < 0).ToList();
+                default:
+                    return GetPendingAdjustmentList();
             }
-
-            return total;
         }
-
-        public int GetPendingStockSubtractQty()
-        {
-            List<AdjVoucher> list = GetPendingAdjustmentList();
-            int total = 0;
-            foreach (AdjVoucher adj in list)
-            {
-                int Quantity = (int) LUSSISContext.AdjVouchers.Select(x => x.Quantity).ToList()[0];
-                if (Quantity < 0)
-                {
-                    total += Quantity;
-                }
-            }
-
-            return total;
-        }
-
-        public void UpdateAdjustmentStatus(int i, String status, String comment)
-        {
-            AdjVoucher a = new AdjVoucher();
-            a = GetById(i);
-            a.Status = status;
-            a.Remark = comment;
-            a.ApprovalDate = DateTime.Today;
-            Update(a);
-        }
-
-        public List<AdjVoucher> GetAllAdjVoucherSearch(string term)
+        
+        public List<AdjVoucher> FindAdjVoucherByText(string term)
         {
             term = term.ToLower();
-            List<AdjVoucher> adjustments = LUSSISContext.AdjVouchers.Where(r =>
+            var adjustments = LUSSISContext.AdjVouchers.Where(r =>
                 r.RequestEmployee.FirstName.ToLower().Contains(term) ||
                 r.RequestEmployee.LastName.ToLower().Contains(term) || r.Status.ToLower().Contains(term) ||
                 r.Stationery.Description.ToLower().Contains(term) || r.Quantity.ToString().Contains(term) ||
@@ -101,9 +70,9 @@ namespace LUSSIS.Repositories
             return adjustments;
         }
 
-        public IEnumerable<AdjVoucher> GetApprovedAdjVoucherByItem(string id)
+        public IEnumerable<AdjVoucher> GetApprovedAdjVoucherByItem(string itemNum)
         {
-            return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == id && x.Status == "approved");
+            return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == itemNum && x.Status == "approved");
         }
     }
 }

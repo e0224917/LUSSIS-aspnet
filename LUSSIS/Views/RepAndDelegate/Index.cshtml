@@ -72,8 +72,7 @@
                 else
                 {
                     <div class="card-body">
-
-                        <table class="table mt-2">
+                        <table class="table mt-3">
                             <tr>
                                 <th>@Html.DisplayFor(model => model.CurrentDelegate.StartDate) - @Html.DisplayFor(model => model.CurrentDelegate.EndDate)</th>
                             </tr>
@@ -89,7 +88,11 @@
 
                         @if (@Model.CurrentDelegate.StartDate > DateTime.Today)
                         {
-                            <h6 class="text-muted">Starting in @((int) (Model.CurrentDelegate.StartDate.Subtract(DateTime.Now)).TotalDays) days</h6>
+                            <h6 class="text-muted">Starting in @((int)(Model.CurrentDelegate.StartDate.Subtract(DateTime.Today)).TotalDays) day(s)</h6>
+                        }
+                        else
+                        {
+                                <h6 class="text-muted">Ending in @((int)(Model.CurrentDelegate.EndDate.Subtract(DateTime.Today)).TotalDays) day(s)</h6>
                         }
 
                     </div>
@@ -107,7 +110,7 @@
     {
         <div class="col-lg-4 col-md-4">
             <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem;">
-                <h4 class="card-header mt-0">Your Delegation period</h4>
+                <h4 class="card-header mt-0">Your Delegation Period</h4>
                 <div class="card-body">
 
                     <table class="table mt-2">
@@ -117,7 +120,7 @@
 
                         <tr>
                             <td>
-                                <h3 class="mt-2 mb-0 text-muted">Ending in @((int) (Model.CurrentDelegate.EndDate.Subtract(DateTime.Now)).TotalDays) days</h3>
+                                <h3 class="mt-2 mb-0 text-muted">Ending in @((int) (Model.CurrentDelegate.EndDate.Subtract(DateTime.Today)).TotalDays) day(s)</h3>
                             </td>
 
                         </tr>
@@ -127,7 +130,7 @@
 
                 </div>
                 <div class="card-footer text-center">
-                    @using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
+                    @using (Html.BeginForm("DeleteDelegate", "RepAndDelegate", FormMethod.Post))
                     {
                         <input type="submit" class="btn btn-secondary" value="Revoke Delegate" style="width: 100%" disabled=""/>
                     }
@@ -140,48 +143,63 @@
             <h4 class="card-header mt-0">Department Rep</h4>
             <div class="card-body">
                 @if (Model.Department.RepEmployee != null)
-                {
-                    <table class="table mt-3">
-                        <tr>
-                            <th>
-                                Current Department Rep
-                            </th>
-                        </tr>
+    {
+            <table class="table mt-3">
+                <tr>
+                    <th>
+                        Current Department Rep
+                    </th>
+                </tr>
 
-                        <tr>
-                            <td>
-                                <h3 class="mt-0 mb-0">
-                                    @Html.DisplayFor(model => model.Department.RepEmployee.FullName)</h3>
-                            </td>
-                        </tr>
-                    </table>
-                }
-                else
-                {
-                    <div class="alert alert-dismissible alert-info p-4">
-                        <h6>No department representative at the moment.</h6>
-                    </div>
-                }
-
-
-
+                <tr>
+                    <td>
+                        <h3 class="mt-0 mb-0">
+                            @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
+                        </h3>
+                    </td>
+                </tr>
+            </table>
+}
+else
+{
+            <div class="alert alert-dismissible alert-info p-4">
+                <h6>No department representative at the moment.</h6>
             </div>
+}
+</div>
+
             <div class="card-footer text-center">
                 @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
-                {
-                    
-                    if (User.IsInRole("head") && !Model.HaveDelegateToday 
-                        || User.IsInRole("staff") && Model.HaveDelegateToday)
-                    {
-                        <input type="submit" class="btn btn-success" value="Change Rep" style="width: 100%"/>
-                    }
-                    else
-                    {
-                        <input type="submit" class="btn btn-secondary" value="Change Rep" style="width: 100%" disabled=""/>
-                    }
-                }
+    {
+
+        if (User.IsInRole("head") && !Model.HaveDelegateToday
+            || User.IsInRole("staff") && Model.HaveDelegateToday)
+        {
+            if (Model.Department.RepEmployee == null)
+            {
+                <input type="submit" class="btn btn-success" value="Set New Rep" style="width: 100%" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-success" value="Change Rep" style="width: 100%" />
+            }
+
+        }
+
+            else
+            {
+                 if (Model.Department.RepEmployee == null)
+                 {
+            <input type="submit" class="btn btn-secondary" value="Set New Rep" style="width: 100%" disabled=""/>
+                 }
+                 else
+                 {
+            <input type="submit" class="btn btn-secondary" value="Change Rep" style="width: 100%" disabled="" />
+                 }
+            }
+     }
 
             </div>
-        </div>
+            </div>
     </div>
 </div>
