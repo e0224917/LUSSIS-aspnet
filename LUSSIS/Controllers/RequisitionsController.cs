@@ -44,6 +44,16 @@ namespace LUSSIS.Controllers
             }
         }
 
+        private bool IsDelegate
+        {
+            get
+            {
+                var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var isDelegate = _delegateRepo.FindCurrentByEmpNum(empNum);
+                return isDelegate != null;
+            }
+        }
+
         //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
         [CustomAuthorize("head", "staff")]
@@ -132,7 +142,7 @@ namespace LUSSIS.Controllers
             {//requisition must be pending for any approval and reject
                 Employee self = _employeeRepo.GetCurrentUser();
 
-                if ((self.JobTitle == "head" && !HasDelegate) || HasDelegate)
+                if ((self.JobTitle == "head" && !HasDelegate) || IsDelegate)
                 {//if (user is head and there is no delegate) or (user is currently delegate)
                     if(self.DeptCode != _departmentRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum).DeptCode)
                     {//if user is trying to approve for other department

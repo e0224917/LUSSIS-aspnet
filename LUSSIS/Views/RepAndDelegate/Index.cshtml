@@ -139,35 +139,34 @@
             <h4 class="card-header mt-0">Department Rep</h4>
             <div class="card-body">
                 @if (Model.Department.RepEmployee != null)
-                {
-                    <table class="table mt-3">
-                        <tr>
-                            <th>
-                                Current Department Rep
-                            </th>
-                        </tr>
+    {
+            <table class="table mt-3">
+                <tr>
+                    <th>
+                        Current Department Rep
+                    </th>
+                </tr>
 
-                        <tr>
-                            <td>
-                                <h3 class="mt-0 mb-0">
-                                    @Html.DisplayFor(model => model.Department.RepEmployee.FullName)</h3>
-                            </td>
-                        </tr>
-                    </table>
-                }
-                else
-                {
-                    <div class="alert alert-dismissible alert-info p-4">
-                        <h6>No department representative at the moment.</h6>
-                    </div>
-                }
-
-
-
+                <tr>
+                    <td>
+                        <h3 class="mt-0 mb-0">
+                            @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
+                        </h3>
+                    </td>
+                </tr>
+            </table>
+}
+else
+{
+            <div class="alert alert-dismissible alert-info p-4">
+                <h6>No department representative at the moment.</h6>
             </div>
+}
+</div>
+
             <div class="card-footer text-center">
                 @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
-{
+    {
 
         if (User.IsInRole("head") && !Model.HaveDelegateToday
             || User.IsInRole("staff") && Model.HaveDelegateToday)
@@ -178,17 +177,25 @@
             }
             else
             {
-            <input type="submit" class="btn btn-success" value="Change Rep" style="width: 100%" />
+                <input type="submit" class="btn btn-success" value="Change Rep" style="width: 100%" />
             }
 
         }
-        else
-        {
+
+            else
+            {
+                 if (Model.Department.RepEmployee == null)
+                 {
+            <input type="submit" class="btn btn-secondary" value="Set New Rep" style="width: 100%" disabled=""/>
+                 }
+                 else
+                 {
             <input type="submit" class="btn btn-secondary" value="Change Rep" style="width: 100%" disabled="" />
-        }
-}
+                 }
+            }
+     }
 
             </div>
-        </div>
+            </div>
     </div>
 </div>
