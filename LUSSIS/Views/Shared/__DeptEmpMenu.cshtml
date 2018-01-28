@@ -18,16 +18,15 @@
 }
 else
 {
-
-    <li class="dropdown nav-item">
-        <a class="nav-link dropdown-toggle" href="#" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <div class="dropdown nav navbar-nav">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <span>Requisition</span>
-        </a>
-        <div class="dropdown-menu show" aria-labelledby="dropdownMenu1">
-            <a class="dropdown-item" href="@Url.Action("Pending", "Requisitions")"><span>Pending Requisition</span></a>
-            <a class="dropdown-item" href="@Url.Action("MyRequisitions", "Requisitions")"><span>My Requisition History</span></a>
-        </div>
-    </li>
+        </button>
+        <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
+            <li class="dropdown-item"><a href="@Url.Action("Pending", "Requisitions")"><span>Pending Requisitions</span></a></li>
+            <li class="dropdown-item"><a href="@Url.Action("All", "Requisitions")"><span>All Requisitions</span></a></li>
+        </ul>
+    </div>
     <li class="nav-item">
         <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")"><span>Department Rep</span></a>
     </li>
