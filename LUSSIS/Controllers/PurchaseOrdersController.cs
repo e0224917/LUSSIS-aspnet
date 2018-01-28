@@ -25,7 +25,7 @@ namespace LUSSIS.Controllers
         private readonly PORepository _poRepo = new PORepository();
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
         private readonly SupplierRepository _supplierRepo = new SupplierRepository();
-        public const double GstRate = 0.07;
+        private const double GstRate = 0.07;
 
         // GET: PurchaseOrders
         public ActionResult Index(int? page = 1)
