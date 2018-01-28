@@ -120,17 +120,18 @@ namespace LUSSIS.Controllers
             {
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
                 var department = _departmentRepo.GetById(deptCode);
+                var oldRepEmpNum = department.RepEmpNum;
+                var oldRep = _employeeRepo.GetById((int)oldRepEmpNum);
 
-                var repEmpNum = Convert.ToInt32(repEmp);
-                var newRep = _employeeRepo.GetById(repEmpNum);
+                var newRepEmpNum = Convert.ToInt32(repEmp);
+                var newRep = _employeeRepo.GetById(newRepEmpNum);
                 newRep.JobTitle = "rep";
-
-                var oldRep = department.RepEmployee;
-
 
                 if (oldRep == null)
                 {
+                    //update two tables: Employee and Department
                     _employeeRepo.Update(newRep);
+                    department.RepEmpNum = newRepEmpNum;
                     _departmentRepo.Update(department);
                 }
                 else
@@ -146,6 +147,8 @@ namespace LUSSIS.Controllers
 
                     _employeeRepo.Update(newRep);
                     _employeeRepo.Update(oldRep);
+
+                    department.RepEmpNum = newRep.EmpNum;
                     _departmentRepo.Update(department);
 
                     var newRepUser = context.Users.FirstOrDefault(u => u.Email == newRep.EmailAddress);
