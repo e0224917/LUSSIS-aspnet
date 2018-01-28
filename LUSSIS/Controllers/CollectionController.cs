@@ -28,7 +28,7 @@ namespace LUSSIS.Controllers
         {
             var manageCollectionDto = new ManageCollectionDTO();
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-            manageCollectionDto.CollectionPoint = _disbursementRepo.GetCollectionPointByDeptCode(deptCode);
+            manageCollectionDto.CollectionPoint = _collectionRepo.GetCollectionPointByDeptCode(deptCode);
             manageCollectionDto.CollectionPoints = _collectionRepo.GetAll();
 
             return View(manageCollectionDto);

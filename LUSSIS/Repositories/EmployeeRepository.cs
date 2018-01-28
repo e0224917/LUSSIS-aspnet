@@ -28,10 +28,6 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Employees.First(x => x.EmailAddress == email);
         }
 
-        public Department GetDepartmentByEmpNum(int empNum)
-        {
-            return GetById(empNum).Department;
-        }
 
         public Employee GetStoreManager()
         {
@@ -41,14 +37,7 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Employees.FirstOrDefault(x => x.JobTitle == "supervisor");
         }
-        public List<String>GetAllDepartmentCode()
-        {
-            return LUSSISContext.Departments.Select(x => x.DeptCode).ToList();
-        }
-        public List<Department>GetAllDepartment()
-        {
-            return LUSSISContext.Departments.ToList();
-        }
-      
+
+
     }
 }

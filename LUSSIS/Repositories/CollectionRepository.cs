@@ -8,6 +8,10 @@ namespace LUSSIS.Repositories
 {
     public class CollectionRepository : Repository<CollectionPoint, int>
     {
-
+        public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
+        {
+            Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
+            return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == d.CollectionPointId);
+        }
     }
 }

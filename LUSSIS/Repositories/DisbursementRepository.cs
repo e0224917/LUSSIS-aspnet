@@ -38,12 +38,10 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements.Where(d => d.Department.DeptName.Contains(deptName));
         }
 
-        public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
-        {
-            Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
-            return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == d.CollectionPointId);
-        }
 
+        
+
+        //Please put this inside collectionRepo
         public IEnumerable<CollectionPoint> GetAllCollectionPoint()
         {
             return LUSSISContext.CollectionPoints.Include(c => c.InChargeEmployee);

@@ -19,6 +19,7 @@ namespace LUSSIS.Controllers
     {
         private readonly SupplierRepository _supplierRepo = new SupplierRepository();
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
+        private readonly StationerySupplierRepository _stationerySupplierRepo = new StationerySupplierRepository();
 
         // GET: Suppliers
         public async Task<ActionResult> Index()
@@ -185,7 +186,7 @@ namespace LUSSIS.Controllers
         public ActionResult QuotationTemplate()
         {
             List<StationerySupplierQuote> slist =
-                _stationeryRepo.GetAllStationerySuppliers().Select(x => new StationerySupplierQuote
+                _stationerySupplierRepo.GetAll().Select(x => new StationerySupplierQuote
                 {
                     ItemCode = x.ItemNum,
                     ItemName = x.Stationery.Description,

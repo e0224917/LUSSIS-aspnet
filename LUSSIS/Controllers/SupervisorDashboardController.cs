@@ -26,6 +26,7 @@ namespace LUSSIS.Controllers
         private StationeryRepository _stationeryRepo = new StationeryRepository();
         private EmployeeRepository _employeeRepo = new EmployeeRepository();
         private SupplierRepository _supplierRepo = new SupplierRepository();
+        private CategoryRepository _categoryRepo = new CategoryRepository();
         private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
 
 
@@ -50,7 +51,7 @@ namespace LUSSIS.Controllers
 
         public JsonResult GetPiechartJSON(String List, String date, String e)
         {
-            List<String> pileName = _stationeryRepo.GetAllCategoryName().ToList();
+            List<String> pileName = _categoryRepo.GetAllCategoryName().ToList();
             List<double> pileValue = _poReoi.GetPOByCategory();
 
 
@@ -76,7 +77,7 @@ namespace LUSSIS.Controllers
       
         public JsonResult GetReportJSON(String supplier_values, String category_values, String date)
         {
-            List<String> pileName = _stationeryRepo.GetAllCategoryName().ToList();
+            List<String> pileName = _categoryRepo.GetAllCategoryName().ToList();
             List<double> pileValue = _poReoi.GetPOByCategory();
 
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
@@ -89,20 +90,20 @@ namespace LUSSIS.Controllers
             ViewBag.flag = flag;
 
             List<Supplier> supplierList = _supplierRepo.GetAll().ToList<Supplier>();
-            List<Category> categoryList = _stationeryRepo.GetAllCategoryList().ToList<Category>();
+            List<Category> categoryList = _categoryRepo.GetAll().ToList<Category>();
             model.Suppliers = supplierList;
             model.Categories = categoryList;
             if (supplier != "a")
             {
                 ViewBag.selected = supplier;
-                ViewBag.category = _stationeryRepo.GetCategoryBySupplier(supplier);
+                ViewBag.category = _categoryRepo.GetCategoryBySupplier(supplier);
                 ViewBag.supplier = null;
 
             }
             else if (category != "a")
             {
                 ViewBag.selected = category;
-                ViewBag.supplier = _stationeryRepo.GetSupplierByCategory(category);
+                ViewBag.supplier = _supplierRepo.GetSupplierByCategory(category);
                 ViewBag.category = null;
             }
             return View(model);
@@ -123,7 +124,7 @@ namespace LUSSIS.Controllers
                 List<String> categoryList = catArray.ToList();
                 if (supplier.Length == 1)
                 {
-                    xvalue = _stationeryRepo.GetCategoryNamebyId(categoryList);
+                    xvalue = _categoryRepo.GetCategoryNameById(categoryList);
                     yvalue = _poReoi.GetAmountByCategoryList(categoryList, supplier, from, to);
 
                 }
@@ -163,12 +164,12 @@ namespace LUSSIS.Controllers
                
                 if (depart.Equals("0"))
                 {
-                    depList = _employeeRepo.GetAllDepartmentCode();
+                    depList = _departmentRepo.GetAllDepartmentCode();
                 }
                 if (cat=="0")
                 {
                     List<String> tmpList = new List<String>();
-                    foreach (int i in _stationeryRepo.GetAllCategoryIds())
+                    foreach (int i in _categoryRepo.GetAllCategoryIds())
                     {
                         tmpList.Add(Convert.ToString(i));
                     }
@@ -177,7 +178,7 @@ namespace LUSSIS.Controllers
                 }
                 if (depList.Capacity == 1 && catList.Capacity > 1)
                 {
-                    xvalue = _stationeryRepo.GetCategoryNamebyId(catList);
+                    xvalue = _categoryRepo.GetCategoryNameById(catList);
 
                     yvalue = _disbursementRepo.GetAmountByDepAndCatList(depart, catList, from, to);
                 }
@@ -276,7 +277,7 @@ namespace LUSSIS.Controllers
                 ReportTransferDTO rto = new ReportTransferDTO();
                 if (depList.Capacity == 1 && catList.Capacity > 1)
                 {
-                    titlevalue = _stationeryRepo.GetCategoryNamebyId(catList);
+                    titlevalue = _stationeryRepo.GetCategoryNameById(catList);
                     for (int j = 0; j < dateList.Capacity; j++)
                     {
                         rto = new ReportTransferDTO();
@@ -344,8 +345,8 @@ namespace LUSSIS.Controllers
         public async Task<ActionResult> GenerateDepartmentTrendAnalysis(String supplier, String category, String flag)
         {
             SupervisorReportDTO model = new SupervisorReportDTO();
-            List<Department> departList = _employeeRepo.GetAllDepartment();
-            List<Category> categoryList = _stationeryRepo.GetAllCategoryList().ToList<Category>();
+            List<Department> departList = _departmentRepo.GetAll().ToList<Department>();
+            List<Category> categoryList = _categoryRepo.GetAll().ToList<Category>();
             model.Department = departList;
             model.Categories = categoryList;
             return View(model);

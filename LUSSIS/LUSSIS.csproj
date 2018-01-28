@@ -386,10 +386,12 @@
     <Compile Include="Repositories\Interface\IStationeryRepository.cs" />
     <Compile Include="Repositories\Interface\IStockAdjustmentRepository.cs" />
     <Compile Include="Repositories\Interface\ISupplierRepository.cs" />
+    <Compile Include="Repositories\Interface\IStationerySupplierRepository.cs" />
     <Compile Include="Repositories\PORepository.cs" />
     <Compile Include="Repositories\Repository.cs" />
     <Compile Include="Repositories\RequisitionRepository.cs" />
     <Compile Include="Repositories\StationeryRepository.cs" />
+    <Compile Include="Repositories\StationerySupplierRepository.cs" />
     <Compile Include="Repositories\StockAdjustmentRepository.cs" />
     <Compile Include="Repositories\SupplierRepository.cs" />
     <Compile Include="Startup.cs" />

@@ -31,6 +31,7 @@ namespace LUSSIS.Controllers
         private EmployeeRepository _employeeRepo = new EmployeeRepository();
         private DisbursementRepository _disbursementRepo = new DisbursementRepository();
         private StationeryRepository _stationeryRepo = new StationeryRepository();
+        private DepartmentRepository _departmentRepo = new DepartmentRepository();
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         private bool HasDelegate
@@ -133,7 +134,7 @@ namespace LUSSIS.Controllers
 
                 if ((self.JobTitle == "head" && !HasDelegate) || HasDelegate)
                 {//if (user is head and there is no delegate) or (user is currently delegate)
-                    if(self.DeptCode != _employeeRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum).DeptCode)
+                    if(self.DeptCode != _departmentRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum).DeptCode)
                     {//if user is trying to approve for other department
                         return View("_unauthoriseAccess");
                     }
@@ -488,7 +489,7 @@ namespace LUSSIS.Controllers
                     Employee self = _employeeRepo.GetCurrentUser();
                     if ((self.JobTitle == "head" && !HasDelegate) || HasDelegate)
                     {//if (user is head and there is no delegate) or (user is currently delegate)
-                        if (self.DeptCode != _employeeRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum).DeptCode)
+                        if (self.DeptCode != _departmentRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum).DeptCode)
                         {//if user is trying to approve for other department
                             return PartialView("_unauthoriseAccess");
                         }

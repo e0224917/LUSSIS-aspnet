@@ -21,6 +21,7 @@ namespace LUSSIS.Controllers
         private readonly PORepository _poRepo = new PORepository();
         private readonly SupplierRepository _supplierRepo = new SupplierRepository();
         private readonly CategoryRepository _categoryRepo = new CategoryRepository();
+        private readonly StationerySupplierRepository _stationerySupplierRepo = new StationerySupplierRepository();
 
         // GET: Stationeries
         public ActionResult Index(string searchString, string currentFilter, int? page)
@@ -46,11 +47,11 @@ namespace LUSSIS.Controllers
             }
 
             return View(stationeryAll);
-        } } }
+        }
 
 
         // GET: Stationeries/Details/5
-       /* public ActionResult Details(string id)
+        public ActionResult Details(string id)
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -77,7 +78,7 @@ namespace LUSSIS.Controllers
                     Transtype = "disburse",
                     Remarks = x.Disbursement.DeptCode
                 }).ToList();
-            var adjustList = _stockAdjustmentRepo.GetApprovedAdjVoucherByItem(id).Select(
+            var adjustList = _adjustmentRepo.GetApprovedAdjVoucherByItem(id).Select(
                 x => new StationeryTransactionDTO
                 {
                     Date = x.CreateDate,
@@ -99,13 +100,13 @@ namespace LUSSIS.Controllers
         {
             var stationeryDto = new StationeryDTO
             {
-                CategoryList = _stationeryRepo.GetCategories(),
+                CategoryList = _categoryRepo.GetCategories(),
                 SupplierList = _supplierRepo.GetSupplierList()
             };
             return View(stationeryDto);
         }
 
-        // POST: Stationeries/Create/
+        //POST: Stationeries/Create/
         [HttpPost]
         public ActionResult Create(StationeryDTO stationeryDto) //Create in MVC architecture
         {
@@ -113,16 +114,16 @@ namespace LUSSIS.Controllers
             {
                 //This is to check if supplier are unique
                 var theList = new List<string>
-                {
-                    stationeryDto.SupplierName1,
-                    stationeryDto.SupplierName2,
-                    stationeryDto.SupplierName3
-                };
+         {
+             stationeryDto.SupplierName1,
+             stationeryDto.SupplierName2,
+             stationeryDto.SupplierName3
+         };
                 var isUnique = theList.Distinct().Count() == theList.Count();
                 if (isUnique == false)
                 {
                     ViewBag.DistinctError = "Please select different suppliers";
-                    stationeryDto.CategoryList = _stationeryRepo.GetCategories();
+                    stationeryDto.CategoryList = _categoryRepo.GetCategories();
                     stationeryDto.SupplierList = _supplierRepo.GetSupplierList();
                     return View(stationeryDto);
                 }
@@ -153,7 +154,7 @@ namespace LUSSIS.Controllers
                     Price = stationeryDto.Price1,
                     Rank = 1
                 };
-                _stationeryRepo.AddStationerySupplier(sp1);
+                _stationerySupplierRepo.Add(sp1);
 
 
                 var sp2 = new StationerySupplier
@@ -163,7 +164,7 @@ namespace LUSSIS.Controllers
                     Price = stationeryDto.Price2,
                     Rank = 2
                 };
-                _stationeryRepo.AddStationerySupplier(sp2);
+                _stationerySupplierRepo.Add(sp2);
 
                 var sp3 = new StationerySupplier
                 {
@@ -172,16 +173,16 @@ namespace LUSSIS.Controllers
                     Price = stationeryDto.Price3,
                     Rank = 3
                 };
-                _stationeryRepo.AddStationerySupplier(sp3);
+                _stationerySupplierRepo.Add(sp3);
                 return RedirectToAction("Index");
             }
 
-            stationeryDto.CategoryList = _stationeryRepo.GetCategories();
+            stationeryDto.CategoryList = _categoryRepo.GetCategories();
             stationeryDto.SupplierList = _supplierRepo.GetSupplierList();
             return View(stationeryDto);
         }
 
-        // POST: Stationeries/Edit/
+        //dPOST: Stationeries/Edit/
         [HttpGet]
         public ActionResult Edit(string id) //Edit in MVC architecture
         {
@@ -199,7 +200,7 @@ namespace LUSSIS.Controllers
             var nDto = new StationeryDTO
             {
                 SupplierList = _supplierRepo.GetSupplierList(),
-                CategoryList = _stationeryRepo.GetCategories(),
+                CategoryList = _categoryRepo.GetCategories(),
                 ItemNum = id,
                 BinNum = st.BinNum,
                 CategoryId = st.CategoryId,
@@ -208,13 +209,13 @@ namespace LUSSIS.Controllers
                 ReorderQty = st.ReorderQty,
                 UnitOfMeasure = st.UnitOfMeasure
             };
-            var ss1 = _stationeryRepo.GetSSByIdRank(id, 1);
+            var ss1 = _stationerySupplierRepo.GetSSByIdRank(id, 1);
             nDto.SupplierName1 = ss1.SupplierId.ToString();
             nDto.Price1 = ss1.Price;
-            var ss2 = _stationeryRepo.GetSSByIdRank(id, 2);
+            var ss2 = _stationerySupplierRepo.GetSSByIdRank(id, 2);
             nDto.SupplierName2 = ss2.SupplierId.ToString();
             nDto.Price2 = ss2.Price;
-            var ss3 = _stationeryRepo.GetSSByIdRank(id, 3);
+            var ss3 = _stationerySupplierRepo.GetSSByIdRank(id, 3);
             nDto.SupplierName3 = ss3.SupplierId.ToString();
             nDto.Price3 = ss3.Price;
 
@@ -227,17 +228,17 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 var theList = new List<string>
-                {
-                    stationeryDto.SupplierName1,
-                    stationeryDto.SupplierName2,
-                    stationeryDto.SupplierName3
-                };
+         {
+             stationeryDto.SupplierName1,
+             stationeryDto.SupplierName2,
+             stationeryDto.SupplierName3
+         };
                 var isUnique = theList.Distinct().Count() == theList.Count();
                 if (isUnique == false)
                 {
                     //Check Supplier is different
                     ViewBag.DistinctError = "Please select different suppliers";
-                    stationeryDto.CategoryList = _stationeryRepo.GetCategories();
+                    stationeryDto.CategoryList = _categoryRepo.GetCategories();
                     stationeryDto.SupplierList = _supplierRepo.GetSupplierList();
                     return View(stationeryDto);
                 }
@@ -250,7 +251,7 @@ namespace LUSSIS.Controllers
                 st.UnitOfMeasure = stationeryDto.UnitOfMeasure;
                 st.BinNum = stationeryDto.BinNum;
                 _stationeryRepo.Update(st);
-                _stationeryRepo.DeleteStationerySUpplier(stationeryDto.ItemNum);
+                _stationerySupplierRepo.DeleteStationerySupplier(stationeryDto.ItemNum);
 
                 var sp1 = new StationerySupplier
                 {
@@ -259,7 +260,7 @@ namespace LUSSIS.Controllers
                     Price = stationeryDto.Price1,
                     Rank = 1
                 };
-                _stationeryRepo.AddStationerySupplier(sp1);
+                _stationerySupplierRepo.Add(sp1);
 
                 var sp2 = new StationerySupplier
                 {
@@ -268,7 +269,7 @@ namespace LUSSIS.Controllers
                     Price = stationeryDto.Price2,
                     Rank = 2
                 };
-                _stationeryRepo.AddStationerySupplier(sp2);
+                _stationerySupplierRepo.Add(sp2);
 
                 var sp3 = new StationerySupplier
                 {
@@ -277,48 +278,23 @@ namespace LUSSIS.Controllers
                     Price = stationeryDto.Price3,
                     Rank = 3
                 };
-                _stationeryRepo.AddStationerySupplier(sp3);
+                _stationerySupplierRepo.Add(sp3);
 
                 return RedirectToAction("Index");
             }
 
-            stationeryDto.CategoryList = _stationeryRepo.GetCategories();
+            stationeryDto.CategoryList = _categoryRepo.GetCategories();
             stationeryDto.SupplierList = _supplierRepo.GetSupplierList();
             return View(stationeryDto);
         }
 
-        // GET: Stationeries/Delete/5
-        //public ActionResult Delete(string id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Stationery stationery = db.Stationeries.Find(id);
-        //    if (stationery == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(stationery);
-        //}
-
-        //// POST: Stationeries/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult DeleteConfirmed(string id)
-        //{
-        //    Stationery stationery = db.Stationeries.Find(id);
-        //    db.Stationeries.Remove(stationery);
-        //    db.SaveChanges();
-        //    return RedirectToAction("Index");
-        //}
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 _stationeryRepo.Dispose();
-                _stockAdjustmentRepo.Dispose();
+                _adjustmentRepo.Dispose();
                 _supplierRepo.Dispose();
                 _poRepo.Dispose();
                 _disbursementRepo.Dispose();
@@ -326,5 +302,32 @@ namespace LUSSIS.Controllers
 
             base.Dispose(disposing);
         }
+        //GET: Stationeries/Delete/5
+        //public ActionResult Delete(string id)
+        //       {
+        //           if (id == null)
+        //           {
+        //               return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //           }
+        //           Stationery stationery = db.Stationeries.Find(id);
+        //           if (stationery == null)
+        //           {
+        //               return HttpNotFound();
+        //           }
+        //           return View(stationery);
+        //       }
+
+        //       POST: Stationeries/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //       [ValidateAntiForgeryToken]
+        //       public ActionResult DeleteConfirmed(string id)
+        //       {
+        //           Stationery stationery = db.Stationeries.Find(id);
+        //           db.Stationeries.Remove(stationery);
+        //           db.SaveChanges();
+        //           return RedirectToAction("Index");
     }
-}*/
+
+
+}
+
