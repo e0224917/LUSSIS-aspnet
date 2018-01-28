@@ -88,7 +88,11 @@
 
                         @if (@Model.CurrentDelegate.StartDate > DateTime.Today)
                         {
-                            <h6 class="text-muted">Starting in @((int) (Model.CurrentDelegate.StartDate.Subtract(DateTime.Today)).TotalDays) day(s)</h6>
+                            <h6 class="text-muted">Starting in @((int)(Model.CurrentDelegate.StartDate.Subtract(DateTime.Today)).TotalDays) day(s)</h6>
+                        }
+                        else
+                        {
+                                <h6 class="text-muted">Ending in @((int)(Model.CurrentDelegate.EndDate.Subtract(DateTime.Today)).TotalDays) day(s)</h6>
                         }
 
                     </div>
@@ -126,7 +130,7 @@
 
                 </div>
                 <div class="card-footer text-center">
-                    @using (Html.BeginForm("DeleteDelegateFromDB", "RepAndDelegate", FormMethod.Post))
+                    @using (Html.BeginForm("DeleteDelegate", "RepAndDelegate", FormMethod.Post))
                     {
                         <input type="submit" class="btn btn-secondary" value="Revoke Delegate" style="width: 100%" disabled=""/>
                     }
