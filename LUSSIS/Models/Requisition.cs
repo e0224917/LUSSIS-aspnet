@@ -17,8 +17,10 @@ namespace LUSSIS.Models
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequisitionId { get; set; }
+
         [Required]
         public int RequisitionEmpNum { get; set; }
+
         [Required]
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
