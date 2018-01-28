@@ -97,7 +97,7 @@ namespace LUSSIS.Repositories
                 r.RequestEmployee.FirstName.ToLower().Contains(term) ||
                 r.RequestEmployee.LastName.ToLower().Contains(term) || r.Status.ToLower().Contains(term) ||
                 r.Stationery.Description.ToLower().Contains(term) || r.Quantity.ToString().Contains(term) ||
-                r.Reason.ToLower().Contains(term) || r.Remark.Contains(term)).ToList();
+                r.Reason.ToLower().Contains(term) || r.Remark.Contains(term)).Reverse().ToList();
             return adjustments;
         }
 
