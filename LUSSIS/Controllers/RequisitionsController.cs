@@ -12,8 +12,6 @@ using LUSSIS.Exceptions;
 using LUSSIS.Models.WebDTO;
 using PagedList;
 using LUSSIS.Emails;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNet.Identity;
 using LUSSIS.CustomAuthority;
 using System.Text;
 using System.Data;
@@ -27,11 +25,11 @@ namespace LUSSIS.Controllers
     public class RequisitionsController : Controller
     {
 
-        private RequisitionRepository _requistionRepo = new RequisitionRepository();
-        private EmployeeRepository _employeeRepo = new EmployeeRepository();
-        private DisbursementRepository _disbursementRepo = new DisbursementRepository();
-        private StationeryRepository _stationeryRepo = new StationeryRepository();
-        private DepartmentRepository _departmentRepo = new DepartmentRepository();
+        private readonly RequisitionRepository _requistionRepo = new RequisitionRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
+        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
+        private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         private bool HasDelegate
@@ -558,15 +556,5 @@ namespace LUSSIS.Controllers
             return PartialView("_unuthoriseAccess");
         }
 
-       
-        private class RetrievalItemDTO
-        {
-            public string BinNum { get; set; }
-            public string Description { get; set; }
-            public string UnitOfMeasure { get; set; }
-            public int RequestedQty { get; set; }
-            public int AvailableQty{ get; set; }
-
-    }
     }
 }
