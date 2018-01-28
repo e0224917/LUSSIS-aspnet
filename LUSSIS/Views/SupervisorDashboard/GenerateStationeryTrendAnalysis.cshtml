@@ -4,36 +4,44 @@
     ViewBag.Title = "GenerateReport";
 }
 
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+<script>
+    $(function () {
+        $("#datepicker").datepicker();
+    });
+</script>
+
 
 <h2>GenerateReport</h2>
 <script>
 
-    window.onload = function ()
-    {
-        var flag = @Html.Raw(Json.Encode(ViewBag.flag));
-        var selected =@Html.Raw(Json.Encode(ViewBag.selected));
+	window.onload = function ()
+	{
+		var flag = @Html.Raw(Json.Encode(ViewBag.flag));
+		var selected =@Html.Raw(Json.Encode(ViewBag.selected));
 
-        document.getElementById(flag).checked = true;
+		document.getElementById(flag).checked = true;
 
-        if (flag == "One_supplier") {
-            $('#hid_supplier').val(selected);
-            document.getElementById("notshowCategory").style.display = "none";
-            document.getElementById("notshowSupplier").style.display = "block";
-        }
-        else {
-            $('#hid_category').val(selected);
-            document.getElementById("notshowCategory").style.display = "block";
-            document.getElementById("notshowSupplier").style.display = "none";
-        }
-    }
+		if (flag == "One_supplier") {
+			$('#hid_supplier').val(selected);
+			document.getElementById("notshowCategory").style.display = "none";
+			document.getElementById("notshowSupplier").style.display = "block";
+		}
+		else {
+			$('#hid_category').val(selected);
+			document.getElementById("notshowCategory").style.display = "block";
+			document.getElementById("notshowSupplier").style.display = "none";
+		}
+	}
 
 
 
 </script>
 
-
+<div class="alert alert-danger alert-dismissable fade show" id="showError" style="display:none;">Cannot Generate Trend Analysis. Your selected data is not incomplete</div>
 <div class="row">
     <div class="col-md-3">
+
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-left">
@@ -48,157 +56,123 @@
                 </div>
             </div>
         </div>
-        <br />
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-left">
                     <div class="card text-black">
-
-                        <div class="card-body">
-
-                            <input type="radio" id="This_month" value="This_month" name="date_range" onclick="handleClick(this)" /><label for="This_month">This Month</label>
-                            <br />
-                            <input type="radio" id="This_year" value="This_year" name="date_range" onclick="handleClick(this)" /><label for="This_year">This Year</label>
-                            <br />
-                            <input type="radio" id="Past_Three_Months" value="Past_Three_Months" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Past Three Months</label>
-                            <br />
-                            <input type="radio" id="Past_Six_Months" value="Past_Six_Months" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Past six Months</label>
-                            <br />
-                            <input type="radio" id="Custom_Range" value="Custom_Range" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Custom Range</label>
-                            <br />
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br />
-        <br />
-        <div class="bs-component">
-            <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
-                <div class="col-xs-12 text-left">
-                    <div class="card text-black">
-
+                        <p>Select Type of chart</p>
                         <div class="card-body">
 
                             <input type="checkbox" name="chart_or_table" id="BarChart" value="BarChart" onclick="handleClick(this)" /><label for="BarChart">Barchart</label><br />
 
-                            <input type="checkbox" name="chart_or_table" id="Table" value="Table" onclick="handleClick(this)" /><label for="Table">Table</label><br />
+                            <input type="checkbox" name="chart_or_table" id="Pie" value="Pie" onclick="handleClick(this)" /><label for="Table">PieChart</label><br />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-6" id="notshowSupplier" style="display:none;">
-                <h6>Select Supplier</h6>
-                <select id="select_supplier" size="8" onchange="supplierChange()">
-                    <option value="0">All</option>
-                    @foreach (var sup in Model.Suppliers)
-            {
+    <div class="col-md-4">
+        <div style="display:none;" id="notshowSupplier">
+            <p>Select Supplier</p>
+            <select id="select_supplier" size="8" onchange="supplierChange()" style="width:230px;">
+
+                @foreach (var sup in Model.Suppliers)
+                    {
                 <option value="@sup.SupplierId">
                     @sup.SupplierName
                 </option>
-    }
-                </select>
-                <br />
-                <br />
-                @if (ViewBag.category == null)
-        {
-        }
-        else
-        {
-            <script>    document.getElementById("notshowCategory").style.display = "none";</script>
-    foreach (var cat in ViewBag.category)
-    {
-        <input type="checkbox" class="chk_category" id="@cat.CategoryId" value="@cat.CategoryId" />
-        @cat.CategoryName
-        <br />
-}
-}
+                     }
+            </select>
+        </div>
+        <div style="display:none;" id="notshowCategory">
+            <p>Select Category</p>
+            <select id="select_category" size="8" onchange="categoryChange()" style="width:170px;">
 
-            </div>
-            <div class="col-md-6" id="notshowCategory" style="display:none;">
-                <h6>Select Category</h6>
-
-                <select id="select_category" size="8" onchange="categoryChange()">
-                    <option value="0">All</option>
-                    @foreach (var cat in Model.Categories)
+                @foreach (var cat in Model.Categories)
             {
                 <option value="@cat.CategoryId">
                     @cat.CategoryName
                 </option>
-    }
-                </select>
-
-                <br />
-                @if (ViewBag.supplier == null)
-        {
         }
-        else
-        {
-            <script>    document.getElementById("notshowSupplier").style.display = "none";</script>
-
-    foreach (var sup in ViewBag.supplier)
-    {
-        <input type="checkbox" class="chk_supplier" id="@sup.SupplierId" value="@sup.SupplierId" />
-        @sup.SupplierName
-        <br />
-}
-}
-
+            </select>
+        </div>
+        <div>
+            <div style="margin-right:60px;">
+                <p>  Select date </p>
+                From &nbsp;<input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-in" />
+                <br />
+                To &nbsp;<input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-inline" />
 
             </div>
-            <input type="text" name="birthdate" value="10/24/1984" />
-
-
-
-            <script type="text/javascript">
-
-                $(function () {
-
-                    $('input[name="birthdate"]').daterangepicker({
-
-                        singleDatePicker: true,
-
-                        showDropdowns: true
-
-                    },
-
-                        function (start, end, label) {
-
-                            var years = moment().diff(start, 'years');
-
-                            alert("You are " + years + " years old.");
-
-                        });
-
-                });
-
-            </script>
         </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <p>
+            </p>
+            <p></p>
+            @if (ViewBag.supplier == null)
+            {
+            }
+            else
+            {
+                <script>document.getElementById("notshowSupplier").style.display = "none";</script>
+
+                foreach (var sup in ViewBag.supplier)
+                {
+                    <input type="checkbox" class="chk_supplier" id="@sup.SupplierId" value="@sup.SupplierId" />
+                    @sup.SupplierName
+                    <br />
+                }
+            }
+        </div>
+        <div>
+            @if (ViewBag.category == null)
+            {
+            }
+            else
+            {
+                <script>    document.getElementById("notshowCategory").style.display = "none";</script>
+                foreach (var cat in ViewBag.category)
+                {
+                    <input type="checkbox" class="chk_category" id="@cat.CategoryId" value="@cat.CategoryId" />
+                    @cat.CategoryName
+                    <br />
+                }
+            }
+
+        </div>
+   
 
     </div>
+   
+
 </div>
+
+<input type="submit" value="Generate" id="Generate" onclick="Generate_click()" class="btn btn-success" />
+
+
 <input type="hidden" id="hid_supplier" name="supplier" />
 <input type="hidden" id="hid_category" name="category" />
-<input type="hidden" id="hid_date" name="date" />
-<input type="submit" value="Generate" id="Generate" onclick="Generate_click()" />
-<input type="hidden" id="barchart" name="barchart" />
-<input type="hidden" id="table" name="table" />
 
+<input type="hidden" id="hid_toDate" name="toDate" />
+<input type="hidden" id="hid_fromDate" name="fromDate" />
+
+<input type="hidden" id="barchart" name="barchart" />
+
+<input type="hidden" id="pie" name="pie" />
 <div class="row">
     <div class="col-md-6">
-        <div id="chart_div"></div>
+        <div id="pie_div"></div>
     </div>
     <div class="col-md-6">
         <div id="bar_div"></div>
     </div>
+
 </div>
 
-
+@Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js")
 @Scripts.Render("https://www.gstatic.com/charts/loader.js")
 <script>
 
@@ -214,7 +188,7 @@
     }
     function categoryChange() {
         var value = $('#select_category').val();
-
+        $('#hid_category').val($("#select_category :selected").text());
         if (value != '0') {
             var newLink = '/SupervisorDashboard/GenerateStationeryTrendAnalysis?supplier=a&&category=' + value + '&&flag=One_category';
             window.location.replace(newLink);
@@ -234,20 +208,13 @@
             document.getElementById("notshowSupplier").style.display = "none";
             document.getElementById("notshowCategory").style.display = "block";
         }
-        if (check == "Custom_Range") {
-            document.getElementById("notshowDate").style.display = "block";
 
-        }
-        if (check == "This_month" || check == "This_year" || check == "Past_Three_Months" || check == "Past_Six_Months") {
-            $('#hid_date').val(check);
-            document.getElementById("notshowDate").style.display = "none";
 
-        }
         if (check == "BarChart") {
             $('#barchart').val(true);
         }
-        if (check == "Table") {
-            $('#table').val(true);
+        if (check == "Pie") {
+            $('#pie').val(true);
         }
 
     }
@@ -275,18 +242,21 @@
         var supplier_values = $('#hid_supplier').val();
         var category_values = $('#hid_category').val();
 
-        var date = $('#hid_date').val();
-        var barchart = $('#barchart').val();
-        var table = $('#table').val();
+
         var selected_supplier = getSupplierCheckList();
         var selected_category = getCategoryCheckList();
 
+        var fromDate = $('#hid_fromDate').val();
+        var toDate = $('#hid_toDate').val();
+        
 
-
-
+        var barchart = $('#barchart').val();
+      
+        var pie = $('#pie').val();
         var input1;
         var input2;
-
+        alert(pie);
+        alert(barchart);
         if (supplier_values == null) {
             input1 = selected_supplier;
             input2 = category_values;
@@ -296,25 +266,43 @@
             input2 = selected_category
         }
 
-        alert(input1);
-        alert(input2);
-        alert(date);
-        alert(barchart);
-        alert(table);
-        getData(input1, input2, date, barchart, table);
+        if (input1 != "" && input2 != "" && fromDate != "" && toDate != "" && (barchart != "" || pie != ""))
+        {
+
+                getData(input1, input2, fromDate, toDate, barchart,pie);
+
+                $("#showError").hide();
+            
+        }
+        else {
+
+            $("#showError").show();
+        }
+
 
     }
-    function getData(input_supplier, input_category, date, barchart, table) {
+    function getData(input_supplier, input_category, fromDate, toDate,barchart,pie) {
         $.ajax({
             type: 'GET',
-            url: '/SupervisorDashboard/GetStationeryReportJSON?supplier_values=' + input_supplier + '&&category_values=' + input_category + '&&date=' + date,
+            url: '/SupervisorDashboard/GetStationeryReportJSON?supplier=' + input_supplier + '&&category=' + input_category + '&&from=' + fromDate + '&&to=' + toDate,
             success: function (chartsdata) {
                 google.charts.load('current', { 'packages': ['corechart'] });
-                google.charts.setOnLoadCallback(function () {
-                    DrawPieChartLoad(chartsdata)
+                if (barchart)
+                {
+                    google.charts.setOnLoadCallback(function () {
+                        DrawBarChartLoad(chartsdata);
+                    });
+
+                }
+                if (pie)
+                {
+                    google.charts.setOnLoadCallback(function () {
+                        DrawPieChartLoad(chartsdata)
 
 
-                });
+                    });
+                }
+              
 
             },
             error: function () {
@@ -325,6 +313,7 @@
 
 
     function DrawPieChartLoad(chartsdata) {
+       
         var first = chartsdata.ListOne;
         var second = chartsdata.ListTwo;
 
@@ -343,7 +332,7 @@
         }
 
         // Instantiate and draw our chart, passing in some options
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.PieChart(document.getElementById('pie_div'));
 
         //Draw pie chart command with data and chart options
         chart.draw(data,
@@ -357,26 +346,94 @@
 
     }
 
+    function DrawBarChartLoad(chartsdata) {
+        var first = chartsdata.ListOne;
+        var second = chartsdata.ListTwo;
 
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('string', 'CategoryName');
+        data.addColumn('number', 'PostCount');
+
+        //Loop through each list data
+
+        for (var i = 0; i < first.length; i++) {
+            if (second[i] != 0) {
+                data.addRow([first[i], second[i]]);
+            }
+        }
+        var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
+
+
+        chart.draw(data,
+            {
+                title: "Department Trend Analysis",
+                position: "top",
+                fontsize: "25px",
+                width: "400",
+                height: "600",
+            });
+
+    }
 
 
 
 </script>
-<script>
-    var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-    $('#startDate').datepicker({
-        uiLibrary: 'bootstrap4',
-        iconsLibrary: 'fontawesome',
-        minDate: today,
-        maxDate: function () {
-            return $('#endDate').val();
-        }
-    });
-    $('#endDate').datepicker({
-        uiLibrary: 'bootstrap4',
-        iconsLibrary: 'fontawesome',
-        minDate: function () {
-            return $('#startDate').val();
-        }
-    });
-</script>
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#from, #to').change(validate);
+
+            function validate() {
+                var from = $('#from').val();
+                var to = $('#to').val();
+                if (from.length > 0 && to.length > 0) {
+                    $('#hid_fromDate').val($('#from').val());
+                    $('#hid_toDate').val($('#to').val());
+
+                }
+            };
+
+            $(function () {
+                from = $("#from")
+                    .datepicker({
+                        dateFormat: 'dd/mm/yy',
+                        changeMonth: true,
+                        numberOfMonths: 1,
+                        onClose: function (selectedDate) {
+                            $("#to").datepicker("option", "minDate", selectedDate);
+                        }
+
+                    })
+                    .on("change", function () {
+                        to.datepicker("option", getDate(this));
+                    }),
+                    to = $("#to").datepicker({
+                        dateFormat: 'dd/mm/yy',
+                        changeMonth: true,
+                        numberOfMonths: 1,
+                        onClose: function (selectedDate) {
+                            $("#from").datepicker("option", "maxDate", selectedDate);
+                        }
+
+                    })
+                        .on("change", function () {
+                            from.datepicker("option", getDate(this));
+                        });
+
+                function getDate(element) {
+                    var date;
+                    try {
+                        date = $.datepicker.parseDate("dd/mm/yy", element.value);
+                    } catch (error) {
+                        date = null;
+                    }
+
+                    return date;
+                }
+            });
+        });
+    </script>
+}
+

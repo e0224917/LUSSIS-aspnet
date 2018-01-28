@@ -5,8 +5,7 @@
 }
 
 
-@Scripts.Render("https://code.jquery.com/jquery-1.12.4.js")
-@Scripts.Render("https://code.jquery.com/ui/1.12.1/jquery-ui.js")
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <script>
     $(function () {
         $("#datepicker").datepicker();
@@ -14,44 +13,18 @@
 </script>
 <h2>GenerateReport</h2>
 
+<div class="alert alert-danger alert-dismissable fade show" id="showError" style="display:none;">Cannot Generate Trend Analysis. Your selected data is not incomplete</div>
+
 <div class="row">
     <div class="col-md-3">
-        <br />
+        <p>Select Chart</p>
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-left">
                     <div class="card text-black">
 
                         <div class="card-body">
-
-                            <input type="radio" id="This_month" value="This_month" name="date_range" onclick="handleClick(this)" /><label for="This_month">This Month</label>
-                            <br />
-                            <input type="radio" id="This_year" value="This_year" name="date_range" onclick="handleClick(this)" /><label for="This_year">This Year</label>
-                            <br />
-                            <input type="radio" id="Past_Three_Months" value="Past_Three_Months" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Past Three Months</label>
-                            <br />
-                            <input type="radio" id="Past_Six_Months" value="Past_Six_Months" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Past six Months</label>
-                            <br />
-                            <input type="radio" id="Custom_Range" value="Custom_Range" name="date_range" onclick="handleClick(this)" /><label for="Supplier">Custom Range</label>
-                            <br />
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br />
-        <br />
-        <div class="bs-component">
-            <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
-                <div class="col-xs-12 text-left">
-                    <div class="card text-black">
-
-                        <div class="card-body">
-
                             <input type="checkbox" name="chart_or_table" id="BarChart" value="BarChart" onclick="handleClick(this)" /><label for="BarChart">Barchart</label><br />
-
-                            <input type="checkbox" name="chart_or_table" id="Table" value="Table" onclick="handleClick(this)" /><label for="Table">Table</label><br />
 
                             <input type="checkbox" name="chart_or_table" id="Pie" value="Pie" onclick="handleClick(this)" /><label for="Table">Pie Chart</label><br />
                         </div>
@@ -60,83 +33,80 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="row">
-            <div class="col-md-6">
-                <h6>Select Department</h6>
-                <select id="select_depart" size="8" onchange="departChange()" multiple>
-                    <option value="0">All</option>
-                    @foreach (var sup in Model.Department)
-                    {
-                        <option value="@sup.DeptCode">
-                            @sup.DeptName
-                        </option>
-                    }
-                </select>
-                <br />
-                <br />
+            <div class="col-md-5">
+                <div>
+                    <p>Select Department</p>
+                    <select id="select_depart" size="7" multiple onchange="departChange()" style="width:210px;">
+                        <option value="0">All</option>
+                        @foreach (var sup in Model.Department)
+                        {
+                            <option value="@sup.DeptCode">
+                                @sup.DeptName
+                            </option>
+                        }
+                    </select>
+                </div>
 
 
             </div>
-            <div class="col-md-6" id="notshowCategory">
-                <h6>Select Category</h6>
+            <div class="col-md-4" id="notshowCategory">
+                <div style="margin-left:0px;margin-right:0px">
+                    <p>Select Category</p>
+                    <select id="select_category" multiple size="12" onchange="categoryChange()" style="width:160px;">
+                        <option value="0">All</option>
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat.CategoryId">
+                                @cat.CategoryName
+                            </option>
+                        }
+                    </select>
 
-                <select id="select_category" multiple size="8" onchange="categoryChange()">
-                    <option value="0">All</option>
-                    @foreach (var cat in Model.Categories)
-                    {
-                        <option value="@cat.CategoryId">
-                            @cat.CategoryName
-                        </option>
-                    }
-                </select>
-
-
-
+                </div>
             </div>
+            <div class="col-md-3" id="notshowDate">
 
-            <input type="text" name="daterange" value="01/01/2015 - 01/31/2015" />
+                <div style="width:150px;margin-left:50px;margin-right:50px">
+                    <p>  Select date </p>
+                    From &nbsp;<input type="text" id="from" name="from" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-in" />
+                    <br />
+                    To &nbsp;<input type="text" id="to" name="to" onkeydown="return false" placeholder="DD/MM/YYYY" class="form-control d-inline" />
 
-
-
-            <script type="text/javascript">
-
-                $(function () {
-
-                    $('input[name="daterange"]').daterangepicker();
-
-                });
-
-            </script>
-            <div class="col-md-4" id="notshowDate" style="display:none;">
-                <p>Date: <input type="text" id="datepicker"></p>
+                </div>
             </div>
 
         </div>
 
     </div>
 </div>
+
+<input type="submit" value="Generate" id="Generate" onclick="Generate_click()" class="btn btn-success" />
+
 <input type="hidden" id="hid_depart" name="supplier" />
 <input type="hidden" id="hid_category" name="category" />
-<input type="hidden" id="hid_date" name="date" />
-<input type="submit" value="Generate" id="Generate" onclick="Generate_click()" />
+
+<input type="hidden" id="hid_date" name="Date" />
+<input type="hidden" id="hid_toDate" name="toDate" />
+<input type="hidden" id="hid_fromDate" name="fromDate" />
 <input type="hidden" id="barchart" name="barchart" />
 <input type="hidden" id="table" name="table" />
 <input type="hidden" id="pie" name="pie" />
 <div class="row">
     <div class="col-md-6">
-        <div id="chart_div"></div>
+        <div id="pie_div"></div>
     </div>
     <div class="col-md-6">
         <div id="bar_div"></div>
     </div>
+   
+</div>
 
-</div>
-<div class="row">
-    <div class="col-md-6">
-        <div id="pie_div"></div>
-    </div>
-</div>
+
+<br />
+<br />
+
 
 
 @Scripts.Render("https://www.gstatic.com/charts/loader.js")
@@ -159,23 +129,10 @@
 
     function handleClick(myRadio) {
         var check = $(myRadio).val();
-
-
-        if (check == "Custom_Range") {
-            document.getElementById("notshowDate").style.display = "block";
-
-        }
-        if (check == "This_month" || check == "This_year" || check == "Past_Three_Months" || check == "Past_Six_Months") {
-            $('#hid_date').val(check);
-            document.getElementById("notshowDate").style.display = "none";
-
-        }
         if (check == "BarChart") {
             $('#barchart').val(true);
         }
-        if (check == "Table") {
-            $('#table').val(true);
-        }
+       
         if (check == "Pie") {
             $('#pie').val(true);
         }
@@ -187,54 +144,70 @@
         var depart_values = $('#hid_depart').val();
         var category_values = $('#hid_category').val();
 
+        var fromDate = $('#hid_fromDate').val();
+        var toDate = $('#hid_toDate').val();
         var date = $('#hid_date').val();
         var barchart = $('#barchart').val();
-        var table = $('#table').val();
+       
         var pie = $('#pie').val();
 
+       
         alert(depart_values);
         alert(category_values);
+        alert(fromDate);
+        alert(toDate);
+        alert(barchart);
+        alert(pie);
+        if (depart_values == ""||category_values == "" ||fromDate == "" ||toDate == "")
+        {
+            $("#showError").show();
 
-        getData(depart_values, category_values, date, barchart, table, pie);
+        }
+        else {
+            getData(depart_values,category_values, fromDate, toDate, barchart, pie);
+          
+        }
+
+
     }
 
-    function getData(depart, category, date, barchart, table, pie) {
+    function getData(depart, category, fromdate, todate, barchart, pie)
+    {
+       
         $.ajax({
             type: 'GET',
-            url: '/SupervisorDashboard/GetDepartmentReportJSON?depart=' + depart + '&&cat=' + category + '&&date=' + date,
-            success: function (chartsdata) {
-
+            url: '/SupervisorDashboard/GetDepartmentReportJSON?depart=' + depart + '&&cat=' + category + '&&to=' + todate + '&&from=' + fromdate,
+            success: function (chartsdata)
+            {
                 google.charts.load('current', { 'packages': ['corechart'] });
-                if (table) {
-                    google.charts.setOnLoadCallback(function () {
-                        DrawStackChart();
-                    });
-
-                }
-
                 if (barchart) {
-                    google.charts.setOnLoadCallback(function () {
+                  
+                    google.charts.setOnLoadCallback(function ()
+                    {
                         DrawBarChartLoad(chartsdata);
                     });
 
                 }
+                if (pie) {
+                    google.charts.setOnLoadCallback(function ()
+                    {
 
-                google.charts.setOnLoadCallback(function () {
+                        DrawPieChartLoad(chartsdata);
+                    });
 
-                    DrawPieChartLoad(chartsdata);
-
-
-                });
-
+                }
+               
+               
             },
             error: function () {
                 alert("Error loading data! Please try again.");
             }
         });
     }
-
+   
 
     function DrawPieChartLoad(chartsdata) {
+      
         var first = chartsdata.ListOne;
         var second = chartsdata.ListTwo;
 
@@ -253,7 +226,7 @@
         }
 
         // Instantiate and draw our chart, passing in some options
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.PieChart(document.getElementById('pie_div'));
 
         //Draw pie chart command with data and chart options
         chart.draw(data,
@@ -267,6 +240,7 @@
 
     }
     function DrawBarChartLoad(chartsdata) {
+        alert("within bar chart");
         var first = chartsdata.ListOne;
         var second = chartsdata.ListTwo;
 
@@ -295,51 +269,64 @@
             });
 
     }
-
-    function DrawStackChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Nescafe Instant');
-        data.addColumn('number', 'Folgers Instant');
-        data.addColumn('number', 'Nescafe Beans');
-        data.addColumn('number', 'Folgers Beans');
-        data.addRows([
-            ['2001', 321, 621, 816, 319],
-            ['2002', 163, 231, 539, 594],
-            ['2003', 125, 819, 123, 578],
-            ['2004', 197, 536, 613, 298]
-        ]);
-
-        // Set chart options
-        var options = {
-            isStacked: true,
-            width: 800,
-            height: 600,
-            chart: {
-                title: 'Year-by-year coffee consumption',
-                subtitle: 'This data is not real'
-            },
-            vAxis: {
-                viewWindow: {
-                    min: 0,
-                    max: 1000
-                }
-            },
-            series: {
-                2: {
-                    targetAxisIndex: 1
-                },
-                3: {
-                    targetAxisIndex: 1
-                }
-            }
-        };
-
-
-        var chart = new google.charts.Bar(document.getElementById('pie_div'));
-        chart.draw(data, google.charts.Bar.convertOptions(options));
-
-    }
 </script>
 
 
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#from, #to').change(validate);
+
+            function validate() {
+                var from = $('#from').val();
+                var to = $('#to').val();
+                if (from.length > 0 && to.length > 0)
+                {
+                    $('#hid_fromDate').val($('#from').val());
+                    $('#hid_toDate').val($('#to').val());
+
+                }
+            };
+
+            $(function () {
+                from = $("#from")
+                    .datepicker({
+                        dateFormat: 'dd/mm/yy',
+                        changeMonth: true,
+                        numberOfMonths: 1,
+                        onClose: function (selectedDate) {
+                            $("#to").datepicker("option", "minDate", selectedDate);
+                        }
+
+                    })
+                    .on("change", function () {
+                        to.datepicker("option", getDate(this));
+                    }),
+                    to = $("#to").datepicker({
+                        dateFormat: 'dd/mm/yy',
+                        changeMonth: true,
+                        numberOfMonths: 1,
+                        onClose: function (selectedDate) {
+                            $("#from").datepicker("option", "maxDate", selectedDate);
+                        }
+
+                    })
+                        .on("change", function () {
+                            from.datepicker("option", getDate(this));
+                        });
+
+                function getDate(element) {
+                    var date;
+                    try {
+                        date = $.datepicker.parseDate("dd/mm/yy", element.value);
+                    } catch (error) {
+                        date = null;
+                    }
+
+                    return date;
+                }
+            });
+        });
+    </script>
+}

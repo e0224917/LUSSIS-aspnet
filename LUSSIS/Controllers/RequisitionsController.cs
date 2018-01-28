@@ -18,7 +18,7 @@ using LUSSIS.CustomAuthority;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using CrystalDecisions.CrystalReports.Engine;
+
 using System.IO;
 
 namespace LUSSIS.Controllers
@@ -52,7 +52,7 @@ namespace LUSSIS.Controllers
             var req = _requistionRepo.GetPendingListForHead(deptCode);
 
             //If user is head and there is delegate
-            if (_employeeRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
+            if (User.IsInRole("head") && HasDelegate)
             {
                 ViewBag.HasDelegate = HasDelegate;
             }
@@ -67,7 +67,7 @@ namespace LUSSIS.Controllers
         {
 
             //If user is head and there is delegate
-            if (_employeeRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
+            if (User.IsInRole("head") && HasDelegate)
             {
                 ViewBag.HasDelegate = HasDelegate;
             }
@@ -122,7 +122,7 @@ namespace LUSSIS.Controllers
         }
 
 
-        //TODO: Add authroization - DepartmentHead or Delegate only
+        //TODO: Add authorization - DepartmentHead or Delegate only
         [CustomAuthorize("head", "staff")]
         [HttpPost]
         public async Task<ActionResult> Details([Bind(Include = "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status,DeptCode")] Requisition requisition, string SubmitButton)
@@ -466,11 +466,12 @@ namespace LUSSIS.Controllers
             };
             var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
             var isDelegated = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
-            if ((_employeeRepo.GetCurrentUser().JobTitle == "head" && !HasDelegate) || isDelegated)
+            if ((User.IsInRole("head") && !HasDelegate) || isDelegated)
             {
                 return PartialView("_ApproveReq", reqDTO);
             }
-            else { return PartialView("_hasDelegate"); }
+
+            return PartialView("_hasDelegate");
         }
 
 
@@ -546,27 +547,7 @@ namespace LUSSIS.Controllers
             return PartialView("_unuthoriseAccess");
         }
 
-        public ActionResult PrintRetrieval()
-        {
-            DataSet ds = new DataSet();
-            ReportDocument rd = new ReportDocument();
-            rd.Load(Path.Combine(Server.MapPath("~/Reports/RetrieveCrystalReport.rpt")));
-            rd.SetDataSource(_requistionRepo.GetRetrievalInPorcess()
-                .Select(x=>new RetrievalItemDTO
-                {
-                    BinNum=x.BinNum,
-                    Description=x.Description,
-                    UnitOfMeasure=x.UnitOfMeasure,
-                    RequestedQty= x.RequestedQty??0,
-                    AvailableQty=x.AvailableQty??0})
-                .ToList());
-            Response.Buffer = false;
-            Response.ClearContent();
-            Response.ClearHeaders();
-            Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-            stream.Seek(0, SeekOrigin.Begin);
-            return File(stream, "application/pdf");
-        }
+       
         private class RetrievalItemDTO
         {
             public string BinNum { get; set; }

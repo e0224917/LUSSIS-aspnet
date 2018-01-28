@@ -1,6 +1,7 @@
 ﻿using System;
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -199,8 +200,9 @@ namespace LUSSIS.Repositories
 
         public List<double> GetAmountBySupplierList(List<String> supplierIds, String category, String from, String to)
         {
-            var fromDate = Convert.ToDateTime(from).Date;
-            var toDate = Convert.ToDateTime(to).Date;
+            DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            DateTime toDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            double total = 0;
 
             var resultList = new List<double>();
             var catId = Convert.ToInt32(category);
