@@ -13,7 +13,7 @@ namespace LUSSIS.Controllers.WebAPI
 {
     public class AccountController : ApiController
     {
-        private readonly EmployeeRepository _eRepo = new EmployeeRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         [HttpGet]
@@ -37,7 +37,7 @@ namespace LUSSIS.Controllers.WebAPI
 
                 if (result != SignInStatus.Success) return BadRequest("Wrong email or password. Please try again.");
 
-                var emp = _eRepo.GetEmployeeByEmail(model.Email);
+                var emp = _employeeRepo.GetEmployeeByEmail(model.Email);
 
                 var isDelegated = false;
 

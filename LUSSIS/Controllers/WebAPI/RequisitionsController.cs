@@ -13,13 +13,13 @@ namespace LUSSIS.Controllers.WebAPI
 {
     public class RequisitionsController : ApiController
     {
-        private readonly RequisitionRepository _repo = new RequisitionRepository();
+        private readonly RequisitionRepository _requistionRepo = new RequisitionRepository();
 
         //GET: api/Requisitions/
         [Route("api/Requisitions/Pending/{dept}")]
         public IEnumerable<RequisitionDTO> GetPending(string dept)
         {
-            var list = _repo.GetPendingListForHead(dept).ToList();
+            var list = _requistionRepo.GetPendingListForHead(dept).ToList();
 
             var result = list.Select(item => new RequisitionDTO()
             {
@@ -53,13 +53,13 @@ namespace LUSSIS.Controllers.WebAPI
         {
             try
             {
-                var req = await _repo.GetByIdAsync(requisition.RequisitionId);
+                var req = await _requistionRepo.GetByIdAsync(requisition.RequisitionId);
                 req.ApprovalEmpNum = requisition.ApprovalEmp.EmpNum;
                 req.ApprovalRemarks = requisition.ApprovalRemarks;
                 req.ApprovalDate = DateTime.Today;
                 req.Status = requisition.Status;
 
-                await _repo.UpdateAsync(req);
+                await _requistionRepo.UpdateAsync(req);
                 return Ok(new {Message = "Updated"});
             }
             catch (Exception e)
@@ -72,7 +72,7 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Requisitions/MyReq/{empnum}")]
         public IHttpActionResult MyRequisitions(int empnum)
         {
-            var req = _repo.GetRequisitionByEmpNum(empnum);
+            var req = _requistionRepo.GetRequisitionByEmpNum(empnum);
             var result = req.Select(item => new RequisitionDTO()
             {
                 ApprovalEmp = item.ApprovalEmployee.ToApiDTO(),
@@ -97,7 +97,7 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Requisitions/Consolidated")]
         public List<RetrievalItemDTO> GetConsolidatedRequisition()
         {
-            var list = _repo.GetConsolidatedRequisition().Select(x => new RetrievalItemDTO
+            var list = _requistionRepo.GetConsolidatedRequisition().Select(x => new RetrievalItemDTO
             {
                 ItemNum = x.ItemNum,
                 AvailableQty = (int) x.AvailableQty,
@@ -113,7 +113,7 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Requisitions/Retrieval")]
         public IEnumerable<RetrievalItemDTO> GetRetrievalList()
         {
-            return _repo.GetRetrievalInPorcess().Select(x => new RetrievalItemDTO
+            return _requistionRepo.GetRetrievalInPorcess().Select(x => new RetrievalItemDTO
             {
                 ItemNum = x.ItemNum,
                 AvailableQty = (int) x.AvailableQty,

@@ -27,10 +27,10 @@ namespace LUSSIS.Controllers
     public class RequisitionsController : Controller
     {
 
-        private RequisitionRepository reqRepo = new RequisitionRepository();
-        private EmployeeRepository empRepo = new EmployeeRepository();
-        private DisbursementRepository disRepo = new DisbursementRepository();
-        private StationeryRepository strepo = new StationeryRepository();
+        private RequisitionRepository _requistionRepo = new RequisitionRepository();
+        private EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private DisbursementRepository _disbursementRepo = new DisbursementRepository();
+        private StationeryRepository _stationeryRepo = new StationeryRepository();
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         private bool HasDelegate
@@ -49,10 +49,10 @@ namespace LUSSIS.Controllers
         public ActionResult Pending()
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-            var req = reqRepo.GetPendingListForHead(deptCode);
+            var req = _requistionRepo.GetPendingListForHead(deptCode);
 
             //If user is head and there is delegate
-            if (empRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
+            if (_employeeRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
             {
                 ViewBag.HasDelegate = HasDelegate;
             }
@@ -67,12 +67,12 @@ namespace LUSSIS.Controllers
         {
 
             //If user is head and there is delegate
-            if (empRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
+            if (_employeeRepo.GetCurrentUser().JobTitle == "head" && HasDelegate)
             {
                 ViewBag.HasDelegate = HasDelegate;
             }
 
-            var req = reqRepo.GetById(reqId);
+            var req = _requistionRepo.GetById(reqId);
             if (req != null)
             {
                 if (req.Status == "pending")
@@ -92,7 +92,7 @@ namespace LUSSIS.Controllers
         public ActionResult All(string searchString, string currentFilter, int? page)
         {
             List<Requisition> requistions = new List<Requisition>();
-            Employee self = empRepo.GetCurrentUser();
+            Employee self = _employeeRepo.GetCurrentUser();
             if (searchString != null)
             { page = 1; }
             else
@@ -102,11 +102,11 @@ namespace LUSSIS.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                requistions = reqRepo.GetAllRequisitionsSearch(searchString, self);
+                requistions = _requistionRepo.GetAllRequisitionsSearch(searchString, self);
             }
             else
             {
-                requistions = reqRepo.GetAllRequisitionsForCurrentUser(self);
+                requistions = _requistionRepo.GetAllRequisitionsForCurrentUser(self);
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
@@ -129,11 +129,11 @@ namespace LUSSIS.Controllers
         {
             if (requisition.Status == "pending")
             {//requisition must be pending for any approval and reject
-                Employee self = empRepo.GetCurrentUser();
+                Employee self = _employeeRepo.GetCurrentUser();
 
                 if ((self.JobTitle == "head" && !HasDelegate) || HasDelegate)
                 {//if (user is head and there is no delegate) or (user is currently delegate)
-                    if(self.DeptCode != empRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum).DeptCode)
+                    if(self.DeptCode != _employeeRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum).DeptCode)
                     {//if user is trying to approve for other department
                         return View("_unauthoriseAccess");
                     }
@@ -145,19 +145,19 @@ namespace LUSSIS.Controllers
                     {
                         if (ModelState.IsValid)
                         {
-                            requisition.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                            requisition.ApprovalEmpNum = _employeeRepo.GetCurrentUser().EmpNum;
                             requisition.ApprovalDate = DateTime.Today;
                             if (SubmitButton == "Approve")
                             {
                                 requisition.Status = "approved";
-                                await reqRepo.UpdateAsync(requisition);
+                                await _requistionRepo.UpdateAsync(requisition);
                                 return RedirectToAction("Pending");
                             }
 
                             if (SubmitButton == "Reject")
                             {
                                 requisition.Status = "rejected";
-                                await reqRepo.UpdateAsync(requisition);
+                                await _requistionRepo.UpdateAsync(requisition);
                                 return RedirectToAction("Pending");
                             }
                         }
@@ -255,7 +255,7 @@ namespace LUSSIS.Controllers
         [DelegateStaffCustomAuth("staff", "rep")]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
-            List<Stationery> stationerys = strepo.GetAll().ToList<Stationery>();
+            List<Stationery> stationerys = _stationeryRepo.GetAll().ToList<Stationery>();
             if (searchString != null)
             { page = 1; }
             else
@@ -264,16 +264,16 @@ namespace LUSSIS.Controllers
             }
             if (!String.IsNullOrEmpty(searchString))
             {
-                stationerys = strepo.GetByDescription(searchString).ToList();
+                stationerys = _stationeryRepo.GetByDescription(searchString).ToList();
                 //if no result, display no result therefore the next 4 lines can be deleted
                 //if (stationerys.Count == 0)
                 //{
-                //    stationerys = strepo.GetAll().ToList();
+                //    stationerys = _stationeryRepo.GetAll().ToList();
                 //}
             }
             else
             {
-                stationerys = strepo.GetAll().ToList();
+                stationerys = _stationeryRepo.GetAll().ToList();
             }
             int pageSize = 15;
             int pageNumber = (page ?? 1);
@@ -292,7 +292,7 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
-            var item = strepo.GetById(id);
+            var item = _stationeryRepo.GetById(id);
             var cart = new Cart(item, qty);
             var shoppingCart = Session["MyCart"] as ShoppingCart;
             shoppingCart?.addToCart(cart);
@@ -302,13 +302,13 @@ namespace LUSSIS.Controllers
         //GET: MyRequisitions
         //public async Task<ActionResult> EmpReq(int EmpNum)
         //{
-        //    return View(reqRepo.GetRequisitionByEmpNum(EmpNum));
+        //    return View(_requistionRepo.GetRequisitionByEmpNum(EmpNum));
         //}
         [DelegateStaffCustomAuth("staff", "rep")]
         public ActionResult MyRequisitions(string currentFilter, int? page)
         {
-            int id = empRepo.GetCurrentUser().EmpNum;
-            List<Requisition> reqlist = reqRepo.GetRequisitionByEmpNum(id).OrderByDescending(s => s.RequisitionDate).OrderByDescending(s => s.RequisitionId).ToList();
+            int id = _employeeRepo.GetCurrentUser().EmpNum;
+            List<Requisition> reqlist = _requistionRepo.GetRequisitionByEmpNum(id).OrderByDescending(s => s.RequisitionDate).OrderByDescending(s => s.RequisitionId).ToList();
             int pageSize = 15;
             int pageNumber = (page ?? 1);
             return View(reqlist.ToPagedList(pageNumber, pageSize));
@@ -318,7 +318,7 @@ namespace LUSSIS.Controllers
         [HttpGet]
         public ActionResult MyRequisitionDetails(int id)
         {
-            List<RequisitionDetail> requisitionDetail = reqRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
+            List<RequisitionDetail> requisitionDetail = _requistionRepo.GetRequisitionDetail(id).ToList<RequisitionDetail>();
             return View(requisitionDetail);
         }
 
@@ -328,7 +328,7 @@ namespace LUSSIS.Controllers
         {
             var itemNum = (List<string>)Session["itemNub"];
             var itemQty = (List<int>)Session["itemQty"];
-            Employee self = empRepo.GetCurrentUser();
+            Employee self = _employeeRepo.GetCurrentUser();
             int reqEmp = self.EmpNum;
             string body = "Description".PadRight(30, ' ') + "\t\t" + "UOM".PadRight(30, ' ') + "\t\t" + "Quantity".PadRight(30, ' ') + "\n";
             DateTime reqDate = System.DateTime.Now.Date;
@@ -345,7 +345,7 @@ namespace LUSSIS.Controllers
                     Status = status,
                     DeptCode = deptCode
                 };
-                reqRepo.Add(requisition);
+                _requistionRepo.Add(requisition);
                 for (int i = 0; i < itemNum.Count; i++)
                 {
                     RequisitionDetail requisitionDetail = new RequisitionDetail()
@@ -354,8 +354,8 @@ namespace LUSSIS.Controllers
                         ItemNum = itemNum[i],
                         Quantity = itemQty[i]
                     };
-                    reqRepo.AddRequisitionDetail(requisitionDetail);
-                    body += strepo.GetById(requisitionDetail.ItemNum).Description.PadRight(30, ' ') + "\t\t" + strepo.GetById(requisitionDetail.ItemNum).UnitOfMeasure.PadRight(30, ' ') + "\t\t" + requisitionDetail.Quantity.ToString().PadRight(30, ' ') + "\n";
+                    _requistionRepo.AddRequisitionDetail(requisitionDetail);
+                    body += _stationeryRepo.GetById(requisitionDetail.ItemNum).Description.PadRight(30, ' ') + "\t\t" + _stationeryRepo.GetById(requisitionDetail.ItemNum).UnitOfMeasure.PadRight(30, ' ') + "\t\t" + requisitionDetail.Quantity.ToString().PadRight(30, ' ') + "\n";
                 }
                 Session["itemNub"] = null;
                 Session["itemQty"] = null;
@@ -419,9 +419,9 @@ namespace LUSSIS.Controllers
 
             return View(new RetrievalItemsWithDateDTO
             {
-                retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
+                retrievalItems = _requistionRepo.GetConsolidatedRequisition().ToList(),
                 collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
-                hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
+                hasInprocessDisbursement = _disbursementRepo.hasInprocessDisbursements()
             });
         }
 
@@ -436,15 +436,15 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 DateTime selectedDate = DateTime.ParseExact(listWithDate.collectionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                reqRepo.ArrangeRetrievalAndDisbursement(selectedDate);
+                _requistionRepo.ArrangeRetrievalAndDisbursement(selectedDate);
                 return RedirectToAction("RetrievalInProcess");
             }
 
             return View("Consolidated", new RetrievalItemsWithDateDTO
             {
-                retrievalItems = reqRepo.GetConsolidatedRequisition().ToList(),
+                retrievalItems = _requistionRepo.GetConsolidatedRequisition().ToList(),
                 collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
-                hasInprocessDisbursement = disRepo.hasInprocessDisbursements()
+                hasInprocessDisbursement = _disbursementRepo.hasInprocessDisbursements()
             });
         }
 
@@ -452,7 +452,7 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = "clerk")]
         public ActionResult RetrievalInProcess()
         {
-            return View(reqRepo.GetRetrievalInPorcess());
+            return View(_requistionRepo.GetRetrievalInPorcess());
         }
 
         [CustomAuthorize("head", "staff")]
@@ -466,7 +466,7 @@ namespace LUSSIS.Controllers
             };
             var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
             var isDelegated = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
-            if ((empRepo.GetCurrentUser().JobTitle == "head" && !HasDelegate) || isDelegated)
+            if ((_employeeRepo.GetCurrentUser().JobTitle == "head" && !HasDelegate) || isDelegated)
             {
                 return PartialView("_ApproveReq", reqDTO);
             }
@@ -479,15 +479,15 @@ namespace LUSSIS.Controllers
         public PartialViewResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]ReqApproveRejectDTO RADTO)
         {
 
-            Requisition req = reqRepo.GetById(RADTO.RequisitionId);
+            Requisition req = _requistionRepo.GetById(RADTO.RequisitionId);
             if (req != null)
             {
                 if (req.Status == "pending")
                 {//must be pending for approval and reject
-                    Employee self = empRepo.GetCurrentUser();
+                    Employee self = _employeeRepo.GetCurrentUser();
                     if ((self.JobTitle == "head" && !HasDelegate) || HasDelegate)
                     {//if (user is head and there is no delegate) or (user is currently delegate)
-                        if (self.DeptCode != empRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum).DeptCode)
+                        if (self.DeptCode != _employeeRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum).DeptCode)
                         {//if user is trying to approve for other department
                             return PartialView("_unauthoriseAccess");
                         }
@@ -497,7 +497,7 @@ namespace LUSSIS.Controllers
                         }
                         if (ModelState.IsValid)
                         {
-                            if (req.ApprovalEmpNum == empRepo.GetCurrentUser().EmpNum)
+                            if (req.ApprovalEmpNum == _employeeRepo.GetCurrentUser().EmpNum)
                             {
 
                                 return PartialView("_unuthoriseAccess");
@@ -506,15 +506,15 @@ namespace LUSSIS.Controllers
                             {
                                 req.Status = RADTO.Status;
                                 req.ApprovalRemarks = RADTO.ApprovalRemarks;
-                                req.ApprovalEmpNum = empRepo.GetCurrentUser().EmpNum;
+                                req.ApprovalEmpNum = _employeeRepo.GetCurrentUser().EmpNum;
                                 req.ApprovalDate = DateTime.Today;
-                                reqRepo.Update(req);
+                                _requistionRepo.Update(req);
 
                                 string destinationEmail = req.RequisitionEmployee.EmailAddress;         
                                 string subject = "Requistion " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status;
                                 StringBuilder body = new StringBuilder("Your Requisition " + req.RequisitionId.ToString() + " made on " + req.RequisitionDate.ToString() + " has been " + RADTO.Status + " by " + req.ApprovalEmployee.FullName);
                                 body.AppendLine("Requested: ");
-                                List<RequisitionDetail> rd = reqRepo.GetRequisitionDetail(RADTO.RequisitionId).ToList();
+                                List<RequisitionDetail> rd = _requistionRepo.GetRequisitionDetail(RADTO.RequisitionId).ToList();
                                 if (rd != null)
                                 {
                                     foreach (RequisitionDetail r in rd)
@@ -551,7 +551,7 @@ namespace LUSSIS.Controllers
             DataSet ds = new DataSet();
             ReportDocument rd = new ReportDocument();
             rd.Load(Path.Combine(Server.MapPath("~/Reports/RetrieveCrystalReport.rpt")));
-            rd.SetDataSource(reqRepo.GetRetrievalInPorcess()
+            rd.SetDataSource(_requistionRepo.GetRetrievalInPorcess()
                 .Select(x=>new RetrievalItemDTO
                 {
                     BinNum=x.BinNum,

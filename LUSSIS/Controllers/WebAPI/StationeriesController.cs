@@ -11,12 +11,12 @@ namespace LUSSIS.Controllers.WebAPI
 {
     public class StationeriesController : ApiController
     {
-        private readonly StationeryRepository _repo = new StationeryRepository();
+        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
 
         // GET: api/Stationeries
         public IEnumerable<StationeryDTO> GetStationeries()
         {
-            return _repo.GetAll().Select(item => new StationeryDTO()
+            return _stationeryRepo.GetAll().Select(item => new StationeryDTO()
                 {
                     ItemNum = item.ItemNum,
                     Category = item.Category.CategoryName,
@@ -34,7 +34,7 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(StationeryDTO))]
         public async Task<IHttpActionResult> GetStationery(string id)
         {
-            var stationery = await _repo.GetByIdAsync(id);
+            var stationery = await _stationeryRepo.GetByIdAsync(id);
             if (stationery == null)
             {
                 return NotFound();
@@ -69,7 +69,7 @@ namespace LUSSIS.Controllers.WebAPI
                 return BadRequest();
             }
 
-            var s = _repo.GetById(id);
+            var s = _stationeryRepo.GetById(id);
 
             s.Description = stationery.Description;
             s.ReorderLevel = stationery.ReorderLevel;
@@ -82,7 +82,7 @@ namespace LUSSIS.Controllers.WebAPI
 
             s.BinNum = stationery.BinNum;
 
-            await _repo.UpdateAsync(s);
+            await _stationeryRepo.UpdateAsync(s);
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -137,7 +137,7 @@ namespace LUSSIS.Controllers.WebAPI
         {
             if (disposing)
             {
-                _repo.Dispose();
+                _stationeryRepo.Dispose();
             }
             base.Dispose(disposing);
         }

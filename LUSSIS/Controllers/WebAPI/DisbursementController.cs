@@ -10,13 +10,13 @@ namespace LUSSIS.Controllers.WebAPI
 {
     public class DisbursementController : ApiController
     {
-        private readonly DisbursementRepository _repo = new DisbursementRepository();
+        private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
 
         [HttpGet]
         [Route("api/Disbursement/")]
         public IHttpActionResult Get()
         {
-            var list = _repo.GetDisbursementByStatus("inprocess");
+            var list = _disbursementRepo.GetDisbursementByStatus("inprocess");
             var result = list.Select(item => item.ToApiDTO());
 
             return Ok(result);
@@ -26,7 +26,7 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Disbursement/{id}")]
         public async Task<DisbursementDTO> Get(int id)
         {
-            var item = await _repo.GetByIdAsync(id);
+            var item = await _disbursementRepo.GetByIdAsync(id);
             return item.ToApiDTO();
         } 
 
@@ -35,7 +35,7 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(DisbursementDTO))]
         public IHttpActionResult Upcoming([FromUri] string dept)
         {
-            var d = _repo.GetUpcomingDisbursement(dept);
+            var d = _disbursementRepo.GetUpcomingDisbursement(dept);
             if (d == null) return NotFound();
 
             return Ok(d.ToApiDTO());
@@ -45,7 +45,7 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Disbursement/Acknowledge/{id}")]
         public IHttpActionResult Acknowledge(int id, [FromBody] int empnum)
         {
-            var disbursement = _repo.GetById(id);
+            var disbursement = _disbursementRepo.GetById(id);
 
             var isFulfilled = disbursement.DisbursementDetails.All(item => item.ActualQty == item.RequestedQty);
 

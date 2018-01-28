@@ -10,7 +10,7 @@ namespace LUSSIS.Controllers.WebAPI
 {
     public class StockAdjustmentController : ApiController
     {
-        private readonly StockAdjustmentRepository _repo = new StockAdjustmentRepository();
+        private readonly StockAdjustmentRepository _stockadjustmentRepo = new StockAdjustmentRepository();
         // GET api/<controller>
         public IEnumerable<string> Get()
         {
@@ -38,7 +38,7 @@ namespace LUSSIS.Controllers.WebAPI
                 RequestEmpNum = adjustment.RequestEmpNum
             };
 
-            await _repo.AddAsync(ad);
+            await _stockadjustmentRepo.AddAsync(ad);
 
             return Ok(new {Message = "New adjusment sent."});
         }
