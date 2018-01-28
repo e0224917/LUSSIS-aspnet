@@ -118,6 +118,9 @@ namespace LUSSIS.Controllers
         {
             if (ModelState.IsValid)
             {
+                var context = new ApplicationDbContext();
+                var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
                 var department = _departmentRepo.GetById(deptCode);
                 var oldRepEmpNum = department.RepEmpNum != null;
@@ -132,11 +135,14 @@ namespace LUSSIS.Controllers
                     _employeeRepo.Update(newRep);
                     department.RepEmpNum = newRepEmpNum;
                     _departmentRepo.Update(department);
+
+                    
+                    var newRepUser = context.Users.FirstOrDefault(u => u.Email == newRep.EmailAddress);
+                    userManager.RemoveFromRole(newRepUser?.Id, "staff");
+                    userManager.AddToRole(newRepUser?.Id, "rep");
                 }
                 else
                 {
-                    var context = new ApplicationDbContext();
-                    var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
                     var oldEmpNum = department.RepEmpNum;
                     var oldRep = _employeeRepo.GetById((int)oldEmpNum);
                     oldRep.JobTitle = "staff";
