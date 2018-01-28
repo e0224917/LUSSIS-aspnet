@@ -17,7 +17,7 @@ namespace LUSSIS.Repositories
     public class DisbursementRepository : Repository<Disbursement, int>
     {
 
-        StationeryRepository statRepo = new StationeryRepository();
+        StationeryRepository _stationeryRepo = new StationeryRepository();
 
         public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
@@ -413,7 +413,7 @@ namespace LUSSIS.Repositories
             List<double> result= new List<double>();
             foreach (String id in catId)
             {
-                List<String>itemList=statRepo.GetItembyCategory(Convert.ToInt32(id));
+                List<String>itemList=_stationeryRepo.GetItembyCategory(Convert.ToInt32(id));
                 //int Id= Convert.ToInt32(id);
                 total = 0;
                 foreach(String item in itemList)
