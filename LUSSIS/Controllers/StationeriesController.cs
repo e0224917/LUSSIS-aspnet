@@ -13,6 +13,7 @@ using PagedList;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Maddireddi Venkata Rajeswari
     public class StationeriesController : Controller
     {
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();

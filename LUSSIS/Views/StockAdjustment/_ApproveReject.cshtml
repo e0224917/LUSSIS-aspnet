@@ -1,11 +1,6 @@
-﻿@{
-    ViewBag.Title = "Remark";
-}
-
-
+﻿
 
 <form id="approveForm">
-
     <div class="modal-body">
         <span>Your Comment (optional):</span>
         <p></p>
@@ -16,36 +11,45 @@
         </div>
     </div>
 
-</form>
-<div class="modal-footer">
+    <div class="modal-footer">
+        @if (@ViewBag.status)
+        {
+            <button class="btn btn-success" id="approve">
+                Confirm Approve
+            </button>
+        }
+        else
+        {
+            <button class="btn btn-danger" id="approve">
+                Confirm Reject
+            </button>
+        }
 
-    <div>
-        
+
         <a href="#" class="btn btn-success" id="approve">
             @(ViewBag.status == "approved" ? "Confirm Approve" : "Confirm Reject")
         </a>
-        <a href="#" class="btn btn-secondary" data-dismiss="modal"> Cancel</a>
+        <button class="btn btn-secondary" data-dismiss="modal"> Cancel</button>
     </div>
-</div>
-
+</form>
 <script>
     $(document).ready(function () {
-        $("#approve").click(function () {
+        $("#approve").click(function() {
             var formdata = $("#approveForm").serialize();
 
             $.ajax({
                 type: "POST",
-                url: "@Url.Content("~/")StockAdjustment/_ApproveReject",
-                        data: formdata,
-                success: function () {
+                url: "@Url.Content("~/")StockAdjustment/ApproveReject",
+                data: formdata,
+                success: function() {
                     $("#myApproveModal").modal("hide");
 
                 }
-                    });
-        location.reload();
-    });
-            })
+            });
+            location.reload();
+        });
+    })
 </script>
 
-    @*Authors: May Zin Ko*@
+@*Authors: May Zin Ko*@
 

@@ -50,6 +50,7 @@ namespace LUSSIS.Models.WebDTO
         
     }
 
+    //Authors: Tang Xiaowen
     public class RetrievalItemDTO
     {
         public string ItemNum { get; set; }

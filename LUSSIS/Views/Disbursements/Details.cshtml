@@ -9,147 +9,146 @@
 <h2>Disbursement for @Model.CurrentDisbursement.Department.DeptName</h2>
 <hr />
 
-@using (Html.BeginForm("Acknowledge", "Disbursements", FormMethod.Post, new { @class = "my-2 my-lg-0" }))
-{
-    @Html.AntiForgeryToken()
+@using (Html.BeginForm("Acknowledge", "Disbursements", FormMethod.Post, new { @class = "my-2 my-lg-0", id="form" }))
+  
+    {
+        @Html.AntiForgeryToken()
 
 
-    <h2>@ViewBag.Message</h2>
-    <div class="row">
-        <div class="card border-dark col-lg-3">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => Model.CurrentDisbursement.CollectionDate)</h6>
-                <h4 class="card-title">@Html.DisplayFor(model => Model.CurrentDisbursement.CollectionDate) @Html.DisplayFor(model => Model.CurrentDisbursement.CollectionPoint.Time)</h4>
-                <p class="card-text"></p>
+        <h2>@ViewBag.Message</h2>
+        <div class="row">
+            <div class="card border-dark col-lg-3">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => Model.CurrentDisbursement.CollectionDate)</h6>
+                    <h4 class="card-title">@Html.DisplayFor(model => Model.CurrentDisbursement.CollectionDate) @Html.DisplayFor(model => Model.CurrentDisbursement.CollectionPoint.Time)</h4>
+                    <p class="card-text"></p>
+                </div>
             </div>
-        </div>
-        <div class="card border-dark col-lg-3">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => Model.CurrentDisbursement.CollectionPoint.CollectionName)</h6>
-                <h4 class="card-title">@Html.DisplayFor(model => Model.CurrentDisbursement.CollectionPoint.CollectionName)</h4>
+            <div class="card border-dark col-lg-3">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayNameFor(model => Model.CurrentDisbursement.CollectionPoint.CollectionName)</h6>
+                    <h4 class="card-title">@Html.DisplayFor(model => Model.CurrentDisbursement.CollectionPoint.CollectionName)</h4>
 
+                </div>
             </div>
-        </div>
-        <div class="card border-dark col-lg-3">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2 text-muted">Representative Name</h6>
-                <h4 class="card-title">@Model.CurrentDisbursement.Department.RepEmployee.FullName</h4>
+            <div class="card border-dark col-lg-3">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Representative Name</h6>
+                    <h4 class="card-title">@Model.CurrentDisbursement.Department.RepEmployee.FullName</h4>
 
+                </div>
             </div>
-        </div>
-        <div class="card border-dark col-lg-3">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2 text-muted">Contact Number</h6>
-                <h4 class="card-title">@Model.CurrentDisbursement.Department.TelephoneNum</h4>
-
+            <div class="card border-dark col-lg-3">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Contact Number</h6>
+                    <h4 class="card-title">@Model.CurrentDisbursement.Department.TelephoneNum</h4>
+                </div>
             </div>
+            @Html.HiddenFor(modelItem => Model.CurrentDisbursement.DisbursementId)
+            @Html.HiddenFor(modelItem => Model.CurrentDisbursement.CollectionPointId)
+            @Html.HiddenFor(modelItem => Model.CurrentDisbursement.DeptCode)
+            @Html.HiddenFor(modelItem => Model.CurrentDisbursement.Status)
+
+        </div>
+        <div style="padding: 1rem; width: 100%; text-align:left">
+
+            <input type="submit" class="btn btn-success" id="btn-generate" onclick="GenerateQR(@Model.CurrentDisbursement.DisbursementId)" name="update" value="Generate QR Code" />
+            <input type="submit" class="btn btn-outline-success" id="btn-acknowledge" name="update" value="Acknowledge Manually" />
+
+            <span style="float:right;">
+                @Html.ActionLink("Edit", "Edit", new { id = Model.CurrentDisbursement.DisbursementId }, new { @class = "btn btn-warning" })
+                @Html.ActionLink("Back to List", "Upcoming", null, new { @class = "btn btn-secondary" })
+            </span>
         </div>
 
-    </div>
-    <div style="padding: 1rem; width: 100%; text-align:left">
+        <hr />
+        <h4>Disbursement Details</h4>
+        <hr />
 
-        <button type="button" class="btn btn-success" onclick="GenerateQR(@Model.CurrentDisbursement.DisbursementId)">Generate QR Code</button>
-        <button type="submit" class="btn btn-outline-success" id="btn-acknowledge">Acknowledge Manually</button>
-        
-        <span style="float:right;">
-            @Html.ActionLink("Edit", "Edit", new { id = Model.CurrentDisbursement.DisbursementId }, new { @class = "btn btn-warning" }) 
-            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
-        </span>
-    </div>
 
-    <hr />
-    <h4>Disbursement Details</h4>
-    <hr />
-   
-
-    <table class="table table-striped table-hover">
-        <tr class="table-active">
-            <th>
-                @Html.DisplayNameFor(model => model.DisDetailList.First().Stationery.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DisDetailList.First().RequestedQty)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DisDetailList.First().ActualQty)
-            </th>
-
-        </tr>
-
-        @for (int i = 0; i < Model.DisDetailList.Count; i++)
-        {
-
-            @Html.HiddenFor(modelItem => Model.DisDetailList[i].DisbursementId)
-            @Html.HiddenFor(modelItem => Model.DisDetailList[i].ItemNum)
-            @Html.HiddenFor(modelItem => Model.DisDetailList[i].UnitPrice)
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.DisDetailList[i].Stationery.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.DisDetailList[i].RequestedQty)
-                    @Html.HiddenFor(modelItem => Model.DisDetailList[i].RequestedQty)
-                </td>
-                <td>
-                    @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @class = "form-control", @value = Model.DisDetailList[i].ActualQty, @min = "0", @max = @Model.DisDetailList[i].RequestedQty, id="qty-"+@i } })
-                    @Html.ValidationMessageFor(model => Model.DisDetailList[i].ActualQty, "", new { @class = "text-danger" })
-                    <input type="submit" value="Update" class="btn btn-warning btn-sm" id="btn-updateQty" data-id="@i" onclick="UpdateQty(@Model.DisDetailList[i])"/>
-
-                </td>
+        <table class="table table-striped table-hover">
+            <tr class="table-active">
+                <th>
+                    @Html.DisplayNameFor(model => model.DisDetailList.First().Stationery.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DisDetailList.First().RequestedQty)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DisDetailList.First().ActualQty)
+                </th>
 
             </tr>
-   
-        }
-    </table>
-}
 
+            @for (int i = 0; i < Model.DisDetailList.Count; i++)
+            {
 
+                @Html.HiddenFor(modelItem => Model.DisDetailList[i].DisbursementId)
+                @Html.HiddenFor(modelItem => Model.DisDetailList[i].ItemNum)
+                @Html.HiddenFor(modelItem => Model.DisDetailList[i].UnitPrice)
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.DisDetailList[i].Stationery.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.DisDetailList[i].RequestedQty)
+                        @Html.HiddenFor(modelItem => Model.DisDetailList[i].RequestedQty)
+                    </td>
+                    <td>
+                        @Html.EditorFor(modelItem => Model.DisDetailList[i].ActualQty, new { htmlAttributes = new { @class = "form-control", @value = Model.DisDetailList[i].ActualQty, @min = "0", @max = @Model.DisDetailList[i].RequestedQty, id = "qty-" + @i } })
+                        @Html.ValidationMessageFor(model => Model.DisDetailList[i].ActualQty, "", new { @class = "text-danger" })
+                    </td>
 
-<div class="modal" id="QRModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body" id="QRBody" align="center">
-                <p></p>
+                </tr>
+
+            }
+        </table>
+    }
+
+    <div class="modal" id="QRModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body" id="QRBody" align="center">
+                    <p></p>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
 
 @section scripts{
-<script>
-        var GenerateQR = function (disbursementId) {
+    <script>
+
+        var GenerateQR = function(disbursementId) {
             var url = "@Url.Content("~/")Disbursements/_QR?Id=" + disbursementId;
+
             $("#QRBody").load(url,
                 function() {
-                    $("#QRModal").modal("show");
+                    $("#QRModal").modal("show")
                 });
         }
+
+        $("#btn-generate").click(function() {
+            $("#form").submit(function() {
+                $.ajax({
+                    type: 'POST',
+                    url: "@Url.Content("~/")Disbursements/Acknowledge",
+                    data: $("#form").serialize()
+                })
+                return false;
+            });
+        });
+
         $("#btn-acknowledge").click(function() {
             if (!confirm(
                 "Are you sure you want to aknowledge without Rep scanning the QR Code? If so, please make sure you have printed a copy of this so that the Rep could signed for acknowledgement.")
             ) {
                 return false;
-            }
-        }
-    );
-        $("#btn-updateQty").click(function () {
-
-                var disDetailsToUpdate = $(this).attr("data-id");
-                var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                var maxQty = document.getElementById('qty-' + $(this).attr("data-id")).attr("max").value;
-                if (qty > 0 && qty<maxQty)
-                {
-                    $.post("@Url.Content("~/")Disbursements/Details", { "id": disDetailsToUpdate, "qty": qty },
-                        function (data) {
-                            location.reload();
-                        });
-                }
-                else
-                {
-                    alert("Please input a valid quantity");
-                }
-        }
+            } }
         );
-
-</script>
+    </script>
+    <script src="~/Scripts/jquery.unobstrusive-ajax.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 }
+
+@*Authors: Tang Xiaowen*@

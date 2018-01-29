@@ -2,6 +2,7 @@
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Tang Xiaowen
     public class DisbursementDetailDTO
     {
         public Disbursement CurrentDisbursement { get; set; }

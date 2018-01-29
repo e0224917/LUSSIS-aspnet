@@ -9,7 +9,8 @@
 <hr />
 @if (Model == null || !Model.Any())
 {
-    <div class="alert alert-dismissible alert-info"><br/>
+    <div class="alert alert-dismissible alert-info">
+        <br />
         <strong>Hmmm...</strong><br /> There is no disbursement planned at the moment.<br /><br />
     </div>
 }
@@ -35,26 +36,28 @@ else
 
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Department.DeptName)
-            </td>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Department.DeptName)
+                </td>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.CollectionDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CollectionPoint.CollectionName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem=>item.CollectionPoint.InChargeEmployee.FullName)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.DisbursementId}, new{ @class= "btn btn-warning btn-sm" })
-                @Html.ActionLink("View Details", "Details", new { id = item.DisbursementId }, new { @class = "btn btn-info btn-sm" })
-            </td>
-        </tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CollectionDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CollectionPoint.CollectionName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CollectionPoint.InChargeEmployee.FullName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.DisbursementId }, new { @class = "btn btn-warning btn-sm" })
+                    @Html.ActionLink("View Details", "Details", new { id = item.DisbursementId }, new { @class = "btn btn-info btn-sm" })
+                </td>
+            </tr>
         }
 
     </table>
 }
+
+@*Authors: Tang Xiaowen*@

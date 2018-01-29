@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Ton That Minh Nhat
     public class SupplierRepository : Repository<Supplier, int>, ISupplierRepository
     {
         public SupplierRepository()
@@ -51,6 +52,16 @@ namespace LUSSIS.Repositories
                 supList.Add(LUSSISContext.Suppliers.Where(x => x.SupplierId == supId).FirstOrDefault());
             }
             return supList;
+        }
+        public List<String> GetSupplierIds()
+        {
+            List<String> e = new List<String>();
+            List<int>list=LUSSISContext.Suppliers.Select(x => x.SupplierId).ToList();
+            foreach(int i in list)
+            {
+                e.Add(Convert.ToString(i));
+            }
+            return e;
         }
     }
 }

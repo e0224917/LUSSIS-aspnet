@@ -8,14 +8,18 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Koh Meng Guan
     [NotMapped]
     public class AdjustmentVoucherDTO
     {
         [ItemNumValidator]
+        [Display(Name = "Item Code")]
         [Required(ErrorMessage = "This field is required")]
         [StringLength(20)]
         public string ItemNum { get; set; }
 
+
+        [Required(ErrorMessage = "This field is required")]
         [Range (1,10000, ErrorMessage="Please enter a valid quantity")]
         public int Quantity { get; set; }
 

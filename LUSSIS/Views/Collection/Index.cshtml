@@ -9,8 +9,9 @@
 
 @if (@Model == null || @Model.DisbursementDetails.Count == 0)
 {
-    <div class="alert alert-dismissible alert-info"><br/>
-        <strong>No disbursement to be collected at the moment.</strong> <br/><br/>
+    <div class="alert alert-dismissible alert-info">
+        <br />
+        <strong>No disbursement to be collected at the moment.</strong> <br /><br />
     </div>
 }
 else
@@ -22,20 +23,20 @@ else
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CollectionPoint.CollectionName)
-                
+
             </th>
         </tr>
-         <tr class="table-dark">
-             <td>
-                 @Html.DisplayFor(model => model.CollectionDate)&nbsp;&nbsp;&nbsp;@Html.DisplayFor(model => model.CollectionPoint.Time)
-             </td>
-                <td>
-                    @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
-                </td>
-            </tr>
-        
+        <tr class="table-dark">
+            <td>
+                @Html.DisplayFor(model => model.CollectionDate)&nbsp;&nbsp;&nbsp;@Html.DisplayFor(model => model.CollectionPoint.Time)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.CollectionPoint.CollectionName)
+            </td>
+        </tr>
+
     </table>
- 
+
     <h5>Items to be collected</h5>
     <table class="table table-hover">
         <tr class="table-active">
@@ -53,27 +54,28 @@ else
             </th>
         </tr>
 
-            @foreach (var item in Model.DisbursementDetails)
-            {
-                <tr>
+        @foreach (var item in Model.DisbursementDetails)
+        {
+            <tr>
 
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Stationery.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RequestedQty)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ActualQty)
-                    </td>
-                </tr>
-  
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stationery.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestedQty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActualQty)
+                </td>
+            </tr>
+
         }
     </table>
 
-
 }
+
+@*Authors: Ong Xin Ying*@
 

@@ -7,6 +7,7 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ton That Minh Nhat, Ong Xin Ying
     [RequireHttps]
     public class HomeController : Controller
     {
@@ -39,12 +40,12 @@ namespace LUSSIS.Controllers
 
             if (User.IsInRole("supervisor"))
             {
-                return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
+                return RedirectToAction("Index", "SupervisorDashboard");
             }
 
             if (User.IsInRole("manager"))
             {
-                return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
+                return RedirectToAction("Index", "SupervisorDashboard");
             }
 
             return View();

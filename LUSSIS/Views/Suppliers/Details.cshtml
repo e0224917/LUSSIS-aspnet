@@ -7,60 +7,62 @@
 <h2>Supplier Details</h2>
 
 <div>
-   <hr />
+    <hr />
     <dl class="dl-horizontal">
-        
+        mb-2
         <dt class="control-label col-lg-6 col-sm-6">
             @Html.DisplayNameFor(model => model.SupplierName)
         </dt>
-        
-        <dd class="form-control col-lg-6 col-sm-6", id="readOnlyInput",type="text", readonly= "", style="margin:0.5rem">
+
+        <dd class="form-control col-lg-6 col-sm-6 mb-2" , id="readOnlyInput" ,type="text" , readonly="">
             @Html.DisplayFor(model => model.SupplierName)
         </dd>
 
-        <dt class="control-label col-lg-6 col-sm-6">
+        <dt class="control-label col-lg-6 col-sm-6 mb-2">
             @Html.DisplayNameFor(model => model.ContactName)
         </dt>
 
-        <dd class="form-control col-lg-6 col-sm-6", id="readOnlyInput",type="text", readonly= "", style="margin:0.5rem">
+        <dd class="form-control col-lg-6 col-sm-6 mb-2" , id="readOnlyInput" ,type="text" , readonly="">
             @Html.DisplayFor(model => model.ContactName)
         </dd>
 
-        <dt class="control-label col-lg-6 col-sm-6">
+        <dt class="control-label col-lg-6 col-sm-6 mb-2">
             @Html.DisplayNameFor(model => model.TelephoneNum)
         </dt>
 
-        <dd class="form-control col-lg-6 col-sm-6", id="readOnlyInput",type="text", readonly= "", style="margin:0.5rem">
+        <dd class="form-control col-lg-6 col-sm-6 mb-2" , id="readOnlyInput" ,type="text" , readonly="">
             @Html.DisplayFor(model => model.TelephoneNum)
         </dd>
 
-        <dt class="control-label col-lg-6 col-sm-6">
+        <dt class="control-label col-lg-6 col-sm-6 mb-2">
             @Html.DisplayNameFor(model => model.FaxNum)
         </dt>
 
-        <dd class="form-control col-lg-6 col-sm-6", id="readOnlyInput",type="text", readonly= "", style="margin:0.5rem">
+        <dd class="form-control col-lg-6 col-sm-6 mb-2" , id="readOnlyInput" ,type="text" , readonly="">
             @Html.DisplayFor(model => model.FaxNum)
         </dd>
 
-        <dt class="control-label col-lg-6 col-sm-6">
+        <dt class="control-label col-lg-6 col-sm-6 mb-2">
             @Html.DisplayNameFor(model => model.Address)
         </dt>
 
-        <dd class="form-control col-lg-6 col-sm-6", id="readOnlyInput",type="text", readonly= "", style="margin:0.5rem">
+        <dd class="form-control col-lg-6 col-sm-6 mb-2" , id="readOnlyInput" ,type="text" , readonly="">
             @Html.DisplayFor(model => model.Address)
         </dd>
 
-        <dt class="control-label col-lg-6 col-sm-6">
+        <dt class="control-label col-lg-6 col-sm-6 mb-2">
             @Html.DisplayNameFor(model => model.GstRegistration)
         </dt>
 
-        <dd class="form-control col-lg-6 col-sm-6", id="readOnlyInput",type="text", readonly= "", style="margin:0.5rem">
+        <dd class="form-control col-lg-6 col-sm-6 mb-2" , id="readOnlyInput" ,type="text" , readonly="">
             @Html.DisplayFor(model => model.GstRegistration)
         </dd>
 
     </dl>
-</div><br/>
-      <p>
-          @Html.ActionLink("Edit", "Edit", new { id = Model.SupplierId }, new { @class = "btn btn-warning" })  | 
-          @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
-      </p>
+</div><br />
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SupplierId }, new { @class = "btn btn-warning mr-2" })
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+</p>
+
+@*Authors: Ton That Minh Nhat*@

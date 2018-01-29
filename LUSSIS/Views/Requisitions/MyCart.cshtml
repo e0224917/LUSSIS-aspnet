@@ -41,11 +41,11 @@
                 <td>
                     <div class="row">
                         <input type="number" class="form-control form-control-sm col-md-6" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
-                        <input type="submit" value="Update" class="UpdateLink btn btn-warning btn-sm" data-id="@item.stationery.ItemNum" />
+                        <input type="submit" value="Update" id="btn-update" class="UpdateLink btn btn-warning btn-sm" data-id="@item.stationery.ItemNum" />
                     </div>
                 </td>
                 <td>
-                    <input type="submit" value="Delete" class="RemoveLink btn btn-danger btn-sm" data-id="@item.stationery.ItemNum" />
+                    <input type="submit" value="Delete" id="btn-remove" class="RemoveLink btn btn-danger btn-sm" data-id="@item.stationery.ItemNum" />
                 </td>
             </tr>
             {
@@ -80,14 +80,10 @@ else
     </div>
 }
 
-
-
-
 @section scripts {
     <script type="text/javascript">
         $(function () {
-            // Document.ready -> link up remove event handler
-            $(".RemoveLink").click(function () {
+            $("#btn-remove").click(function () {
                 // Get the id from the link
                 var stationeryToDelete = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
@@ -101,25 +97,27 @@ else
             });
         });
         $(function () {
-            $(".UpdateLink").click(function ()
+            $("#btn-update").click(function ()
             {
                 var stationeryToUpdate = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                
-                if(qty > 0)
+
+                if (qty <= 0) {
+                    Alert("Quantity should be more than 1");
+                }
+                else 
                 {
                     $.post("@Url.Content("~/")Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
                         function () {
                             location.reload();
                         });
                 }
-                else
-                {
-                    alert("Please input a valid quantity");
-                }
+                
             });
         });
     </script>
 }
+
+@*Authors: Cui Runze*@
 
 

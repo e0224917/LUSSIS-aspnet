@@ -6,6 +6,7 @@ using Delegate = LUSSIS.Models.Delegate;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Ong Xin Ying
     public class DelegateRepository : Repository<Delegate, int>
     {
         public void DeleteByDeptCode(string deptCode)

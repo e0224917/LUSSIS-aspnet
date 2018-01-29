@@ -16,14 +16,16 @@ using QRCoder;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Tang Xiaowen
     [Authorize(Roles = "clerk")]
     public class DisbursementsController : Controller
     {
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private readonly CollectionRepository _collectionRepo = new CollectionRepository();
 
         // GET: Upcoming Disbursement
-        public ActionResult Index()
+        public ActionResult Upcoming()
         {
             var disbursements = _disbursementRepo.GetInProcessDisbursements();
             return View(disbursements.ToList());
@@ -85,7 +87,7 @@ namespace LUSSIS.Controllers
                     .ForUpdateDisbursement(disbursement).Build();
                 EmailHelper.SendEmail(email);
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Upcoming");
             }
 
             ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId",
@@ -93,27 +95,11 @@ namespace LUSSIS.Controllers
             return View(disbursement);
         }
 
-        [HttpPost]
-        public ActionResult UpdateActualQty(int disId, string itemNum, int qty)
-        {
-            try
-            {
-                _disbursementRepo.GetById(disId).DisbursementDetails.FirstOrDefault(dd => dd.ItemNum == itemNum)
-                    .ActualQty = qty;
-                return RedirectToAction("Details", new {id = disId});
-            }
-            catch (NullReferenceException e)
-            {
-                return RedirectToAction("Details", new {id = disId});
-            }
-        }
-
-
         [OverrideAuthorization]
         [Authorize(Roles = "clerk, rep")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Acknowledge(DisbursementDetailDTO disbursementDTO)
+        public ActionResult Acknowledge(DisbursementDetailDTO disbursementDTO, string update)
         {
             if (disbursementDTO == null)
             {
@@ -121,22 +107,25 @@ namespace LUSSIS.Controllers
             }
 
             if (ModelState.IsValid)
-            {
                 //Disbursement d = disbursementDTO.CurrentDisbursement;
-                var d = _disbursementRepo.GetById(disbursementDTO.DisDetailList.First().DisbursementId);
+                Disbursement d = _disbursementRepo.GetById(disbursementDTO.CurrentDisbursement.DisbursementId);
                 foreach (var dd in d.DisbursementDetails)
                 {
-                    foreach (var ddEdited in disbursementDTO.DisDetailList)
-                    {
-                        if (dd.ItemNum == ddEdited.ItemNum)
-                        {
-                            dd.ActualQty = ddEdited.ActualQty;
-                        }
-                    }
-                }
+                    dd.ActualQty = disbursementDTO.DisDetailList.First(ddEdited => ddEdited.ItemNum == dd.ItemNum)
+                        .ActualQty;
 
-                _disbursementRepo.Acknowledge(d);
-                return RedirectToAction("Index");
+                }
+                _disbursementRepo.Update(d);
+                
+                switch (update)
+                {
+                    case "Acknowledge Manually":
+                        _disbursementRepo.Acknowledge(d);
+                        return RedirectToAction("Upcoming");
+                    case "Generate QR Code":
+                        break;
+                }
+                return Json("Ok");
             }
 
             return View("Details", disbursementDTO);

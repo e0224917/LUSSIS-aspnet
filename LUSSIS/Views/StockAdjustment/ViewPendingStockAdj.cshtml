@@ -1,18 +1,23 @@
 ﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
+@{
+    ViewBag.Title = "Pending Adjustments";
+}
 
-<br/>
+<br />
 <h4>View Pending Stock Adjustment for @ViewBag.Message</h4>
-
-<style>
-    body.modal-open div.modal-backdrop { z-index: 0; }
-</style>
+<hr />
+@*<style>
+        body.modal-open div.modal-backdrop {
+            z-index: 0;
+        }
+    </style>*@
 
 <div class="alert alert-danger alert-dismissable fade show" id="showError" style="display: none;">Please select one checkbox</div>
 
 <table class="table">
     <tr>
         <th>
-            <input type="checkbox" id="all" onclick="onClickFunction()"/>
+            <input type="checkbox" id="all" onclick="onClickFunction()" />
         </th>
 
         <th>
@@ -39,7 +44,7 @@
 
             <td>
 
-                <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" onclick="onClickFunction()"/>
+                <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" onclick="onClickFunction()" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreateDate)
@@ -60,10 +65,10 @@
     }
 
 </table>
-<div>
 
-    <a href="#" class="btn btn-success" onclick="approve(getCheckList())">Approve</a>
-    <a href="#" class="btn btn-danger" onclick="reject(getCheckList())">Reject</a>
+<div class="text-right">
+    <a href="#" class="btn btn-success btn-lg" onclick="approve(getCheckList())">Approve Selection</a>
+    <a href="#" class="btn btn-danger btn-lg" onclick="reject(getCheckList())">Reject Selection</a>
 </div>
 
 
@@ -71,12 +76,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ApprovalTitle">Remarks for Approval</h5>
+                <h5 class="modal-title" id="ApprovalTitle"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" id="myApproveModalBodyDiv">
+            <div id="myApproveModalBodyDiv">
 
             </div>
         </div>
@@ -100,7 +105,7 @@
 
         function getCheckList() {
             var chkArray = [];
-            $(".chk:checked").each(function() {
+            $(".chk:checked").each(function () {
                 chkArray.push($(this).val());
 
             });
@@ -115,13 +120,13 @@
         var approve = function(checkList) {
             if (checkList.length < 1) {
                 $("#showError").show();
-            } else {
+            }
+            else {
                 $("#showError").hide();
-
+                document.getElementById("ApprovalTitle").textContent = "Approve";
                 var url = "@Url.Content("~/")StockAdjustment/ApproveReject?list=" + checkList + "&status=approved";
 
-                $("#myApproveModalBodyDiv").load(url,
-                    function() {
+                $("#myApproveModalBodyDiv").load(url, function() {
                         $("#myApproveModal").modal("show");
                     });
             }
@@ -131,16 +136,21 @@
             if (checkList.length < 1) {
                 $("#showError").show();
 
-            } else {
+            }
+            else {
                 $("#showError").hide();
+                document.getElementById("ApprovalTitle").textContent = "Reject";
                 var url = "@Url.Content("~/")StockAdjustment/ApproveReject?List=" + checkList + "&Status=rejected";
 
-                $("#myApproveModalBodyDiv").load(url,
-                    function() {
+                $("#myApproveModalBodyDiv").load(url, function() {
                         $("#myApproveModal").modal("show");
                     });
             }
 
         }
     </script>
+
+
 }
+
+@*Authors: May Zin Ko*@

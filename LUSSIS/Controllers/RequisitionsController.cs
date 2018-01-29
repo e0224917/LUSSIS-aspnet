@@ -15,6 +15,7 @@ using LUSSIS.CustomAuthority;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan
     [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {
@@ -45,8 +46,8 @@ namespace LUSSIS.Controllers
             }
         }
 
-        //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         public ActionResult Pending()
         {
@@ -62,7 +63,7 @@ namespace LUSSIS.Controllers
             return View(req);
         }
 
-        //TODO: Add authroization - DepartmentHead or Delegate only
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpGet]
         public ActionResult Details(int reqId)
@@ -79,11 +80,15 @@ namespace LUSSIS.Controllers
                 ViewBag.Pending = "Pending";
                 return View(req);
             }
+            else if(req != null){
+                return View(req);
+            }
 
             return new HttpNotFoundResult();
         }
 
         [CustomAuthorize("head", "staff")]
+        //Authors: Koh Meng Guan
         public ActionResult All(string searchString, string currentFilter, int? page)
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
@@ -98,8 +103,8 @@ namespace LUSSIS.Controllers
             }
 
             var requistions = !string.IsNullOrEmpty(searchString)
-                ? _requistionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode)
-                : _requistionRepo.GetAllByDeptCode(deptCode);
+                ? _requistionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode).Reverse().ToList()
+                : _requistionRepo.GetAllByDeptCode(deptCode).Reverse().ToList();
 
             var reqAll = requistions.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
@@ -112,13 +117,13 @@ namespace LUSSIS.Controllers
         }
 
 
-        //TODO: Add authorization - DepartmentHead or Delegate only
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpPost]
         public async Task<ActionResult> Details(
             [Bind(Include =
                 "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status,DeptCode")]
-            Requisition requisition, string status)
+            Requisition requisition, string statuses)
         {
             if (requisition.Status == "pending")
             {
@@ -145,7 +150,7 @@ namespace LUSSIS.Controllers
                     {
                         requisition.ApprovalEmpNum = empNum;
                         requisition.ApprovalDate = DateTime.Today;
-                        requisition.Status = status;
+                        requisition.Status = statuses;
                         await _requistionRepo.UpdateAsync(requisition);
                         return RedirectToAction("Pending");
                     }
@@ -159,72 +164,6 @@ namespace LUSSIS.Controllers
             return new HttpUnauthorizedResult();
         }
 
-
-        //TODO: return create page, only showing necessary fields
-        // GET: Requisition/Create
-        //???
-        [DelegateStaffCustomAuth("staff")]
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // TODO: 1. create new requisition, 2. its status set to pending, 3. send notification to departmenthead
-        // [employee page] POST: Requisition/Create
-        [DelegateStaffCustomAuth("staff", "rep")]
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // TODO: only implement once main project is done. Enable editing if status is pending
-        // [employee page]  GET: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff", "rep")]
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // TODO: only enable editing if status is pending
-        // [employee page]  POST: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff", "rep")]
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // POST: Requisition/Delete/5
-        [HttpPost]
-        [Authorize(Roles = "clerk")]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
 
         // GET: DeptEmpReqs
@@ -382,7 +321,6 @@ namespace LUSSIS.Controllers
             return RedirectToAction("MyCart");
         }
 
-        //Store Clerk's page
         [Authorize(Roles = "clerk")]
         public ActionResult Consolidated(int? page)
         {
@@ -400,8 +338,6 @@ namespace LUSSIS.Controllers
             });
         }
 
-        //TODO: Add authorization - Stock Clerk only 
-        //click on generate button - post with date selected
         [HttpPost]
         [Authorize(Roles = "clerk")]
         [ValidateAntiForgeryToken]
@@ -568,14 +504,14 @@ namespace LUSSIS.Controllers
             return itemsToRetrieve;
         }
 
-
-        //TODO: A method to display in process Retrieval
+        
         [Authorize(Roles = "clerk")]
         public ActionResult RetrievalInProcess()
         {
             return View(_requistionRepo.GetRetrievalInProcess());
         }
 
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpGet]
         public PartialViewResult _ApproveReq(int Id, String Status)
@@ -595,6 +531,7 @@ namespace LUSSIS.Controllers
         }
 
 
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpPost]
         public PartialViewResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]

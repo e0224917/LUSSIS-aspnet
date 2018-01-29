@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: May Zin Ko
     public class SupervisorReportDTO
     {
         public List<Supplier> Suppliers { get; set; }

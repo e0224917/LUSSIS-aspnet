@@ -45,12 +45,12 @@ else
     using (Html.BeginForm())
     {
 
-            @Html.Hidden("PoNum", (int)@ViewBag.PurchaseOrder.PoNum)
+        @Html.Hidden("PoNum", (int)@ViewBag.PurchaseOrder.PoNum)
 
-            @Html.AntiForgeryToken()
+        @Html.AntiForgeryToken()
 
         <div class="card border-dark bg-transparent col-lg-12 col-sm-12 col-md-12">
-   
+
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-4 col-sm-4 col-md-4">
@@ -74,18 +74,18 @@ else
                         </div>
 
                     </div>
-          
+
                     <div class="col-lg-4 col-sm-4 col-md-4">
                         <div class="form-group">
                             <label class="control-label col-md-12"><strong>Delivery Order Number</strong></label>
                             <div class="col-md-12">
-                                @Html.EditorFor(model=>model.DeliveryOrderNum, new { htmlAttributes = new { @class = "form-control", @required=true } })
+                                @Html.EditorFor(model => model.DeliveryOrderNum, new { htmlAttributes = new { @class = "form-control", @required = true } })
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-12"><strong>Invoice Number</strong></label>
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.InvoiceNum, new { htmlAttributes = new { @class = "form-control", @required=true } })
+                                @Html.EditorFor(model => model.InvoiceNum, new { htmlAttributes = new { @class = "form-control", @required = true } })
                             </div>
                         </div>
 
@@ -117,45 +117,47 @@ else
                             </div>
                         </div>
                     </div>
-    
 
 
-                </div>   </div>  </div> <br />
-            <table class="table table-hover table-striped">
-                <tr class="table-active">
-                    <th>No</th>
-                    <th>Product</th>
-                    <th>UOM</th>
-                    <th>Ordered Qty</th>
-                    <th>Received Qty (Before)</th>
-                    <th>Received Qty (Now)</th>
-                </tr>
 
-                @if (ViewBag.PurchaseOrder != null)
+                </div>
+            </div>
+        </div> <br />
+        <table class="table table-hover table-striped">
+            <tr class="table-active">
+                <th>No</th>
+                <th>Product</th>
+                <th>UOM</th>
+                <th>Ordered Qty</th>
+                <th>Received Qty (Before)</th>
+                <th>Received Qty (Now)</th>
+            </tr>
+
+            @if (ViewBag.PurchaseOrder != null)
+            {
+                for (int i = 0; i < ViewBag.PurchaseOrder.PurchaseOrderDetails.Count; i++)
                 {
-                    for (int i = 0; i < ViewBag.PurchaseOrder.PurchaseOrderDetails.Count; i++)
-                    {
-                        <tr>
-                            <td>@(i + 1)</td>
-                            <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].Stationery.Description</td>
-                            <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
-                            <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].OrderQty</td>
-                            <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].ReceiveQty</td>
-                            <td>
-                                @Html.HiddenFor(model => model.ReceiveTransDetails[i].ItemNum)
-                                @Html.EditorFor(model => model.ReceiveTransDetails[i].Quantity, new { htmlAttributes = new { @class = "form-control", @min="0" } })
-                            </td>
-                        </tr>
-                    }
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].Stationery.Description</td>
+                        <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
+                        <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].OrderQty</td>
+                        <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].ReceiveQty</td>
+                        <td>
+                            @Html.HiddenFor(model => model.ReceiveTransDetails[i].ItemNum)
+                            @Html.EditorFor(model => model.ReceiveTransDetails[i].Quantity, new { htmlAttributes = new { @class = "form-control", @min = "0" } })
+                        </td>
+                    </tr>
                 }
-            </table>
+            }
+        </table>
 
         <div class="text-right">
             <input type="submit" value="Confirm Receive" class="btn btn-success btn-lg" style="width:40%" />
         </div>
-    
-            }
-            }
+
+    }
+}
 
 @section scripts
 {
@@ -169,4 +171,6 @@ else
         });
     </script>
 }
+
+@*Authors: Douglas Lee Kiat Hui*@
 

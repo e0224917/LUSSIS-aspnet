@@ -4,25 +4,27 @@
 }
 
 <h2>@ViewBag.Title</h2>
-<hr/>
+<hr />
 <p class="text-success">@ViewBag.StatusMessage</p>
 <div>
-   
+
     <dl class="dl-horizontal">
         <dt></dt>
         <dd></dd>
         <dd>
-            
+
             @if (Model.HasPassword)
             {
-                @Html.ActionLink("Change your password", "ChangePassword",null, new{@class="btn btn-primary"})
+                @Html.ActionLink("Change your password", "ChangePassword", null, new { @class = "btn btn-primary" })
             }
             else
             {
-                @Html.ActionLink("Create", "SetPassword",null,  new { @class = "btn btn-success"} )
+                @Html.ActionLink("Create", "SetPassword", null, new { @class = "btn btn-success" })
             }
-            
+
         </dd>
-        
+
     </dl>
 </div>
+
+@*Authors: Ton That Minh Nhat*@

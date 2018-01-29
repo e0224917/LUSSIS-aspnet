@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ong Xin Ying
     [Authorize(Roles = "rep")]
     public class CollectionController : Controller
     {
@@ -30,7 +31,6 @@ namespace LUSSIS.Controllers
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             manageCollectionDto.CollectionPoint = _collectionRepo.GetCollectionPointByDeptCode(deptCode);
             manageCollectionDto.CollectionPoints = _collectionRepo.GetAll();
-
             return View(manageCollectionDto);
         }
 
@@ -45,8 +45,10 @@ namespace LUSSIS.Controllers
 
                 department.CollectionPointId = manageCollectionDto.DeptCollectionPointId;
                 _departmentRepo.Update(department);
+                
+                return PartialView("_SetCollection", department.CollectionPoint);
+                
             }
-
             return RedirectToAction("SetCollection");
         }
 

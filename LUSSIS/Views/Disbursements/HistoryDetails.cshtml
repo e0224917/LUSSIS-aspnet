@@ -6,9 +6,10 @@
 }
 
 <h2>Disbursement Details - @Model.First().Disbursement.Department.DeptName</h2>
+<hr/>
 <table class="table table-striped table-hover">
     <tr class="table-active">
-        
+
         <th>
             @Html.DisplayNameFor(model => model.Stationery.Description)
         </th>
@@ -26,7 +27,7 @@
     @foreach (var item in Model)
     {
         <tr>
-            
+
             <td>
                 @Html.HiddenFor(modelItem => item.Disbursement.DeptCode)
                 @Html.DisplayFor(modelItem => item.Stationery.Description)
@@ -45,3 +46,5 @@
 
 </table>
 @Html.ActionLink("Back to List", "History", null, new { @class = "btn btn-secondary" })
+
+@*Authors: Tang Xiaowen*@

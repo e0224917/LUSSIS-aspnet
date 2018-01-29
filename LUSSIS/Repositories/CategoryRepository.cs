@@ -7,6 +7,7 @@ using LUSSIS.Models;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Koh Meng Guan
     public class CategoryRepository : Repository<Category, int>
     {
 

@@ -33,12 +33,9 @@
             <th style="width:40%">
                 @Html.DisplayName("Reason")
             </th>
-            @if (ViewBag.Pending != "Pending")
-            {
                 <th>
                     @Html.DisplayNameFor(model => model.Status)
                 </th>
-            }
         </tr>
         <tr class="table-dark">
             <td>
@@ -50,18 +47,16 @@
             <td>
                 @Html.DisplayFor(model => model.RequestRemarks)
             </td>
-            @if (ViewBag.Pending != "Pending")
-            {
+
                 <td>
                     <span class="text-warning lead">
                         @Html.DisplayFor(model => model.Status)
                     </span>
                 </td>
-            }
         </tr>
     </table>
     <br />
-    if (ViewBag.HasDelegate == true && ViewBag.Pending == "Pending")
+    if (ViewBag.HasDelegate != true && ViewBag.Pending == "Pending")
     {
         <div class="row">
             <div class="form-group col-md-6">
@@ -69,12 +64,12 @@
                 @Html.TextAreaFor(model => model.ApprovalRemarks, 3, 60, new { @class = "form-control" })
             </div>
             <div class="form-group col-md-6">
-                <button type="submit" name="status" class="btn btn-success btn-lg btn-block form-control" value="approve">Approve</button>
-                <button type="submit" name="status" class="btn btn-danger btn-lg btn-block form-control" value="reject">Reject</button>
+                <button type="submit" name="statuses" class="btn btn-success btn-lg btn-block form-control" value="approved">Approve</button>
+                <button type="submit" name="statuses" class="btn btn-danger btn-lg btn-block form-control" value="rejected">Reject</button>
             </div>
         </div>
     }
-    else
+    else if (ViewBag.Pending != "Pending")
     {
         <div class="card border-dark col-sm-12 col-lg-12" style="padding:0">
             <div class="card-header"> @(Model.Status == "rejected" ? "Rejection" : "Approval") Comments from <strong>@(Model.ApprovalEmployee == null ? "" : Model.ApprovalEmployee.FullName)</strong>: </div>
@@ -92,13 +87,7 @@
 
 @Html.Partial("_Details", Model.RequisitionDetails)
 
-
-
-
-
-<p>
-
-</p>
+@*Authors: Koh Meng Guan*@
 
 
 

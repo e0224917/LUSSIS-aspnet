@@ -5,10 +5,10 @@
 }
 
 <h2>My DashBoard</h2>
-<hr/>
+<hr />
 <div class="row">
     <div class="col-lg-4 col-md-4 text-center">
-        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem;">
+        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem; min-height: 22rem">
             <h4 class="card-header mt-0">Pending Requisitions</h4>
             <div class="card-body">
 
@@ -43,7 +43,7 @@
                 {
                     using (Html.BeginForm("Pending", "Requisitions", FormMethod.Post))
                     {
-                        <input type="submit" class="btn btn-success" value="View All" style="width: 100%"/>
+                        <input type="submit" class="btn btn-success" value="View All" style="width: 100%" />
                     }
                 }
             </div>
@@ -52,7 +52,7 @@
     @if (User.IsInRole("head"))
     {
         <div class="col-lg-4 col-md-4 text-center">
-            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem;">
+            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem; min-height: 22rem">
                 <h4 class="card-header mt-0">My @((Model.CurrentDelegate != null && Model.CurrentDelegate.StartDate < DateTime.Today) ? "Current" : null) Delegate</h4>
 
                 @if (Model.CurrentDelegate == null)
@@ -65,7 +65,7 @@
                     <div class="card-footer text-center">
                         @using (Html.BeginForm("MyDelegate", "RepAndDelegate", FormMethod.Post))
                         {
-                            <input type="submit" class="btn btn-success" value="Set My Delegate" style="width: 100%"/>
+                            <input type="submit" class="btn btn-success" value="Set My Delegate" style="width: 100%" />
                         }
                     </div>
                 }
@@ -92,14 +92,21 @@
                         }
                         else
                         {
-                                <h6 class="text-muted">Ending in @((int)(Model.CurrentDelegate.EndDate.Subtract(DateTime.Today)).TotalDays) day(s)</h6>
+                            if (Model.CurrentDelegate.EndDate == DateTime.Today)
+                            {
+                                <h6 class="text-muted">Ending Today</h6>
+                            }
+                            else
+                            {
+                            <h6 class="text-muted">Ending in @((int)(Model.CurrentDelegate.EndDate.Subtract(DateTime.Today)).TotalDays) day(s)</h6>
+                            }
                         }
 
                     </div>
                     <div class="card-footer text-center">
                         @using (Html.BeginForm("DeleteDelegate", "RepAndDelegate", FormMethod.Post))
                         {
-                            <input type="submit" class="btn btn-success" value="Revoke Delegate" style="width: 100%"/>
+                            <input type="submit" class="btn btn-success" value="Revoke Delegate" style="width: 100%" />
                         }
                     </div>
                 }
@@ -109,7 +116,7 @@
     else
     {
         <div class="col-lg-4 col-md-4">
-            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem;">
+            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem; min-height: 22rem">
                 <h4 class="card-header mt-0">Your Delegation Period</h4>
                 <div class="card-body">
 
@@ -120,7 +127,14 @@
 
                         <tr>
                             <td>
-                                <h3 class="mt-2 mb-0 text-muted">Ending in @((int) (Model.CurrentDelegate.EndDate.Subtract(DateTime.Today)).TotalDays) day(s)</h3>
+                                @if (Model.CurrentDelegate.EndDate == DateTime.Today)
+                                {
+                                <h3 class="mt-2 mb-0 text-muted">Ending Today</h3>
+                                }
+                                else
+                                {
+                                <h3 class="mt-2 mb-0 text-muted">Ending in @((int)(Model.CurrentDelegate.EndDate.Subtract(DateTime.Today)).TotalDays) day(s)</h3>
+                                }
                             </td>
 
                         </tr>
@@ -132,74 +146,76 @@
                 <div class="card-footer text-center">
                     @using (Html.BeginForm("DeleteDelegate", "RepAndDelegate", FormMethod.Post))
                     {
-                        <input type="submit" class="btn btn-secondary" value="Revoke Delegate" style="width: 100%" disabled=""/>
+                        <input type="submit" class="btn btn-secondary" value="Revoke Delegate" style="width: 100%" disabled="" />
                     }
                 </div>
             </div>
         </div>
     }
     <div class="col-lg-4 col-md-4 text-center">
-        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem;">
+        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem; min-height: 22rem">
             <h4 class="card-header mt-0">Department Rep</h4>
             <div class="card-body">
                 @if (Model.Department.RepEmployee != null)
-    {
-            <table class="table mt-3">
-                <tr>
-                    <th>
-                        Current Department Rep
-                    </th>
-                </tr>
+                {
+                    <table class="table mt-3">
+                        <tr>
+                            <th>
+                                Current Department Rep
+                            </th>
+                        </tr>
 
-                <tr>
-                    <td>
-                        <h3 class="mt-0 mb-0">
-                            @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
-                        </h3>
-                    </td>
-                </tr>
-            </table>
-}
-else
-{
-            <div class="alert alert-dismissible alert-info p-4">
-                <h6>No department representative at the moment.</h6>
+                        <tr>
+                            <td>
+                                <h3 class="mt-0 mb-0">
+                                    @Html.DisplayFor(model => model.Department.RepEmployee.FullName)
+                                </h3>
+                            </td>
+                        </tr>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-dismissible alert-info p-4">
+                        <h6>No department representative at the moment.</h6>
+                    </div>
+                }
             </div>
-}
-</div>
 
             <div class="card-footer text-center">
                 @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
-    {
+                {
 
-        if (User.IsInRole("head") && !Model.HaveDelegateToday
-            || User.IsInRole("staff") && Model.HaveDelegateToday)
-        {
-            if (Model.Department.RepEmployee == null)
-            {
-                <input type="submit" class="btn btn-success" value="Set New Rep" style="width: 100%" />
-            }
-            else
-            {
-                <input type="submit" class="btn btn-success" value="Change Rep" style="width: 100%" />
-            }
+                    if (User.IsInRole("head") && !Model.HaveDelegateToday
+                        || User.IsInRole("staff") && Model.HaveDelegateToday)
+                    {
+                        if (Model.Department.RepEmployee == null)
+                        {
+                            <input type="submit" class="btn btn-success" value="Set New Rep" style="width: 100%" />
+                        }
+                        else
+                        {
+                            <input type="submit" class="btn btn-success" value="Change Rep" style="width: 100%" />
+                        }
 
-        }
+                    }
 
-            else
-            {
-                 if (Model.Department.RepEmployee == null)
-                 {
-            <input type="submit" class="btn btn-secondary" value="Set New Rep" style="width: 100%" disabled=""/>
-                 }
-                 else
-                 {
-            <input type="submit" class="btn btn-secondary" value="Change Rep" style="width: 100%" disabled="" />
-                 }
-            }
-     }
+                    else
+                    {
+                        if (Model.Department.RepEmployee == null)
+                        {
+                            <input type="submit" class="btn btn-secondary" value="Set New Rep" style="width: 100%" disabled="" />
+                        }
+                        else
+                        {
+                            <input type="submit" class="btn btn-secondary" value="Change Rep" style="width: 100%" disabled="" />
+                        }
+                    }
+                }
 
             </div>
-            </div>
+        </div>
     </div>
 </div>
+
+@*Authors: Ong Xin Ying*@

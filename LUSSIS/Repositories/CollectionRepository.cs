@@ -6,6 +6,7 @@ using LUSSIS.Models;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Ong Xin Ying
     public class CollectionRepository : Repository<CollectionPoint, int>
     {
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
