@@ -662,10 +662,9 @@
     <Content Include="Views\Requisitions\_ApproveReq.cshtml" />
     <Content Include="Views\Shared\_DeptEmployeeLayout.cshtml" />
     <Content Include="Views\Requisitions\RetrievalInProcess.cshtml" />
-    <Content Include="Views\Disbursements\Delete.cshtml" />
     <Content Include="Views\Disbursements\Details.cshtml" />
     <Content Include="Views\Disbursements\Edit.cshtml" />
-    <Content Include="Views\Disbursements\Index.cshtml" />
+    <Content Include="Views\Disbursements\Upcoming.cshtml" />
     <Content Include="Scripts\umd\popper-utils.js.map" />
     <Content Include="Scripts\umd\popper-utils.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />
@@ -676,7 +675,6 @@
     <Content Include="Scripts\popper.min.js.map" />
     <Content Include="Scripts\README.md" />
     <Content Include="Views\RepAndDelegate\DeptRep.cshtml" />
-    <Content Include="Views\Disbursements\_Details.cshtml" />
     <Content Include="Views\RepAndDelegate\MyDelegate.cshtml" />
     <Content Include="Views\PurchaseOrders\Summary.cshtml" />
     <Content Include="Views\PurchaseOrders\Order.cshtml" />

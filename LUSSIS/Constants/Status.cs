@@ -3,9 +3,10 @@
     //Authors: Ton That Minh Nhat
     public class RequisitionStatus
     {
-        public const string InProgress = "inprogress";
+        public const string InProcess = "inprocess";
         public const string Approved = "approved";
         public const string Rejected = "rejected";
+        public const string Processed = "processed";
     }
 
     public class DisbursementStatus
