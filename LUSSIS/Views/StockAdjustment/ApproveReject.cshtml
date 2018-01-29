@@ -15,19 +15,26 @@
             <input type="hidden" name="checkList" value="@ViewBag.checkList" />
         </div>
     </div>
+    <div class="modal-footer">
 
-</form>
-<div class="modal-footer">
+        <div>
+            @if(@ViewBag.status=="approved")
+            {
+                <button class="btn btn-success" id="approve">
+                    Confirm Approve
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-danger" id="approve">
+                    Confirm Reject
+                </button>
+            }
 
-    <div>
-        
-        <a href="#" class="btn btn-success" id="approve">
-            @(ViewBag.status == "approved" ? "Confirm Approve" : "Confirm Reject")
-        </a>
-        <a href="#" class="btn btn-secondary" data-dismiss="modal"> Cancel</a>
+            <a href="#" class="btn btn-secondary" data-dismiss="modal"> Cancel</a>
+        </div>
     </div>
-</div>
-
+</form>
 <script>
     $(document).ready(function () {
         $("#approve").click(function () {
@@ -35,7 +42,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "@Url.Content("~/")StockAdjustment/_ApproveReject",
+                url: "@Url.Content("~/")StockAdjustment/ApproveReject",
                         data: formdata,
                 success: function () {
                     $("#myApproveModal").modal("hide");
@@ -47,5 +54,5 @@
             })
 </script>
 
-    @*Authors: May Zin Ko*@
+ @*Authors: May Zin Ko*@
 

@@ -1,96 +1,103 @@
 ﻿@model IEnumerable<LUSSIS.Models.WebDTO.PendingPurchaseOrderDTO>
-
-
-<style>
-    body.modal-open div.modal-backdrop {
-        z-index: 0;
-    }
-</style>
-<br />
-<h4>View Pending PO List</h4>
+@{
+    ViewBag.Title = "Pending PO";
+}
 
 
 
+<h2>View Pending PO List</h2>
+<hr />
 
-<div class="alert alert-danger alert-dismissable fade show" id="showError" style="display:none;">Please select one checkbox</div>
-<table class="table">
-    <tr>
-        <th>
-            <input type="checkbox" id="all" onclick="onClickFunction()" />
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PoNum)
-        </th>
 
-        <th>
-            @Html.DisplayNameFor(model => model.Supplier)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreateDate)
-        </th>
-        <th>
-            @Html.DisplayName("Submitted by")
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TotalCost)
-        </th>
-        <th></th>
-    </tr>
+@if (!@Model.Any() || @Model == null)
+{
+    <div class="alert alert-dismissible alert-info">
+        <br />
+        <strong>There is no pending stock adjustment at the moment</strong> <br /> <br />
+    </div>
+}
+else
+{
 
-    @foreach (var item in Model)
-    {
+    <div class="alert alert-danger alert-dismissable fade show" id="showError" style="display: none;">Please select one checkbox</div>
+    <table class="table">
         <tr>
+            <th>
+                <input type="checkbox" id="all" onclick="onClickFunction()"/>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PoNum)
+            </th>
 
-            <td>
-                <input class="chk" id=@item.PoNum value="@item.PoNum" type="checkbox" onclick="onClickFunction()" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PoNum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Supplier)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderEmp)
-            </td>
-            <td>
-                $ @Html.DisplayFor(modelItem => item.TotalCost)
-            </td>
-            <td>
-                @Html.ActionLink("View Details", "Details", new { id = item.PoNum }, new { @class = "btn btn-sm btn-info" })
-            </td>
+            <th>
+                @Html.DisplayNameFor(model => model.Supplier)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th>
+                @Html.DisplayName("Submitted by")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalCost)
+            </th>
+            <th></th>
         </tr>
-    }
 
-</table>
-<div class="text-right">
-    <a href="#" class="btn btn-success btn-lg" onclick="ApproveReject(getCheckList())">Approve Selection</a>
-    <a href="#" class="btn btn-danger btn-lg" onclick="RejectReject(getCheckList())">Reject Selection</a>
-</div>
+        @foreach (var item in Model)
+        {
+            <tr>
 
-<div class="modal" id="myApproveModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="ApprovalTitle"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div id="myApproveModalBodyDiv">
+                <td>
+                    <input class="chk" id=@item.PoNum value="@item.PoNum" type="checkbox" onclick="onClickFunction()"/>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PoNum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderEmp)
+                </td>
+                <td>
+                    $ @Html.DisplayFor(modelItem => item.TotalCost)
+                </td>
+                <td>
+                    @Html.ActionLink("View Details", "Details", new {id = item.PoNum}, new {@class = "btn btn-sm btn-info"})
+                </td>
+            </tr>
+        }
 
+    </table>
+    <div class="text-right">
+        <a href="#" class="btn btn-success btn-lg" onclick="ApproveReject(getCheckList())">Approve Selection</a>
+        <a href="#" class="btn btn-danger btn-lg" onclick="RejectReject(getCheckList())">Reject Selection</a>
+    </div>
+
+    <div class="modal" id="myApproveModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ApprovalTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="myApproveModalBodyDiv">
+
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 
-
-@section scripts
+    @section scripts
 {
-    <script>
+        <script>
 
         var ApproveReject = function (CheckList) {
             if (CheckList < 1) {
@@ -121,32 +128,32 @@
             }
 
         }
-    </script>
-    <script>
+        </script>
+        <script>
 
-        function onClickFunction() {
-            var checkBox = document.getElementById("all");
+            function onClickFunction() {
+                var checkBox = document.getElementById("all");
 
-            if (checkBox.checked == true) {
+                if (checkBox.checked == true) {
 
-                $('.chk').attr('checked', true);
+                    $('.chk').attr('checked', true);
+                }
+                else {
+                    $('.chk').attr('checked', false);
+                }
             }
-            else {
-                $('.chk').attr('checked', false);
+
+            function getCheckList() {
+                var chkArray = [];
+                $(".chk:checked").each(function () {
+                    chkArray.push($(this).val());
+
+                });
+                return chkArray.toString();
             }
-        }
-
-        function getCheckList() {
-            var chkArray = [];
-            $(".chk:checked").each(function () {
-                chkArray.push($(this).val());
-
-            });
-            return chkArray.toString();
-        }
 
 
-    </script>
-}
+        </script>
+    }
 
-@*Authors: May Zin Ko*@
+    @*Authors: May Zin Ko*@
