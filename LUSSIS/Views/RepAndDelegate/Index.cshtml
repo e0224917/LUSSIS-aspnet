@@ -99,7 +99,6 @@
                             else
                             {
                             <h6 class="text-muted">Ending in @((int)(Model.CurrentDelegate.EndDate.Subtract(DateTime.Today)).TotalDays) day(s)</h6>
-
                             }
                         }
 
@@ -128,7 +127,14 @@
 
                         <tr>
                             <td>
+                                @if (Model.CurrentDelegate.EndDate == DateTime.Today)
+                                {
+                                <h3 class="mt-2 mb-0 text-muted">Ending Today</h3>
+                                }
+                                else
+                                {
                                 <h3 class="mt-2 mb-0 text-muted">Ending in @((int)(Model.CurrentDelegate.EndDate.Subtract(DateTime.Today)).TotalDays) day(s)</h3>
+                                }
                             </td>
 
                         </tr>
