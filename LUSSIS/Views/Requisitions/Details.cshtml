@@ -33,12 +33,9 @@
             <th style="width:40%">
                 @Html.DisplayName("Reason")
             </th>
-            @if (ViewBag.Pending != "Pending")
-            {
                 <th>
                     @Html.DisplayNameFor(model => model.Status)
                 </th>
-            }
         </tr>
         <tr class="table-dark">
             <td>
@@ -50,18 +47,16 @@
             <td>
                 @Html.DisplayFor(model => model.RequestRemarks)
             </td>
-            @if (ViewBag.Pending != "Pending")
-            {
+
                 <td>
                     <span class="text-warning lead">
                         @Html.DisplayFor(model => model.Status)
                     </span>
                 </td>
-            }
         </tr>
     </table>
     <br />
-    if (ViewBag.HasDelegate == true && ViewBag.Pending == "Pending")
+    if (ViewBag.HasDelegate != true && ViewBag.Pending == "Pending")
     {
         <div class="row">
             <div class="form-group col-md-6">

@@ -83,6 +83,9 @@ namespace LUSSIS.Controllers
                 ViewBag.Pending = "Pending";
                 return View(req);
             }
+            else if(req != null){
+                return View(req);
+            }
 
             return new HttpNotFoundResult();
         }
@@ -103,8 +106,8 @@ namespace LUSSIS.Controllers
             }
 
             var requistions = !string.IsNullOrEmpty(searchString)
-                ? _requistionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode)
-                : _requistionRepo.GetAllByDeptCode(deptCode);
+                ? _requistionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode).Reverse().ToList()
+                : _requistionRepo.GetAllByDeptCode(deptCode).Reverse().ToList();
 
             var reqAll = requistions.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 

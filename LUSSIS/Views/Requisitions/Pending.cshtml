@@ -12,7 +12,7 @@
             @Html.DisplayNameFor(model => model.RequisitionDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RequisitionEmployee.FullName)
+            @Html.DisplayName("Employee")
         </th>
         <th>
             @Html.DisplayNameFor(model => model.RequestRemarks)
@@ -20,7 +20,7 @@
         <th>
             @Html.DisplayName("View")
         </th>
-        @if (ViewBag.HasDelegate == true)
+        @if (ViewBag.HasDelegate != true)
         {
             <th>
                 @Html.DisplayName("Manage")
@@ -44,7 +44,7 @@
             <td>
                 @Html.ActionLink("View Details", "Details", "Requisitions", new { reqId = item.RequisitionId }, new { @class = "btn btn-sm btn-info" })
             </td>
-            @if (ViewBag.Message != "Delegate")
+            @if (ViewBag.HasDelegate != true)
             {
                 <td>
                     <div class="btn-group">
