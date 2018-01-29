@@ -680,7 +680,7 @@
     <Content Include="Views\PurchaseOrders\Order.cshtml" />
     <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
-    <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
+    <Content Include="Views\StockAdjustment\_ApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\_ApproveRejectPO.cshtml" />
     <Content Include="Views\PurchaseOrders\PendingPO.cshtml" />
     <Content Include="Views\Shared\__ClerkMenu.cshtml" />
