@@ -6,6 +6,7 @@ using System.Web;
 
 namespace LUSSIS.Validations
 {
+    //Authors: Tang Xiaowen
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class CollectionDateAttribute : ValidationAttribute
     {

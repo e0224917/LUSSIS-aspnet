@@ -5,6 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class EmployeeDTO
     {
         public int EmpNum { get; set; }

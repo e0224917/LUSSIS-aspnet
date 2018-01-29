@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Koh Meng Guan
     public class StationeryRepository : Repository<Stationery, string>, IStationeryRepository
     {
         public int GetLastRunningPlusOne(string initial)
@@ -28,7 +29,7 @@ namespace LUSSIS.Repositories
         
 
 
-        
+       
 
         public IEnumerable<Stationery> GetByCategory(string category)
         {
@@ -116,8 +117,5 @@ namespace LUSSIS.Repositories
         {     
             return GetAll().Where(x => x.CategoryId == c).Select(x => x.ItemNum).ToList();
         }
-
-
-      
     }
 }

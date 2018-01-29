@@ -10,6 +10,7 @@ using System.Web.Routing;
 
 namespace LUSSIS.CustomAuthority
 {
+    //Authors: Koh Meng Guan, Ong Xin Ying
     public class HeadWithDelegateAuthAttribute : AuthorizeAttribute
     {
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();

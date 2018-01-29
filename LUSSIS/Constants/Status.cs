@@ -1,5 +1,6 @@
 ﻿namespace LUSSIS.Constants
 {
+    //Authors: Ton That Minh Nhat
     public class RequisitionStatus
     {
         public const string InProcess = "inprocess";

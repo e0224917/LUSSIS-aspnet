@@ -6,6 +6,7 @@ using System.Web;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Koh Meng Guan
     public class StationerySupplierRepository : Repository<StationerySupplier, int>, IStationerySupplierRepository
     {
         public StationerySupplier GetSSByIdRank(string id, int rank)

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Douglas Lee Kiat Hui
     public class PurchaseOrderDTO
     {
         public PurchaseOrderDTO()
@@ -29,10 +30,12 @@ namespace LUSSIS.Models.WebDTO
         public Employee OrderEmployee { get; set; }
         public Employee ApprovalEmployee { get; set; }
         public Supplier Supplier { get; set; }
+        [Required]
         public string SupplierContact { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
+        [Required]
         public string SupplierAddress
         {
             get => Address1 + Environment.NewLine + Address2 + Environment.NewLine + Address3;

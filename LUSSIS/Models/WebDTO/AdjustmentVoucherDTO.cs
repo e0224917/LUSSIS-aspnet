@@ -8,11 +8,13 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Koh Meng Guan
     [NotMapped]
     public class AdjustmentVoucherDTO
     {
         [ItemNumValidator]
         [Required(ErrorMessage = "This field is required")]
+        [RegularExpression(@"^[a-zA-Z][1-9]{3}$", ErrorMessage = "Invalid Item Format")]
         [StringLength(20)]
         public string ItemNum { get; set; }
 

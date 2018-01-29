@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Douglas Lee Kiat Hui
     public class ReceiveTransDTO
     {
         public ReceiveTransDTO()

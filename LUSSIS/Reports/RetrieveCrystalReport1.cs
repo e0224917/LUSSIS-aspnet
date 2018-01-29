@@ -8,114 +8,91 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebApplication1.Reports
-{
+namespace LUSSIS.Reports {
     using System;
     using System.ComponentModel;
     using CrystalDecisions.Shared;
     using CrystalDecisions.ReportSource;
     using CrystalDecisions.CrystalReports.Engine;
-
-
-    public class PoCrystalReport : ReportClass
-    {
-
-        public PoCrystalReport()
-        {
+    
+    
+    public class RetrieveCrystalReport : ReportClass {
+        
+        public RetrieveCrystalReport() {
         }
-
-        public override string ResourceName
-        {
-            get
-            {
-                return "PoCrystalReport.rpt";
+        
+        public override string ResourceName {
+            get {
+                return "RetrieveCrystalReport.rpt";
             }
-            set
-            {
+            set {
                 // Do nothing
             }
         }
-
-        public override bool NewGenerator
-        {
-            get
-            {
+        
+        public override bool NewGenerator {
+            get {
                 return true;
             }
-            set
-            {
+            set {
                 // Do nothing
             }
         }
-
-        public override string FullResourceName
-        {
-            get
-            {
-                return "WebApplication1.Reports.PoCrystalReport.rpt";
+        
+        public override string FullResourceName {
+            get {
+                return "LUSSIS.Reports.RetrieveCrystalReport.rpt";
             }
-            set
-            {
+            set {
                 // Do nothing
             }
         }
-
+        
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section1
-        {
-            get
-            {
+        public CrystalDecisions.CrystalReports.Engine.Section Section1 {
+            get {
                 return this.ReportDefinition.Sections[0];
             }
         }
-
+        
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section2
-        {
-            get
-            {
+        public CrystalDecisions.CrystalReports.Engine.Section Section2 {
+            get {
                 return this.ReportDefinition.Sections[1];
             }
         }
-
+        
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section3
-        {
-            get
-            {
+        public CrystalDecisions.CrystalReports.Engine.Section Section3 {
+            get {
                 return this.ReportDefinition.Sections[2];
             }
         }
-
+        
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section4
-        {
-            get
-            {
+        public CrystalDecisions.CrystalReports.Engine.Section Section4 {
+            get {
                 return this.ReportDefinition.Sections[3];
             }
         }
-
+        
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section5
-        {
-            get
-            {
+        public CrystalDecisions.CrystalReports.Engine.Section Section5 {
+            get {
                 return this.ReportDefinition.Sections[4];
             }
         }
     }
-}
     
-   /* [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
-  public class CachedPoCrystalReport : Component, ICachedReport {
+    [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
+    public class CachedRetrieveCrystalReport : Component, ICachedReport {
         
-        public CachedPoCrystalReport() {
+        public CachedRetrieveCrystalReport() {
         }
         
         [Browsable(false)]
@@ -144,7 +121,7 @@ namespace WebApplication1.Reports
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public virtual System.TimeSpan CacheTimeOut {
             get {
-               // return CachedReportConstants.DEFAULT_TIMEOUT;
+                return CachedReportConstants.DEFAULT_TIMEOUT;
             }
             set {
                 // 
@@ -152,7 +129,7 @@ namespace WebApplication1.Reports
         }
         
         public virtual CrystalDecisions.CrystalReports.Engine.ReportDocument CreateReport() {
-            PoCrystalReport rpt = new PoCrystalReport();
+            RetrieveCrystalReport rpt = new RetrieveCrystalReport();
             rpt.Site = this.Site;
             return rpt;
         }
@@ -173,4 +150,4 @@ namespace WebApplication1.Reports
             return key;
         }
     }
-}*/
+}

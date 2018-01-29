@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ong Xin Ying
     [Authorize(Roles = "rep")]
     public class CollectionController : Controller
     {

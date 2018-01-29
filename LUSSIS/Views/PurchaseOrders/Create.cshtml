@@ -53,6 +53,7 @@
                             <label class="control-label col-md-12">Contact Name</label>
                             <div class="col-md-12">
                                 @Html.EditorFor(model => model.SupplierContact, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.SupplierContact, "", new { @class = "text-danger" })
                             </div>
                         </div>
                         <div class="form-group col-md-3 col-sm-3 col-lg-3">
@@ -67,6 +68,7 @@
                             <label class="control-label col-md-12">Supplier Address</label>
                             <div class="col-md-12">
                                 @Html.TextAreaFor(model => model.SupplierAddress, 3, 40, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.SupplierAddress, "", new { @class = "text-danger" })
                             </div>
                         </div>
                     </div>
@@ -82,8 +84,9 @@
                     <th>Item</th>
                     <th>Quantity</th>
                     <th>UOM</th>
-                    <th>Unit Price</th>
-                    <th>Line Price</th>
+                    <th>Unit Price($)</th>
+                    <th>Line Price($)</th>
+                    <th>Delete</th>
                 </tr>
 
                 @for (int i = 0; i < Model.PurchaseOrderDetailsDTO.Count; i++)
@@ -93,14 +96,15 @@
                             string itemNum = Model.PurchaseOrderDetailsDTO[i].ItemNum;
                         }
                         <td style="width:5%">@(i + 1)</td>
-                        <td style="width:33%">@Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].ItemNum, new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.Description", itemNum), new { @class = "line_item form-control" })</td>
-                        <td style="width:7%">@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { htmlAttributes = new { @class = "line_qty form-control", @min = "0" } })</td>
+                        <td style="width:28%">@Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].ItemNum, new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.Description", itemNum), new { @class = "line_item form-control" })</td>
+                        <td style="width:7%">@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { htmlAttributes = new { @class = "line_qty form-control", @min = Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString() } })</td>
                         <td style="width:15%">@Html.DropDownList("unit_of_measure", new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.UnitOfMeasure", itemNum), new { @class = "unit_of_measure form-control", @disabled = true })</td>
                         <td style="width:20%">
                             @Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new SelectList(ViewBag.Stationery, "Price", "Price"), new { @class = "unit_price form-control", @disabled = true })
                             @Html.HiddenFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new { @class = "hide_unit_price" })
                         </td>
                         <td style="width:20%"><input type="text" class="line_price form-control" value="0.00" disabled></td>
+                        <td style="width:5%"><input type="button" value="Delete" class="Delete btn btn-warning" onclick="deleteRow(this)"></td>
                     </tr>
                 }
             </table>
@@ -111,21 +115,21 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-md-3">
-                            <label type="text" class="control-label col-md-12">Product Cost</label>
+                            <label type="text" class="control-label col-md-12">Product Cost($)</label>
                             <div class="col-md-12">
                                 <input type="text" id="product_cost" class="form-control" disabled />
                             </div>
                         </div>
 
                         <div class="form-group col-md-3">
-                            <label type="text" class="control-label col-md-12">GST</label>
+                            <label type="text" class="control-label col-md-12">GST($)</label>
                             <div class="col-md-12">
                                 <input type="text" class="line_price form-control" id="GstAmt" placeholder="0" disabled>
                                 @*@Html.Editor("GstAmt", "0")*@
                             </div>
                         </div>
                         <div class="form-group col-md-3">
-                            <label type="text" class="control-label col-md-12">Total Cost</label>
+                            <label type="text" class="control-label col-md-12">Total Cost($)</label>
                             <div class="col-md-12">
                                 <input type="text" class="line_price form-control" id="TotalPoAmt" placeholder="0" disabled>
                                 @*@Html.Editor("TotalPoAmt", "0")*@
@@ -134,7 +138,7 @@
                         <div class="form-group col-md-3">
                             @Html.LabelFor(model => model.CreateDate, htmlAttributes: new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
-                                <input type="date" name="CreateDate" id="CreateDate" class="form-control" value="@Model.CreateDate.ToString("yyyy-MM-dd")" />
+                                <input type="date" name="CreateDate" id="CreateDate" class="form-control" value="@Model.CreateDate.ToString("yyyy-MM-dd")" disabled />
                                 @Html.ValidationMessageFor(model => model.CreateDate, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -176,8 +180,21 @@
         var trId = '#id' + cindex;
         $(trId).removeAttr("hidden");
         cindex++;
-    });
-
+        });
+        //delete row
+    function deleteRow(r){
+        var i = r.parentNode.parentNode.rowIndex       
+            document.getElementById('details').deleteRow(i);
+            var rows = document.getElementById('details').rows;
+            for (var c = i; c < rows.length; c++) {
+                rows[c].cells[0].innerHTML = parseInt(rows[c].cells[0].innerHTML) - 1;
+            }
+            //var lineCost = parseFloat(
+            //    parseFloat($(r).find('.line_qty').val(0))
+            //    * parseFloat($(r).find('.unit_price').val(0))
+            //);
+            calculateAll();
+      }
     //update line if selection is changed
     $(document).on('change', '.line_item', function () {
     var $tr = $(this).closest('.po_line');
@@ -230,7 +247,7 @@
         $('#product_cost').val(productCost.toFixed(2));
         $('#GstAmt').val((productCost * GST).toFixed(2));
         $('#TotalPoAmt').val((productCost * (1+GST)).toFixed(2));
-    }
+        }
 
 
     /*
@@ -269,4 +286,6 @@
 
     </script>
 }
+
+@*Authors: Douglas Lee Kiat Hui*@
 

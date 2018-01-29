@@ -12,8 +12,7 @@ using LUSSIS.Repositories.Interface;
 
 namespace LUSSIS.Repositories
 {
-    //still working on it. --- xiaowen
-
+    //Authors: Tang Xiaowen, Cui Runze
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
 

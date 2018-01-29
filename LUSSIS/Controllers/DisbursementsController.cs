@@ -17,6 +17,7 @@ using QRCoder;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Tang Xiaowen, Guo Rui
     [Authorize(Roles = "clerk")]
     public class DisbursementsController : Controller
     {
@@ -51,21 +52,21 @@ namespace LUSSIS.Controllers
 
 
         // GET: Disbursement/Edit/5
-        public async Task<ActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Disbursement disbursement = await _disbursementRepo.GetByIdAsync((int)id);
-            if (disbursement == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
+        //public async Task<ActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    Disbursement disbursement = await _disbursementRepo.GetByIdAsync((int)id);
+        //    if (disbursement == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
 
-            return View(disbursement);
-        }
+        //    return View(disbursement);
+        //}
 
         //POST: Disbursement/Edit/5
         [HttpPost]
