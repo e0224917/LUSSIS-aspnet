@@ -714,7 +714,7 @@
     <Content Include="Views\StockAdjustment\_History.cshtml" />
     <Content Include="Views\Requisitions\_All.cshtml" />
     <Content Include="Views\Requisitions\_Index.cshtml" />
-    <Content Include="Views\SupervisorDashboard\TestGoogleStackedCharts.cshtml" />
+    <Content Include="Views\SupervisorDashboard\TrendAnalysis.cshtml" />
     <Content Include="Views\Requisitions\_Consolidated.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />

@@ -116,7 +116,7 @@ namespace LUSSIS.Controllers
                 rto = new ReportTransferDTO();
                 double temp=0;
                 rto.timeValue = datevalue[j];
-
+                xvalue = new List<double>();
                 for (int i = 0; i <depList.Count; i++)
                 {
 
@@ -148,7 +148,7 @@ namespace LUSSIS.Controllers
         }
 
 
-        public ActionResult TestGoogleStackedCharts()
+        public ActionResult TrendAnalysis()
         {
             ViewBag.Departments = _departmentRepo.GetAll().Where(x => x.DeptCode != "STNR");
             ViewBag.Categories = _categoryRepo.GetAll();
