@@ -17,7 +17,7 @@ using QRCoder;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Tang Xiaowen, Guo Rui
+    //Authors: Tang Xiaowen
     [Authorize(Roles = "clerk")]
     public class DisbursementsController : Controller
     {

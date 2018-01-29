@@ -662,7 +662,6 @@
     <Content Include="Views\Requisitions\_ApproveReq.cshtml" />
     <Content Include="Views\Shared\_DeptEmployeeLayout.cshtml" />
     <Content Include="Views\Requisitions\RetrievalInProcess.cshtml" />
-    <Content Include="Views\Disbursements\Delete.cshtml" />
     <Content Include="Views\Disbursements\Details.cshtml" />
     <Content Include="Views\Disbursements\Edit.cshtml" />
     <Content Include="Views\Disbursements\Upcoming.cshtml" />
