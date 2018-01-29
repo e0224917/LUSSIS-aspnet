@@ -7,6 +7,7 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ton That Minh Nhat, Ong Xin Ying
     [RequireHttps]
     public class HomeController : Controller
     {

@@ -21,7 +21,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.CollectionDate, new { @class = "col-form-label" })
             <div class="col-md-10">
-                <input type="text" class = "form-control" name="collectionDate" id="collectionDate" onkeydown="return false">
+                <input type="text" class="form-control" name="collectionDate" id="collectionDate" onkeydown="return false">
                 @Html.ValidationMessageFor(model => model.CollectionDate, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -42,7 +42,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-success"/>&nbsp;&nbsp;
+                <input type="submit" value="Save" class="btn btn-success" />&nbsp;&nbsp;
                 @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
             </div>
         </div>
@@ -64,5 +64,7 @@
         });
     </script>
 }
+
+@*Authors: Tang Xiaowen, Guo Rui*@
 
 

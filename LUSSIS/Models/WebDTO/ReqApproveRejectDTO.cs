@@ -5,6 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Koh Meng Guan
     public class ReqApproveRejectDTO
     {
 

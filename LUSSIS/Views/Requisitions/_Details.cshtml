@@ -19,20 +19,22 @@
     </tr>
     @foreach (var item in Model)
     {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Stationery.Category.CategoryName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Stationery.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Quantity)
-        </td>
-    </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stationery.Category.CategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stationery.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+        </tr>
     }
 
-</table> 
+</table>
+
+@*Authors: Koh Meng Guan*@

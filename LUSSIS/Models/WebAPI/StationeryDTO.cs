@@ -6,6 +6,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class StationeryDTO
     {
         public string ItemNum { get; set; }

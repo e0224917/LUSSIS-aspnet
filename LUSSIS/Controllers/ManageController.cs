@@ -10,6 +10,7 @@ using LUSSIS.Models;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ton That Minh Nhat
     [Authorize]
     public class ManageController : Controller
     {

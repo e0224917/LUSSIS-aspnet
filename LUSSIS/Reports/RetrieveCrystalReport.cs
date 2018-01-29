@@ -8,88 +8,111 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace LUSSIS.Reports {
+namespace LUSSIS.Reports
+{
     using System;
     using System.ComponentModel;
     using CrystalDecisions.Shared;
     using CrystalDecisions.ReportSource;
     using CrystalDecisions.CrystalReports.Engine;
-    
-    
-    public class RetrieveCrystalReport : ReportClass {
-        
-        public RetrieveCrystalReport() {
+
+
+    public class RetrieveCrystalReport : ReportClass
+    {
+
+        public RetrieveCrystalReport()
+        {
         }
-        
-        public override string ResourceName {
-            get {
+
+        public override string ResourceName
+        {
+            get
+            {
                 return "RetrieveCrystalReport.rpt";
             }
-            set {
+            set
+            {
                 // Do nothing
             }
         }
-        
-        public override bool NewGenerator {
-            get {
+
+        public override bool NewGenerator
+        {
+            get
+            {
                 return true;
             }
-            set {
+            set
+            {
                 // Do nothing
             }
         }
-        
-        public override string FullResourceName {
-            get {
+
+        public override string FullResourceName
+        {
+            get
+            {
                 return "LUSSIS.Reports.RetrieveCrystalReport.rpt";
             }
-            set {
+            set
+            {
                 // Do nothing
             }
         }
-        
+
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section1 {
-            get {
+        public CrystalDecisions.CrystalReports.Engine.Section Section1
+        {
+            get
+            {
                 return this.ReportDefinition.Sections[0];
             }
         }
-        
+
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section2 {
-            get {
+        public CrystalDecisions.CrystalReports.Engine.Section Section2
+        {
+            get
+            {
                 return this.ReportDefinition.Sections[1];
             }
         }
-        
+
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section3 {
-            get {
+        public CrystalDecisions.CrystalReports.Engine.Section Section3
+        {
+            get
+            {
                 return this.ReportDefinition.Sections[2];
             }
         }
-        
+
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section4 {
-            get {
+        public CrystalDecisions.CrystalReports.Engine.Section Section4
+        {
+            get
+            {
                 return this.ReportDefinition.Sections[3];
             }
         }
-        
+
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section5 {
-            get {
+        public CrystalDecisions.CrystalReports.Engine.Section Section5
+        {
+            get
+            {
                 return this.ReportDefinition.Sections[4];
             }
         }
     }
+}
     
-    [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
+   /* [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
     public class CachedRetrieveCrystalReport : Component, ICachedReport {
         
         public CachedRetrieveCrystalReport() {
@@ -151,3 +174,4 @@ namespace LUSSIS.Reports {
         }
     }
 }
+*/

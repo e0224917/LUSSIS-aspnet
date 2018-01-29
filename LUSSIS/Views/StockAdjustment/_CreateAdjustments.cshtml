@@ -22,10 +22,10 @@
                     @Html.RadioButtonFor(model => model.Sign, true) +
                 </label>
             </div>
-            @Html.ValidationMessageFor(model => model.Sign, "", new {@class = "text-danger"})
+            @Html.ValidationMessageFor(model => model.Sign, "", new { @class = "text-danger" })
         </td>
         <td>
-            @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control", @min ="0"} }) <br /> <span style="font-size:0">a </span>
+            @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control", @min = "0" } }) <br /> <span style="font-size:0">a </span>
             @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
         </td>
         <td>
@@ -49,5 +49,7 @@
         });
     </script>
 }
+
+@*Authors: Koh Meng Guan*@
 
 

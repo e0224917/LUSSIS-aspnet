@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Koh Meng Guan
     public class StationeryDTO
     {
         public string ItemNum { get; set; }

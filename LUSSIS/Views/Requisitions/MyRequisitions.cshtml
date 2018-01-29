@@ -5,7 +5,7 @@
 }
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 <h2>Requisition List</h2>
-<hr/>
+<hr />
 
 <table class="table table-striped table-hover">
     <tr class="table-active">
@@ -42,7 +42,7 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.ActionLink("View Details", "MyRequisitionDetails", new { id = item.RequisitionId}, new{@class="btn btn-info btn-sm"})
+                @Html.ActionLink("View Details", "MyRequisitionDetails", new { id = item.RequisitionId }, new { @class = "btn btn-info btn-sm" })
             </td>
         </tr>
     }
@@ -51,5 +51,5 @@
         Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
         @Html.PagedListPager(Model, page => Url.Action("MyRequisitions", new { page, currentFilter = ViewBag.CurrentFilter }))
 
-
+        @*Authors: Cui Runze*@
 

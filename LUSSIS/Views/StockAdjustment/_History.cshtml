@@ -29,30 +29,30 @@
 
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate, "Date of creation")
-                @Html.HiddenFor(modelItem => item.AdjVoucherId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequestEmployee.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stationery.Description, "Item")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity, "Quantity")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reason, "Reason")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status, "Status")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Remark, "Approval remark")
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate, "Date of creation")
+                    @Html.HiddenFor(modelItem => item.AdjVoucherId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestEmployee.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stationery.Description, "Item")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity, "Quantity")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Reason, "Reason")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status, "Status")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Remark, "Approval remark")
+                </td>
+            </tr>
         }
 
     </table>
@@ -64,4 +64,5 @@
 
 </div>
 
+@*Authors: Koh Meng Guan*@
 

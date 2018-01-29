@@ -7,6 +7,7 @@ using System.Web;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Ong Xin Ying
     public class EmployeeRepository : Repository<Employee, int>
     {
         public Employee GetEmployeeByEmail(string email)
