@@ -39,7 +39,7 @@ namespace LUSSIS.Controllers
             }
 
             var adjustments = !string.IsNullOrEmpty(searchString)
-                ? _stockAdjustmentRepo.FindAdjVoucherByText(searchString)
+                ? _stockAdjustmentRepo.FindAdjVoucherByText(searchString).Reverse().ToList()
                 : _stockAdjustmentRepo.GetAll().Reverse().ToList();
 
             var reqAll = adjustments.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
