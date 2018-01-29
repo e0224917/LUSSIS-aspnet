@@ -90,10 +90,10 @@ namespace LUSSIS.Controllers
                     SupplierName = "Select a Supplier"
                 };
 
-                ViewBag.Suppliers = _supplierRepo.GetAll().Concat(new [] {emptySupplier});
+                ViewBag.Suppliers = _supplierRepo.GetAll().Concat(new[] { emptySupplier });
                 ViewBag.Supplier = emptySupplier;
 
-                var emptyPo = new PurchaseOrderDTO {SupplierId = -1};
+                var emptyPo = new PurchaseOrderDTO { SupplierId = -1 };
                 return View(emptyPo);
             }
 
@@ -166,7 +166,7 @@ namespace LUSSIS.Controllers
                 Stationery = emptyStationery
             };
 
-            var sslist = new List<StationerySupplier> {stationerySupplier};
+            var sslist = new List<StationerySupplier> { stationerySupplier };
             sslist.AddRange(_stationerySupplierRepo.GetStationerySupplierBySupplierId(supplierId).ToList());
             ViewBag.Stationery = sslist;
             ViewBag.Suppliers = _supplierRepo.GetAll();
@@ -189,9 +189,12 @@ namespace LUSSIS.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
+                if (purchaseOrderDto.SupplierContact == null)
+                    throw new Exception("Please input the supplier contact");
+                if (purchaseOrderDto.SupplierAddress == "\r\n\r\n")
+                    throw new Exception("Please input the supplier address");
+                else if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
-
                 //fill default values
                 var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
                 var fullName = Request.Cookies["Employee"]?["Name"];
@@ -229,7 +232,7 @@ namespace LUSSIS.Controllers
             catch (Exception e)
             {
                 return RedirectToAction("Create",
-                    new {supplierId = purchaseOrderDto.SupplierId.ToString(), error = e.Message});
+                    new { supplierId = purchaseOrderDto.SupplierId.ToString(), error = e.Message });
             }
         }
 
@@ -297,37 +300,37 @@ namespace LUSSIS.Controllers
             }
             catch (Exception e)
             {
-                return RedirectToAction("Receive", new {p = receiveModel.PoNum.ToString(), error = e.Message});
+                return RedirectToAction("Receive", new { p = receiveModel.PoNum.ToString(), error = e.Message });
             }
         }
 
-       /* public ActionResult PrintPo(int id, double? orderDate)
-        {
+        /* public ActionResult PrintPo(int id, double? orderDate)
+         {
 
-            DateTime OrderDate;
-            
-            DataSet ds = new DataSet();
-            ReportDocument rd = new ReportDocument();
-            rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
-            if (orderDate != null)
-            {
-                var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                    .AddMilliseconds(Convert.ToDouble(orderDate)).ToLocalTime();
-                ds.Tables.Add(GetPo(id, date));
-            }
-            else
-            {
-                ds.Tables.Add(GetPo(id));
-            }
+             DateTime OrderDate;
 
-            rd.SetDataSource(ds);
-            Response.Buffer = false;
-            Response.ClearContent();
-            Response.ClearHeaders();
-            var stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-            stream.Seek(0, SeekOrigin.Begin);
-            return File(stream, "application/pdf");
-        }*/
+             DataSet ds = new DataSet();
+             ReportDocument rd = new ReportDocument();
+             rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
+             if (orderDate != null)
+             {
+                 var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                     .AddMilliseconds(Convert.ToDouble(orderDate)).ToLocalTime();
+                 ds.Tables.Add(GetPo(id, date));
+             }
+             else
+             {
+                 ds.Tables.Add(GetPo(id));
+             }
+
+             rd.SetDataSource(ds);
+             Response.Buffer = false;
+             Response.ClearContent();
+             Response.ClearHeaders();
+             var stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+             stream.Seek(0, SeekOrigin.Begin);
+             return File(stream, "application/pdf");
+         }*/
 
 
         //GET: PurchaseOrders/Order?p=10001
@@ -347,7 +350,7 @@ namespace LUSSIS.Controllers
             var purchaseOrder = await _poRepo.GetByIdAsync(Convert.ToInt32(p));
             if (purchaseOrder.Status != "approved")
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var po = new PurchaseOrderDTO(purchaseOrder) {OrderDate = DateTime.Today};
+            var po = new PurchaseOrderDTO(purchaseOrder) { OrderDate = DateTime.Today };
 
             return View(po);
         }
@@ -359,6 +362,7 @@ namespace LUSSIS.Controllers
         {
             try
             {
+
                 if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
                 var purchaseorder = _poRepo.GetById(po.PoNum);
@@ -371,7 +375,7 @@ namespace LUSSIS.Controllers
             }
             catch (Exception e)
             {
-                return RedirectToAction("Order", new {p = po.PoNum.ToString(), error = e.Message});
+                return RedirectToAction("Order", new { p = po.PoNum.ToString(), error = e.Message });
             }
         }
 
@@ -408,6 +412,14 @@ namespace LUSSIS.Controllers
 
             return PartialView("_ApproveRejectPO");
         }
+        //[Authorize(Roles = "supervisor")]
+        //[HttpPost]
+        
+        //public ActionResult DeleteItem(string id)
+        //{
+
+        //    return View();
+        //}
 
         protected override void Dispose(bool disposing)
         {
@@ -512,6 +524,7 @@ namespace LUSSIS.Controllers
             table.TableName = "PurchaseOrder";
             return table;
         }
+       
     }
 }
 
