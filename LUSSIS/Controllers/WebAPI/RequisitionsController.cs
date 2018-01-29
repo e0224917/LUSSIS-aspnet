@@ -11,6 +11,7 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class RequisitionsController : ApiController
     {
         private readonly RequisitionRepository _requistionRepo = new RequisitionRepository();

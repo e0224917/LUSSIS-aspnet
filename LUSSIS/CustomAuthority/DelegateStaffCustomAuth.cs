@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace LUSSIS.CustomAuthority
 {
+    //Authors: Koh Meng Guan, Ong Xin Ying
     public class DelegateStaffCustomAuthAttribute : AuthorizeAttribute
     {
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();

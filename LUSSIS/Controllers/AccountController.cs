@@ -14,6 +14,7 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ton That Minh Nhat
     [Authorize]
     public class AccountController : Controller
     {
@@ -116,7 +117,7 @@ namespace LUSSIS.Controllers
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    UserManager.AddToRole(user.Id, _employeeRepo.GetJobTitleByEmail(model.Email));
+                    UserManager.AddToRole(user.Id, _employeeRepo.GetEmployeeByEmail(model.Email).JobTitle);
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);

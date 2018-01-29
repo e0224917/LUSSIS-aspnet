@@ -5,6 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Ong Xin Ying
     public class ManageCollectionDTO
     {
         public CollectionPoint CollectionPoint { get; set; }

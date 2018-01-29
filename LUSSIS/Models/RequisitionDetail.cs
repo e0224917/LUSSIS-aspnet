@@ -18,6 +18,7 @@ namespace LUSSIS.Models
         [Column(Order = 1)]
         [StringLength(20)]
         public string ItemNum { get; set; }
+
         [Required]
         public int Quantity { get; set; }
 

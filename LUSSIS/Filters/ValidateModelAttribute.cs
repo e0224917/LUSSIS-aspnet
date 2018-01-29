@@ -9,6 +9,7 @@ using System.Web.Http.Filters;
 
 namespace LUSSIS.Filters
 {
+    //Authors: Ton That Minh Nhat
     public class ValidateModelAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(HttpActionContext actionContext)

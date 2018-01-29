@@ -2,6 +2,7 @@
 
 namespace LUSSIS.Models.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class DelegateDTO
     {
         public int DelegateId { get; set; }

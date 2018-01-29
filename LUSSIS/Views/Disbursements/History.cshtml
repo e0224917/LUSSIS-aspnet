@@ -1,7 +1,7 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Disbursement>
 @using PagedList.Mvc;
 
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
 @{
     ViewBag.Title = "Disbursement History";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -21,7 +21,7 @@
         {
             <span class="d-inline nav-item nav-link" style="color:whitesmoke">Find By Department </span>
             @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
-            <button type="submit" class="btn btn-secondary my-2 my-sm-0" >Search</button>
+            <button type="submit" class="btn btn-secondary my-2 my-sm-0">Search</button>
 
         }
         @using (Ajax.BeginForm(new AjaxOptions
@@ -48,3 +48,8 @@
 
 
 }
+
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+}
+
+@*Authors: Tang Xiaowen, Guo Rui*@

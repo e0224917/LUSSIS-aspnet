@@ -11,7 +11,7 @@ using LUSSIS.Repositories.Interface;
 
 namespace LUSSIS.Repositories
 {
-
+    //Authors: Douglas Lee Kiat Hui, May Zin Ko
     public class PORepository : Repository<PurchaseOrder, int>, IPORepository
     {
         public List<PurchaseOrder> GetPendingApprovalPO()

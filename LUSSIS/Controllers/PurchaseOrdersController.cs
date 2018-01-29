@@ -20,6 +20,7 @@ using PagedList;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Douglas Lee Kiat Hui
     [Authorize(Roles = "clerk, supervisor")]
     public class PurchaseOrdersController : Controller
     {

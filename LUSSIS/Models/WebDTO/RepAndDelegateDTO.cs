@@ -5,6 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Ong Xin Ying
     public class RepAndDelegateDTO
     {
         public Department Department { get; set; }

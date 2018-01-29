@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
@@ -15,6 +14,7 @@ using LUSSIS.Emails;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Koh Meng Guan, May Zin Ko
     [Authorize(Roles = "clerk, supervisor, manager")]
     public class StockAdjustmentController : Controller
     {
@@ -28,6 +28,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("History");
         }
 
+        //Author: Koh Meng Guan
         public ActionResult History(string searchString, string currentFilter, int? page)
         {
             if (searchString != null)
@@ -40,8 +41,8 @@ namespace LUSSIS.Controllers
             }
 
             var adjustments = !string.IsNullOrEmpty(searchString)
-                ? _stockAdjustmentRepo.FindAdjVoucherByText(searchString)
-                : _stockAdjustmentRepo.GetAll().ToList();
+                ? _stockAdjustmentRepo.FindAdjVoucherByText(searchString).Reverse().ToList()
+                : _stockAdjustmentRepo.GetAll().Reverse().ToList();
 
             var reqAll = adjustments.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
@@ -53,6 +54,8 @@ namespace LUSSIS.Controllers
             return View(reqAll);
         }
 
+
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpGet]
         public ActionResult CreateAdjustments()
@@ -65,6 +68,7 @@ namespace LUSSIS.Controllers
             return View("CreateAdjustments", adjVoucherColView);
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpPost]
         public ActionResult CreateAdjustments(AdjVoucherColView adjVoucherColView)
@@ -104,9 +108,9 @@ namespace LUSSIS.Controllers
                     var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                     var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
                     var email1 = new LUSSISEmail.Builder().From(self.EmailAddress)
-                        .To(managerEmail).ForStockAdjustments(self.FullName, vouchers).Build();
+                        .To(managerEmail).ForNewStockAdjustments(self.FullName, vouchers).Build();
                     var email2 = new LUSSISEmail.Builder().From(self.EmailAddress)
-                        .To(supervisorEmail).ForStockAdjustments(self.FullName, vouchers).Build();
+                        .To(supervisorEmail).ForNewStockAdjustments(self.FullName, vouchers).Build();
 
                     EmailHelper.SendEmail(email1);
                     EmailHelper.SendEmail(email2);
@@ -120,12 +124,14 @@ namespace LUSSIS.Controllers
             return View(adjVoucherColView);
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         public PartialViewResult _CreateAdjustments()
         {
             return PartialView("_CreateAdjustments", new AdjustmentVoucherDTO());
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpGet]
         public ActionResult CreateAdjustment(string id)
@@ -144,6 +150,7 @@ namespace LUSSIS.Controllers
             return View(adj);
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpPost]
         public ActionResult CreateAdjustment([Bind(Include = "Quantity,Reason,ItemNum,Sign")]
@@ -174,9 +181,9 @@ namespace LUSSIS.Controllers
                 var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                 var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
                 var email1 = new LUSSISEmail.Builder().From(self.EmailAddress)
-                    .To(managerEmail).ForStockAdjustment(self.FullName, adjustment).Build();
+                    .To(managerEmail).ForNewStockAdjustment(self.FullName, adjustment).Build();
                 var email2 = new LUSSISEmail.Builder().From(self.EmailAddress)
-                    .To(supervisorEmail).ForStockAdjustment(self.FullName, adjustment).Build();
+                    .To(supervisorEmail).ForNewStockAdjustment(self.FullName, adjustment).Build();
 
                 EmailHelper.SendEmail(email1);
                 EmailHelper.SendEmail(email2);
@@ -188,6 +195,7 @@ namespace LUSSIS.Controllers
             return View(adjVoucherDto);
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpGet]
         public JsonResult GetItemNum(string term)
@@ -207,6 +215,7 @@ namespace LUSSIS.Controllers
         }
 
 
+        //Author: May Zin Ko
         [Authorize(Roles = "manager,supervisor")]
         public ActionResult ViewPendingStockAdj()
         {
@@ -215,6 +224,7 @@ namespace LUSSIS.Controllers
             return View(_stockAdjustmentRepo.GetPendingAdjustmentByRole(role));
         }
 
+        //Author: May Zin Ko
         [Authorize(Roles = "manager,supervisor")]
         [HttpGet]
         public ActionResult ApproveReject(string list, string status)
@@ -225,6 +235,7 @@ namespace LUSSIS.Controllers
             return PartialView("ApproveReject");
         }
 
+        //Author: May Zin Ko
         [Authorize(Roles = "manager,supervisor")]
         [HttpPost]
         public ActionResult ApproveReject(string checkList, string comment, string status)

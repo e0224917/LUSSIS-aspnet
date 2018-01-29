@@ -162,7 +162,7 @@ else
 
 @section scripts
 {
-        <script>
+    <script>
 
         //redirect page if PO selected from no-PO page
         $(document).on('change', '#select_PO', function () {
@@ -177,6 +177,8 @@ else
                 var date = new Date($('#OrderDate').val());
             window.open(urlToPrintPo + '&orderDate=' + date.getTime());
         }
-        </script>
+    </script>
 }
+
+@*Authors: Douglas Lee Kiat Hui*@
 

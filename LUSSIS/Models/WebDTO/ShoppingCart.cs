@@ -5,6 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Cui Runze
     public class ShoppingCart
     {
         public List<Cart> shoppingCart;

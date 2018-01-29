@@ -1,5 +1,6 @@
 ﻿namespace LUSSIS.Constants
 {
+    //Authors: Ton That Minh Nhat
     public class Role
     {
         public const string Clerk = "clerk";

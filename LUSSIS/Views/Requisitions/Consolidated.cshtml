@@ -1,12 +1,13 @@
 ﻿@using LUSSIS.Models.WebDTO
+@using PagedList.Mvc
 @model RetrievalItemsWithDateDTO
 
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+
 @{
     ViewBag.Title = "Consolidated";
 }
 <h2>Consolidated Stationery Requisitions</h2>
-<hr/>
+<hr />
 
 @if (Model.retrievalItems == null || !Model.retrievalItems.Any())
 {
@@ -20,10 +21,11 @@ else
         Since generating multiple batches of retrieval is not a business requirement, we will omit this funtion *@
     if (Model.hasInprocessDisbursement)
     {
-        <div class="alert alert-dismissible alert-info"><br/>
+        <div class="alert alert-dismissible alert-info">
+            <br />
             <strong>
                 There are already disbursements in process . <br />
-            </strong> You can arrange for new disbursements once the current ones are completed.<br/><br/>
+            </strong> You can arrange for new disbursements once the current ones are completed.<br /><br />
         </div>
     }
     else
@@ -46,59 +48,28 @@ else
 
     }
 
-    <table id="long-table" class="table table-hover table-striped">
-        <thead>
-            <tr class="table-active">
-                <th scope="col">Bin Num</th>
-                <th scope="col">Stationery</th>
-                <th scope="col">UOM</th>
-                <th scope="col">Requested Qty*</th>
-                <th scope="col">Available Qty</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.retrievalItems)
-            {
-                <tr>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.BinNum)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UnitOfMeasure)
-                    </td>
-
-                    <td>
-                        @(item.RequestedQty + item.RemainingQty)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AvailableQty)
-                    </td>
-
-                </tr>
-            }
-        </tbody>
-
-    </table>
-    <small id="fileHelp" class="form-text text-muted">*Unfullfilled Qty from previous disbursements has been added to Requested Qty</small>
+    @Html.Partial("_Consolidated", Model.retrievalItems)
 
 }
 
-@section scripts {
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script>
-        $(function () {
-            $("#collectionDate")
-                .datepicker({
-                    minDate: 1,
-                    maxDate: "+1M +10D",
-                    dateFormat: "dd/mm/yy"
-                });
-        });
-    </script>
+    @section scripts {
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+            $(function () {
+                $("#collectionDate")
+                    .datepicker({
+                        minDate: 1,
+                        maxDate: "+1M +10D",
+                        dateFormat: "dd/mm/yy",
+                    }).datepicker("setDate", "+2d");
+            });
+        </script>
 
+    }
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 }
+
+@*Authors: Tang Xiaowen*@
+
