@@ -14,7 +14,7 @@ using LUSSIS.Emails;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Koh Meng Guan
+    //Authors: Koh Meng Guan, May Zin Ko
     [Authorize(Roles = "clerk, supervisor, manager")]
     public class StockAdjustmentController : Controller
     {
@@ -28,6 +28,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("History");
         }
 
+        //Author: Koh Meng Guan
         public ActionResult History(string searchString, string currentFilter, int? page)
         {
             if (searchString != null)
@@ -53,6 +54,8 @@ namespace LUSSIS.Controllers
             return View(reqAll);
         }
 
+
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpGet]
         public ActionResult CreateAdjustments()
@@ -65,6 +68,7 @@ namespace LUSSIS.Controllers
             return View("CreateAdjustments", adjVoucherColView);
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpPost]
         public ActionResult CreateAdjustments(AdjVoucherColView adjVoucherColView)
@@ -120,12 +124,14 @@ namespace LUSSIS.Controllers
             return View(adjVoucherColView);
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         public PartialViewResult _CreateAdjustments()
         {
             return PartialView("_CreateAdjustments", new AdjustmentVoucherDTO());
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpGet]
         public ActionResult CreateAdjustment(string id)
@@ -144,6 +150,7 @@ namespace LUSSIS.Controllers
             return View(adj);
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpPost]
         public ActionResult CreateAdjustment([Bind(Include = "Quantity,Reason,ItemNum,Sign")]
@@ -188,6 +195,7 @@ namespace LUSSIS.Controllers
             return View(adjVoucherDto);
         }
 
+        //Author: Koh Meng Guan
         [Authorize(Roles = "clerk")]
         [HttpGet]
         public JsonResult GetItemNum(string term)
@@ -207,6 +215,7 @@ namespace LUSSIS.Controllers
         }
 
 
+        //Author: May Zin Ko
         [Authorize(Roles = "manager,supervisor")]
         public ActionResult ViewPendingStockAdj()
         {
@@ -215,6 +224,7 @@ namespace LUSSIS.Controllers
             return View(_stockAdjustmentRepo.GetPendingAdjustmentByRole(role));
         }
 
+        //Author: May Zin Ko
         [Authorize(Roles = "manager,supervisor")]
         [HttpGet]
         public ActionResult ApproveReject(string list, string status)
@@ -225,6 +235,7 @@ namespace LUSSIS.Controllers
             return PartialView("ApproveReject");
         }
 
+        //Author: May Zin Ko
         [Authorize(Roles = "manager,supervisor")]
         [HttpPost]
         public ActionResult ApproveReject(string checkList, string comment, string status)

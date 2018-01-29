@@ -14,6 +14,7 @@ namespace LUSSIS.Models.WebDTO
     {
         [ItemNumValidator]
         [Required(ErrorMessage = "This field is required")]
+        [RegularExpression(@"^[a-zA-Z][1-9]{3}$", ErrorMessage = "Invalid Item Format")]
         [StringLength(20)]
         public string ItemNum { get; set; }
 
