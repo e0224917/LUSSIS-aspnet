@@ -679,7 +679,7 @@
     <Content Include="Views\PurchaseOrders\Order.cshtml" />
     <Content Include="Views\PurchaseOrders\Details.cshtml" />
     <Content Include="Views\StockAdjustment\ViewPendingStockAdj.cshtml" />
-    <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
+    <Content Include="Views\StockAdjustment\_ApproveReject.cshtml" />
     <Content Include="Views\PurchaseOrders\_ApproveRejectPO.cshtml" />
     <Content Include="Views\PurchaseOrders\PendingPO.cshtml" />
     <Content Include="Views\Shared\__ClerkMenu.cshtml" />
@@ -716,6 +716,7 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Collection\_SetCollection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
