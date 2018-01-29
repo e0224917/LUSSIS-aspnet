@@ -3,7 +3,7 @@
 <div id="a"></div>
 <h2>Dashboard for @ViewBag.Message</h2>
 <div class="row">
-    <div class="col-4">
+    <div class="col-3">
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-    <div class="col-3" id="notShowManager" style="display: none;">
+    <div class="col-3" id="notShowManager">
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <div class="col-lg-8">
+    <div class="col-3">
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
@@ -49,7 +49,7 @@
         </div>
     </div>
 
-    <div class="col-lg-8">
+    <div class="col-3">
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
@@ -67,27 +67,22 @@
 </div>
 
 
-<div class="row">
-    @*<img src="@Url.Action("CharterColumn")" alt="chart" />*@
 
-</div>
-<div class="row">
-    @**<img src="@Url.Action("PieChartColumn")" alt="chart" />*@
-
-</div>
 <div class="row">
     <div class="col-md-6">
         <div id="chart_div"></div>
     </div>
     <div class="col-md-6">
-        <div id="bar_div"></div>
+        <h5></h5>
+        <div id="stack_div"></div>
     </div>
 </div>
 
 @section scripts
 {
     <script>
-    window.onload = function() {
+        window.onload = function ()
+        {
         if (@User.IsInRole("supervisor")) {
             document.getElementById("notShowManager").style.display = "block";
         } else {
@@ -102,16 +97,20 @@
         google.charts.load('current', { 'packages': ['corechart'] });
 
         //Call function after Google Chart is loaded, it is required, otherwise you may get error
-        google.charts.setOnLoadCallback(DrawPieChartLoad);
+       google.charts.setOnLoadCallback(DrawPieChartLoad);
 
-        google.charts.setOnLoadCallback(DrawBarChartLoad);
-
-        function DrawPieChartLoad() {
+      google.charts.setOnLoadCallback(DrawStackChartLoad);
+        
+       
+       
+        function DrawPieChartLoad()
+        {
             $(function () {
                 $.ajax({
                     type: 'GET',
                     url: '/SupervisorDashboard/GetPiechartJson?list=aaa&date=bbbb&&e=cdefe',
-                    success: function (chartsdata) {
+                    success: function (chartsdata)
+                    {
 
                         var first = chartsdata.ListOne;
                         var second = chartsdata.ListTwo;
@@ -136,7 +135,7 @@
                         //Draw pie chart command with data and chart options
                         chart.draw(data,
                             {
-                                title: "Stationery Trend Analysis",
+                                title: "Stationery Trend Analysis for Past three month",
                                 position: "top",
                                 fontsize: "25px",
                                 width: "600",
@@ -151,39 +150,72 @@
             });
 
         }
-
-        /////this one is for department
-        function DrawBarChartLoad() {
+       
+      
+        function DrawStackChartLoad() {
             $(function () {
+               // alert("this is");
                 $.ajax({
                     type: 'GET',
-                    url: '/SupervisorDashboard/GetBarchartJson',
-                    success: function (chartsdata) {
-                        var first = chartsdata.firstList;
-                        var second = chartsdata.secondList;
-
+                    url: '/SupervisorDashboard/GetStackJSON',
+                    success: function (chartsdata)
+                    {
+                        //alert("please");
                         var data = new google.visualization.DataTable();
-                        data.addColumn('string', 'Department');
-                        data.addColumn('number', 'Amount');
+                      
+                        var title = chartsdata.title;
+                        var listone = chartsdata.ListOne;
+                       // alert(listone.length);
 
-                        //Loop through each list data
-
-                        for (var i = 0; i < first.length; i++) {
-                            if (second[i] !== 0) {
-                                data.addRow([first[i], second[i]]);
+                        for (var i = 0; i < title.length + 1; i++)
+                        {
+                           // alert("first");
+                            if (i == 0) {
+                                data.addColumn("string", 'Time');
+                            } else {
+                                data.addColumn('number', title[i - 1]);
                             }
                         }
-                        var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
+                        
+                        data.addRows(listone.length);
+                        for (var j = 0; j < listone.length; j++)
+                        {
+                           // alert("second" + listone.length);
 
-
-                        chart.draw(data,
+                            var tmpTime = listone[j].timeValue;
+                            var tmpXvalue = listone[j].xvalue;
+                            for (var k = 0; k < title.length + 1; k++)
                             {
-                                title: "Department Trend Analysis",
-                                position: "top",
-                                fontsize: "25px",
-                                width: "400",
-                                height: "600"
-                            });
+
+                                //alert("" + k);
+                                if (k == 0) {
+                                    data.setValue(j, k, tmpTime);
+                                }
+                                else {
+
+                                    //alert("k" + k);
+                                    //alert("value" + tmpXvalue[k - 1]);
+
+                                    data.setValue(j, k, tmpXvalue[k - 1]);
+
+                                }
+                            }
+
+                        }
+
+
+                        var options = {
+                            width: 600,
+                            height: 400,
+                            legend: { position: 'top', maxLines: 3 },
+                            bar: { groupWidth: '75%' },
+                            isStacked: true
+                        };
+
+                        // Instantiate and draw the chart.
+                        var chart = new google.visualization.BarChart(document.getElementById('stack_div'));
+                        chart.draw(data, options);
+
                     },
                     error: function () {
                         alert("Error loading data! Please try again.");

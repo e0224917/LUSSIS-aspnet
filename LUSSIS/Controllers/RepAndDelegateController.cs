@@ -14,6 +14,7 @@ using System.Web.Security;
 using LUSSIS.DAL;
 using LUSSIS.CustomAuthority;
 using LUSSIS.Extensions;
+using LUSSIS.Emails;
 
 namespace LUSSIS.Controllers
 {
@@ -125,8 +126,12 @@ namespace LUSSIS.Controllers
                 var department = _departmentRepo.GetById(deptCode);
                 var oldRepEmpNum = department.RepEmpNum != null;
 
+                var loginUser = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var sender = _employeeRepo.GetById(loginUser);
+
                 var newRepEmpNum = Convert.ToInt32(repEmp);
                 var newRep = _employeeRepo.GetById(newRepEmpNum);
+                var newRepEmailAdd = newRep.EmailAddress;
                 newRep.JobTitle = "rep";
 
                 if (!oldRepEmpNum)
@@ -142,8 +147,10 @@ namespace LUSSIS.Controllers
                 }
                 else
                 {
+                    //switch roles rep and staff
                     var oldEmpNum = department.RepEmpNum;
                     var oldRep = _employeeRepo.GetById((int)oldEmpNum);
+                    var oldRepEmailAdd = oldRep.EmailAddress;
                     oldRep.JobTitle = "staff";
 
                     var oldRepUser = context.Users.FirstOrDefault(u => u.Email == oldRep.EmailAddress);
@@ -159,7 +166,19 @@ namespace LUSSIS.Controllers
                     var newRepUser = context.Users.FirstOrDefault(u => u.Email == newRep.EmailAddress);
                     userManager.RemoveFromRole(newRepUser?.Id, "staff");
                     userManager.AddToRole(newRepUser?.Id, "rep");
+
+                    var emailToOldRep = new LUSSISEmail.Builder().From(sender.EmailAddress)
+                    .To(oldRepEmailAdd).ForOldRepresentative().Build();
+
+                    EmailHelper.SendEmail(emailToOldRep);
                 }
+
+                //email to new rep
+                var emailToNewRep = new LUSSISEmail.Builder().From(sender.EmailAddress)
+                    .To(newRepEmailAdd).ForNewRepresentative().Build();
+
+                EmailHelper.SendEmail(emailToNewRep);
+
             }
 
             return RedirectToAction("DeptRep");
@@ -172,8 +191,13 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 var empNum = Convert.ToInt32(delegateEmp);
+                var newDelegate = _employeeRepo.GetById(empNum);
+                var newDelegateEmailAdd = newDelegate.EmailAddress;
                 var startDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 var endDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                var loginUser = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var sender = _employeeRepo.GetById(loginUser);
 
                 var del = new Models.Delegate()
                 {
@@ -183,6 +207,11 @@ namespace LUSSIS.Controllers
                 };
 
                 _delegateRepo.Add(del);
+
+                var emailToNewDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
+                    .To(newDelegateEmailAdd).ForNewDelegate().Build();
+
+                EmailHelper.SendEmail(emailToNewDelegate);
             }
 
             return RedirectToAction("MyDelegate");
@@ -195,6 +224,17 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+                var oldDelegate = _delegateRepo.FindExistingByDeptCode(deptCode);
+                var oldDelegateEmailAdd = oldDelegate.Employee.EmailAddress;
+
+                var loginUser = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var sender = _employeeRepo.GetById(loginUser);
+
+                var emailToOldDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
+                    .To(oldDelegateEmailAdd).ForOldDelegate().Build();
+
+                EmailHelper.SendEmail(emailToOldDelegate);
+
                 _delegateRepo.DeleteByDeptCode(deptCode);             
             }
 

@@ -47,7 +47,6 @@ namespace LUSSIS.Controllers
             }
         }
 
-        //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
         //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
@@ -65,7 +64,6 @@ namespace LUSSIS.Controllers
             return View(req);
         }
 
-        //TODO: Add authroization - DepartmentHead or Delegate only
         //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpGet]
@@ -120,7 +118,6 @@ namespace LUSSIS.Controllers
         }
 
 
-
         //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpPost]
@@ -169,72 +166,6 @@ namespace LUSSIS.Controllers
         }
 
 
-        //TODO: return create page, only showing necessary fields
-        // GET: Requisition/Create
-        //???
-        [DelegateStaffCustomAuth("staff")]
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // TODO: 1. create new requisition, 2. its status set to pending, 3. send notification to departmenthead
-        // [employee page] POST: Requisition/Create
-        [DelegateStaffCustomAuth("staff", "rep")]
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // TODO: only implement once main project is done. Enable editing if status is pending
-        // [employee page]  GET: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff", "rep")]
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // TODO: only enable editing if status is pending
-        // [employee page]  POST: Requisition/Edit/5
-        [DelegateStaffCustomAuth("staff", "rep")]
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // POST: Requisition/Delete/5
-        [HttpPost]
-        [Authorize(Roles = "clerk")]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
 
         // GET: DeptEmpReqs
         [DelegateStaffCustomAuth("staff", "rep")]
@@ -274,12 +205,7 @@ namespace LUSSIS.Controllers
             shoppingCart?.addToCart(cart);
             return Json(shoppingCart?.GetCartItemCount());
         }
-
-        //GET: MyRequisitions
-        //public async Task<ActionResult> EmpReq(int EmpNum)
-        //{
-        //    return View(_requistionRepo.GetRequisitionByEmpNum(EmpNum));
-        //}
+        
         [DelegateStaffCustomAuth("staff", "rep")]
         public ActionResult MyRequisitions(string currentFilter, int? page)
         {
@@ -395,7 +321,6 @@ namespace LUSSIS.Controllers
             return RedirectToAction("MyCart");
         }
 
-        //Store Clerk's page
         [Authorize(Roles = "clerk")]
         public ActionResult Consolidated(int? page)
         {
@@ -413,8 +338,6 @@ namespace LUSSIS.Controllers
             });
         }
 
-        //TODO: Add authorization - Stock Clerk only 
-        //click on generate button - post with date selected
         [HttpPost]
         [Authorize(Roles = "clerk")]
         [ValidateAntiForgeryToken]
@@ -437,7 +360,7 @@ namespace LUSSIS.Controllers
             });
         }
 
-        //TODO: A method to display in process Retrieval
+        
         [Authorize(Roles = "clerk")]
         public ActionResult RetrievalInProcess()
         {

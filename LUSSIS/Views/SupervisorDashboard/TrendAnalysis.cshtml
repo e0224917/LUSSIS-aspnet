@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "Trend Analysis Report";
+}
+
+<h2>Trend Analysis Report</h2>
+<div class="container">
+    <div class="row" id="filter_criteria">
+        <div class="col-3">
+            Date Range<br />
+            Date Type: <select id="custom_date_range">
+                <option value="0">Custom</option>
+                <option value="1">Last Month</option>
+                <option value="3">Past 3 Months</option>
+                <option value="6">Past 6 Months</option>
+                <option value="12">Past 12 Months</option>
+            </select><br />
+            From: <input type="date" id="from_date" class="chart_builder" /><br />
+            To: <input type="date" id="to_date" class="chart_builder" />
+        </div>
+        <div class="col-3">
+            Chart Type<br />
+            Data Type:<br />
+            <input type="radio" id="data_type" name="data_type" value="disburse" checked="checked" class="chart_builder" /><label>Disbursement</label>
+            <input type="radio" id="data_type" name="data_type" value="po" class="chart_builder" /><label>Purchase Order</label>
+            <br />
+            Unit Type:<br />
+            <input type="radio" id="unit_type" name="unit_type" value="qty" checked="checked" class="chart_builder" /><label>Qty</label>
+            <input type="radio" id="unit_type" name="unit_type" value="cost" class="chart_builder" /><label>Cost</label>
+            <br />
+        </div>
+        <div class="col-3" id="department">
+            Department<br />
+            @Html.ListBox("Departments", new SelectList(ViewBag.Departments, "DeptCode", "DeptName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder" })
+        </div>
+        <div class="col-3" id="supplier">
+            Supplier<br />
+            @Html.ListBox("Suppliers", new SelectList(ViewBag.Suppliers, "SupplierId", "SupplierName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder" })
+        </div>
+        <div class="col-3" id="category">
+            Category<br />
+            @Html.ListBox("Categories", new SelectList(ViewBag.Categories, "CategoryId", "CategoryName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder" })
+        </div>
+    </div>
+    <br />
+    <div class="row text-center">
+        <div class="col-12">
+            <div id="columnchart_total" style="width: 1050px; height: 320px;"></div>
+        </div>
+    </div>
+    <br />
+    <div class="row text-center">
+        <div class="col-6">
+            <div id="columnchart" style="width: 520px; height: 320px;"></div>
+        </div>
+        <div class="col-6">
+            <div id="columnchart_1" style="width: 520px; height: 320px;"></div>
+        </div>
+    </div>
+    <br />
+</div>
+@section scripts
+{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+
+
+        $(document).ready(function () {
+            var mydate = new Date();
+            mydate.setDate(0);
+            $('input[type=radio][name=data_type]').on('change', function () {
+                if ($('#data_type:checked').val() == 'po') {
+                    $('#supplier').show();
+                    $('#department').hide();
+                }
+                else {
+                    $('#supplier').hide();
+                    $('#department').show();
+                }
+            })
+            $('#to_date').val(mydate.toISOString().substr(0, 10));
+            mydate.setMonth(mydate.getMonth() - 1);
+            $('#from_date').val(mydate.toISOString().substr(0, 10));
+            $('.chart_builder').each(function (i, obj) {
+                $(obj).on('change', function () { update_chart()(); })
+            });
+            $('#supplier').hide();
+            $('#custom_date_range').on('change', function () {
+                if ($(this).val() != '0') {
+                    var mydate = new Date();
+                    mydate.setDate(0);
+                    $('#to_date').val(mydate.toISOString().substr(0, 10));
+                    mydate.setMonth(mydate.getMonth() - Number($(this).val()));
+                    $('#from_date').val(mydate.toISOString().substr(0, 10));
+                    //because it does not run automatically when the dates are changed
+                    update_chart();
+                }
+            })
+        })
+
+
+
+
+        var chart;
+        var chart1;
+        var chart_total;
+
+        //load charts
+        google.charts.load('current', { 'packages': ['bar'] });
+        google.charts.setOnLoadCallback(function () {
+            chart = new google.charts.Bar(document.getElementById('columnchart'));
+            chart1 = new google.charts.Bar(document.getElementById('columnchart_1'));
+            chart_total = new google.charts.Bar(document.getElementById('columnchart_total'));
+        });
+
+
+
+        function update_chart() {
+            var posted_data = '{fromdate=' + new Date($('#from_date').val()).getTime() +
+                ", todate=" + new Date($('#to_date').val()).getTime() +
+                ', departments=' + $('#Departments').val() +
+                ', suppliers=' + $('#Suppliers').val() +
+                ', categories=' + $('#Categories').val() +
+                ', data_type=' + $('#data_type:checked').val() +
+                ', unit_type=' + $('#unit_type:checked').val() + '}';
+
+            $.ajax({
+                url: 'https://localhost:44303/SupervisorDashboard/returnjsondata',
+                data: posted_data,
+                type: 'POST',
+                dataType: 'json',
+                success: function (json_data) {
+                    var data = google.visualization.arrayToDataTable(json_data.arr);
+                    var options = {
+                        chart: {
+                            title: $('#data_type:checked').val() == "po" ? "Split By Supplier" : "Split By Department",
+                            subtitle: '',
+                        }
+                    };
+                    chart.draw(data, google.charts.Bar.convertOptions(options));
+                    var data1 = google.visualization.arrayToDataTable(json_data.arr1);
+                    var options1 = {
+                        title: "Split By Category",
+                        colors: ['#000099', '#0033cc', '#0066cc', '#0099cc', '#33cccc',
+                            '#00ffcc', '#00ff99', '#66ff99', '#66ff66', '#66ff33', '#33cc33',
+                            '#009900', '#669900', '#99cc00', '#cccc00', '#cc9900', '#996600'],
+                        bar: { groupWidth: "95%" },
+                        isStacked: true,
+                    };
+                    chart1.draw(data1, google.charts.Bar.convertOptions(options1));
+                    var data_total = google.visualization.arrayToDataTable(json_data.arrTotal);
+                    var options_total = {
+                        chart: {
+                            title: 'Summary By Month',
+                        }
+                    };
+                    chart_total.draw(data_total, google.charts.Bar.convertOptions(options_total));
+                }
+            });
+        }
+    </script>
+}
+@*Authors: Douglas Lee Kiat Hui*@

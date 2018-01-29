@@ -29,7 +29,7 @@ namespace LUSSIS.Repositories
         
 
 
-        
+       
 
         public IEnumerable<Stationery> GetByCategory(string category)
         {
@@ -117,8 +117,5 @@ namespace LUSSIS.Repositories
         {     
             return GetAll().Where(x => x.CategoryId == c).Select(x => x.ItemNum).ToList();
         }
-
-
-      
     }
 }
