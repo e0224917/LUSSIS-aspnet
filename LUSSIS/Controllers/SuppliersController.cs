@@ -14,6 +14,7 @@ using System.IO;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ton That Minh Nhat
     [Authorize(Roles = "clerk")]
     public class SuppliersController : Controller
     {

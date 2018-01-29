@@ -11,6 +11,7 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class AccountController : ApiController
     {
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();

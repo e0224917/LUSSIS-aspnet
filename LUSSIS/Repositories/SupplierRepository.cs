@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Ton That Minh Nhat
     public class SupplierRepository : Repository<Supplier, int>, ISupplierRepository
     {
         public SupplierRepository()

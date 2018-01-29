@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Koh Meng Guan
     public class StationeryRepository : Repository<Stationery, string>, IStationeryRepository
     {
         public int GetLastRunningPlusOne(string initial)

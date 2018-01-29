@@ -2,8 +2,8 @@
 
 @{
     ViewBag.Title = "My Cart";
-    List<string> itemNub = new List<string>();
-    List<int> itemQty = new List<int>();
+    var itemNums = new List<string>();
+    var itemQty = new List<int>();
 
 }
 
@@ -49,8 +49,8 @@
                 </td>
             </tr>
             {
-                itemNub.Add(@item.stationery.ItemNum);
-                Session["itemNub"] = itemNub;
+                itemNums.Add(@item.stationery.ItemNum);
+                Session["itemNums"] = itemNums;
                 itemQty.Add(@item.quantity);
                 Session["itemQty"] = itemQty;
             }
@@ -91,7 +91,7 @@ else
                 // Get the id from the link
                 var stationeryToDelete = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (stationeryToDelete != '') {
+                if (stationeryToDelete !== '') {
                     // Perform the ajax post
                     $.post("@Url.Content("~/")Requisitions/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
                         function () {
@@ -105,7 +105,7 @@ else
             {
                 var stationeryToUpdate = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                
+
                 if(qty > 0)
                 {
                     $.post("@Url.Content("~/")Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
@@ -121,5 +121,7 @@ else
         });
     </script>
 }
+
+@*Authors: Cui Runze*@
 
 

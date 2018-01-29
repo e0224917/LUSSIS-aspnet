@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using LUSSIS.Exceptions;
 using System.Globalization;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
@@ -15,9 +14,11 @@ using System.Web.Security;
 using LUSSIS.DAL;
 using LUSSIS.CustomAuthority;
 using LUSSIS.Extensions;
+using LUSSIS.Emails;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ong Xin Ying
     [CustomAuthorize("head", "staff")]
     public class RepAndDelegateController : Controller
     {
@@ -33,18 +34,18 @@ namespace LUSSIS.Controllers
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
 
             var department = _departmentRepo.GetById(deptCode);
-            var currentDelegate = _delegateRepo.FindAllByDeptCode(deptCode);
+            var existingDelegate = _delegateRepo.FindExistingByDeptCode(deptCode);
             var staffAndRepList = department.Employees
                 .Where(e => e.JobTitle == "staff" || e.JobTitle == "rep").ToList();
             var reqListCount = _requisitionRepo.GetPendingListForHead(deptCode).Count();
             var haveDelegateToday = false;
-            if (currentDelegate != null)
-                haveDelegateToday = currentDelegate.StartDate <= DateTime.Today;
+            if (existingDelegate != null)
+                haveDelegateToday = existingDelegate.StartDate <= DateTime.Today;
 
             var dbDto = new DeptHeadDashBoardDTO
             {
                 Department = department,
-                CurrentDelegate = currentDelegate,
+                CurrentDelegate = existingDelegate,
                 StaffRepByDepartment = staffAndRepList,
                 RequisitionListCount = reqListCount,
                 HaveDelegateToday = haveDelegateToday
@@ -118,26 +119,38 @@ namespace LUSSIS.Controllers
         {
             if (ModelState.IsValid)
             {
+                var context = new ApplicationDbContext();
+                var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
                 var department = _departmentRepo.GetById(deptCode);
+                var oldRepEmpNum = department.RepEmpNum != null;
 
-                var repEmpNum = Convert.ToInt32(repEmp);
-                var newRep = _employeeRepo.GetById(repEmpNum);
+                var loginUser = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var sender = _employeeRepo.GetById(loginUser);
+
+                var newRepEmpNum = Convert.ToInt32(repEmp);
+                var newRep = _employeeRepo.GetById(newRepEmpNum);
+                var newRepEmailAdd = newRep.EmailAddress;
                 newRep.JobTitle = "rep";
 
-                var oldRep = department.RepEmployee;
-
-
-                if (oldRep == null)
+                if (!oldRepEmpNum)
                 {
+                    //update two tables: Employee and Department
                     _employeeRepo.Update(newRep);
+                    department.RepEmpNum = newRepEmpNum;
                     _departmentRepo.Update(department);
+                    
+                    var newRepUser = context.Users.FirstOrDefault(u => u.Email == newRep.EmailAddress);
+                    userManager.RemoveFromRole(newRepUser?.Id, "staff");
+                    userManager.AddToRole(newRepUser?.Id, "rep");
                 }
                 else
                 {
-                    var context = new ApplicationDbContext();
-                    var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-
+                    //switch roles rep and staff
+                    var oldEmpNum = department.RepEmpNum;
+                    var oldRep = _employeeRepo.GetById((int)oldEmpNum);
+                    var oldRepEmailAdd = oldRep.EmailAddress;
                     oldRep.JobTitle = "staff";
 
                     var oldRepUser = context.Users.FirstOrDefault(u => u.Email == oldRep.EmailAddress);
@@ -146,12 +159,26 @@ namespace LUSSIS.Controllers
 
                     _employeeRepo.Update(newRep);
                     _employeeRepo.Update(oldRep);
+
+                    department.RepEmpNum = newRep.EmpNum;
                     _departmentRepo.Update(department);
 
                     var newRepUser = context.Users.FirstOrDefault(u => u.Email == newRep.EmailAddress);
                     userManager.RemoveFromRole(newRepUser?.Id, "staff");
                     userManager.AddToRole(newRepUser?.Id, "rep");
+
+                    var emailToOldRep = new LUSSISEmail.Builder().From(sender.EmailAddress)
+                    .To(oldRepEmailAdd).ForOldRepresentative().Build();
+
+                    EmailHelper.SendEmail(emailToOldRep);
                 }
+
+                //email to new rep
+                var emailToNewRep = new LUSSISEmail.Builder().From(sender.EmailAddress)
+                    .To(newRepEmailAdd).ForNewRepresentative().Build();
+
+                EmailHelper.SendEmail(emailToNewRep);
+
             }
 
             return RedirectToAction("DeptRep");
@@ -164,8 +191,13 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 var empNum = Convert.ToInt32(delegateEmp);
+                var newDelegate = _employeeRepo.GetById(empNum);
+                var newDelegateEmailAdd = newDelegate.EmailAddress;
                 var startDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 var endDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                var loginUser = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var sender = _employeeRepo.GetById(loginUser);
 
                 var del = new Models.Delegate()
                 {
@@ -175,6 +207,11 @@ namespace LUSSIS.Controllers
                 };
 
                 _delegateRepo.Add(del);
+
+                var emailToNewDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
+                    .To(newDelegateEmailAdd).ForNewDelegate().Build();
+
+                EmailHelper.SendEmail(emailToNewDelegate);
             }
 
             return RedirectToAction("MyDelegate");
@@ -187,11 +224,21 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-                _delegateRepo.DeleteByDeptCode(deptCode);
-            }
-            var actionName = ControllerContext.RouteData.Values["action"].ToString();
+                var oldDelegate = _delegateRepo.FindExistingByDeptCode(deptCode);
+                var oldDelegateEmailAdd = oldDelegate.Employee.EmailAddress;
 
-            return RedirectToAction(actionName);
+                var loginUser = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var sender = _employeeRepo.GetById(loginUser);
+
+                var emailToOldDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
+                    .To(oldDelegateEmailAdd).ForOldDelegate().Build();
+
+                EmailHelper.SendEmail(emailToOldDelegate);
+
+                _delegateRepo.DeleteByDeptCode(deptCode);             
+            }
+
+            return RedirectToAction("Index");
         }
 
         [CustomAuthorize("head")]
@@ -199,7 +246,7 @@ namespace LUSSIS.Controllers
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var department = _departmentRepo.GetById(deptCode);
-            var myDelegate = _delegateRepo.FindAllByDeptCode(deptCode);
+            var myDelegate = _delegateRepo.FindExistingByDeptCode(deptCode);
 
             var radDto = new RepAndDelegateDTO
             {

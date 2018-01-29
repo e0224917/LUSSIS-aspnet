@@ -5,6 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Douglas Lee Kiat Hui
     public class StationeryTransactionDTO
     {
         public DateTime Date { get; set; }

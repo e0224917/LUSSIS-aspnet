@@ -10,6 +10,7 @@ namespace LUSSIS.Models.WebDTO
     *this DTO is used to facilitate retrieval
     */
 
+    //Authors: Tang Xiaowen
     public class RetrievalItemDTO
     {
         public string ItemNum { get; set; }

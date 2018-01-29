@@ -17,6 +17,7 @@ using QRCoder;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Tang Xiaowen, Guo Rui
     [Authorize(Roles = "clerk")]
     public class DisbursementsController : Controller
     {
@@ -51,35 +52,35 @@ namespace LUSSIS.Controllers
 
 
         // GET: Disbursement/Edit/5
-        public async Task<ActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Disbursement disbursement = await _disbursementRepo.GetByIdAsync((int)id);
-            if (disbursement == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
+        //public async Task<ActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    Disbursement disbursement = await _disbursementRepo.GetByIdAsync((int)id);
+        //    if (disbursement == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
 
-            return View(disbursement);
-        }
+        //    return View(disbursement);
+        //}
 
-        //POST: Disbursement/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DisbursementId, CollectionDate, CollectionPointId, AcknowledgeEmpNum, DeptCode, Status")] Disbursement disbursement)
-        {
-            if (ModelState.IsValid)
-            {
-                _disbursementRepo.UpdateAndNotify(disbursement);
-                return RedirectToAction("Index");
-            }
-            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
-            return View(disbursement);
-        }
+        ////POST: Disbursement/Edit/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit([Bind(Include = "DisbursementId, CollectionDate, CollectionPointId, AcknowledgeEmpNum, DeptCode, Status")] Disbursement disbursement)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _disbursementRepo.UpdateAndNotify(disbursement);
+        //        return RedirectToAction("Index");
+        //    }
+        //    ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
+        //    return View(disbursement);
+        //}
 
         [HttpPost]
         public ActionResult UpdateActualQty(int disId, string itemNum, int qty)
@@ -168,8 +169,7 @@ namespace LUSSIS.Controllers
             }
 
             return View(disHistory);
-            //return View(_disbursementRepo.GetAll());
-        }
+         }
 
         public ActionResult HistoryDetails(int? id)
         {

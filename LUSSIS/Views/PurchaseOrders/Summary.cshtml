@@ -11,9 +11,9 @@
     <div class="card-body">
         @if (ViewBag.OutstandingStationeryList == null || ViewBag.OutstandingStationeryList.Count == 0)
         {
-        <div class="alert alert-dismissible alert-info">
-            There are no stationeries recommended for purchase
-        </div>
+            <div class="alert alert-dismissible alert-info">
+                There are no stationeries recommended for purchase
+            </div>
         }
         else
         {
@@ -48,7 +48,7 @@
         }
     </div>
 </div>
-<br/>
+<br />
 <div class="card border-dark bg-transparent ">
     <h4 class="card-header border-dark bg-dark" style="margin-top: auto;color:whitesmoke">Purchase Order Pending Approval</h4>
 
@@ -74,7 +74,7 @@
                 {
                     <tr>
                         <td>@(i + 1)</td>
-                    <td><button class="btn btn-info btn-sm"><a style="color:whitesmoke" href="@Url.Action("Details", new {id=ViewBag.PendingApprovalPOList[i].PoNum })">@ViewBag.PendingApprovalPOList[i].PoNum</a></button></td>
+                        <td><button class="btn btn-info btn-sm"><a style="color:whitesmoke" href="@Url.Action("Details", new {id=ViewBag.PendingApprovalPOList[i].PoNum })">@ViewBag.PendingApprovalPOList[i].PoNum</a></button></td>
                         <td>@ViewBag.PendingApprovalPOList[i].Supplier.SupplierName</td>
                         <td>@ViewBag.PendingApprovalPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
                         <td>@ViewBag.PendingApprovalPOList[i].OrderEmployee.FullName</td>
@@ -154,3 +154,5 @@
         }
     </div>
 </div>
+
+@*Authors: Douglas Lee Kiat Hui*@

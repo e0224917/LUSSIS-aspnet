@@ -1,181 +1,70 @@
 ﻿@model LUSSIS.Models.WebDTO.SupervisorDashboardDTO
 
-<script>
-
-
-    window.onload = function () {
-        var role = @Html.Raw(Json.Encode(ViewBag.Message));
-         if (role=="supervisor") {
-          
-            document.getElementById("notShowManager").style.display = "block";
-
-        }
-         else {
-             
-            document.getElementById("notShowManager").style.display = "none";
-        }
-
-    }
-
-</script>
-
-@Scripts.Render("https://www.gstatic.com/charts/loader.js")
-
-<script type="text/javascript">
-    google.charts.load('current', { 'packages': ['corechart'] });
-
-    //Call function after Google Chart is loaded, it is required, otherwise you may get error
-    google.charts.setOnLoadCallback(DrawPieChartLoad);
-
-    google.charts.setOnLoadCallback(DrawBarChartLoad);
-
-    function DrawPieChartLoad() {
-        $(function () {
-            $.ajax({
-                type: 'GET',
-                url: '/SupervisorDashboard/GetPiechartJSON?List=aaa&date=bbbb&&e=cdefe',
-                success: function (chartsdata) {
-                    
-                    var first = chartsdata.ListOne;
-                    var second = chartsdata.ListTwo;
-
-                    var data = new google.visualization.DataTable();
-
-                    data.addColumn('string', 'CategoryName');
-                    data.addColumn('number', 'PostCount');
-
-                    //Loop through each list data
-
-                    for (var i = 0; i < first.length; i++) {
-                        if (second[i] != 0) {
-                            data.addRow([first[i], second[i]]);
-                        }
-
-                    }
-
-                    // Instantiate and draw our chart, passing in some options
-                    var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-
-                    //Draw pie chart command with data and chart options
-                    chart.draw(data,
-                        {
-                            title: "Stationery Trend Analysis",
-                            position: "top",
-                            fontsize: "25px",
-                            width: "600",
-                            height: "600",
-                        });
-
-                },
-                error: function () {
-                    alert("Error loading data! Please try again.");
-                }
-            });
-        })
-
-    }
-
-    /////this one is for department
-    function DrawBarChartLoad() {
-        $(function () {
-            $.ajax({
-                type: 'GET',
-                url: '/SupervisorDashboard/GetBarchartJson',
-                success: function (chartsdata) {
-                    var first = chartsdata.firstList;
-                    var second = chartsdata.secondList;
-
-                    var data = new google.visualization.DataTable();
-                    data.addColumn('string', 'Department');
-                    data.addColumn('number', 'Amount');
-
-                    //Loop through each list data
-
-                    for (var i = 0; i < first.length; i++) {
-                        if (second[i] != 0) {
-                            data.addRow([first[i], second[i]]);
-                        }
-                    }
-                    var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
-
-
-                    chart.draw(data,
-                        {
-                            title: "Department Trend Analysis",
-                            position: "top",
-                            fontsize: "25px",
-                            width: "400",
-                            height: "600",
-                        });
-                },
-                error: function () {
-                    alert("Error loading data! Please try again.");
-                }
-            });
-        })
-
-    }
-
-
-</script>
 <div id="a"></div>
 <h2>Dashboard for @ViewBag.Message</h2>
 <div class="row">
-    <div class="class=" col-4">
+    <div class="col-4">
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
                     <div class="card bg-info text-white">
-                        <div class="card-header">Pending Adjustment <span style="padding-left:3em">@Model.PendingStockAdjCount</span> </div>
-                        <div class="card-body"><span style="padding-left:2em">+ @Model.PendingStockAdjAddQty</span><span style="padding-left:3em">- @Model.PendingStockAdjSubtractQty</span> </div>
+                        <div class="card-header">Pending Adjustment <span style="padding-left: 3em">@Model.PendingStockAdjCount</span> </div>
+                        <div class="card-body">
+                            <span style="padding-left: 2em">+ @Model.PendingStockAdjAddQty</span><span style="padding-left: 3em">- @Model.PendingStockAdjSubtractQty</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="class="col-3" id="notShowManager" style="display:none;">
+    <div class="col-3" id="notShowManager" style="display: none;">
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
 
                     <div class="card bg-info text-white">
-                        <div class="card-header">Pending Purchase Order <span style="padding-left:3em">@Model.PendingPOCount</span></div>
-                        <div class="card-body"><span style="padding-left:5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span></div>
+                        <div class="card-header">Pending Purchase Order <span style="padding-left: 3em">@Model.PendingPOCount</span></div>
+                        <div class="card-body">
+                            <span style="padding-left: 5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="class=" col-lg-8">
+    <div class="col-lg-8">
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
 
                     <div class="card bg-info text-white">
                         <div class="card-header">Total ChargeBack</div>
-                        <div class="card-body"><span style="padding-left:5em">$@Model.TotalDisbursementAmount.ToString("#.00")</span></div>
+                        <div class="card-body">
+                            <span style="padding-left: 5em">$@Model.TotalDisbursementAmount.ToString("#.00")</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="class=" col-lg-8">
+    <div class="col-lg-8">
         <div class="bs-component">
             <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
 
                     <div class="card bg-info text-white">
                         <div class="card-header">Total PO Expenditure</div>
-                        <div class="card-body"><span style="padding-left:5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span></div>
+                        <div class="card-body">
+                            <span style="padding-left: 5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 
 <div class="row">
@@ -195,11 +84,115 @@
     </div>
 </div>
 
+@section scripts
+{
+    <script>
+    window.onload = function() {
+        if (@User.IsInRole("supervisor")) {
+            document.getElementById("notShowManager").style.display = "block";
+        } else {
+            document.getElementById("notShowManager").style.display = "none";
+        }
+    }
+    </script>
+
+    @Scripts.Render("https://www.gstatic.com/charts/loader.js")
+
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+
+        //Call function after Google Chart is loaded, it is required, otherwise you may get error
+        google.charts.setOnLoadCallback(DrawPieChartLoad);
+
+        google.charts.setOnLoadCallback(DrawBarChartLoad);
+
+        function DrawPieChartLoad() {
+            $(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '/SupervisorDashboard/GetPiechartJson?list=aaa&date=bbbb&&e=cdefe',
+                    success: function (chartsdata) {
+
+                        var first = chartsdata.ListOne;
+                        var second = chartsdata.ListTwo;
+
+                        var data = new google.visualization.DataTable();
+
+                        data.addColumn('string', 'CategoryName');
+                        data.addColumn('number', 'PostCount');
+
+                        //Loop through each list data
+
+                        for (var i = 0; i < first.length; i++) {
+                            if (second[i] !== 0) {
+                                data.addRow([first[i], second[i]]);
+                            }
+
+                        }
+
+                        // Instantiate and draw our chart, passing in some options
+                        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+
+                        //Draw pie chart command with data and chart options
+                        chart.draw(data,
+                            {
+                                title: "Stationery Trend Analysis",
+                                position: "top",
+                                fontsize: "25px",
+                                width: "600",
+                                height: "600"
+                            });
+
+                    },
+                    error: function () {
+                        alert("Error loading data! Please try again.");
+                    }
+                });
+            });
+
+        }
+
+        /////this one is for department
+        function DrawBarChartLoad() {
+            $(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '/SupervisorDashboard/GetBarchartJson',
+                    success: function (chartsdata) {
+                        var first = chartsdata.firstList;
+                        var second = chartsdata.secondList;
+
+                        var data = new google.visualization.DataTable();
+                        data.addColumn('string', 'Department');
+                        data.addColumn('number', 'Amount');
+
+                        //Loop through each list data
+
+                        for (var i = 0; i < first.length; i++) {
+                            if (second[i] !== 0) {
+                                data.addRow([first[i], second[i]]);
+                            }
+                        }
+                        var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
 
 
+                        chart.draw(data,
+                            {
+                                title: "Department Trend Analysis",
+                                position: "top",
+                                fontsize: "25px",
+                                width: "400",
+                                height: "600"
+                            });
+                    },
+                    error: function () {
+                        alert("Error loading data! Please try again.");
+                    }
+                });
+            });
 
+        }
+    </script>
+}
 
-
-
-
-
+@*Authors: May Zin Ko*@

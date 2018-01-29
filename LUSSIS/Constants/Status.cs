@@ -1,5 +1,6 @@
 ﻿namespace LUSSIS.Constants
 {
+    //Authors: Ton That Minh Nhat
     public class RequisitionStatus
     {
         public const string InProgress = "inprogress";
@@ -9,9 +10,9 @@
 
     public class DisbursementStatus
     {
+        public const string InProcess = "inprocess";
         public const string Fulfilled = "fulfilled";
         public const string Unfulfilled = "unfulfilled";
-
     }
 
     public class AdjustmentVoucherStatus

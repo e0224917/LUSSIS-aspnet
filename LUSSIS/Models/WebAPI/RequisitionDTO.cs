@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace LUSSIS.Models.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class RequisitionDTO
     {
         public int RequisitionId { get; set; }

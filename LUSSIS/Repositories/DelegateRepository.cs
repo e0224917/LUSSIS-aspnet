@@ -6,11 +6,12 @@ using Delegate = LUSSIS.Models.Delegate;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Ong Xin Ying
     public class DelegateRepository : Repository<Delegate, int>
     {
         public void DeleteByDeptCode(string deptCode)
         {
-            var del = LUSSISContext.Delegates.FirstOrDefault(d => d.Employee.DeptCode == deptCode);
+            var del = FindExistingByDeptCode(deptCode);
             Delete(del);
         }
 
@@ -40,7 +41,7 @@ namespace LUSSIS.Repositories
                                      && d.StartDate <= DateTime.Today && d.EndDate >= DateTime.Today);
         }
 
-        public Delegate FindAllByDeptCode(string deptCode)
+        public Delegate FindExistingByDeptCode(string deptCode)
         {
             return LUSSISContext.Delegates
                 .SingleOrDefault(d => d.Employee.DeptCode == deptCode && d.EndDate >= DateTime.Today);

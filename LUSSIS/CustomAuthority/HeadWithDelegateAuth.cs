@@ -10,6 +10,7 @@ using System.Web.Routing;
 
 namespace LUSSIS.CustomAuthority
 {
+    //Authors: Koh Meng Guan, Ong Xin Ying
     public class HeadWithDelegateAuthAttribute : AuthorizeAttribute
     {
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
@@ -24,9 +25,11 @@ namespace LUSSIS.CustomAuthority
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
             var email = httpContext.User.Identity.Name;
+            var deptCode = httpContext.Request.Cookies["Employee"]?["DeptCode"];
             var isDelegate = _delegateRepo.FindCurrentByEmail(email) != null;
+            var hasDelegate = _delegateRepo.FindCurrentByDeptCode(deptCode) != null;
 
-            if (httpContext.User.IsInRole("head") && !isDelegate
+            if (httpContext.User.IsInRole("head") && !hasDelegate
                 || httpContext.User.IsInRole("staff") && isDelegate)
             {
                 return true;

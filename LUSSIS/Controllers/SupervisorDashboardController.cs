@@ -10,14 +10,13 @@ using System.Web.Mvc;
 using LUSSIS.Models;
 using LUSSIS.Repositories;
 using LUSSIS.Models.WebDTO;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNet.Identity;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: May Zin Ko
     [Authorize(Roles = "manager,supervisor")]
     public class SupervisorDashboardController : Controller
     {
@@ -26,32 +25,34 @@ namespace LUSSIS.Controllers
         private StockAdjustmentRepository _stockAdjustmentRepo = new StockAdjustmentRepository();
         private StationeryRepository _stationeryRepo = new StationeryRepository();
         private EmployeeRepository _employeeRepo = new EmployeeRepository();
-        private SupplierRepository _supplierRepo = new SupplierRepository();
-        private CategoryRepository _categoryRepo = new CategoryRepository();
+        private readonly SupplierRepository _supplierRepo = new SupplierRepository();
+        private readonly CategoryRepository _categoryRepo = new CategoryRepository();
         private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
 
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            var user = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            ViewBag.Message = user.GetRoles(System.Web.HttpContext.Current.User.Identity.GetUserId()).First().ToString();
-            SupervisorDashboardDTO dash = new SupervisorDashboardDTO();
+            ViewBag.Message = User.IsInRole("supervisor") ? "supervisor" : "manager";
+            var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add").Count;
+            var totalSubtractAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract").Count;
 
-            dash.PendingPOTotalAmount = _poReoi.GetPendingPOTotalAmount();
-            dash.PendingPOCount = _poReoi.GetPendingPOCount();
-            dash.POTotalAmount = _poReoi.GetPOTotalAmount();
-            dash.PendingStockAdjAddQty = _stockAdjustmentRepo.GetPendingStockAddQty();
-            dash.PendingStockAdjSubtractQty = _stockAdjustmentRepo.GetPendingStockSubtractQty();
-            dash.PendingStockAdjCount = _stockAdjustmentRepo.GetPendingAdjustmentList().Count;
-            dash.TotalDisbursementAmount = _disbursementRepo.GetDisbursementTotalAmount();
+            var dash = new SupervisorDashboardDTO
+            {
+                PendingPOTotalAmount = _poRepo.GetPendingPOTotalAmount(),
+                PendingPOCount = _poRepo.GetPendingPOCount(),
+                POTotalAmount = _poRepo.GetPOTotalAmount(),
+                PendingStockAdjAddQty = totalAddAdjustmentQty,
+                PendingStockAdjSubtractQty = totalSubtractAdjustmentQty,
+                PendingStockAdjCount = _stockAdjustmentRepo.GetPendingAdjustmentList().Count,
+                TotalDisbursementAmount = _disbursementRepo.GetDisbursementTotalAmount()
+            };
 
             return View(dash);
         }
 
-        public JsonResult GetPiechartJSON(String List, String date, String e)
+        public JsonResult GetPiechartJson(string list, string date, string e)
         {
-            List<String> pileName = _categoryRepo.GetAllCategoryName().ToList();
-            List<double> pileValue = _poReoi.GetPOByCategory();
-
+            var pileName = _categoryRepo.GetAllCategoryName().ToList();
+            var pileValue = _poRepo.GetPOByCategory();
 
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }
@@ -76,7 +77,7 @@ namespace LUSSIS.Controllers
         public JsonResult GetReportJSON(String supplier_values, String category_values, String date)
         {
             List<String> pileName = _categoryRepo.GetAllCategoryName().ToList();
-            List<double> pileValue = _poReoi.GetPOByCategory();
+            List<double> pileValue = _poRepo.GetPOByCategory();
 
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }
@@ -123,14 +124,14 @@ namespace LUSSIS.Controllers
                 if (supplier.Length == 1)
                 {
                     xvalue = _categoryRepo.GetCategoryNameById(categoryList);
-                    yvalue = _poReoi.GetAmountByCategoryList(categoryList, supplier, from, to);
+                    yvalue = _poRepo.GetAmountByCategoryList(categoryList, supplier, from, to);
 
                 }
                 else if (category.Length == 1)
                 {
                     xvalue = _supplierRepo.GetSupplierNamebyId(supplierList);
 
-                    yvalue = _poReoi.GetAmountBySupplierList(supplierList, category, from, to);
+                    yvalue = _poRepo.GetAmountBySupplierList(supplierList, category, from, to);
 
 
                 }
@@ -348,10 +349,23 @@ namespace LUSSIS.Controllers
             model.Department = departList;
             model.Categories = categoryList;
             return View(model);
+        }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _poRepo.Dispose();
+                _stockAdjustmentRepo.Dispose();
+                _stationeryRepo.Dispose();
+                _employeeRepo.Dispose();
+                _departmentRepo.Dispose();
+                _categoryRepo.Dispose();
+                _supplierRepo.Dispose();
+                _disbursementRepo.Dispose();
+            }
 
-
-
+            base.Dispose(disposing);
         }
 
 

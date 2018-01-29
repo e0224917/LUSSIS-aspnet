@@ -1,5 +1,6 @@
 ﻿namespace LUSSIS.Models.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class RetrievalItemDTO
     {
         public string ItemNum { get; set; }
