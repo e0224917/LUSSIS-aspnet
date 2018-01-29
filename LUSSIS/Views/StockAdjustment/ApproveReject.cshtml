@@ -5,7 +5,7 @@
 }
 
 
-<div class="container">
+
     <form id="approveForm">
 
         <div class="form-group">
@@ -15,7 +15,7 @@
             <input type="hidden" name="checkList" value="@ViewBag.checkList" />
         </div>
     </form>
-</div>
+
 
 <div>
     <a href="#" class="btn btn-success" id="approve">
@@ -25,8 +25,6 @@
 </div>
 
 
-@section scripts
-{
     <script>
         $(document).ready(function () {
             $("#approve").click(function() {
@@ -34,7 +32,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "@Url.Content("~/")StockAdjustment/ApproveReject",
+                    url: "@Url.Content("~/")StockAdjustment/_ApproveReject",
                     data: formdata,
                     success: function() {
                         $("#myApproveModal").modal("hide");
@@ -45,7 +43,6 @@
             });
         })
     </script>
-}
 
 @*Authors: May Zin Ko*@
 
