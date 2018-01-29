@@ -1,12 +1,8 @@
 ﻿
 
-@{
-    ViewBag.Title = "Remark";
-}
-
 <form id="approveForm">
     <div class="modal-body">
-        <span>Comment (optional):</span>
+        <span>Your Comment (optional):</span>
         <p></p>
         <div class="form-group col-md-10 col-sm-10">
             <textarea class="form-control" rows="5" id="comment" name="comment"></textarea>
@@ -16,7 +12,7 @@
     </div>
 
     <div class="modal-footer">
-        @if (@ViewBag.status == "approved")
+        @if (@ViewBag.status)
         {
             <button class="btn btn-success" id="approve">
                 Confirm Approve
@@ -28,12 +24,32 @@
                 Confirm Reject
             </button>
         }
+
+
+        <a href="#" class="btn btn-success" id="approve">
+            @(ViewBag.status == "approved" ? "Confirm Approve" : "Confirm Reject")
+        </a>
         <button class="btn btn-secondary" data-dismiss="modal"> Cancel</button>
     </div>
 </form>
+<script>
+    $(document).ready(function () {
+        $("#approve").click(function() {
+            var formdata = $("#approveForm").serialize();
 
+            $.ajax({
+                type: "POST",
+                url: "@Url.Content("~/")StockAdjustment/ApproveReject",
+                data: formdata,
+                success: function() {
+                    $("#myApproveModal").modal("hide");
 
-
+                }
+            });
+            location.reload();
+        });
+    })
+</script>
 
 @*Authors: May Zin Ko*@
 

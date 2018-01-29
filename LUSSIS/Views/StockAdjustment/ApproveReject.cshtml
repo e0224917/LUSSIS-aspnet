@@ -1,48 +1,51 @@
-﻿
-
-@{
+﻿@{
     ViewBag.Title = "Remark";
 }
 
 
 
-    <form id="approveForm">
+<form id="approveForm">
 
-        <div class="form-group">
-            <label for="comment">Enter your remark</label>
+    <div class="modal-body">
+        <span>Your Comment (optional):</span>
+        <p></p>
+        <div class="form-group col-md-10 col-sm-10">
             <textarea class="form-control" rows="5" id="comment" name="comment"></textarea>
             <input type="hidden" name="status" value="@ViewBag.status" />
             <input type="hidden" name="checkList" value="@ViewBag.checkList" />
         </div>
-    </form>
+    </div>
 
+</form>
+<div class="modal-footer">
 
-<div>
-    <a href="#" class="btn btn-success" id="approve">
-        @(ViewBag.status == "approved" ? "Confirm Approve" : "Confirm Reject")
-    </a>
-    <a href="#" class="btn btn-danger" data-dismiss="modal"> Cancel</a>
+    <div>
+        
+        <a href="#" class="btn btn-success" id="approve">
+            @(ViewBag.status == "approved" ? "Confirm Approve" : "Confirm Reject")
+        </a>
+        <a href="#" class="btn btn-secondary" data-dismiss="modal"> Cancel</a>
+    </div>
 </div>
 
+<script>
+    $(document).ready(function () {
+        $("#approve").click(function () {
+            var formdata = $("#approveForm").serialize();
 
-    <script>
-        $(document).ready(function () {
-            $("#approve").click(function() {
-                var formdata = $("#approveForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Content("~/")StockAdjustment/_ApproveReject",
+                        data: formdata,
+                success: function () {
+                    $("#myApproveModal").modal("hide");
 
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Content("~/")StockAdjustment/_ApproveReject",
-                    data: formdata,
-                    success: function() {
-                        $("#myApproveModal").modal("hide");
+                }
+                    });
+        location.reload();
+    });
+            })
+</script>
 
-                    }
-                });
-                location.reload();
-            });
-        })
-    </script>
-
-@*Authors: May Zin Ko*@
+    @*Authors: May Zin Ko*@
 

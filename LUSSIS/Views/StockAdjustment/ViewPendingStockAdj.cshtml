@@ -1,13 +1,16 @@
 ﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
+@{
+    ViewBag.Title = "Pending Adjustments";
+}
 
 <br />
 <h4>View Pending Stock Adjustment for @ViewBag.Message</h4>
-
-<style>
-    body.modal-open div.modal-backdrop {
-        z-index: 0;
-    }
-</style>
+<hr />
+@*<style>
+        body.modal-open div.modal-backdrop {
+            z-index: 0;
+        }
+    </style>*@
 
 <div class="alert alert-danger alert-dismissable fade show" id="showError" style="display: none;">Please select one checkbox</div>
 
@@ -121,7 +124,7 @@
             else {
                 $("#showError").hide();
                 document.getElementById("ApprovalTitle").textContent = "Approve";
-                var url = "@Url.Content("~/")StockAdjustment/_ApproveReject?list=" + checkList + "&status=approved";
+                var url = "@Url.Content("~/")StockAdjustment/ApproveReject?list=" + checkList + "&status=approved";
 
                 $("#myApproveModalBodyDiv").load(url, function() {
                         $("#myApproveModal").modal("show");
@@ -137,7 +140,7 @@
             else {
                 $("#showError").hide();
                 document.getElementById("ApprovalTitle").textContent = "Reject";
-                var url = "@Url.Content("~/")StockAdjustment/_ApproveReject?List=" + checkList + "&Status=rejected";
+                var url = "@Url.Content("~/")StockAdjustment/ApproveReject?List=" + checkList + "&Status=rejected";
 
                 $("#myApproveModalBodyDiv").load(url, function() {
                         $("#myApproveModal").modal("show");
@@ -148,24 +151,6 @@
     </script>
 
 
-    <script>
-        $(document).ready(function () {
-            $("#approve").click(function() {
-                var formdata = $("#approveForm").serialize();
-
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Content("~/")StockAdjustment/_ApproveReject",
-                    data: formdata,
-                    success: function() {
-                        $("#myApproveModal").modal("hide");
-
-                    }
-                });
-                location.reload();
-            });
-        })
-    </script>
 }
 
 @*Authors: May Zin Ko*@
