@@ -621,7 +621,7 @@
     <Content Include="Views\Disbursements\Delete.cshtml" />
     <Content Include="Views\Disbursements\Details.cshtml" />
     <Content Include="Views\Disbursements\Edit.cshtml" />
-    <Content Include="Views\Disbursements\Index.cshtml" />
+    <Content Include="Views\Disbursements\Upcoming.cshtml" />
     <Content Include="Scripts\umd\popper-utils.js.map" />
     <Content Include="Scripts\umd\popper-utils.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />

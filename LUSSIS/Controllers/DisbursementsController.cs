@@ -25,7 +25,7 @@ namespace LUSSIS.Controllers
 
 
         // GET: Upcoming Disbursement
-        public ActionResult Index()
+        public ActionResult Upcoming()
         {
             var disbursements = _disbursementRepo.GetInProcessDisbursements();
             return View(disbursements.ToList());
@@ -75,7 +75,7 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 _disbursementRepo.UpdateAndNotify(disbursement);
-                return RedirectToAction("Index");
+                return RedirectToAction("Upcoming");
             }
             ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
@@ -123,7 +123,7 @@ namespace LUSSIS.Controllers
                     }
                 }
                 _disbursementRepo.Acknowledge(d);
-                return RedirectToAction("Index");
+                return RedirectToAction("Upcoming");
             }
             return View("Details", disbursementDTO);
 
