@@ -5,9 +5,11 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using LUSSIS.Constants;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories.Interface;
+using static LUSSIS.Constants.POStatus;
 
 namespace LUSSIS.Repositories
 {
@@ -89,18 +91,26 @@ namespace LUSSIS.Repositories
 
         public double GetPOTotalAmount()
         {
+            // DateTime toDate = DateTime.ParseExact(DateTime.Today, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            DateTime toDate = DateTime.Parse("2018-01-31");
+            DateTime fromDate = DateTime.Parse("2017-11-01");
             double result = 0;
-            var list = GetPOByStatus("fulfilled").ToList();
+            var q = from t1 in LUSSISContext.ReceiveTrans
+                    join t2 in LUSSISContext.ReceiveTransDetails
+                    on t1.ReceiveId equals t2.ReceiveId
+                    join t3 in LUSSISContext.Stationeries
+                    on t2.ItemNum equals t3.ItemNum
+                    where t1.ReceiveId == t2.ReceiveId
+                    && (t1.ReceiveDate >= fromDate && t1.ReceiveDate <= toDate)
+                    select new
+                    {
+                        price = (int)t3.AverageCost,
+                        qty = (double)t2.Quantity
+                    };
 
-            foreach (var po in list)
+            foreach (var a in q)
             {
-                var pdList = po.PurchaseOrderDetails.ToList();
-
-                foreach (var pod in pdList)
-                {
-                    result += GetPOAmountByPoNum(pod.PoNum);
-                }
-
+                result += a.qty*a.price;
             }
             return result;
         }
@@ -113,36 +123,66 @@ namespace LUSSIS.Repositories
             Update(p);
         }
 
-        public double GetPOAmountByCategory(int categoryId, List<String>itemList)
-        {
-            double total = 0;
-            foreach (var e in itemList)
-            {
-                var pdList = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList();
-                foreach (var pod in pdList)
-                {
-                    var qty = pod.OrderQty;
-                    var unitPrice = pod.UnitPrice;
-                    total += qty * unitPrice;
+        /* public double GetPOAmountByCategory(int categoryId, List<String>itemList)
+         {
+             double total = 0;
+             foreach (var e in itemList)
+             {
+                 var pdList = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList();
+                 foreach (var pod in pdList)
+                 {
+                     var qty = pod.OrderQty;
+                     var unitPrice = pod.UnitPrice;
+                     total += qty * unitPrice;
 
-                }
-            }
+                 }
+             }
 
-            return total;
-        }
+             return total;
+         }
 
+         public List<double> GetPOByCategory()
+         {
+             var list = new List<double>();
+             var categoryIds = LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
+
+             foreach (var id in categoryIds)
+             {
+                 var itemList = LUSSISContext.Stationeries.Where(x => x.CategoryId == id)
+                     .Select(x => x.ItemNum).ToList();
+                 list.Add(GetPOAmountByCategory(id, itemList));
+             }
+
+             return list;
+         }*/
         public List<double> GetPOByCategory()
         {
             var list = new List<double>();
+            DateTime toDate = DateTime.Parse("2018-01-31");
+            DateTime fromDate = DateTime.Parse("2017-11-01");
             var categoryIds = LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
-
-            foreach (var id in categoryIds)
+            foreach (int catId in categoryIds)
             {
-                var itemList = LUSSISContext.Stationeries.Where(x => x.CategoryId == id)
-                    .Select(x => x.ItemNum).ToList();
-                list.Add(GetPOAmountByCategory(id, itemList));
-            }
+                double total = 0;
+                var q = from t1 in LUSSISContext.ReceiveTrans
+                        join t2 in LUSSISContext.ReceiveTransDetails
+                        on t1.ReceiveId equals t2.ReceiveId
+                        join t3 in LUSSISContext.Stationeries
+                        on t2.ItemNum equals t3.ItemNum
+                        where t3.CategoryId == catId 
+                        && (t1.ReceiveDate <= toDate && t1.ReceiveDate >= fromDate)
+                        select new
+                        {
+                            price = (int)t3.AverageCost,
+                            Qty = (double)t2.Quantity
+                        };
 
+                foreach (var a in q)
+                {
+                    total += a.price * a.Qty;
+                }
+                list.Add(total);
+            }
             return list;
         }
 

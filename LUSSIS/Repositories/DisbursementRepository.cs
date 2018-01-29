@@ -406,6 +406,7 @@ namespace LUSSIS.Repositories
                         join t3 in LUSSISContext.Stationeries
                         on t2.ItemNum equals t3.ItemNum
                         where t3.CategoryId == catId &&
+                        t1.Status!=DisbursementStatus.InProcess &&
                         t1.DeptCode == dep
                         && (t1.CollectionDate <= toDate && t1.CollectionDate >= fromDate)
                         select new

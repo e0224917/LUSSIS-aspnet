@@ -135,7 +135,7 @@
             }
             else {
                 $("#showError").hide();
-                var url = "@Url.Content("~/")PurchaseOrders/_ApproveRejectPO?List=" + CheckList + "&Status=Approve";
+                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?list=" + CheckList + "&status=Approve";
 
                 $("#myApproveModalBodyDiv").load(url, function () {
                     $("#myApproveModal").modal("show");
@@ -143,13 +143,14 @@
             }
 
         }
-        var RejectReject = function (CheckList) {
+        var RejectReject = function (CheckList)
+        {
             if (CheckList.length < 1) {
                 $("#showError").show();
             }
             else {
                 $("#showError").hide();
-                var url = "@Url.Content("~/")PurchaseOrders/_ApproveRejectPO?List=" + CheckList + "&Status=Reject";
+                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?list=" + CheckList + "&status=Reject";
 
                 $("#myApproveModalBodyDiv").load(url, function () {
                     $("#myApproveModal").modal("show");
@@ -160,4 +161,4 @@
     </script>
 }
 
-@*Authors: Douglas Lee Kiat Hui*@
+@*Authors: May Zin Ko*@

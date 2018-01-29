@@ -40,12 +40,12 @@ namespace LUSSIS.Controllers
 
             if (User.IsInRole("supervisor"))
             {
-                return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
+                return RedirectToAction("Index", "SupervisorDashboard");
             }
 
             if (User.IsInRole("manager"))
             {
-                return RedirectToAction("SupervisorDashboard", "PurchaseOrders");
+                return RedirectToAction("Index", "SupervisorDashboard");
             }
 
             return View();
