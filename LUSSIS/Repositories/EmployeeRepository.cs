@@ -28,5 +28,10 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Employees.SingleOrDefault(e => e.DeptCode == deptCode && e.JobTitle == "head");
         }
+
+        public Employee GetRepByDeptCode(string deptCode)
+        {
+            return LUSSISContext.Employees.SingleOrDefault(e => e.DeptCode == deptCode && e.JobTitle == "rep");
+        }
     }
 }

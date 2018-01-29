@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Drawing;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
@@ -20,9 +19,8 @@ namespace LUSSIS.Controllers
     [Authorize(Roles = "clerk")]
     public class DisbursementsController : Controller
     {
-
-        private DisbursementRepository _disbursementRepo = new DisbursementRepository();
-
+        private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
 
         // GET: Upcoming Disbursement
         public ActionResult Index()
@@ -31,7 +29,6 @@ namespace LUSSIS.Controllers
             return View(disbursements.ToList());
         }
 
-
         // GET: Disbursement/Details/5
         public ActionResult Details(int? id)
         {
@@ -39,16 +36,18 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            DisbursementDetailDTO disDetailDTO = new DisbursementDetailDTO();
-            disDetailDTO.CurrentDisbursement = _disbursementRepo.GetById((int)id);
-            if (disDetailDTO.CurrentDisbursement == null)
+
+            var disbursement = _disbursementRepo.GetById((int) id);
+
+            var disDetailDto = new DisbursementDetailDTO {CurrentDisbursement = disbursement};
+            if (disDetailDto.CurrentDisbursement == null)
             {
                 return HttpNotFound();
             }
-            disDetailDTO.DisDetailList = disDetailDTO.CurrentDisbursement.DisbursementDetails.ToList();
-            return View(disDetailDTO);
-        }
 
+            disDetailDto.DisDetailList = disDetailDto.CurrentDisbursement.DisbursementDetails.ToList();
+            return View(disDetailDto);
+        }
 
         // GET: Disbursement/Edit/5
         public async Task<ActionResult> Edit(int? id)
@@ -57,12 +56,15 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Disbursement disbursement = await _disbursementRepo.GetByIdAsync((int)id);
+
+            var disbursement = await _disbursementRepo.GetByIdAsync((int) id);
             if (disbursement == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
+
+            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId",
+                "CollectionName", disbursement.CollectionPointId);
 
             return View(disbursement);
         }
@@ -70,14 +72,24 @@ namespace LUSSIS.Controllers
         //POST: Disbursement/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DisbursementId, CollectionDate, CollectionPointId, AcknowledgeEmpNum, DeptCode, Status")] Disbursement disbursement)
+        public ActionResult Edit([Bind(Include =
+                "DisbursementId, CollectionDate, CollectionPointId, AcknowledgeEmpNum, DeptCode, Status")]
+            Disbursement disbursement)
         {
             if (ModelState.IsValid)
             {
-                _disbursementRepo.UpdateAndNotify(disbursement);
+                _disbursementRepo.Update(disbursement);
+
+                var repEmail = _employeeRepo.GetRepByDeptCode(disbursement.DeptCode).EmailAddress;
+                var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
+                    .ForUpdateDisbursement(disbursement).Build();
+                EmailHelper.SendEmail(email);
+
                 return RedirectToAction("Index");
             }
-            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
+
+            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId",
+                "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
 
@@ -86,14 +98,14 @@ namespace LUSSIS.Controllers
         {
             try
             {
-                _disbursementRepo.GetById(disId).DisbursementDetails.FirstOrDefault(dd => dd.ItemNum == itemNum).ActualQty = qty;
-                return RedirectToAction("Details", new { id = disId });
+                _disbursementRepo.GetById(disId).DisbursementDetails.FirstOrDefault(dd => dd.ItemNum == itemNum)
+                    .ActualQty = qty;
+                return RedirectToAction("Details", new {id = disId});
             }
             catch (NullReferenceException e)
             {
-                return RedirectToAction("Details", new { id=disId });
+                return RedirectToAction("Details", new {id = disId});
             }
-
         }
 
 
@@ -111,7 +123,7 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 //Disbursement d = disbursementDTO.CurrentDisbursement;
-                Disbursement d = _disbursementRepo.GetById(disbursementDTO.DisDetailList.First().DisbursementId);
+                var d = _disbursementRepo.GetById(disbursementDTO.DisDetailList.First().DisbursementId);
                 foreach (var dd in d.DisbursementDetails)
                 {
                     foreach (var ddEdited in disbursementDTO.DisDetailList)
@@ -122,45 +134,40 @@ namespace LUSSIS.Controllers
                         }
                     }
                 }
+
                 _disbursementRepo.Acknowledge(d);
                 return RedirectToAction("Index");
             }
-            return View("Details", disbursementDTO);
 
+            return View("Details", disbursementDTO);
         }
 
-        public PartialViewResult _QR(String id)
+        public PartialViewResult _QR(string id)
         {
-            QRCodeGenerator qrGen = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGen.CreateQrCode(id, QRCodeGenerator.ECCLevel.Q);
-            Base64QRCode qrCode = new Base64QRCode(qrCodeData);
-            string QR = qrCode.GetGraphic(20);
-            ViewBag.generatedQrCode = QR;
+            var qrGen = new QRCodeGenerator();
+            var qrCodeData = qrGen.CreateQrCode(id, QRCodeGenerator.ECCLevel.Q);
+            var qrCode = new Base64QRCode(qrCodeData);
+            var qr = qrCode.GetGraphic(20);
+            ViewBag.generatedQrCode = qr;
             return PartialView();
         }
 
         public ActionResult History(string searchString, string currentFilter, int? page)
         {
-            List<Disbursement> disbursements = new List<Disbursement>();
             if (searchString != null)
-            { page = 1; }
+            {
+                page = 1;
+            }
             else
             {
                 searchString = currentFilter;
             }
 
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                disbursements = _disbursementRepo.GetDisbursementsByDeptName(searchString).ToList();
-            }
-            else
-            {
-                disbursements = _disbursementRepo.GetAll().OrderByDescending(d=>d.CollectionDate).ToList();
-            }
-            int pageSize = 15;
-            int pageNumber = (page ?? 1);
+            var disbursements = !string.IsNullOrEmpty(searchString)
+                ? _disbursementRepo.GetDisbursementsByDeptName(searchString).ToList()
+                : _disbursementRepo.GetAll().OrderByDescending(d => d.CollectionDate).ToList();
 
-            var disHistory = disbursements.ToPagedList(pageNumber, pageSize);
+            var disHistory = disbursements.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
             if (Request.IsAjaxRequest())
             {
@@ -168,7 +175,7 @@ namespace LUSSIS.Controllers
             }
 
             return View(disHistory);
-         }
+        }
 
         public ActionResult HistoryDetails(int? id)
         {
@@ -176,11 +183,13 @@ namespace LUSSIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Disbursement d = _disbursementRepo.GetById((int)id);
+
+            var d = _disbursementRepo.GetById((int) id);
             if (d == null)
             {
                 return HttpNotFound();
             }
+
             return View(d.DisbursementDetails);
         }
 
@@ -190,9 +199,8 @@ namespace LUSSIS.Controllers
             {
                 _disbursementRepo.Dispose();
             }
+
             base.Dispose(disposing);
         }
-
-
     }
 }

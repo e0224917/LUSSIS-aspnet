@@ -9,6 +9,11 @@ namespace LUSSIS.Models
     [Table("DisbursementDetail")]
     public partial class DisbursementDetail
     {
+        public DisbursementDetail()
+        {
+
+        }
+
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -34,13 +39,25 @@ namespace LUSSIS.Models
 
         public virtual Stationery Stationery { get; set; }
 
-        public DisbursementDetail() { }
-        public DisbursementDetail(string itemNum, double unitPrice, int requestedQty, Stationery stationery)
+        public DisbursementDetail(RequisitionDetail requisitionDetail)
         {
-            ItemNum = itemNum;
-            UnitPrice = unitPrice;
-            RequestedQty = requestedQty;
-            Stationery = stationery;
+            ItemNum = requisitionDetail.ItemNum;
+            RequestedQty = requisitionDetail.Quantity;
+            UnitPrice = requisitionDetail.Stationery.AverageCost;
+            //if not enough stock, set actual qty to stock number, else set as requested qty
+            ActualQty = requisitionDetail.Stationery.AvailableQty > RequestedQty 
+                ? RequestedQty
+                : requisitionDetail.Stationery.AvailableQty;
+            Stationery = requisitionDetail.Stationery;
+        }
+
+        public DisbursementDetail(DisbursementDetail unfufilledDisbursementDetail)
+        {
+            ItemNum = unfufilledDisbursementDetail.ItemNum;
+            //new requested qty equals to the difference between last requested qty and actual qty
+            RequestedQty = unfufilledDisbursementDetail.RequestedQty - unfufilledDisbursementDetail.ActualQty;
+            UnitPrice = unfufilledDisbursementDetail.UnitPrice;
+            ActualQty = RequestedQty;
         }
     }
 }
