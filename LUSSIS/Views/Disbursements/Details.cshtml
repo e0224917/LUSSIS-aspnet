@@ -9,11 +9,8 @@
 <h2>Disbursement for @Model.CurrentDisbursement.Department.DeptName</h2>
 <hr />
 
+@using (Html.BeginForm("Acknowledge", "Disbursements", FormMethod.Post, new { @class = "my-2 my-lg-0", id="form" }))
   
-    @using (Ajax.BeginForm("Acknowledge", "Disbursements", new AjaxOptions()
-    {
-        HttpMethod = "POST",
-    }))
     {
         @Html.AntiForgeryToken()
 
@@ -130,17 +127,24 @@
                     $("#QRModal").modal("show")
                 });
         }
+
         $("#btn-generate").click(function() {
-            $("#form").submit();
+            $("#form").submit(function() {
+                $.ajax({
+                    type: 'POST',
+                    url: "@Url.Content("~/")Disbursements/Acknowledge",
+                    data: $("#form").serialize()
+                })
+                return false;
+            });
         });
-       
+
         $("#btn-acknowledge").click(function() {
-                if (!confirm(
-                    "Are you sure you want to aknowledge without Rep scanning the QR Code? If so, please make sure you have printed a copy of this so that the Rep could signed for acknowledgement.")
-                ) {
-                    return false;
-                }
-            }
+            if (!confirm(
+                "Are you sure you want to aknowledge without Rep scanning the QR Code? If so, please make sure you have printed a copy of this so that the Rep could signed for acknowledgement.")
+            ) {
+                return false;
+            } }
         );
     </script>
     <script src="~/Scripts/jquery.unobstrusive-ajax.js"></script>
