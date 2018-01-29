@@ -23,7 +23,7 @@ namespace LUSSIS.Controllers
     {
 
         private DisbursementRepository _disbursementRepo = new DisbursementRepository();
-
+        private CollectionRepository _collectionRepo = new CollectionRepository();
 
         // GET: Upcoming Disbursement
         public ActionResult Upcoming()
@@ -51,22 +51,22 @@ namespace LUSSIS.Controllers
         }
 
 
-        // GET: Disbursement/Edit/5
-        //public async Task<ActionResult> Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Disbursement disbursement = await _disbursementRepo.GetByIdAsync((int)id);
-        //    if (disbursement == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
+        //GET: Disbursement/Edit/5
+        public async Task<ActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Disbursement disbursement = await _disbursementRepo.GetByIdAsync((int)id);
+            if (disbursement == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.CollectionPointId = new SelectList(_collectionRepo.GetAll(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
 
-        //    return View(disbursement);
-        //}
+            return View(disbursement);
+        }
 
         //POST: Disbursement/Edit/5
         [HttpPost]
@@ -78,7 +78,7 @@ namespace LUSSIS.Controllers
                 _disbursementRepo.UpdateAndNotify(disbursement);
                 return RedirectToAction("Upcoming");
             }
-            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
+            ViewBag.CollectionPointId = new SelectList(_collectionRepo.GetAll(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
 

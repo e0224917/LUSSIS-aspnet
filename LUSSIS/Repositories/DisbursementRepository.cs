@@ -21,8 +21,6 @@ namespace LUSSIS.Repositories
     public class DisbursementRepository : Repository<Disbursement, int>
     {
 
-        StationeryRepository _stationeryRepo = new StationeryRepository();
-
         public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
             try
@@ -189,7 +187,8 @@ namespace LUSSIS.Repositories
         public Disbursement UpdateAndNotify(Disbursement disbursement)
         {
             Update(disbursement);
-            SendEmailNotifyCollectionUpdate(disbursement);
+            //TODO: Email methods are to be relocated to another file. depends on email method, required disbursement object attributes might need to be included
+            //SendEmailNotifyCollectionUpdate(disbursement);
             return disbursement;
         }
 
@@ -217,7 +216,7 @@ namespace LUSSIS.Repositories
         private void SendEmailNotifyCollectionUpdate(Disbursement dis)
         {
             string subject, body, destinationEmail;
-           
+            
             subject = String.Format("Stationery Collection for " + dis.Department.DeptName + " on " +
                                     ((DateTime)dis.CollectionDate).ToShortDateString() +
                                     " has been updated");
