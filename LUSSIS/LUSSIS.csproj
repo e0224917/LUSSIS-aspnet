@@ -270,8 +270,6 @@
     <Compile Include="CustomAuthority\DelegateStaffCustomAuth.cs" />
     <Compile Include="CustomAuthority\HeadWithDelegateAuth.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
-    <Compile Include="Exceptions\InvalidDateException.cs" />
-    <Compile Include="Exceptions\InvalidSetRepException.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Filters\ValidateModelAttribute.cs" />
@@ -575,9 +573,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
@@ -597,7 +592,6 @@
     <Content Include="Views\Suppliers\Details.cshtml" />
     <Content Include="Views\Suppliers\Edit.cshtml" />
     <Content Include="Views\Suppliers\Index.cshtml" />
-    <Content Include="Views\Manage\StationeryDetails.cshtml" />
     <Content Include="Views\StockAdjustment\History.cshtml" />
     <Content Include="Views\StockAdjustment\CreateAdjustments.cshtml" />
     <Content Include="Views\StockAdjustment\_CreateAdjustments.cshtml" />
@@ -677,7 +671,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Delegate\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

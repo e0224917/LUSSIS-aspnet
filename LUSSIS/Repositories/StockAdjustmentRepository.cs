@@ -7,6 +7,7 @@ using System.Web;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Koh Meng Guan
     public class StockAdjustmentRepository : Repository<AdjVoucher, int>, IStockAdjustmentRepository
     {
         public List<AdjVoucher> GetPendingAdjustmentList()

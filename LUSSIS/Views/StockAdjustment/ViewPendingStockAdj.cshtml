@@ -1,10 +1,12 @@
 ﻿@model IEnumerable<LUSSIS.Models.AdjVoucher>
 
-<br/>
+<br />
 <h4>View Pending Stock Adjustment for @ViewBag.Message</h4>
 
 <style>
-    body.modal-open div.modal-backdrop { z-index: 0; }
+    body.modal-open div.modal-backdrop {
+        z-index: 0;
+    }
 </style>
 
 <div class="alert alert-danger alert-dismissable fade show" id="showError" style="display: none;">Please select one checkbox</div>
@@ -12,7 +14,7 @@
 <table class="table">
     <tr>
         <th>
-            <input type="checkbox" id="all" onclick="onClickFunction()"/>
+            <input type="checkbox" id="all" onclick="onClickFunction()" />
         </th>
 
         <th>
@@ -39,7 +41,7 @@
 
             <td>
 
-                <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" onclick="onClickFunction()"/>
+                <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" onclick="onClickFunction()" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreateDate)
@@ -100,7 +102,7 @@
 
         function getCheckList() {
             var chkArray = [];
-            $(".chk:checked").each(function() {
+            $(".chk:checked").each(function () {
                 chkArray.push($(this).val());
 
             });
@@ -144,3 +146,5 @@
         }
     </script>
 }
+
+@*Authors: Koh Meng Guan*@

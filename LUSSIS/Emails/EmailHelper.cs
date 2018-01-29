@@ -9,6 +9,7 @@ using LUSSIS.Models;
 
 namespace LUSSIS.Emails
 {
+    //Authors: Guo Rui
     public static class EmailHelper
     {
         public static string DestinationEmail { get; set; }

@@ -5,6 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: May Zin Ko
     public class SupervisorDashboardDTO
     {
         public double PendingPOTotalAmount { get; set; }

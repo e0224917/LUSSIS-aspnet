@@ -5,6 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class RequisitionDetailDTO
     {
         public string Description { get; set; }

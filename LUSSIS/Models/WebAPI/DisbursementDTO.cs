@@ -5,6 +5,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class DisbursementDTO
     {
         public int DisbursementId { get; set; }

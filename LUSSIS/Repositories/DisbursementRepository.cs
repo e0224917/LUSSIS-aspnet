@@ -14,6 +14,7 @@ using Microsoft.ApplicationInsights.WindowsServer;
 
 namespace LUSSIS.Repositories
 {
+    //Authors: Tang Xiaowen, May Zin Ko
     public class DisbursementRepository : Repository<Disbursement, int>
     {
 
@@ -38,14 +39,10 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements.Where(d => d.Department.DeptName.Contains(deptName));
         }
 
-
-        
-
-        //Please put this inside collectionRepo
-        public IEnumerable<CollectionPoint> GetAllCollectionPoint()
-        {
-            return LUSSISContext.CollectionPoints.Include(c => c.InChargeEmployee);
-        }
+        //public IEnumerable<CollectionPoint> GetAllCollectionPoint()
+        //{
+        //    return LUSSISContext.CollectionPoints.Include(c => c.InChargeEmployee);
+        //}
 
         public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
         {

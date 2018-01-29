@@ -8,6 +8,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Koh Meng Guan
     [NotMapped]
     public class AdjustmentVoucherDTO
     {

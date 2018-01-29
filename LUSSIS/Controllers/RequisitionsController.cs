@@ -21,6 +21,7 @@ using System.IO;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Cui Runze, Tang Xiaowen
     [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {

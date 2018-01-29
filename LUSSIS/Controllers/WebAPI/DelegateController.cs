@@ -9,6 +9,7 @@ using Delegate = LUSSIS.Models.Delegate;
 
 namespace LUSSIS.Controllers.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class DelegateController : ApiController
     {
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();

@@ -4,7 +4,7 @@
 }
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <h2>Department Representative</h2>
-<hr/>
+<hr />
 <div class="jumbotron">
 
     <h5 class="mt-4 mb-5">
@@ -16,7 +16,7 @@
         </strong>
     </h2>
 
-    <hr/>
+    <hr />
     <h3 class="mt-4 mb-5">Set representative:</h3>
 
     @using (Html.BeginForm("UpdateRep", "RepAndDelegate", FormMethod.Post))
@@ -24,13 +24,13 @@
         <h5>Find Employee:</h5>
         <div class="row m-2">
             <div class="col-lg-10">
-                <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" class="form-control d-inline"/>
-                <input type="submit" value="Set New Department Rep" class="btn btn-success form-control d-inline ml-3"/>
-                <input type="hidden" id="Emp2" name="RepEmp"/>
+                <input id="Emp" type="text" placeholder="Type and Search Name" name="FullName" class="form-control d-inline" />
+                <input type="submit" value="Set New Department Rep" class="btn btn-success form-control d-inline ml-3" />
+                <input type="hidden" id="Emp2" name="RepEmp" />
             </div>
         </div>
         <h5 id="tagsname" class="text-info m-3"></h5>
-        <br/>
+        <br />
     }
 </div>
 
@@ -93,3 +93,5 @@
         })
     </script>
 }
+
+@*Authors: Ong Xin Ying*@

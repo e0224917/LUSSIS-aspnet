@@ -15,6 +15,7 @@ using LUSSIS.Emails;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Koh Meng Guan
     [Authorize(Roles = "clerk, supervisor, manager")]
     public class StockAdjustmentController : Controller
     {

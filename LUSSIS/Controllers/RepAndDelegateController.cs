@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using LUSSIS.Exceptions;
 using System.Globalization;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
@@ -18,6 +17,7 @@ using LUSSIS.Extensions;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ong Xin Ying
     [CustomAuthorize("head", "staff")]
     public class RepAndDelegateController : Controller
     {

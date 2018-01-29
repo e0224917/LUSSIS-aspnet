@@ -8,6 +8,7 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class StockAdjustmentController : ApiController
     {
         private readonly StockAdjustmentRepository _stockadjustmentRepo = new StockAdjustmentRepository();

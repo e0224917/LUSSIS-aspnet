@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: May Zin Ko
     [Authorize(Roles = "manager,supervisor")]
     public class SupervisorDashboardController : Controller
     {

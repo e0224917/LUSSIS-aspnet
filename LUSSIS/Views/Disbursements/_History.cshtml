@@ -41,7 +41,7 @@
                 <td>
                     <span>
                         <a href="@Url.Action("HistoryDetails")/@item.DisbursementId" class="btn btn-info btn-sm">
-                            
+
                             View Details
                         </a>
                     </span>
@@ -52,8 +52,10 @@
     </table>
 
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-   
+
     @Html.PagedListPager(Model, page =>
-                     Url.Action("History",
-                         new { page, currentFilter = ViewBag.CurrentFilter }))
+                         Url.Action("History",
+                             new { page, currentFilter = ViewBag.CurrentFilter }))
 </div>
+
+@*Authors: Tang Xiaowen, Guo Rui*@

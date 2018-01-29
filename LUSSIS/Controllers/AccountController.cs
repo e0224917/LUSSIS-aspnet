@@ -14,6 +14,7 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
 {
+    //Authors: Ton That Minh Nhat
     [Authorize]
     public class AccountController : Controller
     {

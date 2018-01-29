@@ -9,6 +9,7 @@ using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers.WebAPI
 {
+    //Authors: Ton That Minh Nhat
     public class StationeriesController : ApiController
     {
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();

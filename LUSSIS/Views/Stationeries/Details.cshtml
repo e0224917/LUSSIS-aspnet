@@ -23,7 +23,7 @@
                 <br />
                 <div class="row ml-3">
                     <div>@Html.ActionLink("Edit", "Edit", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-warning d-inline mr-2" })</div>
-                    <div>@Html.ActionLink("Stock Adjustment","CreateAdjustment", "StockAdjustment",  new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-primary d-inline" })</div>
+                    <div>@Html.ActionLink("Stock Adjustment", "CreateAdjustment", "StockAdjustment", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-primary d-inline" })</div>
                 </div>
             </div>
         </div>
@@ -131,10 +131,12 @@
                 var split_by = html_date.substring(2, 3);
                 var d3 = html_date.split(split_by);
                 var this_date = new Date(d3[1] + "/" + d3[0] + "/" + d3[2]);
-                if (this_date<from_date || this_date>to_date) {
+                if (this_date < from_date || this_date > to_date) {
                     $(obj).hide();
                 }
             }
         })
     }
 </script>
+
+@*Authors: Koh Meng Guan*@

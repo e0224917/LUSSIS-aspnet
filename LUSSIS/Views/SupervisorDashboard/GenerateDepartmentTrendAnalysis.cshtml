@@ -100,7 +100,7 @@
     <div class="col-md-6">
         <div id="bar_div"></div>
     </div>
-   
+
 </div>
 
 
@@ -132,7 +132,7 @@
         if (check == "BarChart") {
             $('#barchart').val(true);
         }
-       
+
         if (check == "Pie") {
             $('#pie').val(true);
         }
@@ -148,66 +148,61 @@
         var toDate = $('#hid_toDate').val();
         var date = $('#hid_date').val();
         var barchart = $('#barchart').val();
-       
+
         var pie = $('#pie').val();
 
-       
+
         alert(depart_values);
         alert(category_values);
         alert(fromDate);
         alert(toDate);
         alert(barchart);
         alert(pie);
-        if (depart_values == ""||category_values == "" ||fromDate == "" ||toDate == "")
-        {
+        if (depart_values == "" || category_values == "" || fromDate == "" || toDate == "") {
             $("#showError").show();
 
         }
         else {
-            getData(depart_values,category_values, fromDate, toDate, barchart, pie);
-          
+            getData(depart_values, category_values, fromDate, toDate, barchart, pie);
+
         }
 
 
     }
 
-    function getData(depart, category, fromdate, todate, barchart, pie)
-    {
-       
+    function getData(depart, category, fromdate, todate, barchart, pie) {
+
         $.ajax({
             type: 'GET',
             url: '/SupervisorDashboard/GetDepartmentReportJSON?depart=' + depart + '&&cat=' + category + '&&to=' + todate + '&&from=' + fromdate,
-            success: function (chartsdata)
-            {
+            success: function (chartsdata) {
                 google.charts.load('current', { 'packages': ['corechart'] });
                 if (barchart) {
-                  
-                    google.charts.setOnLoadCallback(function ()
-                    {
+
+                    google.charts.setOnLoadCallback(function () {
                         DrawBarChartLoad(chartsdata);
                     });
 
                 }
                 if (pie) {
-                    google.charts.setOnLoadCallback(function ()
-                    {
+                    google.charts.setOnLoadCallback(function () {
 
                         DrawPieChartLoad(chartsdata);
                     });
 
                 }
-               
-               
+
+
             },
             error: function () {
                 alert("Error loading data! Please try again.");
             }
         });
     }
-   
+
 
     function DrawPieChartLoad(chartsdata) {
-      
+
         var first = chartsdata.ListOne;
         var second = chartsdata.ListTwo;
 
@@ -281,8 +276,7 @@
             function validate() {
                 var from = $('#from').val();
                 var to = $('#to').val();
-                if (from.length > 0 && to.length > 0)
-                {
+                if (from.length > 0 && to.length > 0) {
                     $('#hid_fromDate').val($('#from').val());
                     $('#hid_toDate').val($('#to').val());
 
@@ -330,3 +324,5 @@
         });
     </script>
 }
+
+@*Authors: May Zin Ko*@

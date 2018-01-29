@@ -6,6 +6,7 @@ using System.Web;
 
 namespace LUSSIS.Models.WebDTO
 {
+    //Authors: Tang Xiaowen
     public class RetrievalItemsWithDateDTO
     {
         public List<RetrievalItemDTO> retrievalItems { get; set; }

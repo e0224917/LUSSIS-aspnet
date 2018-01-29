@@ -78,11 +78,11 @@
             <select id="select_supplier" size="8" onchange="supplierChange()" style="width:230px;">
 
                 @foreach (var sup in Model.Suppliers)
-                    {
-                <option value="@sup.SupplierId">
-                    @sup.SupplierName
-                </option>
-                     }
+                {
+                    <option value="@sup.SupplierId">
+                        @sup.SupplierName
+                    </option>
+                }
             </select>
         </div>
         <div style="display:none;" id="notshowCategory">
@@ -90,11 +90,11 @@
             <select id="select_category" size="8" onchange="categoryChange()" style="width:170px;">
 
                 @foreach (var cat in Model.Categories)
-            {
-                <option value="@cat.CategoryId">
-                    @cat.CategoryName
-                </option>
-        }
+                {
+                    <option value="@cat.CategoryId">
+                        @cat.CategoryName
+                    </option>
+                }
             </select>
         </div>
         <div>
@@ -143,10 +143,10 @@
             }
 
         </div>
-   
+
 
     </div>
-   
+
 
 </div>
 
@@ -248,10 +248,10 @@
 
         var fromDate = $('#hid_fromDate').val();
         var toDate = $('#hid_toDate').val();
-        
+
 
         var barchart = $('#barchart').val();
-      
+
         var pie = $('#pie').val();
         var input1;
         var input2;
@@ -266,13 +266,12 @@
             input2 = selected_category
         }
 
-        if (input1 != "" && input2 != "" && fromDate != "" && toDate != "" && (barchart != "" || pie != ""))
-        {
+        if (input1 != "" && input2 != "" && fromDate != "" && toDate != "" && (barchart != "" || pie != "")) {
 
-                getData(input1, input2, fromDate, toDate, barchart,pie);
+            getData(input1, input2, fromDate, toDate, barchart, pie);
 
-                $("#showError").hide();
-            
+            $("#showError").hide();
+
         }
         else {
 
@@ -281,28 +280,26 @@
 
 
     }
-    function getData(input_supplier, input_category, fromDate, toDate,barchart,pie) {
+    function getData(input_supplier, input_category, fromDate, toDate, barchart, pie) {
         $.ajax({
             type: 'GET',
             url: '/SupervisorDashboard/GetStationeryReportJSON?supplier=' + input_supplier + '&&category=' + input_category + '&&from=' + fromDate + '&&to=' + toDate,
             success: function (chartsdata) {
                 google.charts.load('current', { 'packages': ['corechart'] });
-                if (barchart)
-                {
+                if (barchart) {
                     google.charts.setOnLoadCallback(function () {
                         DrawBarChartLoad(chartsdata);
                     });
 
                 }
-                if (pie)
-                {
+                if (pie) {
                     google.charts.setOnLoadCallback(function () {
                         DrawPieChartLoad(chartsdata)
 
 
                     });
                 }
-              
+
 
             },
             error: function () {
@@ -313,7 +310,7 @@
 
 
     function DrawPieChartLoad(chartsdata) {
-       
+
         var first = chartsdata.ListOne;
         var second = chartsdata.ListTwo;
 
@@ -436,4 +433,6 @@
         });
     </script>
 }
+
+@*Authors: May Zin Ko*@
 
