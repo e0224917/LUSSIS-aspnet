@@ -52,5 +52,15 @@ namespace LUSSIS.Repositories
             }
             return supList;
         }
+        public List<String> GetSupplierIds()
+        {
+            List<String> e = new List<String>();
+            List<int>list=LUSSISContext.Suppliers.Select(x => x.SupplierId).ToList();
+            foreach(int i in list)
+            {
+                e.Add(Convert.ToString(i));
+            }
+            return e;
+        }
     }
 }

@@ -12,6 +12,7 @@ using LUSSIS.Repositories;
 using LUSSIS.Models.WebDTO;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace LUSSIS.Controllers
 {
@@ -70,8 +71,6 @@ namespace LUSSIS.Controllers
                 JsonRequestBehavior.AllowGet);
         }
 
-
-      
         public JsonResult GetReportJSON(String supplier_values, String category_values, String date)
         {
             List<String> pileName = _categoryRepo.GetAllCategoryName().ToList();
@@ -79,275 +78,67 @@ namespace LUSSIS.Controllers
 
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }
-
-        [HttpGet]
-        public async Task<ActionResult> GenerateStationeryTrendAnalysis(String supplier, String category, String flag)
+        public JsonResult GetStackJSON()
         {
-            SupervisorReportDTO model = new SupervisorReportDTO();
-            ViewBag.flag = flag;
+            /*List<String> pileName = _categoryRepo.GetAllCategoryName().ToList();
+            List<double> pileValue = _poRepo.GetPOByCategory();
+            return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);*/
 
-            List<Supplier> supplierList = _supplierRepo.GetAll().ToList<Supplier>();
-            List<Category> categoryList = _categoryRepo.GetAll().ToList<Category>();
-            model.Suppliers = supplierList;
-            model.Categories = categoryList;
-            if (supplier != "a")
-            {
-                ViewBag.selected = supplier;
-                ViewBag.category = _categoryRepo.GetCategoryBySupplier(supplier);
-                ViewBag.supplier = null;
+            List<String> depList = _departmentRepo.GetAllDepartmentCode();
+            List<int> catList = _categoryRepo.GetAllCategoryIds();
 
-            }
-            else if (category != "a")
-            {
-                ViewBag.selected = category;
-                ViewBag.supplier = _supplierRepo.GetSupplierByCategory(category);
-                ViewBag.category = null;
-            }
-            return View(model);
-        }
-        public JsonResult GetStationeryReportJSON(String supplier,String category, String from,String to)
-        {
-            List<String> xvalue = new List<String>();
-            List<double> yvalue = new List<double>();
-            String[] suppArray;
-            String[] catArray;
-           
-            if (supplier != null && category != null)
-            {
-                catArray = category.Split(',');
-                suppArray = supplier.Split(',');
-
-                List<String> supplierList = suppArray.ToList();
-                List<String> categoryList = catArray.ToList();
-                if (supplier.Length == 1)
-                {
-                    xvalue = _categoryRepo.GetCategoryNameById(categoryList);
-                    yvalue = _poRepo.GetAmountByCategoryList(categoryList, supplier, from, to);
-
-                }
-                else if (category.Length == 1)
-                {
-                    xvalue = _supplierRepo.GetSupplierNamebyId(supplierList);
-
-                    yvalue = _poRepo.GetAmountBySupplierList(supplierList, category, from, to);
-
-
-                }
-
-                return Json(new { ListOne = xvalue, ListTwo = yvalue }, JsonRequestBehavior.AllowGet);
-
-            }
-
-
-            return Json(new { ListOne = xvalue, ListTwo = yvalue }, JsonRequestBehavior.AllowGet);
-        }
-
-
-        public JsonResult GetDepartmentReportJSON(String depart, String cat, String to, String from)
-        {
-            List<String> catList = new List<String>();
-            List<String> depList = new List<String>();
-            List<String> xvalue = new List<String>();
-            List<double> yvalue = new List<double>();
-            String[] departArray;
-            String[] catArray;
-            
-            if (depart != null && cat != null)
-            {
-                departArray = depart.Split(',');
-                catArray = cat.Split(',');
-                 catList = catArray.ToList();
-                 depList = departArray.ToList();
-               
-                if (depart.Equals("0"))
-                {
-                    depList = _departmentRepo.GetAllDepartmentCode();
-                }
-                if (cat=="0")
-                {
-                    List<String> tmpList = new List<String>();
-                    foreach (int i in _categoryRepo.GetAllCategoryIds())
-                    {
-                        tmpList.Add(Convert.ToString(i));
-                    }
-                    catList = tmpList;
-
-                }
-                if (depList.Capacity == 1 && catList.Capacity > 1)
-                {
-                    xvalue = _categoryRepo.GetCategoryNameById(catList);
-
-                    yvalue = _disbursementRepo.GetAmountByDepAndCatList(depart, catList, from, to);
-                }
-                else if (depList.Capacity > 1 && catList.Capacity == 1)
-                {
-                    xvalue = depList;
-
-                    yvalue = _disbursementRepo.GetAmoutByCatAndDepList(cat, xvalue, from, to);
-                }
-                else if (depList.Capacity > 1 && catList.Capacity > 1)
-                {
-                    xvalue = depList;
-
-                    yvalue = _disbursementRepo.GetMaxCategoryAmountByDep(catList, depList, from, to);
-                }
-
-
-                return Json(new { ListOne = xvalue, ListTwo = yvalue }, JsonRequestBehavior.AllowGet);
-
-            }
-
-            return Json(new { ListOne = xvalue, ListTwo = yvalue }, JsonRequestBehavior.AllowGet);
-        }
-       /* public JsonResult GetDepartmentStackJSON(String depart, String cat, String from, String to, String stack)
-        {
             List<ReportTransferDTO> Listone = new List<ReportTransferDTO>();
-
+           
             List<String> fromList = new List<String>();
             List<String> toList = new List<String>();
-            List<String> dateList = new List<String>();
+
+           
             List<String> datevalue = new List<String>();
+
             List<double> xvalue = new List<double>();
             List<String> titlevalue = new List<String>();
-            String[] departArray;
-            String[] catArray;
-            String fromDate = "2017-10-02";
-            String toDate = "2018-10-02";
-            String[] fromArray = fromDate.Split('-');
-            String[] toArray = toDate.Split('-');
-            int[] start = new int[3];
-            int[] end = new int[3];
-            for (int i = 0; i < start.Length; i++)
-            {
-                start[i] = Convert.ToInt32(fromArray[i]);
-                end[i] = Convert.ToInt32(toArray[i]);
-            }
-            if (start[0] - end[0] > 1)
-            {
-                for (int i = start[0]; i <end[0]; i++)
-                {
-                    dateList.Add("" + start[0]);
-                    fromList.Add(String.Format("{0}-{1}-{2}", start[i], start[1], start[2]));
-
-                }
-            }
-            else if (start[1] - end[1] > 1)
-            {
-                for (int i = start[1]; i <end[1]; i++)
-                {
-                    dateList.Add("" + start[1]);
-                    fromList.Add(String.Format("{0}-{1}-{2}", start[0], start[i], start[2]));
-                }
-            }
-            else
-            {
-                for (int i = start[2]; i <end[2]; i++)
-                {
-                    dateList.Add("" + start[2]);
-                    fromList.Add(String.Format("{0}-{1}-{2}", start[0], start[1], start[i]));
-                }
-            }
-
-            if (depart != null && cat != null)
-            {
-                departArray = depart.Split(',');
-                catArray = cat.Split(',');
-                List<String> catList = catArray.ToList();
-                List<String> depList = departArray.ToList();
-
-
-                if (depart.Equals("0"))
-                {
-                    depList = _employeeRepo.GetAllDepartmentCode();
-                }
-                if (cat.Equals("0"))
-                {
-                    List<String> tmpList = new List<String>();
-                    foreach (int i in _stationeryRepo.GetAllCategoryIds())
-                    {
-                        tmpList.Add(Convert.ToString(i));
-                    }
-                    catList = tmpList;
-                }
-
-
+          
+                double temp = 0;
                 ReportTransferDTO rto = new ReportTransferDTO();
-                if (depList.Capacity == 1 && catList.Capacity > 1)
-                {
-                    titlevalue = _stationeryRepo.GetCategoryNameById(catList);
-                    for (int j = 0; j < dateList.Capacity; j++)
+                    datevalue.Add("2017 November");
+                    datevalue.Add("2017 December");
+                    datevalue.Add("2018 January");
+
+                    fromList.Add("2017-11-01");
+                    fromList.Add("2017-12-01");
+                    fromList.Add("2018-01-01");
+
+                    toList.Add("2017-11-30");
+                    toList.Add("2017-12-31");
+                    toList.Add("2018-01-31");
+
+                    titlevalue = depList;
+
+                    for (int j = 0; j < datevalue.Count; j++)
                     {
                         rto = new ReportTransferDTO();
+                        xvalue = new List<double>();
+                      
+                        rto.timeValue = datevalue[j];
                         
-                        rto.timeValue = dateList[j];
-                        for (int i = 0; i < fromList.Capacity - 1; i++)
+                        for (int i = 0; i < depList.Count; i++)
                         {
-
-                            List<double> temp = _disbursementRepo.GetAmountByDepAndCatList(depart, catList, fromList[i], fromList[i + 1]);
-                            rto.xvalue = temp;
-                        }
-                        Listone.Add(rto);
-
+                             Debug.WriteLine(catList[i]);
+                              Debug.WriteLine(depList[i]);
+                           
+                            temp = _disbursementRepo.GetDisAmountByDate(depList[i],catList,fromList[j],toList[j]);
+                            xvalue.Add(temp);
+                           
+                         }
+                         rto.xvalue = xvalue;
+                         Listone.Add(rto);
                     }
-
-                }
-                else if (depList.Capacity > 1 && catList.Capacity == 1)
-                {
-                    datevalue = dateList;
-                    titlevalue = depList;
-
-                    for (int j = 0; j < dateList.Capacity; j++)
-                    {
-                        rto = new ReportTransferDTO();
-                        rto.timeValue = dateList[j];
-                        for (int i = 0; i < dateList.Capacity - 1; i++)
-                        {
-
-                            List<double> temp = _disbursementRepo.GetAmoutByCatAndDepList(cat, depList, fromList[i], toList[i + 1]);
-                            rto.xvalue = temp;
-                        }
-                        Listone.Add(rto);
-                    }
-
-                }
-                else if (depList.Capacity > 1 && catList.Capacity > 1)
-                {
-                    datevalue = dateList;
-                    titlevalue = depList;
-
-                    for (int j = 0; j < dateList.Capacity; j++)
-                    {
-                        rto = new ReportTransferDTO();
                        
-                        rto.timeValue = dateList[j];
-                        for (int i = 0; i < fromList.Capacity - 1; i++)
-                        {
+                
 
-                            List<double> temp = _disbursementRepo.GetMaxCategoryAmountByDep(catList, depList, fromList[i], toList[i + 1]);
-                            rto.xvalue = temp;
-                        }
-                        Listone.Add(rto);
-                    }
-
-                }
-
-
-                return Json(new { Title=titlevalue,ListOne = Listone }, JsonRequestBehavior.AllowGet);
+                return Json(new { Title = titlevalue, ListOne = Listone }, JsonRequestBehavior.AllowGet);
 
             }
-
-            return Json(new { Title=titlevalue,ListOne = Listone }, JsonRequestBehavior.AllowGet);
-        }*/
-        [HttpGet]
-        public async Task<ActionResult> GenerateDepartmentTrendAnalysis(String supplier, String category, String flag)
-        {
-            SupervisorReportDTO model = new SupervisorReportDTO();
-            List<Department> departList = _departmentRepo.GetAll().ToList<Department>();
-            List<Category> categoryList = _categoryRepo.GetAll().ToList<Category>();
-            model.Department = departList;
-            model.Categories = categoryList;
-            return View(model);
-        }
 
         protected override void Dispose(bool disposing)
         {
