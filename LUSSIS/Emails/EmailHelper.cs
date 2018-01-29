@@ -1,5 +1,4 @@
-﻿using Glimpse.AspNet.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
@@ -127,7 +126,7 @@ namespace LUSSIS.Emails
                 return this;
             }
 
-            public Builder ForStockAdjustments(string fullName, List<AdjVoucher> adjVouchers)
+            public Builder ForNewStockAdjustments(string fullName, List<AdjVoucher> adjVouchers)
             {
                 Subject = "A new adjustment of stationeries has been made by " + fullName;
 
@@ -146,7 +145,7 @@ namespace LUSSIS.Emails
                 return this;
             }
 
-            public Builder ForStockAdjustment(string fullName, AdjVoucher adjVoucher)
+            public Builder ForNewStockAdjustment(string fullName, AdjVoucher adjVoucher)
             {
                 Subject = "A new adjustment of stationeries has been made by " + fullName;
 
@@ -156,6 +155,46 @@ namespace LUSSIS.Emails
                 body.AppendLine("Quantity: " + adjVoucher.Quantity);
                 body.AppendLine();
                 body.AppendLine("by " + fullName + "on" + DateTime.Now.ToString("dd-MM-yyyy"));
+
+                Body = body.ToString();
+                return this;
+            }
+
+            public Builder ForNewRequistion(string fullName, Requisition requisition, List<Stationery> stationerys)
+            {
+                Subject = "New requisition from" + fullName;
+
+                var body = new StringBuilder();
+                body.AppendLine("Description".PadRight(30, ' ') + "\t\t" + "UOM".PadRight(30, ' ') + "\t\t" +
+                              "Quantity".PadRight(30, ' '));
+                foreach (var detail in requisition.RequisitionDetails)
+                {
+                    var stationery = stationerys.SingleOrDefault(s => s.ItemNum == detail.ItemNum);
+
+                    body.AppendLine(stationery?.Description.PadRight(30, ' ') + "\t\t" +
+                                    stationery?.UnitOfMeasure.PadRight(30, ' ') +
+                            "\t\t" + detail.Quantity.ToString().PadRight(30, ' '));
+                }
+
+                Body = body.ToString();
+                return this;
+            }
+
+            public Builder ForRequisitionApproval(Requisition req)
+            {
+                Subject = "Requistion " + req.RequisitionId + " made on " +
+                                 req.RequisitionDate.ToString("dd-MM-yyyy") + " has been " + req.Status;
+                var body = new StringBuilder(
+                    "Your Requisition " + req.RequisitionId + " made on " +
+                    req.RequisitionDate.ToString("dd-MM-yyyy") + " has been " + req.Status + " by " +
+                    req.ApprovalEmployee.FullName);
+                body.AppendLine("Requested: ");
+                foreach (var detail in req.RequisitionDetails)
+                {
+                    body.AppendLine("Item: " + detail.Stationery.Description);
+                    body.AppendLine("Quantity: " + detail.Quantity);
+                    body.AppendLine();
+                }
 
                 Body = body.ToString();
                 return this;

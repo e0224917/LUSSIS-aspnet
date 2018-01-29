@@ -60,15 +60,15 @@ namespace LUSSIS.Repositories
             }
         }
         
-        public List<AdjVoucher> FindAdjVoucherByText(string term)
+        public IEnumerable<AdjVoucher> FindAdjVoucherByText(string term)
         {
             term = term.ToLower();
-            var adjustments = LUSSISContext.AdjVouchers.Where(r =>
+            IEnumerable<AdjVoucher> adjList = LUSSISContext.AdjVouchers.Where(r =>
                 r.RequestEmployee.FirstName.ToLower().Contains(term) ||
                 r.RequestEmployee.LastName.ToLower().Contains(term) || r.Status.ToLower().Contains(term) ||
                 r.Stationery.Description.ToLower().Contains(term) || r.Quantity.ToString().Contains(term) ||
-                r.Reason.ToLower().Contains(term) || r.Remark.Contains(term)).ToList();
-            return adjustments;
+                r.Reason.ToLower().Contains(term) || r.Remark.Contains(term));
+            return adjList;
         }
 
         public IEnumerable<AdjVoucher> GetApprovedAdjVoucherByItem(string itemNum)

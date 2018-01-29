@@ -69,8 +69,8 @@
                 @Html.TextAreaFor(model => model.ApprovalRemarks, 3, 60, new { @class = "form-control" })
             </div>
             <div class="form-group col-md-6">
-                <button type="submit" name="SubmitButton" class="btn btn-success btn-lg btn-block form-control" value="Approve">Approve</button>
-                <button type="submit" name="SubmitButton" class="btn btn-danger btn-lg btn-block form-control" value="Reject">Reject</button>
+                <button type="submit" name="status" class="btn btn-success btn-lg btn-block form-control" value="approve">Approve</button>
+                <button type="submit" name="status" class="btn btn-danger btn-lg btn-block form-control" value="reject">Reject</button>
             </div>
         </div>
     }

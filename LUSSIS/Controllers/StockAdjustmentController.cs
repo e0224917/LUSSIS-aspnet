@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
@@ -41,8 +40,8 @@ namespace LUSSIS.Controllers
             }
 
             var adjustments = !string.IsNullOrEmpty(searchString)
-                ? _stockAdjustmentRepo.FindAdjVoucherByText(searchString)
-                : _stockAdjustmentRepo.GetAll().ToList();
+                ? _stockAdjustmentRepo.FindAdjVoucherByText(searchString).Reverse().ToList()
+                : _stockAdjustmentRepo.GetAll().Reverse().ToList();
 
             var reqAll = adjustments.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
@@ -105,9 +104,9 @@ namespace LUSSIS.Controllers
                     var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                     var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
                     var email1 = new LUSSISEmail.Builder().From(self.EmailAddress)
-                        .To(managerEmail).ForStockAdjustments(self.FullName, vouchers).Build();
+                        .To(managerEmail).ForNewStockAdjustments(self.FullName, vouchers).Build();
                     var email2 = new LUSSISEmail.Builder().From(self.EmailAddress)
-                        .To(supervisorEmail).ForStockAdjustments(self.FullName, vouchers).Build();
+                        .To(supervisorEmail).ForNewStockAdjustments(self.FullName, vouchers).Build();
 
                     EmailHelper.SendEmail(email1);
                     EmailHelper.SendEmail(email2);
@@ -175,9 +174,9 @@ namespace LUSSIS.Controllers
                 var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                 var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
                 var email1 = new LUSSISEmail.Builder().From(self.EmailAddress)
-                    .To(managerEmail).ForStockAdjustment(self.FullName, adjustment).Build();
+                    .To(managerEmail).ForNewStockAdjustment(self.FullName, adjustment).Build();
                 var email2 = new LUSSISEmail.Builder().From(self.EmailAddress)
-                    .To(supervisorEmail).ForStockAdjustment(self.FullName, adjustment).Build();
+                    .To(supervisorEmail).ForNewStockAdjustment(self.FullName, adjustment).Build();
 
                 EmailHelper.SendEmail(email1);
                 EmailHelper.SendEmail(email2);

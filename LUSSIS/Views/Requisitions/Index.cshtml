@@ -1,5 +1,4 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Stationery>
-@using PagedList.Mvc;
 @{
     ViewBag.Title = "Stationery List";
 
@@ -53,9 +52,8 @@
                 // Get the id from the link
                 var stationeryToAdd = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (qty <= 0)
-                {
-                    alert("Please input a valid quantity")
+                if (qty <= 0) {
+                    alert("Please input a valid quantity");
                 }
                 else if (stationeryToAdd !== '') {
                     // Perform the ajax post

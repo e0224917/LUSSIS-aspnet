@@ -169,8 +169,7 @@ namespace LUSSIS.Controllers
             }
 
             return View(disHistory);
-            //return View(_disbursementRepo.GetAll());
-        }
+         }
 
         public ActionResult HistoryDetails(int? id)
         {

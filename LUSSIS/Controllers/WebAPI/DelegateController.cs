@@ -77,7 +77,7 @@ namespace LUSSIS.Controllers.WebAPI
 
             _delegateRepo.Update(d);
 
-            return Ok(new {Message = "Editted delegate"});
+            return Ok(new {Message = "Delegate has been editted"});
         }
 
         [HttpDelete]
@@ -87,7 +87,7 @@ namespace LUSSIS.Controllers.WebAPI
         {
             _delegateRepo.DeleteByDeptCode(dept);
 
-            return Ok(new {Message = "Revoked delegate"});
+            return Ok(new {Message = "Delegate has been revoked"});
         }
 
         [HttpGet]

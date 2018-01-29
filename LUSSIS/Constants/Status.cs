@@ -10,9 +10,9 @@
 
     public class DisbursementStatus
     {
+        public const string InProcess = "inprocess";
         public const string Fulfilled = "fulfilled";
         public const string Unfulfilled = "unfulfilled";
-
     }
 
     public class AdjustmentVoucherStatus
