@@ -124,7 +124,7 @@ namespace LUSSIS.Controllers
         public async Task<ActionResult> Details(
             [Bind(Include =
                 "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status,DeptCode")]
-            Requisition requisition, string status)
+            Requisition requisition, string statuses)
         {
             if (requisition.Status == "pending")
             {
@@ -151,7 +151,7 @@ namespace LUSSIS.Controllers
                     {
                         requisition.ApprovalEmpNum = empNum;
                         requisition.ApprovalDate = DateTime.Today;
-                        requisition.Status = status;
+                        requisition.Status = statuses;
                         await _requistionRepo.UpdateAsync(requisition);
                         return RedirectToAction("Pending");
                     }
