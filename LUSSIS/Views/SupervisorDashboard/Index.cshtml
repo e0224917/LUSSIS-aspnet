@@ -80,7 +80,8 @@
 @section scripts
 {
     <script>
-    window.onload = function() {
+        window.onload = function ()
+        {
         if (@User.IsInRole("supervisor")) {
             document.getElementById("notShowManager").style.display = "block";
         } else {
@@ -95,16 +96,20 @@
         google.charts.load('current', { 'packages': ['corechart'] });
 
         //Call function after Google Chart is loaded, it is required, otherwise you may get error
-        google.charts.setOnLoadCallback(DrawPieChartLoad);
+       google.charts.setOnLoadCallback(DrawPieChartLoad);
 
-        getStackChartData();
+        google.charts.setOnLoadCallback(DrawStackChartLoad);
+        
        
-        function DrawPieChartLoad() {
+       
+        function DrawPieChartLoad()
+        {
             $(function () {
                 $.ajax({
                     type: 'GET',
                     url: '/SupervisorDashboard/GetPiechartJson?list=aaa&date=bbbb&&e=cdefe',
-                    success: function (chartsdata) {
+                    success: function (chartsdata)
+                    {
 
                         var first = chartsdata.ListOne;
                         var second = chartsdata.ListTwo;
@@ -124,7 +129,7 @@
                         }
 
                         // Instantiate and draw our chart, passing in some options
-                        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+                        var chart = new google.visualization.PieChart(document.getElementById('bar_div'));
 
                         //Draw pie chart command with data and chart options
                         chart.draw(data,
@@ -144,71 +149,90 @@
             });
 
         }
-        function drawStackChart(chartsdata) {
+       
+      
+        function DrawStackChartLoad() {
+            $(function () {
+                alert("this is");
+                $.ajax({
+                    type: 'GET',
+                    url: '/SupervisorDashboard/GetStackJSON',
+                    success: function (chartsdata) {
+                        var data = new google.visualization.DataTable();
+                      
+                        var title = chartsdata.Title;
+                        var listone = chartsdata.ListOne;
+                        for (var i = 0; i < title.length + 1; i++)
+                        {
+                            alert("first");
+                            if (i == 0) {
+                                data.addColumn("string", 'Time');
+                            } else {
+                                data.addColumn('number', title[i - 1]);
+                            }
+                        }
+                        alert(listone.length);
+                        data.addRows(listone.length);
+                        for (var j = 0; j < listone.length; j++)
+                        {
+                            alert("second" + listone.length);
 
-            var data = new google.visualization.DataTable();
+                            var tmpTime = listone[j].timeValue;
+                            var tmpXvalue = listone[j].xvalue;
+                            for (var k = 0; k < title.length + 1; k++) {
 
-            var title = chartsdata.Title;
-            var listone = chartsdata.ListOne;
-            for (var i = 0; i < title.length + 1; i++)
-            {
-               // alert("first");
-                if (i == 0) {
-                    data.addColumn("string", 'Time');
-                } else {
-                    data.addColumn('number',title[i - 1]);
-                }
-            }
-          //  alert(listone.length);
-            data.addRows(listone.length);
-            for (var j = 0; j < listone.length; j++)
-            {
-               // alert("second" + listone.length);
+                                alert("" + k);
+                                if (k == 0) {
+                                    data.setValue(j, k, tmpTime);
+                                }
+                                else {
 
-                var tmpTime = listone[j].timeValue;
-                var tmpXvalue = listone[j].xvalue;
-                for (var k = 0; k < title.length + 1; k++) {
+                                    alert("k" + k);
+                                    alert("value" + tmpXvalue[k - 1]);
 
-                   // alert("" + k);
-                    if (k == 0) {
-                        data.setValue(j, k, tmpTime);
+                                    data.setValue(j, k, tmpXvalue[k - 1]);
+
+                                }
+                            }
+
+                        }
+
+
+                        var options = {
+                            width: 600,
+                            height: 400,
+                            legend: { position: 'top', maxLines: 3 },
+                            bar: { groupWidth: '75%' },
+                            isStacked: true
+                        };
+
+                        // Instantiate and draw the chart.
+                        var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
+                        chart.draw(data, options);
+
+                    },
+                    error: function () {
+                        alert("Error loading data! Please try again.");
                     }
-                    else {
+                });
+            });
 
-                       //// alert("k" + k);
-                       // alert("value" + tmpXvalue[k - 1]);
-
-                        data.setValue(j, k, tmpXvalue[k - 1]);
-
-                    }
-                }
-               // alert("next");
-            }
-
-
-            var options = {
-                width: 600,
-                height: 400,
-                legend: { position: 'top', maxLines: 3 },
-                bar: { groupWidth: '75%' },
-                isStacked: true
-            };
-
-            // Instantiate and draw the chart.
-            var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
-            chart.draw(data, options);
         }
+
+                
+       
         function getStackChartData() {
-           // alert("this is");
+           alert("this is");
             $.ajax({
                 type: 'GET',
                 url: '/SupervisorDashboard/GetStackJSON',
                 success: function (chartsdata) {
-                  //  alert("i am here");
+                   alert("i am here");
                     google.charts.load('current', { 'packages': ['corechart'] });
 
-                    google.charts.setOnLoadCallback(function () {
-
+                    google.charts.setOnLoadCallback(function ()
+                    {
+                        
                         drawStackChart(chartsdata);
 
                     });
@@ -221,49 +245,33 @@
                 }
             });
         }
-        /////this one is for department
-       /* function DrawBarChartLoad() {
-            $(function () {
-                $.ajax({
-                    type: 'GET',
-                    url: '/SupervisorDashboard/GetBarchartJson',
-                    success: function (chartsdata) {
-                        var first = chartsdata.firstList;
-                        var second = chartsdata.secondList;
+       
+        function getStackChartData() {
+            alert("this is");
+            $.ajax({
+                type: 'GET',
+                url: '/SupervisorDashboard/GetStackJSON',
+                success: function (chartsdata) {
+                     alert("i am here");
+                    google.charts.load('current', { 'packages': ['corechart'] });
 
-                        var data = new google.visualization.DataTable();
-                        data.addColumn('string', 'Department');
-                        data.addColumn('number', 'Amount');
+                    google.charts.setOnLoadCallback(function ()
+                    {
+                        alert("i am here");
+                        DrawStackChart(chartsdata);
 
-                        //Loop through each list data
-
-                        for (var i = 0; i < first.length; i++) {
-                            if (second[i] !== 0) {
-                                data.addRow([first[i], second[i]]);
-                            }
-                        }
-                        var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
+                    });
 
 
-                        chart.draw(data,
-                            {
-                                title: "Department Trend Analysis",
-                                position: "top",
-                                fontsize: "25px",
-                                width: "400",
-                                height: "600"
-                            });
-                    },
-                    error: function () {
-                        alert("Error loading data! Please try again.");
-                    }
-                });
+
+                },
+                error: function () {
+                    alert("Error loading data! Please try again.");
+                }
             });
+        }
 
-        }*/
-
-
-
+       
     </script>
 }
 
