@@ -41,7 +41,7 @@
             $('input[type="text"]').keyup(function() {
                 if ($(this).val() === '') {
                     $(':input[type="submit"]').prop('disabled', true);
-                    $('#tagsname').html('You selected none ');
+                    $('#tagsname').html('You selected: none ');
                 } else {
                     $(':input[type="submit"]').prop('disabled', false);
                 }
