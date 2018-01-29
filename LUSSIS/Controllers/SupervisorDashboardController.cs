@@ -20,7 +20,7 @@ namespace LUSSIS.Controllers
     [Authorize(Roles = "manager,supervisor")]
     public class SupervisorDashboardController : Controller
     {
-        protected PORepository _poReoi = new PORepository();
+        protected PORepository _poRepo = new PORepository();
         protected DisbursementRepository _disbursementRepo = new DisbursementRepository();
         private StockAdjustmentRepository _stockAdjustmentRepo = new StockAdjustmentRepository();
         private StationeryRepository _stationeryRepo = new StationeryRepository();
@@ -405,7 +405,7 @@ namespace LUSSIS.Controllers
                         Group = x.Disbursement.DeptCode
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);
             else
-                allList = _poReoi.GetPurchaseOrderDetailsByStatus("fulfilled")
+                allList = _poRepo.GetPurchaseOrderDetailsByStatus("fulfilled")
                     .Select(x => new Detail
                     {
                         Date = x.PurchaseOrder.CreateDate,
