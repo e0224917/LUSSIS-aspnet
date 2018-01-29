@@ -440,7 +440,6 @@
     <Compile Include="Validations\CollectionDateAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\datepicker.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-reboot.css" />
