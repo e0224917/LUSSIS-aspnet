@@ -16,8 +16,8 @@
         <h4 class="mb-5">@Html.DisplayFor(model => model.MyDelegate.StartDate) - @Html.DisplayFor(model => model.MyDelegate.EndDate)</h4>
         <h5 class="mt-4 mb-5 text-muted">
             @((Model.MyDelegate.StartDate > DateTime.Today) ?
-                    "Starting in " + (((int)(Model.MyDelegate.StartDate.Subtract(DateTime.Now)).TotalDays) + 1) + " day(s)" :
-                          "Ending in " + (((int)(Model.MyDelegate.EndDate.Subtract(DateTime.Now)).TotalDays) + 1) + " day(s)")
+                    "Starting in " + ((int)(Model.MyDelegate.StartDate.Subtract(DateTime.Today)).TotalDays) + " day(s)" :
+                          "Ending in " + ((int)(Model.MyDelegate.EndDate.Subtract(DateTime.Now)).TotalDays) + " day(s)")
         </h5>
         using (Html.BeginForm("DeleteDelegate", "RepAndDelegate", FormMethod.Post))
         {
