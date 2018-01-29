@@ -108,6 +108,7 @@
                     </tr>
                 }
             </table>
+            @Html.DropDownList("MinPurchQty",new SelectList(ViewBag.Stationery,"ItemNum","Stationery.ReorderQty"),new{ @hidden = "hidden" })
             <div class="text-right">
                 <input type="button" value="Add Row" id="btn_add_row" class="btn btn-info" />
             </div><br />
@@ -206,6 +207,9 @@
     $tr.find('.unit_of_measure').val(this.value);
     $tr.find('.unit_price').prop('selectedIndex', $(this)[0].selectedIndex);
     $tr.find('.hide_unit_price').val($tr.find('.unit_price').val());
+    //comment the next two lines to remove reorder qty level
+    var reorder_string = '#MinPurchQty option[value="' + $(this).val() + '"]';
+    { $lineqty.val($(reorder_string).text())}
     calculateAll();
     });
     $(document).on('change', '.line_qty', function () {
@@ -215,7 +219,7 @@
     });
 
     //initialise class and attributes
-    $(document).ready(function () {
+        $(document).ready(function () {
         for (var i = 0; i < sindex ; i++) {
             var showId = '#id' + i;
             $(showId).find('.unit_price').prop('selectedIndex', i + 1);
