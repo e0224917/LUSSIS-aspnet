@@ -9,44 +9,14 @@
 <br />
 <h4>View Pending PO List</h4>
 
-<script>
 
-    function onClickFunction() {
-        var checkBox = document.getElementById("all");
-
-        if (checkBox.checked == true) {
-
-            $('.chk').attr('checked', true);
-        }
-        else {
-            $('.chk').attr('checked', false);
-        }
-    }
-
-    function getCheckList() {
-        var chkArray = [];
-        $(".chk:checked").each(function () {
-            chkArray.push($(this).val());
-
-        });
-        return chkArray.toString();
-    }
-
-
-</script>
 
 
 <div class="alert alert-danger alert-dismissable fade show" id="showError" style="display:none;">Please select one checkbox</div>
 <table class="table">
     <tr>
         <th>
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="all customCheck1" onclick="onClickFunction()" />
-                    <label class="custom-control-label" for="customCheck1"> </label>
-                </div>
-
-            </div>
+            <input type="checkbox" id="all" onclick="onClickFunction()" />
         </th>
         <th>
             @Html.DisplayNameFor(model => model.PoNum)
@@ -72,14 +42,7 @@
         <tr>
 
             <td>
-                <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                        <input class="chk" class="custom-control-input" id="@item.PoNum customCheck1" value="@item.PoNum" type="checkbox" />
-                        <label class="custom-control-label" for="customCheck1"> </label>
-                    </div>
-
-                </div>
-
+                <input class="chk" id=@item.PoNum value="@item.PoNum" type="checkbox" onclick="onClickFunction()" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PoNum)
@@ -158,6 +121,31 @@
             }
 
         }
+    </script>
+    <script>
+
+        function onClickFunction() {
+            var checkBox = document.getElementById("all");
+
+            if (checkBox.checked == true) {
+
+                $('.chk').attr('checked', true);
+            }
+            else {
+                $('.chk').attr('checked', false);
+            }
+        }
+
+        function getCheckList() {
+            var chkArray = [];
+            $(".chk:checked").each(function () {
+                chkArray.push($(this).val());
+
+            });
+            return chkArray.toString();
+        }
+
+
     </script>
 }
 
