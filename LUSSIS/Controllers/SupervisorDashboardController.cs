@@ -17,7 +17,7 @@ using System.Diagnostics;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: May Zin Ko
+    //Authors: May Zin Ko Authors: Douglas Lee Kiat Hui
     [Authorize(Roles = "manager,supervisor")]
     public class SupervisorDashboardController : Controller
     {
@@ -90,7 +90,6 @@ namespace LUSSIS.Controllers
             List<String> fromList = new List<String>();
             List<String> toList = new List<String>();
 
-          
             List<String> datevalue = new List<String>();
 
             List<double> xvalue = new List<double>();
@@ -147,7 +146,7 @@ namespace LUSSIS.Controllers
             base.Dispose(disposing);
         }
 
-
+        [Authorize(Roles = "manager,supervisor")]
         public ActionResult TrendAnalysis()
         {
             ViewBag.Departments = _departmentRepo.GetAll().Where(x => x.DeptCode != "STNR");

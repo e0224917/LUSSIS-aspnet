@@ -6,7 +6,7 @@
 
 <form id="confirmForm">
     <div class="modal-body">
-        <h5> Are you sure to @ViewBag.status</h5>
+        <h5> Are You Sure To @ViewBag.status</h5>
         <div class="form-group">
 
 
@@ -36,7 +36,8 @@
 @section scripts {
     <script>
         $(document).ready(function () {
-            $("#ok").click(function() {
+            $("#ok").click(function ()
+            {
                 var formdata = $("#confirmForm").serialize();
 
                 $.ajax({
@@ -54,7 +55,7 @@
     </script>
 }
 
-@*Authors: Douglas Lee Kiat Hui*@
+@*Authors: May Zin Ko*@
 
 
 

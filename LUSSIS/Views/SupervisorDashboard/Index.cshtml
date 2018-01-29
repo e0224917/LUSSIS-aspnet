@@ -57,7 +57,7 @@
                     <div class="card bg-info text-white">
                         <div class="card-header">Total PO Expenditure</div>
                         <div class="card-body">
-                            <span style="padding-left: 5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span>
+                            <span style="padding-left: 5em">$@Model.POTotalAmount.ToString("#.00")</span>
                         </div>
                     </div>
                 </div>
@@ -70,10 +70,11 @@
 
 <div class="row">
     <div class="col-md-6">
+        <h5>Stationery Expenditure for Past three months</h5>
         <div id="chart_div"></div>
     </div>
     <div class="col-md-6">
-        <h5></h5>
+        <h5>Charge Back for each department for past three months</h5>
         <div id="stack_div"></div>
     </div>
 </div>
@@ -123,7 +124,8 @@
                         //Loop through each list data
 
                         for (var i = 0; i < first.length; i++) {
-                            if (second[i] !== 0) {
+                            if (second[i] !== 0)
+                            {
                                 data.addRow([first[i], second[i]]);
                             }
 
@@ -135,9 +137,9 @@
                         //Draw pie chart command with data and chart options
                         chart.draw(data,
                             {
-                                title: "Stationery Trend Analysis for Past three month",
+                              @*  title: "Stationery Expenditure for Past three months",*@
                                 position: "top",
-                                fontsize: "25px",
+                                fontsize: "30px",
                                 width: "600",
                                 height: "600"
                             });
@@ -205,8 +207,10 @@
 
 
                         var options = {
+                            Title:"Charge Back for each department for past three months",
                             width: 600,
-                            height: 400,
+                            fontsize: "30px",
+                            height: 600,
                             legend: { position: 'top', maxLines: 3 },
                             bar: { groupWidth: '75%' },
                             isStacked: true

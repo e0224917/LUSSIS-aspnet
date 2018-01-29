@@ -397,7 +397,7 @@ namespace LUSSIS.Controllers
 
         [Authorize(Roles = "supervisor")]
         [HttpPost]
-        public ActionResult ApproveRejectPO(string checkList, string status, string a)
+        public ActionResult ApproveRejectPO(string status, string checkList, string a)
         {
             var list = checkList.Split(',');
             var idList = new int[list.Length];

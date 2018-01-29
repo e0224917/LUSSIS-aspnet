@@ -78,7 +78,7 @@ namespace LUSSIS.Controllers
                 _disbursementRepo.UpdateAndNotify(disbursement);
                 return RedirectToAction("Upcoming");
             }
-            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
+          //  ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId", "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
 
