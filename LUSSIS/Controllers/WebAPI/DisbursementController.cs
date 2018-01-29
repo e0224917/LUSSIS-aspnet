@@ -62,5 +62,14 @@ namespace LUSSIS.Controllers.WebAPI
             return Ok(new {Message = "Acknowledged"});
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _disbursementRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

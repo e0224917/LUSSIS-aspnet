@@ -104,7 +104,7 @@ namespace LUSSIS.Controllers
 
             var requistions = !string.IsNullOrEmpty(searchString)
                 ? _requistionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode).Reverse().ToList()
-                : _requistionRepo.GetAllByDeptCode(deptCode).Reverse().ToList();
+                : _requistionRepo.GetAllByDeptCode(deptCode);
 
             var reqAll = requistions.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
@@ -334,7 +334,7 @@ namespace LUSSIS.Controllers
             {
                 retrievalItems = itemsList,
                 collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
-                hasInprocessDisbursement = _disbursementRepo.hasInprocessDisbursements()
+                hasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
             });
         }
 
@@ -366,7 +366,7 @@ namespace LUSSIS.Controllers
             {
                 retrievalItems = CreateRetrievalList().List.ToPagedList(1, 15),
                 collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
-                hasInprocessDisbursement = _disbursementRepo.hasInprocessDisbursements()
+                hasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
             });
         }
 
@@ -408,7 +408,7 @@ namespace LUSSIS.Controllers
                 foreach (var requisition in requisitions)
                 {
                     requisition.Status = "processed";
-                    _requistionRepo.Update(requisition);
+                    _disbursementRepo.UpdateRequisition(requisition);
                 }
 
             }
@@ -508,13 +508,13 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = "clerk")]
         public ActionResult RetrievalInProcess()
         {
-            return View(_requistionRepo.GetRetrievalInProcess());
+            return View(_disbursementRepo.GetRetrievalInProcess());
         }
 
         //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpGet]
-        public PartialViewResult _ApproveReq(int Id, String Status)
+        public PartialViewResult _ApproveReq(int Id, string Status)
         {
             var reqDto = new ReqApproveRejectDTO
             {

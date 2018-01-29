@@ -92,9 +92,9 @@ namespace LUSSIS.Controllers.WebAPI
 
         [HttpGet]
         [Route("api/Delegate/Employee/{dept}")]
-        public IEnumerable<EmployeeDTO> GetEmployeeList(string deptCode)
+        public IEnumerable<EmployeeDTO> GetEmployeeList(string dept)
         {
-            var list = _departmentRepo.GetById(deptCode).Employees;
+            var list = _departmentRepo.GetById(dept).Employees;
 
             return list.Select(item => new EmployeeDTO()
             {
@@ -108,6 +108,17 @@ namespace LUSSIS.Controllers.WebAPI
                 JobTitle = item.JobTitle,
                 Title = item.Title
             });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _departmentRepo.Dispose();
+                _departmentRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

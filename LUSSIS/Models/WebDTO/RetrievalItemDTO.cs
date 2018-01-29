@@ -72,7 +72,7 @@ namespace LUSSIS.Models.WebDTO
             UnitOfMeasure = stationery.UnitOfMeasure;
             AvailableQty = stationery.AvailableQty;
             RequestedQty = 0;
-            RemainingQty = stationery.AvailableQty;
+            RemainingQty = 0;
         }
 
         public RetrievalItemDTO(List<RequisitionDetail> requisitionDetails)
@@ -85,7 +85,7 @@ namespace LUSSIS.Models.WebDTO
             UnitOfMeasure = stationery.UnitOfMeasure;
             AvailableQty = stationery.AvailableQty;
             RequestedQty = 0;
-            RemainingQty = stationery.AvailableQty;
+            RemainingQty = 0;
 
             //Calculate the quantity
             foreach (var requisitionDetail in requisitionDetails)
@@ -104,12 +104,12 @@ namespace LUSSIS.Models.WebDTO
             UnitOfMeasure = stationery.UnitOfMeasure;
             AvailableQty = stationery.AvailableQty;
             RequestedQty = 0;
-            RemainingQty = stationery.AvailableQty;
+            RemainingQty = 0;
 
             //Calculate the quantity
             foreach (var disbursementDetail in disbursementDetails)
             {
-                RequestedQty += disbursementDetail.RequestedQty - disbursementDetail.ActualQty;
+                RemainingQty += disbursementDetail.RequestedQty - disbursementDetail.ActualQty;
             }
         }
     }

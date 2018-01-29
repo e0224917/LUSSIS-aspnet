@@ -12,6 +12,7 @@ namespace LUSSIS.Controllers.WebAPI
     public class RequisitionsController : ApiController
     {
         private readonly RequisitionRepository _requistionRepo = new RequisitionRepository();
+        private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
 
         //GET: api/Requisitions/
         [Route("api/Requisitions/Pending/{dept}")]
@@ -95,15 +96,26 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Requisitions/Retrieval")]
         public IEnumerable<RetrievalItemDTO> GetRetrievalList()
         {
-            return _requistionRepo.GetRetrievalInProcess().Select(x => new RetrievalItemDTO
+            return _disbursementRepo.GetRetrievalInProcess().Select(x => new RetrievalItemDTO
             {
                 ItemNum = x.ItemNum,
-                AvailableQty = (int) x.AvailableQty,
+                AvailableQty = x.AvailableQty,
                 BinNum = x.BinNum,
-                RequestedQty = (int) x.RequestedQty,
+                RequestedQty = x.RequestedQty,
                 Description = x.Description,
                 UnitOfMeasure = x.UnitOfMeasure
             });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _requistionRepo.Dispose();
+                _disbursementRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

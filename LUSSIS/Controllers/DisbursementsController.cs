@@ -7,12 +7,14 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Constants;
 using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 using PagedList;
 using QRCoder;
+using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers
 {
@@ -27,7 +29,7 @@ namespace LUSSIS.Controllers
         // GET: Upcoming Disbursement
         public ActionResult Upcoming()
         {
-            var disbursements = _disbursementRepo.GetInProcessDisbursements();
+            var disbursements = _disbursementRepo.GetDisbursementByStatus(InProcess);
             return View(disbursements.ToList());
         }
 
@@ -65,7 +67,7 @@ namespace LUSSIS.Controllers
                 return HttpNotFound();
             }
 
-            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId",
+            ViewBag.CollectionPointId = new SelectList(_collectionRepo.GetAll(), "CollectionPointId",
                 "CollectionName", disbursement.CollectionPointId);
 
             return View(disbursement);
@@ -90,7 +92,7 @@ namespace LUSSIS.Controllers
                 return RedirectToAction("Upcoming");
             }
 
-            ViewBag.CollectionPointId = new SelectList(_disbursementRepo.GetAllCollectionPoint(), "CollectionPointId",
+            ViewBag.CollectionPointId = new SelectList(_collectionRepo.GetAll(), "CollectionPointId",
                 "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
@@ -107,20 +109,22 @@ namespace LUSSIS.Controllers
             }
 
             if (ModelState.IsValid)
+            { 
                 //Disbursement d = disbursementDTO.CurrentDisbursement;
-                Disbursement d = _disbursementRepo.GetById(disbursementDTO.CurrentDisbursement.DisbursementId);
-                foreach (var dd in d.DisbursementDetails)
+                var disbursementId = disbursementDTO.CurrentDisbursement.DisbursementId;
+                var disbursement = _disbursementRepo.GetById(disbursementId);
+                foreach (var disbursementDetail in disbursement.DisbursementDetails)
                 {
-                    dd.ActualQty = disbursementDTO.DisDetailList.First(ddEdited => ddEdited.ItemNum == dd.ItemNum)
+                    disbursementDetail.ActualQty = disbursementDTO.DisDetailList
+                        .First(ddEdited => ddEdited.ItemNum == disbursementDetail.ItemNum)
                         .ActualQty;
-
                 }
-                _disbursementRepo.Update(d);
+                _disbursementRepo.Update(disbursement);
                 
                 switch (update)
                 {
                     case "Acknowledge Manually":
-                        _disbursementRepo.Acknowledge(d);
+                        _disbursementRepo.Acknowledge(disbursement);
                         return RedirectToAction("Upcoming");
                     case "Generate QR Code":
                         break;

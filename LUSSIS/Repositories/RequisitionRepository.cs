@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.WebPages;
+using LUSSIS.Constants;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories.Interface;
@@ -15,7 +16,9 @@ namespace LUSSIS.Repositories
     {
         public List<Requisition> GetAllByDeptCode(string deptCode)
         {
-            return LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode);
+            var list = LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode).ToList();
+            list.Reverse();
+            return list;
         }
 
         public IEnumerable<Requisition> FindRequisitionsByDeptCodeAndText(string term, string deptCode)
@@ -58,29 +61,6 @@ namespace LUSSIS.Repositories
                 .Where(r => r.DeptCode == deptCode && r.Status == "pending").ToList();
             list.Reverse();
             return list;
-        }
-
-        public IEnumerable<RetrievalItemDTO> GetRetrievalInProcess()
-        {
-            var itemsToRetrieve = new List<RetrievalItemDTO>();
-
-            //use disbursement as resource to generate retrieval in process
-
-            var inProcessDisDetailsGroupedByItem = new DisbursementRepository()
-                .GetInProcessDisbursementDetails().GroupBy(x => x.ItemNum).Select(grp => grp.ToList()).ToList();
-
-            foreach (List<DisbursementDetail> disDetailForOneItem in inProcessDisDetailsGroupedByItem)
-            {
-                Stationery stat = disDetailForOneItem.First().Stationery;
-                RetrievalItemDTO dto = new RetrievalItemDTO(stat);
-                foreach (DisbursementDetail dd in disDetailForOneItem)
-                {
-                    dto.RequestedQty += dd.RequestedQty;
-                }
-                itemsToRetrieve.Add(dto);
-            }
-
-            return itemsToRetrieve;
         }
 
     }

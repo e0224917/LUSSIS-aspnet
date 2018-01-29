@@ -3,29 +3,24 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 using LUSSIS.Constants;
-using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
-using Microsoft.ApplicationInsights.WindowsServer;
 using static LUSSIS.Constants.DisbursementStatus;
-using static LUSSIS.Constants.RequisitionStatus;
 
 namespace LUSSIS.Repositories
 {
     //Authors: Tang Xiaowen, May Zin Ko
     public class DisbursementRepository : Repository<Disbursement, int>
     {
-
         public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)
         {
             try
             {
-                DateTime updatedDate = nowDate.Subtract(new TimeSpan(1, 0, 0, 0));
-                List<Disbursement> disbList = LUSSISContext.Disbursements.Where(x => x.DeptCode == deptCode).ToList();
-                return disbList.First(x => x.CollectionDate > updatedDate && x.Status == DisbursementStatus.InProcess);
+                var updatedDate = nowDate.Subtract(new TimeSpan(1, 0, 0, 0));
+                var disbursements = LUSSISContext.Disbursements.Where(x => x.DeptCode == deptCode).ToList();
+                return disbursements.First(x => x.CollectionDate > updatedDate && x.Status == InProcess);
             }
             catch
             {
@@ -38,11 +33,6 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements.Where(d => d.Department.DeptName.Contains(deptName));
         }
 
-        //public IEnumerable<CollectionPoint> GetAllCollectionPoint()
-        //{
-        //    return LUSSISContext.CollectionPoints.Include(c => c.InChargeEmployee);
-        //}
-
         public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
         {
             return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status).ToList();
@@ -53,20 +43,10 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements.Where(x => x.Status == status).ToList();
         }
 
-        public IEnumerable<Disbursement> GetInProcessDisbursements()
-        {
-            return GetDisbursementByStatus(DisbursementStatus.InProcess);
-        }
-
-        public IEnumerable<DisbursementDetail> GetInProcessDisbursementDetails()
-        {
-            return GetDisbursementDetailsByStatus(DisbursementStatus.InProcess);
-        }
-
         public List<DisbursementDetail> GetUnfulfilledDisbursementDetailList()
         {
             return LUSSISContext.DisbursementDetails.Where(d =>
-                d.Disbursement.Status == "unfulfilled" && d.RequestedQty - d.ActualQty > 0)
+                    d.Disbursement.Status == Unfulfilled && d.RequestedQty - d.ActualQty > 0)
                 .Include(d => d.Stationery).ToList();
         }
 
@@ -77,11 +57,12 @@ namespace LUSSIS.Repositories
         public double GetDisbursementTotalAmount()
         {
             double result = 0;
-            var list = GetAll().Where(x => x.Status != DisbursementStatus.InProcess).ToList();
+            var list = GetAll().Where(x => x.Status != InProcess).ToList();
             foreach (Disbursement d in list)
             {
                 result += GetAmountByDisbursement(d);
             }
+
             return result;
         }
 
@@ -89,7 +70,7 @@ namespace LUSSIS.Repositories
         {
             double result = 0;
 
-            var list = GetAll().Where(x => x.Status != DisbursementStatus.InProcess && x.DeptCode.Equals(deptCode)).ToList();
+            var list = GetAll().Where(x => x.Status != InProcess && x.DeptCode.Equals(deptCode)).ToList();
             foreach (Disbursement d in list)
             {
                 result += GetAmountByDisbursement(d);
@@ -99,45 +80,47 @@ namespace LUSSIS.Repositories
             return result;
         }
 
-        
+
         public void Acknowledge(Disbursement disbursement)
         {
             var isFulfilled = disbursement.DisbursementDetails.All(item => item.ActualQty == item.RequestedQty);
             disbursement.Status = isFulfilled ? Fulfilled : Unfulfilled;
-            
+
             disbursement.AcknowledgeEmpNum = disbursement.Department.RepEmpNum;
             Update(disbursement);
             LUSSISContext.SaveChanges();
         }
 
-        
-        public bool hasInprocessDisbursements()
+
+        public bool HasInprocessDisbursements()
         {
-            return LUSSISContext.Disbursements.Any(d => d.Status == DisbursementStatus.InProcess);
+            return LUSSISContext.Disbursements.Any(d => d.Status == InProcess);
         }
+
         public double GetAmountByDisbursement(Disbursement d)
         {
             double result = 0;
             var detailList = d.DisbursementDetails.ToList();
             foreach (DisbursementDetail f in detailList)
             {
-
                 int qty = f.ActualQty;
                 double unitPrice = f.UnitPrice;
                 result += (qty * unitPrice);
             }
+
             return result;
         }
 
         public DisbursementDetail GetDisbursementDetailByIdAndItem(string id, string itemNum)
         {
-            return LUSSISContext.DisbursementDetails.FirstOrDefault(dd => (dd.DisbursementId == Convert.ToInt32(id)) && dd.ItemNum == itemNum);
+            return LUSSISContext.DisbursementDetails.FirstOrDefault(dd =>
+                dd.DisbursementId == Convert.ToInt32(id) && dd.ItemNum == itemNum);
         }
 
         public Disbursement GetUpcomingDisbursement(string deptCode)
         {
             return LUSSISContext.Disbursements
-                .FirstOrDefault(d => d.Status == DisbursementStatus.InProcess && d.DeptCode == deptCode);
+                .FirstOrDefault(d => d.Status == InProcess && d.DeptCode == deptCode);
         }
 
         public IEnumerable<DisbursementDetail> GetAllDisbursementDetailByItem(string id)
@@ -145,8 +128,8 @@ namespace LUSSIS.Repositories
             return LUSSISContext.DisbursementDetails.Where(x => x.ItemNum == id);
         }
 
-      
-        public double GetDisAmountByDate(String dep, List<int>cat, String from,String to)
+
+        public double GetDisAmountByDate(String dep, List<int> cat, String from, String to)
         {
             //  DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             // DateTime toDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
@@ -154,30 +137,30 @@ namespace LUSSIS.Repositories
             DateTime fromDate = DateTime.Parse(from);
             DateTime toDate = DateTime.Parse(to);
             double total = 0;
-            List<double> resultList = new List<double>();
-         
-            foreach(int catId in cat)
+
+            foreach (int catId in cat)
             {
                 var q = from t1 in LUSSISContext.Disbursements
-                        join t2 in LUSSISContext.DisbursementDetails
+                    join t2 in LUSSISContext.DisbursementDetails
                         on t1.DisbursementId equals t2.DisbursementId
-                        join t3 in LUSSISContext.Stationeries
+                    join t3 in LUSSISContext.Stationeries
                         on t2.ItemNum equals t3.ItemNum
-                        where t3.CategoryId == catId &&
-                        t1.Status!=DisbursementStatus.InProcess &&
-                        t1.DeptCode == dep
-                        && (t1.CollectionDate <= toDate && t1.CollectionDate >= fromDate)
-                        select new
-                        {
-                            price = (int)t2.Stationery.AverageCost,
-                            Qty = (double)t2.ActualQty
-                        };
+                    where t3.CategoryId == catId &&
+                          t1.Status != InProcess &&
+                          t1.DeptCode == dep
+                          && (t1.CollectionDate <= toDate && t1.CollectionDate >= fromDate)
+                    select new
+                    {
+                        price = (int) t2.Stationery.AverageCost,
+                        Qty = (double) t2.ActualQty
+                    };
 
                 foreach (var a in q)
                 {
                     total += a.price * a.Qty;
                 }
-            }  
+            }
+
             return total;
         }
 
@@ -200,7 +183,33 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Requisitions.Where(r => r.Status == "approved").ToList();
         }
 
-    }
+        public void UpdateRequisition(Requisition requisition)
+        {
+            LUSSISContext.Entry(requisition).State = EntityState.Modified;
+            LUSSISContext.SaveChanges();
+        }
 
-    
+        public IEnumerable<RetrievalItemDTO> GetRetrievalInProcess()
+        {
+            var itemsToRetrieve = new List<RetrievalItemDTO>();
+
+            //use disbursement as resource to generate retrieval in process
+
+            var inProcessDisDetailsGroupedByItem = GetDisbursementDetailsByStatus(InProcess)
+                .GroupBy(x => x.ItemNum).Select(grp => grp.ToList()).ToList();
+
+            foreach (var disDetailForOneItem in inProcessDisDetailsGroupedByItem)
+            {
+                var stat = disDetailForOneItem.First().Stationery;
+                var retrievalItem = new RetrievalItemDTO(stat);
+                foreach (var disbursementDetail in disDetailForOneItem)
+                {
+                    retrievalItem.RequestedQty += disbursementDetail.RequestedQty;
+                }
+                itemsToRetrieve.Add(retrievalItem);
+            }
+
+            return itemsToRetrieve;
+        }
+    }
 }
