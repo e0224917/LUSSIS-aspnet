@@ -8,7 +8,7 @@ using LUSSIS.Models;
 
 namespace LUSSIS.Emails
 {
-    //Authors: Guo Rui
+    //Authors: Guo Rui, Ton That Minh Nhat
     public static class EmailHelper
     {
         public static string DestinationEmail { get; set; }
@@ -155,6 +155,57 @@ namespace LUSSIS.Emails
                 body.AppendLine("Quantity: " + adjVoucher.Quantity);
                 body.AppendLine();
                 body.AppendLine("by " + fullName + "on" + DateTime.Now.ToString("dd-MM-yyyy"));
+
+                Body = body.ToString();
+                return this;
+            }
+            public Builder ForNewRepresentative()
+            {
+                Subject = "You have been assigned as the department representative.";
+
+                var body = new StringBuilder();
+                body.AppendLine("You have been assigned as the department representative.");
+                body.AppendLine();
+                body.AppendLine("This is effective from " + DateTime.Now.ToString("dd-MM-yyyy") + ".");
+
+                Body = body.ToString();
+                return this;
+            }
+
+            public Builder ForOldRepresentative()
+            {
+                Subject = "You are no longer the department representative.";
+
+                var body = new StringBuilder();
+                body.AppendLine("You are no longer the department representative.");
+                body.AppendLine();
+                body.AppendLine("This is effective from " + DateTime.Now.ToString("dd-MM-yyyy") + ".");
+
+                Body = body.ToString();
+                return this;
+            }
+
+            public Builder ForNewDelegate()
+            {
+                Subject = "You have been assigned as the delegate.";
+
+                var body = new StringBuilder();
+                body.AppendLine("You have been assigned as the delegate.");
+                body.AppendLine();
+                body.AppendLine("This is effective from " + DateTime.Now.ToString("dd-MM-yyyy") + ".");
+
+                Body = body.ToString();
+                return this;
+            }
+
+            public Builder ForOldDelegate()
+            {
+                Subject = "You are no longer the delegate.";
+
+                var body = new StringBuilder();
+                body.AppendLine("You are no longer the delegate.");
+                body.AppendLine();
+                body.AppendLine("This is effective from " + DateTime.Now.ToString("dd-MM-yyyy") + ".");
 
                 Body = body.ToString();
                 return this;
