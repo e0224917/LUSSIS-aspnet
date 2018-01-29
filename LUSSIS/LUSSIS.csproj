@@ -674,6 +674,7 @@
     <Content Include="Views\SupervisorDashboard\Report.cshtml" />
     <Content Include="Views\Requisitions\_All.cshtml" />
     <Content Include="Views\Requisitions\_Index.cshtml" />
+    <Content Include="Views\Requisitions\_Consolidated.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

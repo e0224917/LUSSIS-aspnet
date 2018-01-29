@@ -389,11 +389,17 @@ namespace LUSSIS.Controllers
 
         //Store Clerk's page
         [Authorize(Roles = "clerk")]
-        public ActionResult Consolidated()
+        public ActionResult Consolidated(int? page)
         {
+            int pageSize = 15;
+            int pageNumber = (page ?? 1);
+
+            var itemsList = _requistionRepo.GetConsolidatedRequisition().ToList().ToPagedList(pageNumber, pageSize);
+
+
             return View(new RetrievalItemsWithDateDTO
             {
-                retrievalItems = _requistionRepo.GetConsolidatedRequisition().ToList(),
+                retrievalItems = itemsList,
                 collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
                 hasInprocessDisbursement = _disbursementRepo.hasInprocessDisbursements()
             });
@@ -414,9 +420,10 @@ namespace LUSSIS.Controllers
                 return RedirectToAction("RetrievalInProcess");
             }
 
+            
             return View("Consolidated", new RetrievalItemsWithDateDTO
             {
-                retrievalItems = _requistionRepo.GetConsolidatedRequisition().ToList(),
+                retrievalItems = _requistionRepo.GetConsolidatedRequisition().ToList().ToPagedList(1, 15),
                 collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
                 hasInprocessDisbursement = _disbursementRepo.hasInprocessDisbursements()
             });
