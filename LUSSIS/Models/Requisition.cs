@@ -23,6 +23,7 @@ namespace LUSSIS.Models
 
         [Required]
         [Column(TypeName = "date")]
+        [Display(Name = "Date of Requisition")]
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime RequisitionDate { get; set; }
 
@@ -30,6 +31,7 @@ namespace LUSSIS.Models
 
         public string ApprovalRemarks { get; set; }
 
+        [Display(Name = "Reason for Requistion")]
         public string RequestRemarks { get; set; }
 
         [Column(TypeName = "date")]

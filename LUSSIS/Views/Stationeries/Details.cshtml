@@ -3,6 +3,7 @@
 }
 
 <h2>Stationery Details</h2>
+<hr/>
 @{ int balance = ViewBag.InitBal;}
 <div>
     <div class="row">
@@ -23,7 +24,8 @@
                 <br />
                 <div class="row ml-3">
                     <div>@Html.ActionLink("Edit", "Edit", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-warning d-inline mr-2" })</div>
-                    <div>@Html.ActionLink("Stock Adjustment", "CreateAdjustment", "StockAdjustment", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-primary d-inline" })</div>
+                    <div>@Html.ActionLink("Stock Adjustment", "CreateAdjustment", "StockAdjustment", new { id = ViewBag.Stationery.ItemNum }, new { @class = "btn btn-primary d-inline mr-2" })</div>
+                    <div>@Html.ActionLink("Back", "Index", null, new { @class = "btn btn-secondary d-inline" })</div>
                 </div>
             </div>
         </div>

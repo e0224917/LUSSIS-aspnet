@@ -108,22 +108,21 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Requisitions.Where(r => r.Status == status).ToList();
         }
 
-        public List<Requisition> GetAllByDeptCode(string deptCode)
+        public IEnumerable<Requisition> GetAllByDeptCode(string deptCode)
         {
-            return LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode).ToList();
+            return LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode);
         }
 
-        public List<Requisition> FindRequisitionsByDeptCodeAndText(string term, string deptCode)
+        public IEnumerable<Requisition> FindRequisitionsByDeptCodeAndText(string term, string deptCode)
         {
-            var req = LUSSISContext.Requisitions
-                .Where(r => r.DeptCode == deptCode 
-                            && (r.Status.ToLower().Contains(term) 
-                                || r.RequisitionEmployee.FirstName.ToLower().Contains(term) 
-                                || r.RequisitionEmployee.LastName.ToLower().Contains(term) 
-                               // || r.RequisitionDate.ToString().Contains(term) 
-                                || r.RequestRemarks.ToLower().Contains(term)))
-                                .ToList();
-            return req;
+            return LUSSISContext.Requisitions
+                .Where(r => r.DeptCode == deptCode
+                            && (r.Status.ToLower().Contains(term)
+                                || r.RequisitionEmployee.FirstName.ToLower().Contains(term)
+                                || r.RequisitionEmployee.LastName.ToLower().Contains(term)
+                                // || r.RequisitionDate.ToString().Contains(term) 
+                                || r.RequestRemarks.ToLower().Contains(term)));                             
+
         }
 
         public IEnumerable<RequisitionDetail> GetRequisitionDetailsByStatus(string status)

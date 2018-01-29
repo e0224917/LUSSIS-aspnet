@@ -81,6 +81,9 @@ namespace LUSSIS.Controllers
                 ViewBag.Pending = "Pending";
                 return View(req);
             }
+            else if(req != null){
+                return View(req);
+            }
 
             return new HttpNotFoundResult();
         }
@@ -101,8 +104,8 @@ namespace LUSSIS.Controllers
             }
 
             var requistions = !string.IsNullOrEmpty(searchString)
-                ? _requistionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode)
-                : _requistionRepo.GetAllByDeptCode(deptCode);
+                ? _requistionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode).Reverse().ToList()
+                : _requistionRepo.GetAllByDeptCode(deptCode).Reverse().ToList();
 
             var reqAll = requistions.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
@@ -121,7 +124,7 @@ namespace LUSSIS.Controllers
         public async Task<ActionResult> Details(
             [Bind(Include =
                 "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status,DeptCode")]
-            Requisition requisition, string status)
+            Requisition requisition, string statuses)
         {
             if (requisition.Status == "pending")
             {
@@ -148,7 +151,7 @@ namespace LUSSIS.Controllers
                     {
                         requisition.ApprovalEmpNum = empNum;
                         requisition.ApprovalDate = DateTime.Today;
-                        requisition.Status = status;
+                        requisition.Status = statuses;
                         await _requistionRepo.UpdateAsync(requisition);
                         return RedirectToAction("Pending");
                     }
