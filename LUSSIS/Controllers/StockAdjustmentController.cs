@@ -99,7 +99,7 @@ namespace LUSSIS.Controllers
                         };
 
                         _stockAdjustmentRepo.Add(adjustment);
-
+                        adjustment.Stationery = _stationeryRepo.GetById(adjustment.ItemNum);
                         vouchers.Add(adjustment);
                     }
 

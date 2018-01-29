@@ -13,11 +13,13 @@ namespace LUSSIS.Models.WebDTO
     public class AdjustmentVoucherDTO
     {
         [ItemNumValidator]
+        [Display(Name = "Item Code")]
         [Required(ErrorMessage = "This field is required")]
-        [RegularExpression(@"^[a-zA-Z][1-9]{3}$", ErrorMessage = "Invalid Item Format")]
         [StringLength(20)]
         public string ItemNum { get; set; }
 
+
+        [Required(ErrorMessage = "This field is required")]
         [Range (1,10000, ErrorMessage="Please enter a valid quantity")]
         public int Quantity { get; set; }
 
