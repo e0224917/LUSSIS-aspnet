@@ -16,7 +16,7 @@ using System.Text;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Cui Runze, Tang Xiaowen
+    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan
     [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {
@@ -49,6 +49,7 @@ namespace LUSSIS.Controllers
 
         //TODO: Add authroization - DepartmentHead or Delegate only
         // GET: Requisition
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         public ActionResult Pending()
         {
@@ -65,6 +66,7 @@ namespace LUSSIS.Controllers
         }
 
         //TODO: Add authroization - DepartmentHead or Delegate only
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpGet]
         public ActionResult Details(int reqId)
@@ -86,6 +88,7 @@ namespace LUSSIS.Controllers
         }
 
         [CustomAuthorize("head", "staff")]
+        //Authors: Koh Meng Guan
         public ActionResult All(string searchString, string currentFilter, int? page)
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
@@ -114,7 +117,8 @@ namespace LUSSIS.Controllers
         }
 
 
-        //TODO: Add authorization - DepartmentHead or Delegate only
+
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpPost]
         public async Task<ActionResult> Details(
@@ -437,6 +441,7 @@ namespace LUSSIS.Controllers
             return View(_requistionRepo.GetRetrievalInPorcess());
         }
 
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpGet]
         public PartialViewResult _ApproveReq(int Id, String Status)
@@ -456,6 +461,7 @@ namespace LUSSIS.Controllers
         }
 
 
+        //Authors: Koh Meng Guan
         [CustomAuthorize("head", "staff")]
         [HttpPost]
         public PartialViewResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]
