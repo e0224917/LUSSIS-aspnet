@@ -45,9 +45,9 @@ namespace LUSSIS.Models
             RequestedQty = requisitionDetail.Quantity;
             UnitPrice = requisitionDetail.Stationery.AverageCost;
             //if not enough stock, set actual qty to stock number, else set as requested qty
-            ActualQty = requisitionDetail.Stationery.AvailableQty > RequestedQty 
+            ActualQty = requisitionDetail.Stationery.CurrentQty > RequestedQty 
                 ? RequestedQty
-                : requisitionDetail.Stationery.AvailableQty;
+                : requisitionDetail.Stationery.CurrentQty;
             Stationery = requisitionDetail.Stationery;
         }
 
