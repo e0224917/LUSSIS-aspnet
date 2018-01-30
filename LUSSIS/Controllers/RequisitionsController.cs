@@ -18,7 +18,7 @@ using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan
+    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan, Guo Rui
     [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {

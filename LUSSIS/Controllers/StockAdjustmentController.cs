@@ -254,7 +254,8 @@ namespace LUSSIS.Controllers
                 var adjustment = _stockAdjustmentRepo.GetById(id);
                 adjustment.Status = status;
                 String item = adjustment.ItemNum;
-                Stationery st = _stationeryRepo.GetById(item);
+                Stationery st = new Stationery();
+                    st=_stationeryRepo.GetById(item);
                 if(adjustment.Quantity<0)
                 {
                     st.AvailableQty = st.AvailableQty+adjustment.Quantity;
@@ -266,6 +267,7 @@ namespace LUSSIS.Controllers
                     st.CurrentQty = st.CurrentQty-adjustment.Quantity;
                 }
                 _stationeryRepo.Update(st);
+
                 adjustment.Remark = comment;
                 adjustment.ApprovalDate = DateTime.Today;
                 _stockAdjustmentRepo.Update(adjustment);
