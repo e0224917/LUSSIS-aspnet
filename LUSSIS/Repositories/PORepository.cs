@@ -171,7 +171,11 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status.ToUpper() == status.ToUpper());
         }
+        public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsById(int poNo)
+        {
+            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.PoNum == poNo);
+        }
 
-       
+
     }
 }
