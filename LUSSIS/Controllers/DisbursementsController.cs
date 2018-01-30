@@ -85,8 +85,9 @@ namespace LUSSIS.Controllers
                 _disbursementRepo.Update(disbursement);
 
                 var repEmail = _employeeRepo.GetRepByDeptCode(disbursement.DeptCode).EmailAddress;
+                var collectionPoint = _collectionRepo.GetById((int)disbursement.CollectionPointId);
                 var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
-                    .ForUpdateDisbursement(disbursement).Build();
+                    .ForUpdateDisbursement(disbursement, collectionPoint).Build();
                 EmailHelper.SendEmail(email);
 
                 return RedirectToAction("Upcoming");

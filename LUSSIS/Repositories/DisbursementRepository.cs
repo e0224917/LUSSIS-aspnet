@@ -12,7 +12,7 @@ using static LUSSIS.Constants.RequisitionStatus;
 
 namespace LUSSIS.Repositories
 {
-    //Authors: Tang Xiaowen, May Zin Ko
+    //Authors: Tang Xiaowen, May Zin Ko, Ong Xin Ying
     public class DisbursementRepository : Repository<Disbursement, int>
     {
         public Disbursement GetByDateAndDeptCode(DateTime nowDate, string deptCode)

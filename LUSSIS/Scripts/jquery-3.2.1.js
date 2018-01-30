@@ -9237,7 +9237,7 @@ jQuery.extend( {
 				}
 
 				// if no content
-				if ( status === 204 || s.type === Role.DepartmentHead ) {
+                if (status === 204 || s.type === "head" ) {
 					statusText = "nocontent";
 
 				// if not modified
