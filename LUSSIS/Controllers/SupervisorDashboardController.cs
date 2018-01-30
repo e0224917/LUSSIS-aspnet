@@ -36,16 +36,19 @@ namespace LUSSIS.Controllers
             ViewBag.Message = User.IsInRole(Role.Supervisor) ? Role.Supervisor : Role.Manager;
             var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add").Count;
             var totalSubtractAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract").Count;
-
+            List<String> fromList = new List<String>();
+            fromList.Add(DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy"));
+            fromList.Add(DateTime.Now.AddMonths(-2).ToString("dd/MM/yyyy"));
+            fromList.Add(DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy"));
             var dash = new SupervisorDashboardDTO
             {
                 PendingPOTotalAmount = _poRepo.GetPendingPOTotalAmount(),
                 PendingPOCount = _poRepo.GetPendingPOCount(),
-                POTotalAmount = _poRepo.GetPOTotalAmount(),
+                POTotalAmount = _poRepo.GetPOTotalAmount(fromList),
                 PendingStockAdjAddQty = totalAddAdjustmentQty,
                 PendingStockAdjSubtractQty = totalSubtractAdjustmentQty,
                 PendingStockAdjCount = _stockAdjustmentRepo.GetPendingAdjustmentList().Count,
-                TotalDisbursementAmount = _disbursementRepo.GetDisbursementTotalAmount()
+                TotalDisbursementAmount = _disbursementRepo.GetDisbursementTotalAmount(fromList)
             };
 
             return View(dash);
@@ -96,21 +99,17 @@ namespace LUSSIS.Controllers
             List<double> xvalue = new List<double>();
             List<String> titlevalue = new List<String>();
 
-            datevalue.Add("November 2017");
-            datevalue.Add("December 2017");
-            datevalue.Add("January 2018");
+            fromList.Add(DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy"));
+            fromList.Add(DateTime.Now.AddMonths(-2).ToString("dd/MM/yyyy"));
+            fromList.Add(DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy"));
 
-            fromList.Add("2017-11-01");
-            fromList.Add("2017-12-01");
-            fromList.Add("2018-01-01");
-            toList.Add("2017-11-30");
-            toList.Add("2017-12-31");
-            toList.Add("2018-01-31");
-
+            datevalue.Add(DateTime.Now.AddMonths(-3).ToString("MMM/yyyy"));
+            datevalue.Add(DateTime.Now.AddMonths(-2).ToString("MMM/yyyy"));
+            datevalue.Add(DateTime.Now.AddMonths(-1).ToString("MMM/yyyy"));
             titlevalue = depList;
             ReportTransferDTO rto;
             List<ReportTransferDTO> Listone = new List<ReportTransferDTO>();
-            for (int j = 0; j< toList.Count; j++)
+            for (int j = 0; j< fromList.Count; j++)
             {
                 Debug.WriteLine(j);
                 rto = new ReportTransferDTO();
@@ -120,7 +119,7 @@ namespace LUSSIS.Controllers
                 for (int i = 0; i <depList.Count; i++)
                 {
 
-                    temp = _disbursementRepo.GetDisAmountByDate(depList[i], catList, fromList[j], toList[j]);
+                    temp = _disbursementRepo.GetDisAmountByDate(depList[i], catList, fromList[j]);
                     xvalue.Add(temp);
                 }
                 rto.xvalue = xvalue;
