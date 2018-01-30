@@ -5,12 +5,12 @@
 <div class="row">
     <div class="col-3">
         <div class="bs-component">
-            <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+            <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 1rem; text-align: center"">
                 <div class="col-xs-12 text-center">
                     <div class="card bg-info text-white">
-                        <div class="card-header">Pending Adjustment <span style="padding-left: 3em">@Model.PendingStockAdjCount</span> </div>
-                        <div class="card-body">
-                            <span style="padding-left: 2em">+ @Model.PendingStockAdjAddQty</span><span style="padding-left: 3em">- @Model.PendingStockAdjSubtractQty</span>
+                        <div class="card-header" style="min-height: 5rem">Pending Adjustment <br /><h3 class="mt-0 mb-0">@Model.PendingStockAdjCount</h3></div>
+                        <div class="card-body" style="min-height: 6rem">
+                            <span>+ @Model.PendingStockAdjAddQty</span><span style="padding-left: 3em">- @Model.PendingStockAdjSubtractQty</span>
                         </div>
                     </div>
                 </div>
@@ -19,12 +19,12 @@
     </div>
     <div class="col-3" id="notShowManager">
         <div class="bs-component">
-            <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+            <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
 
                     <div class="card bg-info text-white">
-                        <div class="card-header">Pending Purchase Order <span style="padding-left: 3em">@Model.PendingPOCount</span></div>
-                        <div class="card-body">
+                        <div class="card-header" style="min-height: 5rem">Pending Purchase Order <span style="padding-left: 3em">@Model.PendingPOCount</span></div>
+                        <div class="card-body" style="min-height: 6rem">
                             <span style="padding-left: 5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span>
                         </div>
                     </div>
@@ -35,12 +35,12 @@
 
     <div class="col-3">
         <div class="bs-component">
-            <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+            <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
 
                     <div class="card bg-info text-white">
-                        <div class="card-header">Total ChargeBack</div>
-                        <div class="card-body">
+                        <div class="card-header" style="min-height: 5rem">Total Chargeback</div>
+                        <div class="card-body" style="min-height: 6rem">
                             <span style="padding-left: 5em">$@Model.TotalDisbursementAmount.ToString("#.00")</span>
                         </div>
                     </div>
@@ -51,12 +51,12 @@
 
     <div class="col-3">
         <div class="bs-component">
-            <div class="card bg-light mb-3" style="max-height: 10rem; min-width: 15rem; margin-right: 1rem">
+            <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 1rem">
                 <div class="col-xs-12 text-center">
 
                     <div class="card bg-info text-white">
-                        <div class="card-header">Total PO Expenditure</div>
-                        <div class="card-body">
+                        <div class="card-header" style="min-height: 5rem">Total PO Expenditure</div>
+                        <div class="card-body" style="min-height: 6rem">
                             <span style="padding-left: 5em">$@Model.POTotalAmount.ToString("#.00")</span>
                         </div>
                     </div>
@@ -65,23 +65,21 @@
         </div>
     </div>
 </div>
-
-
-
-<div class="row">
-    <div class="col-md-6">
-        <h5>Stationery Expenditure for Past three months</h5>
-        <div id="chart_div"></div>
+<p></p>
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Stationery Expenditure for Past three months</h5>
+            <div id="chart_div"></div>
+        </div>
+        <div class="col-md-6">
+            <h5>Charge Back for each department for past three months</h5>
+            <div id="stack_div"></div>
+        </div>
     </div>
-    <div class="col-md-6">
-        <h5>Charge Back for each department for past three months</h5>
-        <div id="stack_div"></div>
-    </div>
-</div>
 
-@section scripts
+    @section scripts
 {
-    <script>
+        <script>
         window.onload = function ()
         {
         if (@User.IsInRole("supervisor")) {
@@ -90,20 +88,20 @@
             document.getElementById("notShowManager").style.display = "none";
         }
     }
-    </script>
+        </script>
 
-    @Scripts.Render("https://www.gstatic.com/charts/loader.js")
+        @Scripts.Render("https://www.gstatic.com/charts/loader.js")
 
-    <script type="text/javascript">
+        <script type="text/javascript">
         google.charts.load('current', { 'packages': ['corechart'] });
 
         //Call function after Google Chart is loaded, it is required, otherwise you may get error
        google.charts.setOnLoadCallback(DrawPieChartLoad);
 
       google.charts.setOnLoadCallback(DrawStackChartLoad);
-        
-       
-       
+
+
+
         function DrawPieChartLoad()
         {
             $(function () {
@@ -152,8 +150,8 @@
             });
 
         }
-       
-      
+
+
         function DrawStackChartLoad() {
             $(function () {
                // alert("this is");
@@ -164,7 +162,7 @@
                     {
                         //alert("please");
                         var data = new google.visualization.DataTable();
-                      
+
                         var title = chartsdata.title;
                         var listone = chartsdata.ListOne;
                        // alert(listone.length);
@@ -178,7 +176,7 @@
                                 data.addColumn('number', title[i - 1]);
                             }
                         }
-                        
+
                         data.addRows(listone.length);
                         for (var j = 0; j < listone.length; j++)
                         {
@@ -228,7 +226,7 @@
             });
 
         }
-    </script>
-}
+        </script>
+    }
 
-@*Authors: May Zin Ko*@
+    @*Authors: May Zin Ko*@
