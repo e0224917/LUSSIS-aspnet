@@ -37,14 +37,19 @@ namespace LUSSIS.Models.WebDTO
                         break;
                     }
                 }
-                if (isNew) List.Add(item);
+
+                if (isNew)
+                {
+                    List.Add(item);
+                    Count++;
+                }
             }
             else
             {
                 List.Add(item);
+                Count++;
             }
             
-            Count++;
             return true;
         }
 

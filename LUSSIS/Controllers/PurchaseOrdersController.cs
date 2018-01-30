@@ -23,7 +23,7 @@ using static LUSSIS.Constants.POStatus;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Douglas Lee Kiat Hui
+    //Authors: Douglas Lee Kiat Hui Authors: May Zin Ko 
     [Authorize(Roles = "clerk, supervisor")]
     public class PurchaseOrdersController : Controller
     {
@@ -312,7 +312,7 @@ namespace LUSSIS.Controllers
             }
         }
 
-        /* public ActionResult PrintPo(int id, double? orderDate)
+        public ActionResult PrintPo(int id, double? orderDate)
          {
 
             //prepare crystal report to be published in pdf, using datatable format
@@ -337,7 +337,7 @@ namespace LUSSIS.Controllers
              var stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
              stream.Seek(0, SeekOrigin.Begin);
              return File(stream, "application/pdf");
-         }*/
+        }
 
 
         //GET: PurchaseOrders/Order?p=10001
@@ -376,6 +376,7 @@ namespace LUSSIS.Controllers
 
                 //get PO
                 var purchaseorder = _poRepo.GetById(po.PoNum);
+                //update status and order date
                 purchaseorder.Status = Ordered;
                 purchaseorder.OrderDate = po.OrderDate;
                 if (po.OrderDate < po.CreateDate)

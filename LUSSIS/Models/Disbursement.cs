@@ -55,25 +55,6 @@ namespace LUSSIS.Models
             "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DisbursementDetail> DisbursementDetails { get; set; }
 
-        public DisbursementDTO ToApiDTO()
-        {
-            return new DisbursementDTO()
-            {
-                DisbursementId = DisbursementId,
-                CollectionDate = CollectionDate,
-                CollectionPoint = CollectionPoint.CollectionName,
-                CollectionPointId = (int) CollectionPointId,
-                CollectionTime = CollectionPoint.Time,
-                DepartmentName = Department.DeptName,
-                DisbursementDetails = DisbursementDetails.Select(details => new RequisitionDetailDTO()
-                {
-                    Description = details.Stationery.Description,
-                    Quantity = details.ActualQty,
-                    UnitOfMeasure = details.Stationery.UnitOfMeasure
-                })
-            };
-        }
-
         public Disbursement(List<RequisitionDetail> requisitionDetails, DateTime collectionDate)
         {
             var department = requisitionDetails.First().Requisition.RequisitionEmployee.Department;
@@ -105,10 +86,9 @@ namespace LUSSIS.Models
         {
             if (DisbursementDetails.Count > 0)
             {
+                var isNew = true;
                 for (int i = 0; i < Count; i++)
                 {
-                    bool isNew = true;
-
                     if (item.ItemNum == DisbursementDetails.ElementAt(i).ItemNum)
                     {
                         DisbursementDetails.ElementAt(i).RequestedQty += item.RequestedQty;
@@ -119,14 +99,12 @@ namespace LUSSIS.Models
                         isNew = false;
                         break;
                     }
-
-                    if (isNew)
-                    {
-                        DisbursementDetails.Add(item);
-                    }
+                }
+                if (isNew)
+                {
+                    DisbursementDetails.Add(item);
                     Count++;
                 }
-
             }
             else
             {
