@@ -8,6 +8,7 @@ using LUSSIS.Constants;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using static LUSSIS.Constants.DisbursementStatus;
+using static LUSSIS.Constants.RequisitionStatus;
 
 namespace LUSSIS.Repositories
 {
@@ -175,12 +176,12 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.RequisitionDetails
                 .Where(r => r.Requisition.DeptCode == deptCode
-                            && r.Requisition.Status == "approved").ToList();
+                            && r.Requisition.Status == RequisitionStatus.Approved).ToList();
         }
 
         public IEnumerable<Requisition> GetApprovedRequisitions()
         {
-            return LUSSISContext.Requisitions.Where(r => r.Status == "approved").ToList();
+            return LUSSISContext.Requisitions.Where(r => r.Status == RequisitionStatus.Approved).ToList();
         }
 
         public void UpdateRequisition(Requisition requisition)

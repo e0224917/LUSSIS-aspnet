@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using LUSSIS.Constants;
 
 namespace LUSSIS.Models.WebDTO
 {
@@ -75,7 +76,7 @@ namespace LUSSIS.Models.WebDTO
         {
             purchaseOrder = new PurchaseOrder
             {
-                Status = "pending",
+                Status = POStatus.Pending,
                 SupplierId = SupplierId,
                 SupplierContact = SupplierContact,
                 Address1 = Address1,

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Linq;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Validations;
+using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Models
 {
@@ -76,7 +77,7 @@ namespace LUSSIS.Models
         public Disbursement(List<RequisitionDetail> requisitionDetails, DateTime collectionDate)
         {
             var department = requisitionDetails.First().Requisition.RequisitionEmployee.Department;
-            Status = "inprocess";
+            Status = InProcess;
             CollectionDate = collectionDate;
             DeptCode = department.DeptCode;
             CollectionPointId = department.CollectionPointId;
@@ -138,7 +139,7 @@ namespace LUSSIS.Models
         public Disbursement(Disbursement unfulfilledDisbursement, DateTime collectionDate)
         {
             DeptCode = unfulfilledDisbursement.DeptCode;
-            Status = "inprocess";
+            Status = InProcess;
             CollectionDate = collectionDate;
             CollectionPointId = unfulfilledDisbursement.Department.CollectionPointId;
 

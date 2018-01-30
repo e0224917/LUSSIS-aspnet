@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Constants;
 using LUSSIS.Repositories;
 
 namespace LUSSIS.Controllers
@@ -15,7 +16,7 @@ namespace LUSSIS.Controllers
 
         public ActionResult Index()
         {
-            if (User.IsInRole("staff"))
+            if (User.IsInRole(Role.Staff))
             {
                 var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
                 var isDelegate = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
@@ -23,27 +24,27 @@ namespace LUSSIS.Controllers
                     isDelegate ? "RepAndDelegate" : "Requisitions");
             }
 
-            if (User.IsInRole("rep"))
+            if (User.IsInRole(Role.Representative))
             {
                 return RedirectToAction("Index", "Collection");
             }
 
-            if (User.IsInRole("head"))
+            if (User.IsInRole(Role.DepartmentHead))
             {
                 return RedirectToAction("Index", "RepAndDelegate");
             }
 
-            if (User.IsInRole("clerk"))
+            if (User.IsInRole(Role.Clerk))
             {
                 return RedirectToAction("Consolidated", "Requisitions");
             }
 
-            if (User.IsInRole("supervisor"))
+            if (User.IsInRole(Role.Supervisor))
             {
                 return RedirectToAction("Index", "SupervisorDashboard");
             }
 
-            if (User.IsInRole("manager"))
+            if (User.IsInRole(Role.Manager))
             {
                 return RedirectToAction("Index", "SupervisorDashboard");
             }

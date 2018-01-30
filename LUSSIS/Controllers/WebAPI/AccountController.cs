@@ -42,7 +42,7 @@ namespace LUSSIS.Controllers.WebAPI
 
                 var isDelegated = false;
 
-                if (emp.JobTitle.Equals("staff"))
+                if (emp.JobTitle.Equals(Role.Staff))
                 {
                     isDelegated = _delegateRepo.FindCurrentByEmpNum(emp.EmpNum) != null;
                 }
