@@ -88,7 +88,12 @@ namespace LUSSIS.Models
                 var disbursementDetail = new DisbursementDetail(requisitionDetail);
                 Add(disbursementDetail);
             }
+
+            Count = DisbursementDetails.Count;
         }
+
+        [NotMapped]
+        public int Count { get; set; }
 
         /// <summary>
         /// If disbursment detail already existed, increase the requested qty, 
@@ -99,8 +104,10 @@ namespace LUSSIS.Models
         {
             if (DisbursementDetails.Count > 0)
             {
-                for (int i = 0; i < DisbursementDetails.Count; i++)
+                for (int i = 0; i < Count; i++)
                 {
+                    bool isNew = true;
+
                     if (item.ItemNum == DisbursementDetails.ElementAt(i).ItemNum)
                     {
                         DisbursementDetails.ElementAt(i).RequestedQty += item.RequestedQty;
@@ -108,18 +115,24 @@ namespace LUSSIS.Models
                         DisbursementDetails.ElementAt(i).ActualQty = item.Stationery.AvailableQty > DisbursementDetails.ElementAt(i).RequestedQty
                             ? DisbursementDetails.ElementAt(i).RequestedQty
                             : item.Stationery.AvailableQty;
+                        isNew = false;
+                        break;
                     }
-                    else
+
+                    if (isNew)
                     {
                         DisbursementDetails.Add(item);
                     }
+                    Count++;
                 }
 
             }
             else
             {
                 DisbursementDetails.Add(item);
+                Count++;
             }
+            
         }
 
         public Disbursement(Disbursement unfulfilledDisbursement, DateTime collectionDate)
@@ -128,6 +141,8 @@ namespace LUSSIS.Models
             Status = "inprocess";
             CollectionDate = collectionDate;
             CollectionPointId = unfulfilledDisbursement.Department.CollectionPointId;
+
+            Count = 0;
         }
     }
 }
