@@ -114,10 +114,11 @@ namespace LUSSIS.Repositories
             return result;
         }
 
-        public void UpDatePOStatus(int i, String status)
+        public void UpDatePO(int i, String status,String emp)
         {
             var p = GetById(i);
             p.Status = status;
+            p.ApprovalEmpNum = Int32.Parse(emp);
             p.ApprovalDate = DateTime.Today;
             Update(p);
         }
