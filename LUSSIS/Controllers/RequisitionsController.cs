@@ -22,12 +22,13 @@ namespace LUSSIS.Controllers
     [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {
-        private readonly RequisitionRepository _requistionRepo = new RequisitionRepository();
+        private readonly RequisitionRepository _requisitionRepo = new RequisitionRepository();
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
         private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
+        private readonly CollectionRepository _collectionRepo = new CollectionRepository();
 
         private bool HasDelegate
         {
@@ -55,7 +56,7 @@ namespace LUSSIS.Controllers
         public ActionResult Pending()
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-            var req = _requistionRepo.GetPendingListForHead(deptCode);
+            var req = _requisitionRepo.GetPendingListForHead(deptCode);
 
             //If user is head and there is delegate
             if (User.IsInRole(Role.DepartmentHead) && HasDelegate)
@@ -77,7 +78,7 @@ namespace LUSSIS.Controllers
                 ViewBag.HasDelegate = HasDelegate;
             }
 
-            var req = _requistionRepo.GetById(reqId);
+            var req = _requisitionRepo.GetById(reqId);
             if (req != null && req.Status == RequisitionStatus.Pending)
             {
                 ViewBag.Pending = "Pending";
@@ -106,8 +107,8 @@ namespace LUSSIS.Controllers
             }
 
             var requistions = !string.IsNullOrEmpty(searchString)
-                ? _requistionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode).Reverse().ToList()
-                : _requistionRepo.GetAllByDeptCode(deptCode);
+                ? _requisitionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode).Reverse().ToList()
+                : _requisitionRepo.GetAllByDeptCode(deptCode);
 
             var reqAll = requistions.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
@@ -154,7 +155,7 @@ namespace LUSSIS.Controllers
                         requisition.ApprovalEmpNum = empNum;
                         requisition.ApprovalDate = DateTime.Today;
                         requisition.Status = statuses;
-                        await _requistionRepo.UpdateAsync(requisition);
+                        await _requisitionRepo.UpdateAsync(requisition);
                         return RedirectToAction("Pending");
                     }
 
@@ -214,7 +215,7 @@ namespace LUSSIS.Controllers
         {
             var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
 
-            var reqlist = _requistionRepo.GetRequisitionsByEmpNum(empNum)
+            var reqlist = _requisitionRepo.GetRequisitionsByEmpNum(empNum)
                 .OrderByDescending(s => s.RequisitionDate).ThenByDescending(s => s.RequisitionId).ToList();
 
             return View(reqlist.ToPagedList(pageNumber: page ?? 1, pageSize: 15));
@@ -225,7 +226,7 @@ namespace LUSSIS.Controllers
         [HttpGet]
         public ActionResult MyRequisitionDetails(int id)
         {
-            var requisitionDetail = _requistionRepo.GetRequisitionDetailsById(id).ToList();
+            var requisitionDetail = _requisitionRepo.GetRequisitionDetailsById(id).ToList();
             return View(requisitionDetail);
         }
 
@@ -250,7 +251,7 @@ namespace LUSSIS.Controllers
                     Status = RequisitionStatus.Pending,
                     DeptCode = deptCode
                 };
-                _requistionRepo.Add(requisition);
+                _requisitionRepo.Add(requisition);
 
                 var stationerys = new List<Stationery>();
                 for (var i = 0; i < itemNums.Count; i++)
@@ -261,7 +262,7 @@ namespace LUSSIS.Controllers
                         ItemNum = itemNums[i],
                         Quantity = itemQty[i]
                     };
-                    _requistionRepo.AddRequisitionDetail(requisitionDetail);
+                    _requisitionRepo.AddRequisitionDetail(requisitionDetail);
 
                     stationerys.Add(_stationeryRepo.GetById(requisitionDetail.ItemNum));
                 }
@@ -356,8 +357,9 @@ namespace LUSSIS.Controllers
                 foreach (var disbursement in disbursements)
                 {
                     var repEmail = _employeeRepo.GetRepByDeptCode(disbursement.DeptCode);
+                    var collectionPoint = _collectionRepo.GetById((int) disbursement.CollectionPointId);
                     var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
-                        .ForNewDisbursement(disbursement).Build();
+                        .ForNewDisbursement(disbursement, collectionPoint).Build();
                     EmailHelper.SendEmail(email);
                 }
 
@@ -377,7 +379,7 @@ namespace LUSSIS.Controllers
         {
             var itemsToRetrieve = new RetrievalListDTO();
 
-            var approvedRequisitionDetails = _requistionRepo.GetRequisitionDetailsByStatus(RequisitionStatus.Approved);
+            var approvedRequisitionDetails = _requisitionRepo.GetRequisitionDetailsByStatus(RequisitionStatus.Approved);
             var consolidateNewRequisitions = ConsolidateNewRequisitions(approvedRequisitionDetails);
 
             itemsToRetrieve.AddRange(consolidateNewRequisitions);
@@ -543,7 +545,7 @@ namespace LUSSIS.Controllers
         public PartialViewResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]
             ReqApproveRejectDTO RADTO)
         {
-            var req = _requistionRepo.GetById(RADTO.RequisitionId);
+            var req = _requisitionRepo.GetById(RADTO.RequisitionId);
             if (req == null || req.Status != RequisitionStatus.Pending) return PartialView("_unauthoriseAccess");
 
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
@@ -577,7 +579,7 @@ namespace LUSSIS.Controllers
                     req.ApprovalEmpNum = empNum;
                     req.ApprovalDate = DateTime.Today;
 
-                    _requistionRepo.Update(req);
+                    _requisitionRepo.Update(req);
 
                     var toEmail = req.RequisitionEmployee.EmailAddress;
 
@@ -594,6 +596,22 @@ namespace LUSSIS.Controllers
 
             return PartialView("_hasDelegate");
 
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _requisitionRepo.Dispose();
+                _disbursementRepo.Dispose();
+                _employeeRepo.Dispose();
+                _stationeryRepo.Dispose();
+                _departmentRepo.Dispose();
+                _collectionRepo.Dispose();
+                _delegateRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

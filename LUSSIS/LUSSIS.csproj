@@ -390,6 +390,11 @@
     <Compile Include="Reports\PoCrystalReport.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Reports\PoCrystalReport3.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PoCrystalReport.rpt</DependentUpon>
+    </Compile>
     <Compile Include="Reports\RetrieveCrystalReport.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -729,14 +734,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801180649294_Changes.resx">
       <DependentUpon>201801180649294_Changes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\PoCrystalReport.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>PoCrystalReport3.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\RetrieveCrystalReport.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>RetrieveCrystalReport2.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

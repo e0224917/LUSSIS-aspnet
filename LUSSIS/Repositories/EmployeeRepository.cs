@@ -1,4 +1,5 @@
-﻿using LUSSIS.Models;
+﻿using LUSSIS.Constants;
+using LUSSIS.Models;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
