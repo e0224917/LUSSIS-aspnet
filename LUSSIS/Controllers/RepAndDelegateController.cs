@@ -36,8 +36,7 @@ namespace LUSSIS.Controllers
 
             var department = _departmentRepo.GetById(deptCode);
             var existingDelegate = _delegateRepo.FindExistingByDeptCode(deptCode);
-            var staffAndRepList = department.Employees
-                .Where(e => e.JobTitle == Role.Staff || e.JobTitle == Role.Representative).ToList();
+            var staffAndRepList = _employeeRepo.GetStaffRepByDeptCode(deptCode);
             var reqListCount = _requisitionRepo.GetPendingListForHead(deptCode).Count();
             var haveDelegateToday = false;
             if (existingDelegate != null)
@@ -55,19 +54,28 @@ namespace LUSSIS.Controllers
             return View(dbDto);
         }
 
+        private bool ExistingDelegate
+        {
+            get
+            {
+                var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+                var current = _delegateRepo.FindExistingByDeptCode(deptCode);
+                return current != null;
+            }
+        }
+
         // GET: /RepAndDelegate/DeptRep
         [HeadWithDelegateAuth(Role.DepartmentHead, Role.Staff)]
         public ActionResult DeptRep()
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var department = _departmentRepo.GetById(deptCode);
-            var staffAndRepList = department.Employees
-                .Where(e => e.JobTitle == Role.Staff || e.JobTitle == Role.Representative).ToList();
+            var deptRep = department.RepEmployee;
 
             var radDto = new RepAndDelegateDTO
             {
                 Department = department,
-                StaffAndRepList = staffAndRepList,
+                DeptRep = deptRep,
             };
 
             return View(radDto);
@@ -79,8 +87,14 @@ namespace LUSSIS.Controllers
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var department = _departmentRepo.GetById(deptCode);
-            var staffAndRepList = department.Employees
-                .Where(e => e.JobTitle == Role.Staff || e.JobTitle == Role.Representative).ToList();
+            var staffAndRepList = _employeeRepo.GetStaffRepByDeptCode(deptCode);
+
+            if (ExistingDelegate)
+            {
+                var staffDelegate = _employeeRepo.GetById(_delegateRepo.FindExistingByDeptCode(deptCode).EmpNum);
+                staffAndRepList.Remove(staffDelegate);
+            }
+
             var selectedList = staffAndRepList
                 .Where(e => e.FullName.Contains(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
 
@@ -99,8 +113,7 @@ namespace LUSSIS.Controllers
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var department = _departmentRepo.GetById(deptCode);
-            var staffList = department.Employees
-                .Where(e => e.JobTitle == Role.Staff).ToList();
+            var staffList = _employeeRepo.GetStaffByDeptCode(deptCode);
             var selectedlist = staffList
                 .Where(e => e.FullName.Contains(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
 
