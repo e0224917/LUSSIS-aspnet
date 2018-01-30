@@ -115,12 +115,15 @@
 <p>
     @if (Model.Status == POStatus.Approved)
     {
-        @Html.ActionLink("Order", "Order", new { p = Model.PoNum })
+        @Html.ActionLink("Order", "Order", new { p = Model.PoNum }, new { @class = "btn btn-success" })
+        <br />
     }
     @if (Model.Status == POStatus.Ordered)
     {
         @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum }, new { @class = "btn btn-success" })
+        <br />
     }
+    @Html.ActionLink("View as PDF", "PrintPo", new { id = Model.PoNum }, new { @class = "btn btn-success", target="_blank" })
 </p>
 
 @section scripts

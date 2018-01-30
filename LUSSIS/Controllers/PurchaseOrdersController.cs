@@ -41,7 +41,7 @@ namespace LUSSIS.Controllers
             var purchaseOrders = _poRepo.GetAll();
             ViewBag.page = page;
             //get full list of purchase ordered by most recently created
-            return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate)
+            return View(purchaseOrders.ToList().OrderByDescending(x => x.PoNum)
                 .ToPagedList(pageNumber: Convert.ToInt32(page), pageSize: 15));
         }
 
@@ -200,10 +200,11 @@ namespace LUSSIS.Controllers
                 //validate PO
                 if (purchaseOrderDto.SupplierContact == null)
                     throw new Exception("Please input the supplier contact");
-                if (purchaseOrderDto.SupplierAddress == "\r\n\r\n")
+                if (purchaseOrderDto.SupplierAddress.Trim() == "")
                     throw new Exception("Please input the supplier address");
                 else if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
+
                 //fill any missing data with default values
                 var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
                 var fullName = Request.Cookies["Employee"]?["Name"];
@@ -217,23 +218,7 @@ namespace LUSSIS.Controllers
                 //save to database
                 _poRepo.Add(purchaseOrder);
 
-                //send email to supervisor
-                var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
-                var email = new LUSSISEmail.Builder().From(User.Identity.Name)
-                    .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
-                EmailHelper.SendEmail(email);
-
-                //send email if using non=primary supplier
-                var stationerys = purchaseOrder.PurchaseOrderDetails
-                    .Select(orderDetail => _stationeryRepo.GetById(orderDetail.ItemNum))
-                    .Where(stationery => stationery.PrimarySupplier().SupplierId != purchaseOrder.SupplierId).ToList();
-                if (stationerys.Count > 0)
-                {
-                    var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
-                    var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
-                        .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
-                    EmailHelper.SendEmail(email2);
-                }
+                Task sendMailAsync = SendMailForNewPOAsync(purchaseOrder, fullName);
 
                 return RedirectToAction("Summary");
             }
@@ -400,7 +385,7 @@ namespace LUSSIS.Controllers
 
         [Authorize(Roles = Role.Supervisor)]
         [HttpGet]
-        public ActionResult ApproveRejectPO(string list, string status)
+        public ActionResult _ApproveRejectPO(string list, string status)
         {
             ViewBag.checkList = list;
             ViewBag.status = status;
@@ -409,7 +394,7 @@ namespace LUSSIS.Controllers
 
         [Authorize(Roles = Role.Supervisor)]
         [HttpPost]
-        public ActionResult ApproveRejectPO(string status, string checkList, string a)
+        public ActionResult _ApproveRejectPO(string status, string checkList, string a)
         {
             var list = checkList.Split(',');
             var idList = new int[list.Length];
@@ -418,9 +403,22 @@ namespace LUSSIS.Controllers
                 idList[i] = int.Parse(list[i]);
             }
 
-            foreach (var id in idList)
+            foreach (int id in idList)
             {
+                
                 _poRepo.UpDatePOStatus(id, status.ToUpper() == "APPROVE"? Approved : Rejected);
+                if(status.ToUpper() == "APPROVE")
+                {
+                    List<PurchaseOrderDetail> pDetail = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
+
+                    foreach (var p in pDetail)
+                    {
+                        Stationery st = new Stationery();
+                        st = _stationeryRepo.GetById(p.ItemNum);
+                        st.AvailableQty = p.OrderQty + st.AvailableQty;
+                        _stationeryRepo.Update(st);
+                    }
+                }
             }
 
             return PartialView("_ApproveRejectPO");
@@ -531,7 +529,7 @@ namespace LUSSIS.Controllers
                     "inner join purchaseorderdetail q on p.ponum=q.ponum " +
                     "inner join stationery st on st.itemnum=q.itemnum " +
                     "inner join employee e on e.empnum=p.orderempnum " +
-                    "inner join employee f on f.empnum=p.approvalempnum " +
+                    "left join employee f on f.empnum=p.approvalempnum " +
                     "where p.ponum=@id";
                 using (var cmd = new SqlCommand(sqlQuery, sqlConn))
                 {
@@ -547,6 +545,26 @@ namespace LUSSIS.Controllers
             return table;
         }
        
+        public async Task SendMailForNewPOAsync(PurchaseOrder purchaseOrder,string createdBy)
+        {
+            //send email to supervisor
+            var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
+            var email = new LUSSISEmail.Builder().From(User.Identity.Name)
+                .To(supervisorEmail).ForNewPo(purchaseOrder, createdBy).Build();
+            await EmailHelper.SendEmailAsync(email);
+
+            //send email if using non=primary supplier
+            var stationerys = purchaseOrder.PurchaseOrderDetails
+                .Select(orderDetail => _stationeryRepo.GetById(orderDetail.ItemNum))
+                .Where(stationery => stationery.PrimarySupplier().SupplierId != purchaseOrder.SupplierId).ToList();
+            if (stationerys.Count > 0)
+            {
+                var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
+                var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
+                    .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
+                await EmailHelper.SendEmailAsync(email2);
+            }
+        }
     }
 }
 
