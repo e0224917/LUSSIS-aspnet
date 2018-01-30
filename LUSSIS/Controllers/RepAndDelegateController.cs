@@ -46,7 +46,6 @@ namespace LUSSIS.Controllers
 
             var department = _departmentRepo.GetById(deptCode);
             var existingDelegate = _delegateRepo.FindExistingByDeptCode(deptCode);
-            var staffAndRepList = _employeeRepo.GetStaffRepByDeptCode(deptCode);
             var reqListCount = _requisitionRepo.GetPendingListForHead(deptCode).Count();
             var haveDelegateToday = false;
             if (ExistDelegate)
@@ -56,7 +55,6 @@ namespace LUSSIS.Controllers
             {
                 Department = department,
                 CurrentDelegate = existingDelegate,
-                StaffRepByDepartment = staffAndRepList,
                 RequisitionListCount = reqListCount,
                 HaveDelegateToday = haveDelegateToday
             };
@@ -70,12 +68,10 @@ namespace LUSSIS.Controllers
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var department = _departmentRepo.GetById(deptCode);
-            var deptRep = department.RepEmployee;
 
             var radDto = new RepAndDelegateDTO
             {
                 Department = department,
-                DeptRep = deptRep,
             };
 
             return View(radDto);
