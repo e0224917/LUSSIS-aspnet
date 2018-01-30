@@ -18,6 +18,7 @@ using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 using PagedList;
 
+
 namespace LUSSIS.Controllers
 {
     //Authors: Douglas Lee Kiat Hui
@@ -408,7 +409,7 @@ namespace LUSSIS.Controllers
 
             foreach (var id in idList)
             {
-                _poRepo.UpDatePOStatus(id, status);
+                _poRepo.UpDatePOStatus(id, status.ToUpper() == "APPROVE"?"approved":"rejected");
             }
 
             return PartialView("_ApproveRejectPO");

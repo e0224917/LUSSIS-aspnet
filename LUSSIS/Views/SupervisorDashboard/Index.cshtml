@@ -9,28 +9,36 @@
         <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 15rem">
             <h5 class="card-header mt-0">Pending Adjustments</h5>
             <div class="card-body">
-                <table class="table mt-2">
+                @if (@Model.PendingStockAdjCount == 0)
+                {
+                    <div class="alert alert-dismissible alert-info p-4">
+                        <h6>No pending stock adjustment at the moment.</h6>
+                    </div>
+                }
+                else
+                {
+                    <table class="table mt-2">
+                        <tr>
+                            <th><small>No. of requests&nbsp;&nbsp;&nbsp;</small> @Model.PendingStockAdjCount </th>
+                        </tr>
 
-
-                    <tr>
-                        <td></td>
-                        <td>
-                            <h3 class="mt-2 mb-0 text-muted">@Model.PendingStockAdjCount</h3>
-                        </td>
-                        <td></td>
-                        
-                    </tr>
-                    <tr>
-                        <th><div class="text-center">+ @Model.PendingStockAdjAddQty</div></th>
-                        <th><div class="text-center"></div></th>
-                        <th><div class="text-center">- @Model.PendingStockAdjSubtractQty</div></th>
-                    </tr>
-                </table>
-
-
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <h3 class="mt-2 mb-0 text-danger">+ @Model.PendingStockAdjAddQty</h3>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <h3 class="mt-2 mb-0 text-danger">- @Model.PendingStockAdjSubtractQty</h3>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                }
             </div>
             <div class="card-footer text-center">
-                @Html.ActionLink("View All", "ViewPendingStockAdj", "StockAdjustment", null, new { @class = "btn btn-info", style="width:100%" })
+                @Html.ActionLink("View Pending Adjustments", "ViewPendingStockAdj", "StockAdjustment", null, new { @class = "btn btn-info", style = "width:100%" })
             </div>
         </div>
     </div>
@@ -39,35 +47,72 @@
         <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 15rem">
             <h5 class="card-header mt-0">Pending Purchase Order </h5>
             <div class="card-body">
+                @if (@Model.PendingPOCount == 0)
+                {
+                    <div class="alert alert-dismissible alert-info p-4">
+                        <h6>No pending purchase order at the moment.</h6>
+                    </div>
+                }
+                else
+                {
+                    <table class="table mt-2">
+                        <tr>
+                            <th><small>No. of requests&nbsp;&nbsp;&nbsp;</small> @Model.PendingPOCount</th>
+                        </tr>
 
-                <table class="table mt-2">
+                        <tr>
+                            <td>
+
+                                <h3 class="mt-2 mb-0 text-muted">$ @Model.PendingPOTotalAmount.ToString("0.00")</h3>
+
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+                }
+
+            </div>
+            <div class="card-footer text-center">
+                @Html.ActionLink("View Pending PO", "PendingPO", "PurchaseOrders", null, new { @class = "btn btn-info", style = "width:100%" })
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 text-center">
+        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 15rem">
+            <h5 class="card-header mt-0">Total ChargeBack</h5>
+            <div class="card-body">
+
+
+                <table class="table mt-3">
                     <tr>
-                        <th>Pending PO requests: @Model.PendingPOCount</th>
+                        <th>
+                            <small>As of &nbsp;&nbsp;</small>@DateTime.Today.ToShortDateString()
+                        </th>
                     </tr>
-
                     <tr>
                         <td>
-
-                            <h3 class="mt-2 mb-0 text-muted">$@Model.PendingPOTotalAmount.ToString("0.00")</h3>
-
+                            <h3 class="mt-0 mb-0">
+                                $@Model.TotalDisbursementAmount.ToString("#.00")
+                            </h3>
 
                         </td>
-
                     </tr>
-
                 </table>
 
 
+
             </div>
             <div class="card-footer text-center">
-                hello
+                @Html.ActionLink("Demand Trend Analysis", "TrendAnalysis", "SupervisorDashboard", null, new { @class = "btn btn-info", style = "width:100%" })
             </div>
         </div>
     </div>
-
     <div class="col-lg-3 text-center">
         <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 15rem">
-            <h5 class="card-header mt-0">Pending Requisitions</h5>
+            <h5 class="card-header mt-0">Total PO Expenditure</h5>
             <div class="card-body">
 
                 @if (1 == 1)
@@ -75,13 +120,13 @@
                     <table class="table mt-3">
                         <tr>
                             <th>
-                                No. of Pending Requisitions
+                                <small>As of &nbsp;&nbsp;</small>@DateTime.Today.ToShortDateString()
                             </th>
                         </tr>
                         <tr>
                             <td>
                                 <h3 class="mt-0 mb-0">
-                                    Count
+                                    $ @Model.POTotalAmount.ToString("#.00")
                                 </h3>
 
                             </td>
@@ -97,43 +142,7 @@
 
             </div>
             <div class="card-footer text-center">
-                footer
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 text-center">
-        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 15rem">
-            <h5 class="card-header mt-0">Pending Requisitions</h5>
-            <div class="card-body">
-
-                @if (1 == 1)
-                {
-                    <table class="table mt-3">
-                        <tr>
-                            <th>
-                                No. of Pending Requisitions
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <h3 class="mt-0 mb-0">
-                                    Count
-                                </h3>
-
-                            </td>
-                        </tr>
-                    </table>
-                }
-                else
-                {
-                    <div class="alert alert-dismissible alert-info p-4">
-                        <h6>No pending requisitions at the moment.</h6>
-                    </div>
-                }
-
-            </div>
-            <div class="card-footer text-center">
-                footer
+                @Html.ActionLink("Purchase Trend Analysis", "TrendAnalysis", "SupervisorDashboard", null, new { @class = "btn btn-info", style = "width:100%" })
             </div>
         </div>
     </div>
