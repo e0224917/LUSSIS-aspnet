@@ -6,11 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - LUSSIS</title>
     @Scripts.Render("~/bundles/jquery")
-    <script>
-        $(document).ready(function () {
-            $('.dropdown-toggle').dropdown();
-        });
-    </script>
+
     @Styles.Render("~/Content/css")
 </head>
 <body>
@@ -64,11 +60,16 @@
         </footer>
     </div>
 
-    
+
     @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/moment")
-    @Scripts.Render("~/bundles/modernizr")
+    @*@Scripts.Render("~/bundles/moment")
+        @Scripts.Render("~/bundles/modernizr")*@
     @RenderSection("scripts", required: false)
+    <script>
+        $(document).ready(function () {
+            $('.dropdown-toggle').dropdown();
+        });
+    </script>
 
 </body>
 </html>
