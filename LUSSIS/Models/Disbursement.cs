@@ -63,7 +63,7 @@ namespace LUSSIS.Models
             DeptCode = department.DeptCode;
             CollectionPointId = department.CollectionPointId;
 
-            DisbursementDetails = new HashSet<DisbursementDetail>();
+            this.DisbursementDetails = new HashSet<DisbursementDetail>();
             foreach (var requisitionDetail in requisitionDetails)
             {
                 //Convert from requisitionDetail to disbursementDetail 
@@ -84,7 +84,7 @@ namespace LUSSIS.Models
         /// <param name="item"></param>
         public void Add(DisbursementDetail item)
         {
-            if (DisbursementDetails.Count > 0)
+            if (Count > 0)
             {
                 var isNew = true;
                 for (int i = 0; i < Count; i++)
@@ -108,6 +108,7 @@ namespace LUSSIS.Models
             }
             else
             {
+                this.DisbursementDetails = new HashSet<DisbursementDetail>();
                 DisbursementDetails.Add(item);
                 Count++;
             }

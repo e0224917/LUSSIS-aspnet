@@ -10,17 +10,8 @@ namespace LUSSIS.Models.WebDTO
     {
         public CollectionPoint CollectionPoint { get; set; }
 
-        public string CollectionName
-        {
-            get
-            {
-                return CollectionName + "  ";
-            }
-        }
-
         public int DeptCollectionPointId { get; set; }
 
         public IEnumerable<CollectionPoint> CollectionPoints { get; set; }
-
     }
 }
