@@ -17,8 +17,8 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Disbursement/")]
         public IHttpActionResult Get()
         {
-            var list = _disbursementRepo.GetDisbursementByStatus(InProcess);
-            var result = list.Select(item => item.ToApiDTO());
+            var disbursements = _disbursementRepo.GetDisbursementByStatus("inprocess");
+            var result = disbursements.Select(item => new DisbursementDTO(item));
 
             return Ok(result);
         }
@@ -27,8 +27,8 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Disbursement/{id}")]
         public async Task<DisbursementDTO> Get(int id)
         {
-            var item = await _disbursementRepo.GetByIdAsync(id);
-            return item.ToApiDTO();
+            var disbursement = await _disbursementRepo.GetByIdAsync(id);
+            return new DisbursementDTO(disbursement);
         } 
 
         [HttpGet]
@@ -36,10 +36,10 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(DisbursementDTO))]
         public IHttpActionResult Upcoming([FromUri] string dept)
         {
-            var d = _disbursementRepo.GetUpcomingDisbursement(dept);
-            if (d == null) return NotFound();
+            var disbursement = _disbursementRepo.GetUpcomingDisbursement(dept);
+            if (disbursement == null) return NotFound();
 
-            return Ok(d.ToApiDTO());
+            return Ok(new DisbursementDTO(disbursement));
         }
 
         // POST api/<controller>

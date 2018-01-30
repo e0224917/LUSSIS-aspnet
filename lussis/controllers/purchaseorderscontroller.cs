@@ -376,6 +376,7 @@ namespace LUSSIS.Controllers
 
                 //get PO
                 var purchaseorder = _poRepo.GetById(po.PoNum);
+                //update status and order date
                 purchaseorder.Status = Ordered;
                 purchaseorder.OrderDate = po.OrderDate;
                 if (po.OrderDate < po.CreateDate)

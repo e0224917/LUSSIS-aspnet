@@ -5,6 +5,7 @@ using System.Web.Http;
 using Microsoft.AspNet.Identity.Owin;
 using System.Threading.Tasks;
 using System.Web.Http.Description;
+using LUSSIS.Constants;
 using LUSSIS.Emails;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
@@ -43,7 +44,7 @@ namespace LUSSIS.Controllers.WebAPI
 
                 var isDelegated = false;
 
-                if (emp.JobTitle.Equals(Role.Staff))
+                if (emp.JobTitle.Equals(Constants.Role.Staff))
                 {
                     isDelegated = _delegateRepo.FindCurrentByEmpNum(emp.EmpNum) != null;
                 }
