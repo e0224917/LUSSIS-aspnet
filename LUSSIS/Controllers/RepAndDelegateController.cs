@@ -72,12 +72,6 @@ namespace LUSSIS.Controllers
             var department = _departmentRepo.GetById(deptCode);
             var staffAndRepList = _employeeRepo.GetStaffRepByDeptCode(deptCode);
 
-            if (ExistingDelegate)
-            {
-                var staffDelegate = _employeeRepo.GetById(_delegateRepo.FindExistingByDeptCode(deptCode).EmpNum);
-                staffAndRepList.Remove(staffDelegate);
-            }
-
             var radDto = new RepAndDelegateDTO
             {
                 Department = department,
