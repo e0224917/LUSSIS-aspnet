@@ -1,4 +1,5 @@
-﻿using LUSSIS.Repositories;
+﻿using LUSSIS.Constants;
+using LUSSIS.Repositories;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
