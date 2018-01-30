@@ -309,7 +309,7 @@ namespace LUSSIS.Controllers
             }
         }
 
-        /* public ActionResult PrintPo(int id, double? orderDate)
+        public ActionResult PrintPo(int id, double? orderDate)
          {
 
             //prepare crystal report to be published in pdf, using datatable format
@@ -334,7 +334,7 @@ namespace LUSSIS.Controllers
              var stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
              stream.Seek(0, SeekOrigin.Begin);
              return File(stream, "application/pdf");
-         }*/
+        }
 
 
         //GET: PurchaseOrders/Order?p=10001
