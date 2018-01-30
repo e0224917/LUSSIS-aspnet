@@ -21,7 +21,7 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(DelegateDTO))]
         public IHttpActionResult Get([FromUri] string dept)
         {
-            var d = _delegateRepo.GetAll().LastOrDefault(de => de.Employee.DeptCode == dept);
+            var d = _delegateRepo.FindExistingByDeptCode(dept);
 
             if (d == null) return BadRequest("No delegate available.");
 
@@ -49,7 +49,7 @@ namespace LUSSIS.Controllers.WebAPI
         [HttpPost]
         [Route("api/Delegate/{dept}")]
         // POST api/Delegate
-        public async Task<IHttpActionResult> Post(string dept, [FromBody] DelegateDTO del)
+        public IHttpActionResult Post(string dept, [FromBody] DelegateDTO del)
         {
             var d = new Delegate()
             {
@@ -58,9 +58,9 @@ namespace LUSSIS.Controllers.WebAPI
                 EmpNum = del.Employee.EmpNum
             };
 
-            await _delegateRepo.AddAsync(d);
+            _delegateRepo.Add(d);
 
-            var id = _delegateRepo.GetByDeptCode(dept).DelegateId;
+            var id = _delegateRepo.FindExistingByDeptCode(dept).DelegateId;
             del.DelegateId = id;
 
             return Ok(del);
