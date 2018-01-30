@@ -188,11 +188,17 @@
         });
         //delete row
     function deleteRow(r){
-        var i = r.parentNode.parentNode.rowIndex       
-            document.getElementById('details').deleteRow(i);
-            var rows = document.getElementById('details').rows;
-            for (var c = i; c < rows.length; c++) {
-                rows[c].cells[0].innerHTML = parseInt(rows[c].cells[0].innerHTML) - 1;
+        var i = r.parentNode.parentNode.rowIndex;
+        $(r).parent().parent().attr('hidden', 'hidden');
+        var rows = document.getElementById('details').rows;
+        var j = 1;
+        $(r).parent().parent().find('.line_qty').val(0);
+        $(r).parent().parent().find('.line_qty').removeAttr('min');
+        for (var c = i; c < rows.length; c++) {
+            if ($(rows[c]).is(':visible')) {
+                rows[c].cells[0].innerHTML = j;
+                    j++;
+                }
             }
             //var lineCost = parseFloat(
             //    parseFloat($(r).find('.line_qty').val(0))
@@ -209,7 +215,10 @@
     $tr.find('.hide_unit_price').val($tr.find('.unit_price').val());
     //comment the next two lines to remove reorder qty level
     var reorder_string = '#MinPurchQty option[value="' + $(this).val() + '"]';
-    { $lineqty.val($(reorder_string).text())}
+        {
+            $lineqty.val($(reorder_string).text());
+            $lineqty.attr('min', $(reorder_string).text());
+        }
     calculateAll();
     });
     $(document).on('change', '.line_qty', function () {
