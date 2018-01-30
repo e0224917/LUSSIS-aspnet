@@ -36,8 +36,7 @@ namespace LUSSIS.Controllers
 
             var department = _departmentRepo.GetById(deptCode);
             var existingDelegate = _delegateRepo.FindExistingByDeptCode(deptCode);
-            var staffAndRepList = department.Employees
-                .Where(e => e.JobTitle == Role.Staff || e.JobTitle == Role.Representative).ToList();
+            var staffAndRepList = _employeeRepo.GetStaffRepByDeptCode(deptCode);
             var reqListCount = _requisitionRepo.GetPendingListForHead(deptCode).Count();
             var haveDelegateToday = false;
             if (existingDelegate != null)
