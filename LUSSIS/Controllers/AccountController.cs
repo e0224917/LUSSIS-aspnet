@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using LUSSIS.Models;
 using System.Collections.Generic;
 using LUSSIS.Repositories;
+using LUSSIS.Models.WebDTO;
 
 namespace LUSSIS.Controllers
 {
@@ -247,6 +248,8 @@ namespace LUSSIS.Controllers
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             Session["Name"] = "";
             Session["Roles"] = new List<string>();
+            ShoppingCart sc = new ShoppingCart();
+            Session["MyCart"] = sc;
             return RedirectToAction("Index", "Home");
         }
 
