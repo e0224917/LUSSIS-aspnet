@@ -18,23 +18,23 @@
 
             <div class="collapse navbar-collapse" id="navbarResponsive" style="">
                 <ul class="navbar-nav mr-auto">
-                    @if (User.IsInRole("head"))
+                    @if (User.IsInRole(Role.DepartmentHead))
                     {
                         @Html.Partial("__DeptHeadMenu")
                     }
-                    @if (User.IsInRole("clerk"))
+                    @if (User.IsInRole(Role.Clerk))
                     {
                         @Html.Partial("__ClerkMenu")
                     }
-                    @if (User.IsInRole("manager") || User.IsInRole("supervisor"))
+                    @if (User.IsInRole(Role.Manager) || User.IsInRole(Role.Supervisor))
                     {
                         @Html.Partial("__StoreSupMenu")
                     }
-                    @if (User.IsInRole("rep"))
+                    @if (User.IsInRole(Role.Representative))
                     {
                         @Html.Partial("__RepMenu")
                     }
-                    @if (User.IsInRole("staff"))
+                    @if (User.IsInRole(Role.Staff))
                     {
                         @Html.Partial("__DeptEmpMenu")
                     }

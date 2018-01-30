@@ -14,11 +14,12 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.Diagnostics;
+using LUSSIS.Constants;
 
 namespace LUSSIS.Controllers
 {
     //Authors: May Zin Ko Authors: Douglas Lee Kiat Hui
-    [Authorize(Roles = "manager,supervisor")]
+    [Authorize(Roles = "manager, supervisor")]
     public class SupervisorDashboardController : Controller
     {
         protected PORepository _poRepo = new PORepository();
@@ -32,7 +33,7 @@ namespace LUSSIS.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Message = User.IsInRole("supervisor") ? "Supervisor" : "Manager";
+            ViewBag.Message = User.IsInRole(Role.Supervisor) ? Role.Supervisor : Role.Manager;
             var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add").Count;
             var totalSubtractAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract").Count;
             List<String> fromList = new List<String>();

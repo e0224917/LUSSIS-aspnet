@@ -18,29 +18,26 @@ namespace LUSSIS.Repositories
     {
         public List<PurchaseOrder> GetPendingApprovalPO()
         {
-            IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == "pending");
-            return list.ToList();
+            return GetAll().Where(x => x.Status == Pending).ToList();
         }
 
         public List<PurchaseOrder> GetApprovedPO()
         {
-            var list = GetAll().Where(x => x.Status == "approved");
+            var list = GetAll().Where(x => x.Status == Approved);
             return list.ToList();
         }
 
         public List<PurchaseOrder> GetPOByStatus(string status)
         {
-            var list = GetAll().Where(x => x.Status == status);
+            var list = GetAll().Where(x => x.Status.ToUpper() == status.ToUpper());
             return list.ToList();
         }
 
         public int GetPendingPOCount()
         {
-            List<PurchaseOrder> list = GetPendingApprovalPO();
-            return list.Capacity;
+            return GetPendingApprovalPO().Count;
         }
-        /////
-
+        
         public List<PendingPurchaseOrderDTO> GetPendingApprovalPODTO()
         {
             var list = GetPendingApprovalPO();
@@ -172,7 +169,7 @@ namespace LUSSIS.Repositories
 
         public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsByStatus(string status)
         {
-            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status == status);
+            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status.ToUpper() == status.ToUpper());
         }
 
        

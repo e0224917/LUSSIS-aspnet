@@ -11,11 +11,12 @@ using LUSSIS.Models;
 using LUSSIS.Repositories;
 using OfficeOpenXml;
 using System.IO;
+using LUSSIS.Constants;
 
 namespace LUSSIS.Controllers
 {
     //Authors: Ton That Minh Nhat
-    [Authorize(Roles = "clerk")]
+    [Authorize(Roles = Role.Clerk)]
     public class SuppliersController : Controller
     {
         private readonly SupplierRepository _supplierRepo = new SupplierRepository();
@@ -170,7 +171,8 @@ namespace LUSSIS.Controllers
                 StationerySupplierQuote.ValidateData(list);
 
                 //upload data
-                //  _stationeryRepo.UpdateAllStationerySupplier(list);
+                IEnumerable<StationerySupplier> ssList = _stationerySupplierRepo.GetAll();
+                _stationerySupplierRepo.UpdateAll(list);
 
 
                 ViewBag.Success = "Successfully uploaded";
@@ -186,6 +188,7 @@ namespace LUSSIS.Controllers
         //GET: Suppliers/QuotationTemplate (will download Excel file directly)
         public ActionResult QuotationTemplate()
         {
+            //get data to put into excel
             List<StationerySupplierQuote> slist =
                 _stationerySupplierRepo.GetAll().Select(x => new StationerySupplierQuote
                 {
@@ -213,7 +216,7 @@ namespace LUSSIS.Controllers
             public int SupplierCode { get; set; }
             public string SupplierName { get; set; }
 
-
+            //method to convert c# list into format for excel parsing
             public static byte[] ConvertListToByte(IEnumerable<StationerySupplierQuote> slist)
             {
                 byte[] filecontent = null;
@@ -236,6 +239,7 @@ namespace LUSSIS.Controllers
                 return filecontent;
             }
 
+            //method to convert the excel format back to c# list class
             public static List<StationerySupplier> ConvertToList(Stream stream)
             {
                 List<StationerySupplier> list = new List<StationerySupplier>();
@@ -272,6 +276,7 @@ namespace LUSSIS.Controllers
                 //check that all supplier id is valid
                 if (list.Select(x => x.SupplierId).Distinct().Except(repo.GetAll().Select(x => x.SupplierId)).Any())
                     throw new Exception("Supplier Code is not valid");
+                //check that stationery exists as in database, and there is no missing stationery
                 List<string> itemlist = srepo.GetAll().Select(x => x.ItemNum).ToList();
                 if (list.Select(x => x.ItemNum).Distinct().Except(itemlist).Any() ||
                     itemlist.Except(list.Select(x => x.ItemNum).Distinct()).Any())
@@ -280,6 +285,7 @@ namespace LUSSIS.Controllers
                 if (list.Where(x => x.Rank == 1).Select(x => x.ItemNum).Distinct().Count() !=
                     (srepo.GetAll().Select(x => x.ItemNum).Count()))
                     throw new Exception("Each stationery should have at least one primary supplier");
+                //check that composite PK is ok (stationery-rank is distinct) 
                 if (list.Select(x => new {x.ItemNum, x.Rank}).Distinct().Count() > list.Count)
                     throw new Exception("Stationery with duplicated supplier/ranks detected");
             }

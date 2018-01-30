@@ -19,7 +19,7 @@ using static LUSSIS.Constants.DisbursementStatus;
 namespace LUSSIS.Controllers
 {
     //Authors: Tang Xiaowen
-    [Authorize(Roles = "clerk")]
+    [Authorize(Roles = Role.Clerk)]
     public class DisbursementsController : Controller
     {
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();

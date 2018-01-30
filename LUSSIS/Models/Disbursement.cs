@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Linq;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Validations;
+using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Models
 {
@@ -76,7 +77,7 @@ namespace LUSSIS.Models
         public Disbursement(List<RequisitionDetail> requisitionDetails, DateTime collectionDate)
         {
             var department = requisitionDetails.First().Requisition.RequisitionEmployee.Department;
-            Status = "inprocess";
+            Status = InProcess;
             CollectionDate = collectionDate;
             DeptCode = department.DeptCode;
             CollectionPointId = department.CollectionPointId;
@@ -88,7 +89,12 @@ namespace LUSSIS.Models
                 var disbursementDetail = new DisbursementDetail(requisitionDetail);
                 Add(disbursementDetail);
             }
+
+            Count = DisbursementDetails.Count;
         }
+
+        [NotMapped]
+        public int Count { get; set; }
 
         /// <summary>
         /// If disbursment detail already existed, increase the requested qty, 
@@ -99,8 +105,10 @@ namespace LUSSIS.Models
         {
             if (DisbursementDetails.Count > 0)
             {
-                for (int i = 0; i < DisbursementDetails.Count; i++)
+                for (int i = 0; i < Count; i++)
                 {
+                    bool isNew = true;
+
                     if (item.ItemNum == DisbursementDetails.ElementAt(i).ItemNum)
                     {
                         DisbursementDetails.ElementAt(i).RequestedQty += item.RequestedQty;
@@ -108,26 +116,34 @@ namespace LUSSIS.Models
                         DisbursementDetails.ElementAt(i).ActualQty = item.Stationery.AvailableQty > DisbursementDetails.ElementAt(i).RequestedQty
                             ? DisbursementDetails.ElementAt(i).RequestedQty
                             : item.Stationery.AvailableQty;
+                        isNew = false;
+                        break;
                     }
-                    else
+
+                    if (isNew)
                     {
                         DisbursementDetails.Add(item);
                     }
+                    Count++;
                 }
 
             }
             else
             {
                 DisbursementDetails.Add(item);
+                Count++;
             }
+            
         }
 
         public Disbursement(Disbursement unfulfilledDisbursement, DateTime collectionDate)
         {
             DeptCode = unfulfilledDisbursement.DeptCode;
-            Status = "inprocess";
+            Status = InProcess;
             CollectionDate = collectionDate;
             CollectionPointId = unfulfilledDisbursement.Department.CollectionPointId;
+
+            Count = 0;
         }
     }
 }

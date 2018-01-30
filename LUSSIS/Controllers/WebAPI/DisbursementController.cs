@@ -17,7 +17,7 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Disbursement/")]
         public IHttpActionResult Get()
         {
-            var list = _disbursementRepo.GetDisbursementByStatus("inprocess");
+            var list = _disbursementRepo.GetDisbursementByStatus(InProcess);
             var result = list.Select(item => item.ToApiDTO());
 
             return Ok(result);

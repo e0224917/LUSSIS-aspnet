@@ -9,8 +9,10 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Constants;
 using PagedList;
 using LUSSIS.Emails;
+using static LUSSIS.Constants.AdjustmentVoucherStatus;
 
 namespace LUSSIS.Controllers
 {
@@ -56,7 +58,7 @@ namespace LUSSIS.Controllers
 
 
         //Author: Koh Meng Guan
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpGet]
         public ActionResult CreateAdjustments()
         {
@@ -69,7 +71,7 @@ namespace LUSSIS.Controllers
         }
 
         //Author: Koh Meng Guan
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         public ActionResult CreateAdjustments(AdjVoucherColView adjVoucherColView)
         {
@@ -93,7 +95,7 @@ namespace LUSSIS.Controllers
                             ItemNum = adjVoucherDto.ItemNum,
                             Quantity = adjVoucherDto.Quantity,
                             Reason = adjVoucherDto.Reason,
-                            Status = "pending",
+                            Status = Pending,
                             RequestEmpNum = empNum,
                             CreateDate = DateTime.Today
                         };
@@ -125,14 +127,14 @@ namespace LUSSIS.Controllers
         }
 
         //Author: Koh Meng Guan
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         public PartialViewResult _CreateAdjustments()
         {
             return PartialView("_CreateAdjustments", new AdjustmentVoucherDTO());
         }
 
         //Author: Koh Meng Guan
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpGet]
         public ActionResult CreateAdjustment(string id)
         {
@@ -151,7 +153,7 @@ namespace LUSSIS.Controllers
         }
 
         //Author: Koh Meng Guan
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         public ActionResult CreateAdjustment([Bind(Include = "Quantity,Reason,ItemNum,Sign")]
             AdjustmentVoucherDTO adjVoucherDto)
@@ -171,7 +173,7 @@ namespace LUSSIS.Controllers
                     ItemNum = adjVoucherDto.ItemNum,
                     Quantity = adjVoucherDto.Quantity,
                     Reason = adjVoucherDto.Reason,
-                    Status = "pending",
+                    Status = Pending,
                     RequestEmpNum = empNum,
                     CreateDate = DateTime.Today
                 };
@@ -196,7 +198,7 @@ namespace LUSSIS.Controllers
         }
 
         //Author: Koh Meng Guan
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpGet]
         public JsonResult GetItemNum(string term)
         {
@@ -219,7 +221,7 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = "manager,supervisor")]
         public ActionResult ViewPendingStockAdj()
         {
-            var role = User.IsInRole("manager") ? "manager" : "supervisor";
+            var role = User.IsInRole(Role.Manager) ? Role.Manager : Role.Supervisor;
             ViewBag.Message = role;
             return View(_stockAdjustmentRepo.GetPendingAdjustmentByRole(role));
         }

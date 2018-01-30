@@ -12,11 +12,14 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using CrystalDecisions.CrystalReports.Engine;
+using LUSSIS.Constants;
 using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 using PagedList;
+using static LUSSIS.Constants.POStatus;
+
 
 namespace LUSSIS.Controllers
 {
@@ -32,16 +35,17 @@ namespace LUSSIS.Controllers
         private readonly StationerySupplierRepository _stationerySupplierRepo = new StationerySupplierRepository();
 
 
-        // GET: PurchaseOrders
+        // GET: PurchaseOrders 
         public ActionResult Index(int? page = 1)
         {
             var purchaseOrders = _poRepo.GetAll();
             ViewBag.page = page;
+            //get full list of purchase ordered by most recently created
             return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate)
                 .ToPagedList(pageNumber: Convert.ToInt32(page), pageSize: 15));
         }
 
-        // GET: PurchaseOrders/Details/10005
+        // GET: PurchaseOrders/Details/10005 
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -63,27 +67,29 @@ namespace LUSSIS.Controllers
 
 
         //GET: PurchaseOrders/Summary
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         public ActionResult Summary()
         {
+            //each viewbag is for one section.
+            //the sections are 1)items recommended for purchase, pending POs, ordered POs, approved POs 
             ViewBag.OutstandingStationeryList = _stationeryRepo.GetOutstandingStationeryByAllSupplier();
-            ViewBag.PendingApprovalPOList = _poRepo.GetPOByStatus("pending");
-            ViewBag.OrderedPOList = _poRepo.GetPOByStatus("ordered");
-            ViewBag.ApprovedPOList = _poRepo.GetPOByStatus("approved");
+            ViewBag.PendingApprovalPOList = _poRepo.GetPOByStatus(Pending);
+            ViewBag.OrderedPOList = _poRepo.GetPOByStatus(Ordered);
+            ViewBag.ApprovedPOList = _poRepo.GetPOByStatus(Approved);
             return View();
         }
 
 
         // GET: PurchaseOrders/Create or PurchaseOrders/Create?supplierId=1
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         public ActionResult Create(int? supplierId, string error = null)
         {
-            //catch error from redirect
+            //catch error from redirect (from POST) and display back into page
             ViewBag.Error = error;
 
             var po = new PurchaseOrderDTO(); //view model
 
-            if (supplierId == null) //select supplier if non-chosen yet
+            if (supplierId == null) //allow user to select supplier if non is chosen yet
             {
                 var emptySupplier = new Supplier
                 {
@@ -183,20 +189,22 @@ namespace LUSSIS.Controllers
         // POST: PurchaseOrders/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(PurchaseOrderDTO purchaseOrderDto)
         {
             try
             {
+
+                //validate PO
                 if (purchaseOrderDto.SupplierContact == null)
                     throw new Exception("Please input the supplier contact");
                 if (purchaseOrderDto.SupplierAddress == "\r\n\r\n")
                     throw new Exception("Please input the supplier address");
                 else if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
-                //fill default values
+                //fill any missing data with default values
                 var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
                 var fullName = Request.Cookies["Employee"]?["Name"];
                 purchaseOrderDto.OrderEmpNum = empNum;
@@ -219,7 +227,6 @@ namespace LUSSIS.Controllers
                 var stationerys = purchaseOrder.PurchaseOrderDetails
                     .Select(orderDetail => _stationeryRepo.GetById(orderDetail.ItemNum))
                     .Where(stationery => stationery.PrimarySupplier().SupplierId != purchaseOrder.SupplierId).ToList();
-
                 if (stationerys.Count > 0)
                 {
                     var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
@@ -239,24 +246,24 @@ namespace LUSSIS.Controllers
 
 
         //GET: PurchaseOrders/Receive?p=10001
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpGet]
         public ActionResult Receive(int? p = null, string error = null)
         {
-            //catch error from redirect
+            //catch error from redirect (from POST) and display back into page
             ViewBag.Error = error;
 
             var receive = new ReceiveTransDTO(); //model to bind data
 
             if (p == null)
             {
-                ViewBag.OrderedPO = _poRepo.GetPOByStatus("ordered");
+                ViewBag.OrderedPO = _poRepo.GetPOByStatus(Ordered);
                 return View();
             }
 
             //populate PO and ReceiveTrans if PO number is given
             var po = new PurchaseOrderDTO(_poRepo.GetById(Convert.ToInt32(p)));
-            if (po.Status != "ordered")
+            if (po.Status != Ordered)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             for (int i = 0; i < po.PurchaseOrderDetails.Count; i++)
             {
@@ -275,15 +282,15 @@ namespace LUSSIS.Controllers
         }
 
         //POST: PurchaseOrders/Receive
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         public ActionResult Receive(ReceiveTransDTO receiveModel)
         {
             try
             {
+                //validate receive trans
                 if (receiveModel.InvoiceNum == null || receiveModel.DeliveryOrderNum == null)
                     throw new Exception("Delivery Order Number and Invoice Number are required fields");
-
                 if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
 
@@ -308,8 +315,7 @@ namespace LUSSIS.Controllers
         /* public ActionResult PrintPo(int id, double? orderDate)
          {
 
-             DateTime OrderDate;
-
+            //prepare crystal report to be published in pdf, using datatable format
              DataSet ds = new DataSet();
              ReportDocument rd = new ReportDocument();
              rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
@@ -341,22 +347,23 @@ namespace LUSSIS.Controllers
             //catch error from redirect
             ViewBag.Error = error;
 
+            //allow user to pick any 'pending order' POs
             if (p == null)
             {
-                ViewBag.ApprovedPO = _poRepo.GetPOByStatus("approved");
+                ViewBag.ApprovedPO = _poRepo.GetPOByStatus(Approved);
                 return View();
             }
 
             //populate PO DTO if PO number is given
             var purchaseOrder = await _poRepo.GetByIdAsync(Convert.ToInt32(p));
-            if (purchaseOrder.Status != "approved")
+            if (purchaseOrder.Status != Approved)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var po = new PurchaseOrderDTO(purchaseOrder) { OrderDate = DateTime.Today };
 
             return View(po);
         }
 
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Order(PurchaseOrderDTO po)
@@ -366,11 +373,15 @@ namespace LUSSIS.Controllers
 
                 if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
+
+                //get PO
                 var purchaseorder = _poRepo.GetById(po.PoNum);
-                purchaseorder.Status = "ordered";
+                purchaseorder.Status = Ordered;
                 purchaseorder.OrderDate = po.OrderDate;
                 if (po.OrderDate < po.CreateDate)
                     throw new Exception("Record not saved, ordered date cannot be before created date");
+
+                //persist data
                 _poRepo.Update(purchaseorder);
                 return RedirectToAction("Summary");
             }
@@ -380,13 +391,13 @@ namespace LUSSIS.Controllers
             }
         }
 
-        [Authorize(Roles = "supervisor")]
+        [Authorize(Roles = Role.Supervisor)]
         public ActionResult PendingPO()
         {
             return View(_poRepo.GetPendingApprovalPODTO());
         }
 
-        [Authorize(Roles = "supervisor")]
+        [Authorize(Roles = Role.Supervisor)]
         [HttpGet]
         public ActionResult ApproveRejectPO(string list, string status)
         {
@@ -395,7 +406,7 @@ namespace LUSSIS.Controllers
             return PartialView("_ApproveRejectPO");
         }
 
-        [Authorize(Roles = "supervisor")]
+        [Authorize(Roles = Role.Supervisor)]
         [HttpPost]
         public ActionResult ApproveRejectPO(string status, string checkList, string a)
         {
@@ -408,12 +419,12 @@ namespace LUSSIS.Controllers
 
             foreach (var id in idList)
             {
-                _poRepo.UpDatePOStatus(id, status);
+                _poRepo.UpDatePOStatus(id, status.ToUpper() == "APPROVE"? Approved : Rejected);
             }
 
             return PartialView("_ApproveRejectPO");
         }
-        //[Authorize(Roles = "supervisor")]
+        //[Authorize(Roles = Role.Supervisor)]
         //[HttpPost]
         
         //public ActionResult DeleteItem(string id)
@@ -430,6 +441,7 @@ namespace LUSSIS.Controllers
                 _stationeryRepo.Dispose();
                 _supplierRepo.Dispose();
                 _employeeRepo.Dispose();
+                _stationerySupplierRepo.Dispose();
             }
 
             base.Dispose(disposing);
@@ -439,6 +451,8 @@ namespace LUSSIS.Controllers
         {
             var po = _poRepo.GetById(receive.PoNum);
             int? totalQty = 0;
+
+            //check that received qty is between 0 to ordered qty
             foreach (var receiveTransDetail in receive.ReceiveTransDetails)
             {
                 totalQty += receiveTransDetail.Quantity;
@@ -449,6 +463,8 @@ namespace LUSSIS.Controllers
                         .Select(x => x.OrderQty - x.ReceiveQty).First())
                     throw new Exception("Record not saved, received quantity cannot exceed ordered qty");
             }
+
+            //check that at least one line item is received
             if (totalQty == 0)
                 throw new Exception("Record not saved, not receipt of goods found");
         }
@@ -484,21 +500,24 @@ namespace LUSSIS.Controllers
             }
 
             //update purchase order and create receive trans
-            if (fulfilled) po.Status = "fulfilled";
+            if (fulfilled) po.Status = Fulfilled;
             po.ReceiveTrans.Add(receive);
             _poRepo.Update(po);
         }
 
+
+        //to get all the purchase order and line item details to publish to pdf/crystal report
+        //returns data in a datatable class
         private static DataTable GetPo(int id, DateTime? orderDate = null)
         {
             var orderdatequery = "p.orderdate";
-            //handle orderdate
+            //handle orderdate, because the order date in the server is not updated yet when client requests for pdf
             if (orderDate >= new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc).ToLocalTime())
                 orderdatequery = "'" + Convert.ToDateTime(orderDate).ToString("yyyy/MM/dd") + "'as orderdate";
             var connString = System.Configuration.ConfigurationManager.ConnectionStrings["LUSSISContext"]
                 .ConnectionString;
             var table = new DataTable();
-            //get sql
+            //create sql query with parameter 'id' for purchase order number
             using (var sqlConn = new SqlConnection(connString))
             {
                 var sqlQuery =
@@ -522,6 +541,7 @@ namespace LUSSIS.Controllers
                 }
             }
 
+            //set table name because that is the name crystal report is expecting
             table.TableName = "PurchaseOrder";
             return table;
         }
