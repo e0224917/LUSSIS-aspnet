@@ -407,16 +407,18 @@ namespace LUSSIS.Controllers
             {
                 
                 _poRepo.UpDatePOStatus(id, status.ToUpper() == "APPROVE"? Approved : Rejected);
-                List<PurchaseOrderDetail>pDetail=_poRepo.GetPurchaseOrderDetailsById(id).ToList();
-
-                foreach(var p in pDetail)
+                if(status.ToUpper() == "APPROVE")
                 {
-                    Stationery st=new Stationery();
-                    st = _stationeryRepo.GetById(p.ItemNum);
-                    st.AvailableQty = p.OrderQty+st.AvailableQty;
-                    _stationeryRepo.Update(st);
-                }
+                    List<PurchaseOrderDetail> pDetail = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
 
+                    foreach (var p in pDetail)
+                    {
+                        Stationery st = new Stationery();
+                        st = _stationeryRepo.GetById(p.ItemNum);
+                        st.AvailableQty = p.OrderQty + st.AvailableQty;
+                        _stationeryRepo.Update(st);
+                    }
+                }
             }
 
             return PartialView("_ApproveRejectPO");
