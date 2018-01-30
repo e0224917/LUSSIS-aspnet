@@ -8,6 +8,8 @@ namespace LUSSIS.Models.WebAPI
     //Authors: Ton That Minh Nhat
     public class RequisitionDetailDTO
     {
+        public string ItemNum { get; set; }
+
         public string Description { get; set; }
 
         public string UnitOfMeasure { get; set; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using LUSSIS.Models;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
 
@@ -13,6 +14,7 @@ namespace LUSSIS.Controllers.WebAPI
     {
         private readonly RequisitionRepository _requistionRepo = new RequisitionRepository();
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
+        private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         //GET: api/Requisitions/
         [Route("api/Requisitions/Pending/{dept}")]
@@ -30,6 +32,7 @@ namespace LUSSIS.Controllers.WebAPI
                 RequestRemarks = item.RequestRemarks ?? "",
                 RequisitionDetails = item.RequisitionDetails.Select(detail => new RequisitionDetailDTO()
                 {
+                    ItemNum = detail.ItemNum,
                     Description = detail.Stationery.Description,
                     UnitOfMeasure = detail.Stationery.UnitOfMeasure,
                     Quantity = detail.Quantity
@@ -83,6 +86,7 @@ namespace LUSSIS.Controllers.WebAPI
                 Status = item.Status,
                 RequisitionDetails = item.RequisitionDetails.Select(detail => new RequisitionDetailDTO()
                 {
+                    ItemNum = detail.Stationery.ItemNum,
                     Description = detail.Stationery.Description,
                     Quantity = detail.Quantity,
                     UnitOfMeasure = detail.Stationery.UnitOfMeasure
@@ -105,6 +109,37 @@ namespace LUSSIS.Controllers.WebAPI
                 Description = x.Description,
                 UnitOfMeasure = x.UnitOfMeasure
             });
+        }
+
+        [HttpPost]
+        [Route("api/Requisitions/Create")]
+        public IHttpActionResult Create([FromBody] RequisitionDTO requisitionDto)
+        {
+            var empNum = requisitionDto.RequisitionEmp.EmpNum;
+            var isDelegated = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
+
+            if (isDelegated) return BadRequest("Delegated staff cannot make request");
+
+            var detail = requisitionDto.RequisitionDetails.First();
+
+            var requisitionDetail = new RequisitionDetail()
+            {
+                ItemNum = detail.ItemNum,
+                Quantity = detail.Quantity
+            };
+
+            var requisition = new Requisition()
+            {
+                RequisitionEmpNum = requisitionDto.RequisitionEmp.EmpNum,
+                DeptCode = requisitionDto.RequisitionEmp.DeptCode,
+                RequestRemarks = requisitionDto.RequestRemarks,
+                RequisitionDate = DateTime.Today,
+                Status = "inprogress",
+                RequisitionDetails = new List<RequisitionDetail>() {requisitionDetail}
+            };
+
+            _requistionRepo.Add(requisition);
+            return Ok(new {Message = "Requisition created"});
         }
 
         protected override void Dispose(bool disposing)
