@@ -255,6 +255,26 @@ namespace LUSSIS.Emails
                 return this;
             }
 
+            public Builder ForNewRequistion(string fullName, Requisition requisition)
+            {
+                Subject = "New requisition from" + fullName;
+
+                var body = new StringBuilder();
+                body.AppendLine("Description".PadRight(30, ' ') + "\t\t" + "UOM".PadRight(30, ' ') + "\t\t" +
+                                "Quantity".PadRight(30, ' '));
+                foreach (var detail in requisition.RequisitionDetails)
+                {
+                    var stationery = detail.Stationery;
+
+                    body.AppendLine(stationery?.Description.PadRight(30, ' ') + "\t\t" +
+                                    stationery?.UnitOfMeasure.PadRight(30, ' ') +
+                                    "\t\t" + detail.Quantity.ToString().PadRight(30, ' '));
+                }
+
+                Body = body.ToString();
+                return this;
+            }
+
             public Builder ForRequisitionApproval(Requisition requisition)
             {
                 Subject = "Requistion " + requisition.RequisitionId + " made on " +
