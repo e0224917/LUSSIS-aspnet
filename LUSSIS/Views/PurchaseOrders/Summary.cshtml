@@ -25,7 +25,7 @@
                     <tr class="table-active">
                         <th>No</th>
                         <th>Item Description</th>
-                        <th>Quantity</th>
+                        <th>Available Quantity</th>
                         <th>Reorder Level</th>
                         <th>Reorder Quantity</th>
                     </tr>
@@ -34,7 +34,7 @@
                         <tr>
                             <td>@(i + 1)</td>
                             <td>@entry.Value[i].Description</td>
-                            <td>@entry.Value[i].CurrentQty</td>
+                            <td>@entry.Value[i].AvailableQty</td>
                             <td>@entry.Value[i].ReorderLevel</td>
                             <td>@entry.Value[i].ReorderQty</td>
                         </tr>

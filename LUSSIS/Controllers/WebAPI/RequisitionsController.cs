@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
@@ -15,6 +17,8 @@ namespace LUSSIS.Controllers.WebAPI
         private readonly RequisitionRepository _requistionRepo = new RequisitionRepository();
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
 
         //GET: api/Requisitions/
         [Route("api/Requisitions/Pending/{dept}")]
@@ -53,6 +57,10 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Requisitions/Process")]
         public async Task<IHttpActionResult> Process([FromBody] RequisitionDTO requisition)
         {
+            if (requisition.RequisitionEmp.EmpNum == requisition.ApprovalEmp.EmpNum)
+            {
+                return BadRequest("Employee cannot process its own requisition.");
+            }
             try
             {
                 var req = await _requistionRepo.GetByIdAsync(requisition.RequisitionId);
@@ -139,6 +147,16 @@ namespace LUSSIS.Controllers.WebAPI
             };
 
             _requistionRepo.Add(requisition);
+
+            //Send email on new thread
+            var fullName = requisitionDto.RequisitionEmp.FirstName + " " + requisitionDto.RequisitionEmp.LastName;
+
+            var headEmail = _employeeRepo.GetDepartmentHead(requisitionDto.RequisitionEmp.DeptCode);
+            var email = new LUSSISEmail.Builder().From(headEmail).To(requisitionDto.RequisitionEmp.EmailAddress)
+                .ForNewRequistion(fullName, requisition).Build();
+            var thread = new Thread(delegate () { EmailHelper.SendEmail(email); });
+            thread.Start();
+
             return Ok(new {Message = "Requisition created"});
         }
 
@@ -149,6 +167,7 @@ namespace LUSSIS.Controllers.WebAPI
                 _requistionRepo.Dispose();
                 _disbursementRepo.Dispose();
                 _delegateRepo.Dispose();
+                _employeeRepo.Dispose();
             }
 
             base.Dispose(disposing);
