@@ -21,7 +21,7 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarResponsive" style="">
-                <ul class="navbar-nav mr-auto">
+                <ul class="nav navbar-nav mr-auto">
                     @if (User.IsInRole(Role.DepartmentHead))
                     {
                         @Html.Partial("__DeptHeadMenu")
@@ -70,7 +70,11 @@
     <script>
         $(document).ready(function () {
             $('.dropdown-toggle').dropdown();
-        });</script>
+        });
+
+        
+
+    </script>
 
 </body>
 </html>
