@@ -144,7 +144,7 @@ namespace LUSSIS.Repositories
         }
 
 
-        public double GetDisAmountByDate(String dep, List<int> cat, String from)
+        public double GetDisAmountByDep(String dep, List<int> cat, String from)
         {
             DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             

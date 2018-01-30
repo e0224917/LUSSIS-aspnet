@@ -405,8 +405,10 @@ namespace LUSSIS.Controllers
 
             foreach (int id in idList)
             {
+                HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
+                String empNum = cookie["EmpNum"];
+                _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE"? Approved : Rejected,empNum);
                 
-                _poRepo.UpDatePOStatus(id, status.ToUpper() == "APPROVE"? Approved : Rejected);
                 if(status.ToUpper() == "APPROVE")
                 {
                     List<PurchaseOrderDetail> pDetail = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
