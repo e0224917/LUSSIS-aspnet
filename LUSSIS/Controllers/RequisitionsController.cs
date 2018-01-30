@@ -155,6 +155,16 @@ namespace LUSSIS.Controllers
                         requisition.ApprovalEmpNum = empNum;
                         requisition.ApprovalDate = DateTime.Today;
                         requisition.Status = statuses;
+                        Requisition req = _requisitionRepo.GetById(requisition.RequisitionId); 
+                        if (requisition.Status == "approved")
+                        {
+                            foreach (RequisitionDetail rd in req.RequisitionDetails)
+                            {
+                                Stationery st = _stationeryRepo.GetById(rd.ItemNum);
+                                st.AvailableQty = st.AvailableQty - rd.Quantity;
+                                _stationeryRepo.Update(st);
+                            }
+                        }
                         await _requisitionRepo.UpdateAsync(requisition);
                         return RedirectToAction("Pending");
                     }
@@ -579,8 +589,18 @@ namespace LUSSIS.Controllers
                     req.ApprovalEmpNum = empNum;
                     req.ApprovalDate = DateTime.Today;
 
-                    _requisitionRepo.Update(req);
 
+                    if(RADTO.Status == "approved")
+                    {
+                        foreach(RequisitionDetail rd in req.RequisitionDetails)
+                        {
+                            Stationery st = _stationeryRepo.GetById(rd.ItemNum);
+                            st.AvailableQty = st.AvailableQty - rd.Quantity;
+                            _stationeryRepo.Update(st);
+                        }
+                    }
+                    _requisitionRepo.Update(req);
+                
                     var toEmail = req.RequisitionEmployee.EmailAddress;
 
                     var email = new LUSSISEmail.Builder().From(User.Identity.Name)

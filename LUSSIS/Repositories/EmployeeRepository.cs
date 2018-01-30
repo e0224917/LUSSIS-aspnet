@@ -17,6 +17,16 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Employees.First(x => x.EmailAddress == email);
         }
 
+        public List<Employee> GetStaffRepByDeptCode(string deptCode)
+        {
+            return LUSSISContext.Employees.Where(x => x.DeptCode == deptCode && (x.JobTitle == Role.Staff || x.JobTitle == Role.Representative)).ToList();
+        }
+
+        public List<Employee> GetStaffByDeptCode(string deptCode)
+        {
+            return LUSSISContext.Employees.Where(x => x.DeptCode == deptCode && x.JobTitle == Role.Staff).ToList();
+        }
+
         public Employee GetStoreManager()
         {
             return LUSSISContext.Employees.FirstOrDefault(x => x.JobTitle == Role.Manager);
