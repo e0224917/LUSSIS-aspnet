@@ -192,7 +192,7 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(PurchaseOrderDTO purchaseOrderDto)
+        public ActionResult Create(PurchaseOrderDTO purchaseOrderDto)
         {
             try
             {
@@ -216,27 +216,10 @@ namespace LUSSIS.Controllers
                 purchaseOrderDto.CreatePurchaseOrder(out var purchaseOrder);
 
                 //save to database
-                Task<int> addPoAsync=_poRepo.AddAsync(purchaseOrder);
+                _poRepo.Add(purchaseOrder);
 
-                //send email to supervisor
-                var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
-                var email = new LUSSISEmail.Builder().From(User.Identity.Name)
-                    .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
-                EmailHelper.SendEmail(email);
+                Task sendMailAsync = SendMailForNewPOAsync(purchaseOrder, fullName);
 
-                //send email if using non=primary supplier
-                var stationerys = purchaseOrder.PurchaseOrderDetails
-                    .Select(orderDetail => _stationeryRepo.GetById(orderDetail.ItemNum))
-                    .Where(stationery => stationery.PrimarySupplier().SupplierId != purchaseOrder.SupplierId).ToList();
-                if (stationerys.Count > 0)
-                {
-                    var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
-                    var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
-                        .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
-                    EmailHelper.SendEmail(email2);
-                }
-
-                await addPoAsync;
                 return RedirectToAction("Summary");
             }
             catch (Exception e)
@@ -549,6 +532,26 @@ namespace LUSSIS.Controllers
             return table;
         }
        
+        public async Task SendMailForNewPOAsync(PurchaseOrder purchaseOrder,string createdBy)
+        {
+            //send email to supervisor
+            var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
+            var email = new LUSSISEmail.Builder().From(User.Identity.Name)
+                .To(supervisorEmail).ForNewPo(purchaseOrder, createdBy).Build();
+            await EmailHelper.SendEmailAsync(email);
+
+            //send email if using non=primary supplier
+            var stationerys = purchaseOrder.PurchaseOrderDetails
+                .Select(orderDetail => _stationeryRepo.GetById(orderDetail.ItemNum))
+                .Where(stationery => stationery.PrimarySupplier().SupplierId != purchaseOrder.SupplierId).ToList();
+            if (stationerys.Count > 0)
+            {
+                var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
+                var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
+                    .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
+                await EmailHelper.SendEmailAsync(email2);
+            }
+        }
     }
 }
 
