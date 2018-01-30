@@ -13,31 +13,39 @@ namespace LUSSIS.Models.WebDTO
     {
         public List<RetrievalItemDTO> List { get; set; }
 
+        public int Count { get; set; }
+
+        public int Capacity { get; set; }
+
         public RetrievalListDTO()
         {
             List = new List<RetrievalItemDTO>();
+            Count = 0;
         }
 
-        public void Add(RetrievalItemDTO item)
+        public bool Add(RetrievalItemDTO item)
         {
-            if (List.Count > 0)
+            if(Count > 0)
             {
-                for (int i = 0; i < List.Count; i++)
+                bool isNew = true;
+                for (int i = 0; i < Count; i++)
                 {
                     if (item.ItemNum == List[i].ItemNum)
                     {
                         List[i].RequestedQty += item.RequestedQty;
-                    }
-                    else
-                    {
-                        List.Add(item);
+                        isNew = false;
+                        break;
                     }
                 }
+                if (isNew) List.Add(item);
             }
             else
             {
                 List.Add(item);
             }
+            
+            Count++;
+            return true;
         }
 
         public void AddRange(RetrievalListDTO listDto)

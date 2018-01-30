@@ -3,67 +3,81 @@
 <div id="a"></div>
 <h2>Dashboard for @ViewBag.Message</h2>
 <div class="row">
-    <div class="col-3">
+    <div class="col-lg-3 col-md-3 text-center">
         <div class="bs-component">
-            <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 1rem; text-align: center"">
-                <div class="col-xs-12 text-center">
-                    <div class="card bg-info text-white">
-                        <div class="card-header" style="min-height: 5rem">Pending Adjustment <br /><h3 class="mt-0 mb-0">@Model.PendingStockAdjCount</h3></div>
-                        <div class="card-body" style="min-height: 6rem">
-                            <span>+ @Model.PendingStockAdjAddQty</span><span style="padding-left: 3em">- @Model.PendingStockAdjSubtractQty</span>
+            <a href="@Url.Action("ViewPendingStockAdj", "StockAdjustment")" style="text-decoration:none">
+                <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 16rem; margin-right: 0.1rem">
+                    <div class="col-xs-12 text-center">
+                        <div class="card bg-info text-white">
+                            <div class="card-header" style="min-height: 6rem; font-size:large">
+                                Pending Adjustments<br />
+                                <h3 class="mt-0 mb-0">@Model.PendingStockAdjCount</h3>
+                            </div>
+                            <div class="card-body" style="min-height: 5rem">
+                                <h3 class="mt-0 mb-0">
+                                    <span>+ @Model.PendingStockAdjAddQty</span>
+                                    <span style="padding-left: 3em">- @Model.PendingStockAdjSubtractQty</span>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>  
+    </div>
+  
+        <div class="col-lg-3 col-md-3 text-center" id="notShowManager">
+            <div class="bs-component">
+                <a href="@Url.Action("PendingPO", "PurchaseOrders")" style="text-decoration:none">
+                    <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 16rem; margin-right: 0.1rem">
+                        <div class="col-xs-12 text-center">
+
+                            <div class="card bg-info text-white">
+                                <div class="card-header" style="min-height: 6rem; font-size:large">
+                                    Pending Purchase Orders<br />
+                                    <h3 class="mt-0 mb-0">@Model.PendingPOCount</h3>
+                                </div>
+                                <div class="card-body" style="min-height: 5rem">
+                                    <h3 class="mt-0 mb-0">$@Model.PendingPOTotalAmount.ToString("#.00")</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-3 text-center">
+            <div class="bs-component">
+                <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 0.1rem">
+                    <div class="col-xs-12 text-center">
+
+                        <div class="card bg-info text-white">
+                            <div class="card-header" style="min-height: 6rem; font-size:large">Total Chargeback for Past 3 Months</div>
+                            <div class="card-body" style="min-height: 5rem">
+                                <h3 class="mt-0 mb-0">$@Model.TotalDisbursementAmount.ToString("#.00")</h3>
+</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-3" id="notShowManager">
-        <div class="bs-component">
-            <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 1rem">
-                <div class="col-xs-12 text-center">
 
-                    <div class="card bg-info text-white">
-                        <div class="card-header" style="min-height: 5rem">Pending Purchase Order <span style="padding-left: 3em">@Model.PendingPOCount</span></div>
-                        <div class="card-body" style="min-height: 6rem">
-                            <span style="padding-left: 5em">$@Model.PendingPOTotalAmount.ToString("#.00")</span>
+        <div class="col-lg-3 col-md-3 text-center">
+            <div class="bs-component">
+                <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 0.1rem">
+                    <div class="col-xs-12 text-center">
+
+                        <div class="card bg-info text-white">
+                            <div class="card-header" style="min-height: 6rem; font-size:large">Total PO Expenditure for Past 3 Months</div>
+                            <div class="card-body" style="min-height: 5rem">
+                                <h3 class="mt-0 mb-0">$@Model.POTotalAmount.ToString("#.00")</h3>
+</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="col-3">
-        <div class="bs-component">
-            <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 1rem">
-                <div class="col-xs-12 text-center">
-
-                    <div class="card bg-info text-white">
-                        <div class="card-header" style="min-height: 5rem">Total Chargeback</div>
-                        <div class="card-body" style="min-height: 6rem">
-                            <span style="padding-left: 5em">$@Model.TotalDisbursementAmount.ToString("#.00")</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-3">
-        <div class="bs-component">
-            <div class="card bg-light mb-3" style="min-height: 10rem; min-width: 15rem; margin-right: 1rem">
-                <div class="col-xs-12 text-center">
-
-                    <div class="card bg-info text-white">
-                        <div class="card-header" style="min-height: 5rem">Total PO Expenditure</div>
-                        <div class="card-body" style="min-height: 6rem">
-                            <span style="padding-left: 5em">$@Model.POTotalAmount.ToString("#.00")</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 <p></p>
     <div class="row">
