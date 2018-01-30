@@ -375,10 +375,13 @@ namespace LUSSIS.Controllers
             var itemsToRetrieve = new RetrievalListDTO();
 
             var approvedRequisitionDetails = _requistionRepo.GetRequisitionDetailsByStatus("approved");
-            itemsToRetrieve.AddRange(ConsolidateNewRequisitions(approvedRequisitionDetails));
+            var consolidateNewRequisitions = ConsolidateNewRequisitions(approvedRequisitionDetails);
+
+            itemsToRetrieve.AddRange(consolidateNewRequisitions);
 
             var unfulfilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetailList();
-            itemsToRetrieve.AddRange(ConsolidateUnfulfilledDisbursements(unfulfilledDisbursementDetails));
+            var consolidateUnfulfilledDisbursements = ConsolidateUnfulfilledDisbursements(unfulfilledDisbursementDetails);
+            itemsToRetrieve.AddRange(consolidateUnfulfilledDisbursements);
 
             return itemsToRetrieve;
         }

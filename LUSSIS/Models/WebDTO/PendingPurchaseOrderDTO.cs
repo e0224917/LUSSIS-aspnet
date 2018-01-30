@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -13,8 +15,8 @@ namespace LUSSIS.Models.WebDTO
 
             public String Supplier { get; set; }
 
-
-            public DateTime? CreateDate { get; set; }
+             [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
+                public DateTime CreateDate { get; set; }
 
 
             public String OrderEmp { get; set; }
