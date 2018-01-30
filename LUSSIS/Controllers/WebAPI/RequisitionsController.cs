@@ -103,7 +103,7 @@ namespace LUSSIS.Controllers.WebAPI
             return _disbursementRepo.GetRetrievalInProcess().Select(x => new RetrievalItemDTO
             {
                 ItemNum = x.ItemNum,
-                AvailableQty = x.AvailableQty,
+                CurrentQty = x.CurrentQty,
                 BinNum = x.BinNum,
                 RequestedQty = x.RequestedQty,
                 Description = x.Description,
@@ -148,6 +148,7 @@ namespace LUSSIS.Controllers.WebAPI
             {
                 _requistionRepo.Dispose();
                 _disbursementRepo.Dispose();
+                _delegateRepo.Dispose();
             }
 
             base.Dispose(disposing);
