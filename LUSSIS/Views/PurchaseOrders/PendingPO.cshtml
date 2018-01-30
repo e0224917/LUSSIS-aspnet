@@ -49,20 +49,20 @@
             </div>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PoNum)
+            @Html.DisplayName("Po No")
         </th>
 
         <th>
-            @Html.DisplayNameFor(model => model.Supplier)
+            @Html.DisplayName("Supplier")
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CreateDate)
+            @Html.DisplayName("Create Date")
         </th>
         <th>
             @Html.DisplayName("Submitted by")
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TotalCost)
+            @Html.DisplayName("Total Cost")
         </th>
         <th></th>
     </tr>
@@ -125,8 +125,7 @@
 </div>
 
 
-@section scripts
-{
+
     <script>
 
         var ApproveReject = function (CheckList) {
@@ -135,7 +134,7 @@
             }
             else {
                 $("#showError").hide();
-                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?list=" + CheckList + "&status=Approve";
+                var url = "@Url.Content("~/")PurchaseOrders/_ApproveRejectPO?list=" + CheckList + "&status=Approve";
 
                 $("#myApproveModalBodyDiv").load(url, function () {
                     $("#myApproveModal").modal("show");
@@ -150,7 +149,7 @@
             }
             else {
                 $("#showError").hide();
-                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?list=" + CheckList + "&status=Reject";
+                var url = "@Url.Content("~/")PurchaseOrders/_ApproveRejectPO?list=" + CheckList + "&status=Reject";
 
                 $("#myApproveModalBodyDiv").load(url, function () {
                     $("#myApproveModal").modal("show");
@@ -159,6 +158,6 @@
 
         }
     </script>
-}
+
 
 @*Authors: May Zin Ko*@
