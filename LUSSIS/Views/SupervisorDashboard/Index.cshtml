@@ -1,7 +1,143 @@
 ﻿@model LUSSIS.Models.WebDTO.SupervisorDashboardDTO
+@{
+    ViewBag.Title = "Dashboard";
+}
+<h2>My Dashboard</h2>
+<hr />
+<div class="row">
+    <div class="col-lg-3 text-center">
+        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 15rem">
+            <h5 class="card-header mt-0">Pending Adjustments</h5>
+            <div class="card-body">
+                <table class="table mt-2">
 
-<div id="a"></div>
-<h2>Dashboard for @ViewBag.Message</h2>
+
+                    <tr>
+                        <td></td>
+                        <td>
+                            <h3 class="mt-2 mb-0 text-muted">@Model.PendingStockAdjCount</h3>
+                        </td>
+                        <td></td>
+                        
+                    </tr>
+                    <tr>
+                        <th><div class="text-center">+ @Model.PendingStockAdjAddQty</div></th>
+                        <th><div class="text-center"></div></th>
+                        <th><div class="text-center">- @Model.PendingStockAdjSubtractQty</div></th>
+                    </tr>
+                </table>
+
+
+            </div>
+            <div class="card-footer text-center">
+                @Html.ActionLink("View All", "ViewPendingStockAdj", "StockAdjustment", null, new { @class = "btn btn-info", style="width:100%" })
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3  text-center">
+        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 15rem">
+            <h5 class="card-header mt-0">Pending Purchase Order </h5>
+            <div class="card-body">
+
+                <table class="table mt-2">
+                    <tr>
+                        <th>Pending PO requests: @Model.PendingPOCount</th>
+                    </tr>
+
+                    <tr>
+                        <td>
+
+                            <h3 class="mt-2 mb-0 text-muted">$@Model.PendingPOTotalAmount.ToString("0.00")</h3>
+
+
+                        </td>
+
+                    </tr>
+
+                </table>
+
+
+            </div>
+            <div class="card-footer text-center">
+                hello
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 text-center">
+        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 15rem">
+            <h5 class="card-header mt-0">Pending Requisitions</h5>
+            <div class="card-body">
+
+                @if (1 == 1)
+                {
+                    <table class="table mt-3">
+                        <tr>
+                            <th>
+                                No. of Pending Requisitions
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3 class="mt-0 mb-0">
+                                    Count
+                                </h3>
+
+                            </td>
+                        </tr>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-dismissible alert-info p-4">
+                        <h6>No pending requisitions at the moment.</h6>
+                    </div>
+                }
+
+            </div>
+            <div class="card-footer text-center">
+                footer
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 text-center">
+        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 15rem">
+            <h5 class="card-header mt-0">Pending Requisitions</h5>
+            <div class="card-body">
+
+                @if (1 == 1)
+                {
+                    <table class="table mt-3">
+                        <tr>
+                            <th>
+                                No. of Pending Requisitions
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3 class="mt-0 mb-0">
+                                    Count
+                                </h3>
+
+                            </td>
+                        </tr>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-dismissible alert-info p-4">
+                        <h6>No pending requisitions at the moment.</h6>
+                    </div>
+                }
+
+            </div>
+            <div class="card-footer text-center">
+                footer
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-3">
         <div class="bs-component">
@@ -101,9 +237,9 @@
        google.charts.setOnLoadCallback(DrawPieChartLoad);
 
       google.charts.setOnLoadCallback(DrawStackChartLoad);
-        
-       
-       
+
+
+
         function DrawPieChartLoad()
         {
             $(function () {
@@ -152,8 +288,8 @@
             });
 
         }
-       
-      
+
+
         function DrawStackChartLoad() {
             $(function () {
                // alert("this is");
@@ -164,7 +300,7 @@
                     {
                         //alert("please");
                         var data = new google.visualization.DataTable();
-                      
+
                         var title = chartsdata.title;
                         var listone = chartsdata.ListOne;
                        // alert(listone.length);
@@ -178,7 +314,7 @@
                                 data.addColumn('number', title[i - 1]);
                             }
                         }
-                        
+
                         data.addRows(listone.length);
                         for (var j = 0; j < listone.length; j++)
                         {
