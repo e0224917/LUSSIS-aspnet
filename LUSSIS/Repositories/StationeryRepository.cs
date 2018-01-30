@@ -58,7 +58,7 @@ namespace LUSSIS.Repositories
             //get stationery which has current qty<reorder level
             Dictionary<Supplier, List<Stationery>> dic = new Dictionary<Supplier, List<Stationery>>();
             //get list of pending PO stationery and qty
-            List<Stationery> slist = LUSSISContext.Stationeries.Where(x => x.CurrentQty < x.ReorderLevel).ToList();
+            List<Stationery> slist = LUSSISContext.Stationeries.Where(x => x.AvailableQty < x.ReorderLevel).ToList();
             var p = from t1 in LUSSISContext.PurchaseOrderDetails
                     join t2 in LUSSISContext.PurchaseOrders
                     on t1.PoNum equals t2.PoNum
@@ -82,7 +82,7 @@ namespace LUSSIS.Repositories
                     var q = p.Where(x => x.ItemNum == itemNum).ToList();
                     if (q.Count>0)
                         pendingPoQty = Convert.ToInt32(q.First().Qty);
-                    if (slist[i].CurrentQty + pendingPoQty < slist[i].ReorderLevel)
+                    if (slist[i].AvailableQty + pendingPoQty < slist[i].ReorderLevel)
                     {
                         Supplier primarySupplier = slist[i].PrimarySupplier();
                         if (dic.ContainsKey(primarySupplier))

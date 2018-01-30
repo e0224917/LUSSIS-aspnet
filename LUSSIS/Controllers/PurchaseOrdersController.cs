@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -135,7 +136,7 @@ namespace LUSSIS.Controllers
                         {
                             PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
                             pdetails.OrderQty =
-                                Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty),
+                                Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
                                     Convert.ToInt32(stationery.ReorderQty));
                             pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
                             pdetails.ItemNum = stationery.ItemNum;
@@ -192,7 +193,7 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PurchaseOrderDTO purchaseOrderDto)
+        public async Task<ActionResult> Create(PurchaseOrderDTO purchaseOrderDto)
         {
             try
             {
@@ -218,7 +219,8 @@ namespace LUSSIS.Controllers
                 //save to database
                 _poRepo.Add(purchaseOrder);
 
-                Task sendMailAsync = SendMailForNewPOAsync(purchaseOrder, fullName);
+                //send email
+                await Task.Run(() => SendMailForNewPOAsync(purchaseOrder, fullName));
 
                 return RedirectToAction("Summary");
             }
@@ -477,7 +479,6 @@ namespace LUSSIS.Controllers
                                               + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + gstRate))
                                              / (stationery.CurrentQty + receiveQty);
                     stationery.CurrentQty += receiveQty;
-                    stationery.AvailableQty += receiveQty;
                     _stationeryRepo.Update(stationery);   //persist stationery data here
                 }
                 else if (receiveQty == 0)
