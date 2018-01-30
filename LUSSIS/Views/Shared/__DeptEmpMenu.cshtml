@@ -6,14 +6,8 @@
 
 @if (!isDelegate)
 {
-    <li class="nav-item nav-link">
-        <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("Index", "Requisitions")"><span>Stationery</span></a>
-    </li>
-    <li class="nav-item nav-link">
-        
-            <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("MyRequisitions", "Requisitions")"><span>My Requisition</span></a>
-        
-    </li>
+    @Html.ActionLink("Stationery", "Index", "Requisitions", null, new { @class = "nav-item nav-link btn btn-primary", style="color:white" })
+    @Html.ActionLink("My Requisitions", "MyRequisitions", "Requisitions", null, new { @class = "nav-item nav-link btn btn-primary", style = "color:white" })
 }
 else
 {
