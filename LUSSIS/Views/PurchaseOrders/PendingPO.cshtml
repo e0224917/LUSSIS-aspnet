@@ -102,11 +102,12 @@ else
 
         var ApproveReject = function (CheckList) {
             if (CheckList < 1) {
-                $("#showError").show();
+                $("#showError").show();le
+
             }
             else {
                 $("#showError").hide();
-                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?list=" + CheckList + "&status=Approve";
+                var url = "@Url.Content("~/")PurchaseOrders/_ApproveRejectPO?list=" + CheckList + "&status=Approve";
 
                 $("#myApproveModalBodyDiv").load(url, function () {
                     $("#myApproveModal").modal("show");
