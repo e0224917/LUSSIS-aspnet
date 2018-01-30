@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Linq;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Validations;
+using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Models
 {
@@ -54,29 +55,10 @@ namespace LUSSIS.Models
             "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DisbursementDetail> DisbursementDetails { get; set; }
 
-        public DisbursementDTO ToApiDTO()
-        {
-            return new DisbursementDTO()
-            {
-                DisbursementId = DisbursementId,
-                CollectionDate = CollectionDate,
-                CollectionPoint = CollectionPoint.CollectionName,
-                CollectionPointId = (int) CollectionPointId,
-                CollectionTime = CollectionPoint.Time,
-                DepartmentName = Department.DeptName,
-                DisbursementDetails = DisbursementDetails.Select(details => new RequisitionDetailDTO()
-                {
-                    Description = details.Stationery.Description,
-                    Quantity = details.ActualQty,
-                    UnitOfMeasure = details.Stationery.UnitOfMeasure
-                })
-            };
-        }
-
         public Disbursement(List<RequisitionDetail> requisitionDetails, DateTime collectionDate)
         {
             var department = requisitionDetails.First().Requisition.RequisitionEmployee.Department;
-            Status = "inprocess";
+            Status = InProcess;
             CollectionDate = collectionDate;
             DeptCode = department.DeptCode;
             CollectionPointId = department.CollectionPointId;
@@ -104,10 +86,9 @@ namespace LUSSIS.Models
         {
             if (DisbursementDetails.Count > 0)
             {
+                var isNew = true;
                 for (int i = 0; i < Count; i++)
                 {
-                    bool isNew = true;
-
                     if (item.ItemNum == DisbursementDetails.ElementAt(i).ItemNum)
                     {
                         DisbursementDetails.ElementAt(i).RequestedQty += item.RequestedQty;
@@ -118,14 +99,12 @@ namespace LUSSIS.Models
                         isNew = false;
                         break;
                     }
-
-                    if (isNew)
-                    {
-                        DisbursementDetails.Add(item);
-                    }
+                }
+                if (isNew)
+                {
+                    DisbursementDetails.Add(item);
                     Count++;
                 }
-
             }
             else
             {
@@ -138,7 +117,7 @@ namespace LUSSIS.Models
         public Disbursement(Disbursement unfulfilledDisbursement, DateTime collectionDate)
         {
             DeptCode = unfulfilledDisbursement.DeptCode;
-            Status = "inprocess";
+            Status = InProcess;
             CollectionDate = collectionDate;
             CollectionPointId = unfulfilledDisbursement.Department.CollectionPointId;
 

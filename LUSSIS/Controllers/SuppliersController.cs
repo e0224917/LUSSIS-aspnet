@@ -11,11 +11,12 @@ using LUSSIS.Models;
 using LUSSIS.Repositories;
 using OfficeOpenXml;
 using System.IO;
+using LUSSIS.Constants;
 
 namespace LUSSIS.Controllers
 {
     //Authors: Ton That Minh Nhat
-    [Authorize(Roles = "clerk")]
+    [Authorize(Roles = Role.Clerk)]
     public class SuppliersController : Controller
     {
         private readonly SupplierRepository _supplierRepo = new SupplierRepository();
@@ -128,7 +129,7 @@ namespace LUSSIS.Controllers
             }
             catch (Exception e)
             {
-                ModelState.AddModelError("", "This supplier has existed stationeries.");
+                ModelState.AddModelError("", "This supplier has existing stationeries.");
                 return View(supplier);
             }
         }

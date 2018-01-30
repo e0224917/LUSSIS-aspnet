@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using LUSSIS.Constants
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -6,8 +7,11 @@
     <title>@ViewBag.Title - LUSSIS</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @using LUSSIS.Constants
+
 </head>
 <body>
+    
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <img src="~/Images/compass.svg" width="30" height="30" class="d-inline-block align-top" alt="">
@@ -18,23 +22,23 @@
 
             <div class="collapse navbar-collapse" id="navbarResponsive" style="">
                 <ul class="navbar-nav mr-auto">
-                    @if (User.IsInRole("head"))
+                    @if (User.IsInRole(Role.DepartmentHead))
                     {
                         @Html.Partial("__DeptHeadMenu")
                     }
-                    @if (User.IsInRole("clerk"))
+                    @if (User.IsInRole(Role.Clerk))
                     {
                         @Html.Partial("__ClerkMenu")
                     }
-                    @if (User.IsInRole("manager") || User.IsInRole("supervisor"))
+                    @if (User.IsInRole(Role.Manager) || User.IsInRole(Role.Supervisor))
                     {
                         @Html.Partial("__StoreSupMenu")
                     }
-                    @if (User.IsInRole("rep"))
+                    @if (User.IsInRole(Role.Representative))
                     {
                         @Html.Partial("__RepMenu")
                     }
-                    @if (User.IsInRole("staff"))
+                    @if (User.IsInRole(Role.Staff))
                     {
                         @Html.Partial("__DeptEmpMenu")
                     }

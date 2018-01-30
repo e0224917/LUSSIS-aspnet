@@ -58,7 +58,7 @@ namespace LUSSIS.Repositories
         public IEnumerable<Requisition> GetPendingListForHead(string deptCode)
         {
             var list = LUSSISContext.Requisitions
-                .Where(r => r.DeptCode == deptCode && r.Status == "pending").ToList();
+                .Where(r => r.DeptCode == deptCode && r.Status == POStatus.Pending).ToList();
             list.Reverse();
             return list;
         }

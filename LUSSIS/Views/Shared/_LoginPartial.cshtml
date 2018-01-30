@@ -1,5 +1,7 @@
-﻿@using LUSSIS.Models.WebDTO
+﻿@using LUSSIS.Constants
+@using LUSSIS.Models.WebDTO
 @using LUSSIS.Repositories
+@using LUSSIS.Constants
 
 @if (Request.IsAuthenticated)
 {
@@ -13,7 +15,7 @@
 
         <ul class="nav navbar-nav navbar-right">
 
-            @if ((User.IsInRole("staff") || User.IsInRole("rep")) && !isDelegate)
+            @if ((User.IsInRole(Role.Staff) || User.IsInRole(Role.Representative)) && !isDelegate)
             {
                 <li class="nav-item">
                     @Html.ActionLink("My Cart (" + cartQty + ")", "MyCart", "Requisitions", null, new { id="cart-number", title = "Current Request", @class = "nav-link" })

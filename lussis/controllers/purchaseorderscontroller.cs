@@ -23,7 +23,7 @@ using static LUSSIS.Constants.POStatus;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Douglas Lee Kiat Hui
+    //Authors: Douglas Lee Kiat Hui Authors: May Zin Ko 
     [Authorize(Roles = "clerk, supervisor")]
     public class PurchaseOrdersController : Controller
     {
@@ -67,7 +67,7 @@ namespace LUSSIS.Controllers
 
 
         //GET: PurchaseOrders/Summary
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         public ActionResult Summary()
         {
             //each viewbag is for one section.
@@ -81,7 +81,7 @@ namespace LUSSIS.Controllers
 
 
         // GET: PurchaseOrders/Create or PurchaseOrders/Create?supplierId=1
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         public ActionResult Create(int? supplierId, string error = null)
         {
             //catch error from redirect (from POST) and display back into page
@@ -189,7 +189,7 @@ namespace LUSSIS.Controllers
         // POST: PurchaseOrders/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(PurchaseOrderDTO purchaseOrderDto)
@@ -246,7 +246,7 @@ namespace LUSSIS.Controllers
 
 
         //GET: PurchaseOrders/Receive?p=10001
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpGet]
         public ActionResult Receive(int? p = null, string error = null)
         {
@@ -282,7 +282,7 @@ namespace LUSSIS.Controllers
         }
 
         //POST: PurchaseOrders/Receive
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         public ActionResult Receive(ReceiveTransDTO receiveModel)
         {
@@ -312,7 +312,7 @@ namespace LUSSIS.Controllers
             }
         }
 
-        /* public ActionResult PrintPo(int id, double? orderDate)
+        public ActionResult PrintPo(int id, double? orderDate)
          {
 
             //prepare crystal report to be published in pdf, using datatable format
@@ -337,7 +337,7 @@ namespace LUSSIS.Controllers
              var stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
              stream.Seek(0, SeekOrigin.Begin);
              return File(stream, "application/pdf");
-         }*/
+        }
 
 
         //GET: PurchaseOrders/Order?p=10001
@@ -363,7 +363,7 @@ namespace LUSSIS.Controllers
             return View(po);
         }
 
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Order(PurchaseOrderDTO po)
@@ -376,6 +376,7 @@ namespace LUSSIS.Controllers
 
                 //get PO
                 var purchaseorder = _poRepo.GetById(po.PoNum);
+                //update status and order date
                 purchaseorder.Status = Ordered;
                 purchaseorder.OrderDate = po.OrderDate;
                 if (po.OrderDate < po.CreateDate)
@@ -391,13 +392,13 @@ namespace LUSSIS.Controllers
             }
         }
 
-        [Authorize(Roles = "supervisor")]
+        [Authorize(Roles = Role.Supervisor)]
         public ActionResult PendingPO()
         {
             return View(_poRepo.GetPendingApprovalPODTO());
         }
 
-        [Authorize(Roles = "supervisor")]
+        [Authorize(Roles = Role.Supervisor)]
         [HttpGet]
         public ActionResult ApproveRejectPO(string list, string status)
         {
@@ -406,7 +407,7 @@ namespace LUSSIS.Controllers
             return PartialView("_ApproveRejectPO");
         }
 
-        [Authorize(Roles = "supervisor")]
+        [Authorize(Roles = Role.Supervisor)]
         [HttpPost]
         public ActionResult ApproveRejectPO(string status, string checkList, string a)
         {
@@ -424,7 +425,7 @@ namespace LUSSIS.Controllers
 
             return PartialView("_ApproveRejectPO");
         }
-        //[Authorize(Roles = "supervisor")]
+        //[Authorize(Roles = Role.Supervisor)]
         //[HttpPost]
         
         //public ActionResult DeleteItem(string id)

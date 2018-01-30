@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using LUSSIS.Constants;
 
 namespace LUSSIS.CustomAuthority
 {
@@ -29,8 +30,8 @@ namespace LUSSIS.CustomAuthority
             var isDelegate = _delegateRepo.FindCurrentByEmail(email) != null;
             var hasDelegate = _delegateRepo.FindCurrentByDeptCode(deptCode) != null;
 
-            if (httpContext.User.IsInRole("head") && !hasDelegate
-                || httpContext.User.IsInRole("staff") && isDelegate)
+            if (httpContext.User.IsInRole(Role.DepartmentHead) && !hasDelegate
+                || httpContext.User.IsInRole(Role.Staff) && isDelegate)
             {
                 return true;
             }

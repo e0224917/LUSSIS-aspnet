@@ -8,6 +8,7 @@ using LUSSIS.Constants;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using static LUSSIS.Constants.DisbursementStatus;
+using static LUSSIS.Constants.RequisitionStatus;
 
 namespace LUSSIS.Repositories
 {
@@ -54,13 +55,27 @@ namespace LUSSIS.Repositories
         /// /for supervisoer' dashboard
         /// </summary>
         /// <returns></returns>
-        public double GetDisbursementTotalAmount()
+        public double GetDisbursementTotalAmount(List<String>fromList)
         {
             double result = 0;
-            var list = GetAll().Where(x => x.Status != InProcess).ToList();
-            foreach (Disbursement d in list)
+            foreach (String from in fromList)
             {
-                result += GetAmountByDisbursement(d);
+                DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                var q = from t1 in LUSSISContext.Disbursements
+                        join t2 in LUSSISContext.DisbursementDetails
+                        on t1.DisbursementId equals t2.DisbursementId
+                        where t1.Status != InProcess
+                        && t1.CollectionDate.Month == fromDate.Month && t1.CollectionDate.Year == fromDate.Year
+                        select new
+                        {
+                            price = (int)t2.UnitPrice,
+                            Qty = (double)t2.ActualQty
+                        };
+                foreach (var a in q)
+                {
+                    result += a.price * a.Qty;
+                }
+
             }
 
             return result;
@@ -129,13 +144,10 @@ namespace LUSSIS.Repositories
         }
 
 
-        public double GetDisAmountByDate(String dep, List<int> cat, String from, String to)
+        public double GetDisAmountByDate(String dep, List<int> cat, String from)
         {
-            //  DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            // DateTime toDate = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-
-            DateTime fromDate = DateTime.Parse(from);
-            DateTime toDate = DateTime.Parse(to);
+            DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            
             double total = 0;
 
             foreach (int catId in cat)
@@ -147,11 +159,11 @@ namespace LUSSIS.Repositories
                         on t2.ItemNum equals t3.ItemNum
                     where t3.CategoryId == catId &&
                           t1.Status != InProcess &&
-                          t1.DeptCode == dep
-                          && (t1.CollectionDate <= toDate && t1.CollectionDate >= fromDate)
+                          t1.DeptCode == dep && t1.CollectionDate.Month==fromDate.Month && t1.CollectionDate.Year==fromDate.Year
+                         // && (t1.CollectionDate <= toDate && t1.CollectionDate >= fromDate)
                     select new
                     {
-                        price = (int) t2.Stationery.AverageCost,
+                        price = (int) t2.UnitPrice,
                         Qty = (double) t2.ActualQty
                     };
 
@@ -175,12 +187,12 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.RequisitionDetails
                 .Where(r => r.Requisition.DeptCode == deptCode
-                            && r.Requisition.Status == "approved").ToList();
+                            && r.Requisition.Status == RequisitionStatus.Approved).ToList();
         }
 
         public IEnumerable<Requisition> GetApprovedRequisitions()
         {
-            return LUSSISContext.Requisitions.Where(r => r.Status == "approved").ToList();
+            return LUSSISContext.Requisitions.Where(r => r.Status == RequisitionStatus.Approved).ToList();
         }
 
         public void UpdateRequisition(Requisition requisition)

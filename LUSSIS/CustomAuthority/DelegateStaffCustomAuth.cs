@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using LUSSIS.Constants;
 using LUSSIS.Repositories;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -24,7 +25,7 @@ namespace LUSSIS.CustomAuthority
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            if (httpContext.User.IsInRole("staff") || httpContext.User.IsInRole("rep"))
+            if (httpContext.User.IsInRole(Role.Staff) || httpContext.User.IsInRole(Role.Representative))
             {
                 var email = httpContext.User.Identity.Name;
                 var isDelegate = _delegateRepo.FindCurrentByEmail(email) != null;
