@@ -46,10 +46,10 @@
 }
 
 
-@section scripts {
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    @*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
     <script type="text/javascript">
         $(document).on("click", ".deleteEntry", function () {
             $(this).closest("tr").remove();
@@ -65,9 +65,9 @@
         $('#add').click(function () {
             $.get(url, function (response) {
                 Adjustments.append(response);
-                form.removeData("validator");
-                form.removeData("unobtrusiveValidation");
-                $.validator.unobtrusive.parse(form);
+                //form.removeData("validator");
+                //form.removeData("unobtrusiveValidation");
+                //$.validator.unobtrusive.parse(form);
                 loadAutoComplete();
             });
 
@@ -104,7 +104,7 @@
         };
     </script>
 
-}
+
 
 @*Authors: Koh Meng Guan*@
 

@@ -101,12 +101,14 @@ namespace LUSSIS.Controllers
                         };
 
                         _stockAdjustmentRepo.Add(adjustment);
-                        adjustment.Stationery = _stationeryRepo.GetById(adjustment.ItemNum);
                         vouchers.Add(adjustment);
                     }
-
                     //Although there is a threshold of $250, both supervisor and manager will be informed of all adjustments regardless of price
                     //If desired, the threshold can be applied by getting price * quantity and setting if (total price > 250) 
+                    foreach (AdjVoucher av in vouchers)
+                    {
+                        av.Stationery = _stationeryRepo.GetById(av.ItemNum);
+                    }
                     var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                     var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
                     var email1 = new LUSSISEmail.Builder().From(self.EmailAddress)
