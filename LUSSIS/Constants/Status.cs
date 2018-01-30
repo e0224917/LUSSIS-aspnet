@@ -3,9 +3,9 @@
     //Authors: Ton That Minh Nhat
     public class RequisitionStatus
     {
-        public const string InProcess = "inprocess";
         public const string Approved = "approved";
         public const string Rejected = "rejected";
+        public const string Pending = "pending";
         public const string Processed = "processed";
     }
 
@@ -28,5 +28,7 @@
         public const string Pending = "pending";
         public const string Ordered = "ordered";
         public const string Approved = "approved";
+        public const string Rejected = "rejected";
+        public const string Fulfilled = "fulfilled";
     }
 }
