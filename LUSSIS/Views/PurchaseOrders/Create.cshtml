@@ -179,11 +179,32 @@
         }
         else { $(this).val(supplierId) }
     });
-
+        //function notHideNum() {
+        //    var rows = document.getElementById('details').rows;
+        //    var j = 0;
+        //    for (var c = 1; c <= rows.length; c++) {
+        //        if ($(rows[c]).is(':visible')) {
+        //            j++;
+        //        }
+        //    }
+        //    return j;
+        //}
     //show hidden row if click 'add new row'
     $('#btn_add_row').click(function addRow() {
         var trId = '#id' + cindex;
         $(trId).removeAttr("hidden");
+        //var c = notHideNum();
+        //var trId = '#id' + c;
+        //$(trId).removeAttr("hidden")
+        var rows = document.getElementById('details').rows;
+        //rows[c].cells[0].innerHTML = notHideNum() + 1;
+        var j = 1;
+        for (var c = 1; c <= rows.length; c++) {
+            if ($(rows[c]).is(':visible')) {
+                rows[c].cells[0].innerHTML = j;
+                j++;
+            }
+        }
         cindex++;
         });
         //delete row
@@ -194,7 +215,8 @@
         var j = 1;
         $(r).parent().parent().find('.line_qty').val(0);
         $(r).parent().parent().find('.line_qty').removeAttr('min');
-        for (var c = i; c < rows.length; c++) {
+        //cindex--;
+        for (var c = 1; c <= rows.length; c++) {
             if ($(rows[c]).is(':visible')) {
                 rows[c].cells[0].innerHTML = j;
                     j++;
