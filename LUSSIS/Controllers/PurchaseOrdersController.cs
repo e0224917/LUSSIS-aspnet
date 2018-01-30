@@ -12,11 +12,14 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using CrystalDecisions.CrystalReports.Engine;
+using LUSSIS.Constants;
 using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 using PagedList;
+using static LUSSIS.Constants.POStatus;
+
 
 namespace LUSSIS.Controllers
 {
@@ -67,9 +70,9 @@ namespace LUSSIS.Controllers
         public ActionResult Summary()
         {
             ViewBag.OutstandingStationeryList = _stationeryRepo.GetOutstandingStationeryByAllSupplier();
-            ViewBag.PendingApprovalPOList = _poRepo.GetPOByStatus("pending");
-            ViewBag.OrderedPOList = _poRepo.GetPOByStatus("ordered");
-            ViewBag.ApprovedPOList = _poRepo.GetPOByStatus("approved");
+            ViewBag.PendingApprovalPOList = _poRepo.GetPOByStatus(Pending);
+            ViewBag.OrderedPOList = _poRepo.GetPOByStatus(Ordered);
+            ViewBag.ApprovedPOList = _poRepo.GetPOByStatus(Approved);
             return View();
         }
 
@@ -250,13 +253,13 @@ namespace LUSSIS.Controllers
 
             if (p == null)
             {
-                ViewBag.OrderedPO = _poRepo.GetPOByStatus("ordered");
+                ViewBag.OrderedPO = _poRepo.GetPOByStatus(Ordered);
                 return View();
             }
 
             //populate PO and ReceiveTrans if PO number is given
             var po = new PurchaseOrderDTO(_poRepo.GetById(Convert.ToInt32(p)));
-            if (po.Status != "ordered")
+            if (po.Status != Ordered)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             for (int i = 0; i < po.PurchaseOrderDetails.Count; i++)
             {
@@ -343,13 +346,13 @@ namespace LUSSIS.Controllers
 
             if (p == null)
             {
-                ViewBag.ApprovedPO = _poRepo.GetPOByStatus("approved");
+                ViewBag.ApprovedPO = _poRepo.GetPOByStatus(Approved);
                 return View();
             }
 
             //populate PO DTO if PO number is given
             var purchaseOrder = await _poRepo.GetByIdAsync(Convert.ToInt32(p));
-            if (purchaseOrder.Status != "approved")
+            if (purchaseOrder.Status != Approved)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var po = new PurchaseOrderDTO(purchaseOrder) { OrderDate = DateTime.Today };
 
@@ -408,7 +411,7 @@ namespace LUSSIS.Controllers
 
             foreach (var id in idList)
             {
-                _poRepo.UpDatePOStatus(id, status);
+                _poRepo.UpDatePOStatus(id, status.ToUpper() == "APPROVE"? Approved : Rejected);
             }
 
             return PartialView("_ApproveRejectPO");
@@ -484,7 +487,7 @@ namespace LUSSIS.Controllers
             }
 
             //update purchase order and create receive trans
-            if (fulfilled) po.Status = "fulfilled";
+            if (fulfilled) po.Status = Fulfilled;
             po.ReceiveTrans.Add(receive);
             _poRepo.Update(po);
         }
