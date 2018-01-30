@@ -735,14 +735,6 @@
     <EmbeddedResource Include="Migrations\201801180649294_Changes.resx">
       <DependentUpon>201801180649294_Changes.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\PoCrystalReport.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>PoCrystalReport3.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\RetrieveCrystalReport.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>RetrieveCrystalReport2.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
