@@ -7,67 +7,71 @@
     <title>@ViewBag.Title - LUSSIS</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <script type="text/javascript" src="jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="jquery.collapsible.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <img src="~/Images/compass.svg" width="30" height="30" class="d-inline-block align-top" alt="">
-            @Html.ActionLink("LUSSIS", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" style="">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary" role="navigation">
+    <div class="container-fluid">
+        <img src="~/Images/compass.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+        @Html.ActionLink("LUSSIS", "Index", "Home", new {area = ""}, new {@class = "navbar-brand"})
 
-            <div class="collapse navbar-collapse" id="navbarResponsive" style="">
-                <ul class="navbar-nav mr-auto">
-                    @if (User.IsInRole(Role.DepartmentHead))
-                    {
-                        @Html.Partial("__DeptHeadMenu")
-                    }
-                    @if (User.IsInRole(Role.Clerk))
-                    {
-                        @Html.Partial("__ClerkMenu")
-                    }
-                    @if (User.IsInRole(Role.Manager) || User.IsInRole(Role.Supervisor))
-                    {
-                        @Html.Partial("__StoreSupMenu")
-                    }
-                    @if (User.IsInRole(Role.Representative))
-                    {
-                        @Html.Partial("__RepMenu")
-                    }
-                    @if (User.IsInRole(Role.Staff))
-                    {
-                        @Html.Partial("__DeptEmpMenu")
-                    }
-                </ul>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" style="">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-                <div class="nav navbar-nav ml-auto">@Html.Partial("_LoginPartial")</div>
-            </div>
+        <nav class="collapse navbar-collapse" id="navbarResponsive" style="">
+            <ul class="nav navbar-nav mr-auto">
+                @if (User.IsInRole(Role.DepartmentHead))
+                {
+                    @Html.Partial("__DeptHeadMenu")
+                }
+                @if (User.IsInRole(Role.Clerk))
+                {
+                    @Html.Partial("__ClerkMenu")
+                }
+                @if (User.IsInRole(Role.Manager) || User.IsInRole(Role.Supervisor))
+                {
+                    @Html.Partial("__StoreSupMenu")
+                }
+                @if (User.IsInRole(Role.Representative))
+                {
+                    @Html.Partial("__RepMenu")
+                }
+                @if (User.IsInRole(Role.Staff))
+                {
+                    @Html.Partial("__DeptEmpMenu")
+                }
+            </ul>
 
-        </div>
-    </nav>
-
-    <div class="container">
-        @RenderBody()
-
+            <div class="nav navbar-nav ml-auto">@Html.Partial("_LoginPartial")</div>
+        </nav>
+       
     </div>
-    <div class="container">
-        <footer class="text-muted footer">
-            <hr />
-            <p>&copy; @DateTime.Now.Year - LUSSIS By Sa45Team7</p>
-        </footer>
-    </div>
+</nav>
+
+<div class="container">
+    @RenderBody()
+
+</div>
+<div class="container">
+    <footer class="text-muted footer">
+        <hr/>
+        <p>&copy; @DateTime.Now.Year - LUSSIS By Sa45Team7</p>
+    </footer>
+</div>
 
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/moment")
-    @RenderSection("scripts", required: false)
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/moment")
+@RenderSection("scripts", required: false)
 
-    <script>
-        $(document).ready(function () {
-            $('.dropdown-toggle').dropdown();
-        });</script>
+<script>
+    $(document).ready(function() {
+        $('.dropdown-toggle').dropdown();
+    });
+</script>
 
 </body>
 </html>
