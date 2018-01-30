@@ -18,11 +18,11 @@
             @if ((User.IsInRole(Role.Staff) || User.IsInRole(Role.Representative)) && !isDelegate)
             {
                 <li class="nav-item">
-                    @Html.ActionLink("My Cart (" + cartQty + ")", "MyCart", "Requisitions", null, new { id="cart-number", title = "Current Request", @class = "nav-link" })
+                    @Html.ActionLink("My Cart (" + cartQty + ")", "MyCart", "Requisitions", null, new { id="cart-number", title = "Current Request", @class = "nav-item nav-link btn btn-primary" })
                 </li>
             }
                 <li class="nav-item">
-                @Html.ActionLink("Welcome, " + name, "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage Account", @class = "nav-link" })
+                @Html.ActionLink("Welcome, " + name, "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage Account", @class = "nav-item nav-link btn btn-primary" })
             </li>
             <li class="nav-item"><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>

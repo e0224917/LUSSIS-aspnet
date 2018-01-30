@@ -18,7 +18,7 @@ using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan
+    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan, Guo Rui
     [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {
@@ -124,7 +124,7 @@ namespace LUSSIS.Controllers
         //Authors: Koh Meng Guan
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpPost]
-        public async Task<ActionResult> Details(
+        public ActionResult Details(
             [Bind(Include =
                 "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status,DeptCode")]
             Requisition requisition, string statuses)
@@ -155,9 +155,10 @@ namespace LUSSIS.Controllers
                         requisition.ApprovalEmpNum = empNum;
                         requisition.ApprovalDate = DateTime.Today;
                         requisition.Status = statuses;
-                        Requisition req = _requisitionRepo.GetById(requisition.RequisitionId); 
+                        _requisitionRepo.Update(requisition);
                         if (requisition.Status == "approved")
                         {
+                            Requisition req = _requisitionRepo.GetById(requisition.RequisitionId);
                             foreach (RequisitionDetail rd in req.RequisitionDetails)
                             {
                                 Stationery st = _stationeryRepo.GetById(rd.ItemNum);
@@ -165,7 +166,7 @@ namespace LUSSIS.Controllers
                                 _stationeryRepo.Update(st);
                             }
                         }
-                        await _requisitionRepo.UpdateAsync(requisition);
+
                         return RedirectToAction("Pending");
                     }
 
