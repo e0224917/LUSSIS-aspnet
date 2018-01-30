@@ -16,15 +16,9 @@
         <li class="dropdown-item"><a href="@Url.Action("Index", "PurchaseOrders")"><span>P.O. History</span></a></li>
     </ul>
 </div>
-<div class="dropdown nav navbar-nav">
-    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        <span>Analysis</span>
-    </button>
-    <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
-        <li class="dropdown-item"><a href="@Url.Action("TrendAnalysis", "SupervisorDashboard")"><span>Stationery Purchase Trend(N.A)</span></a></li>
-        <li class="dropdown-item"><a href="@Url.Action("TrendAnalysis", "SupervisorDashboard")"><span>Requisition Request Trend(N.A)</span></a></li>
-    </ul>
-</div>
+    <div class="nav navbar-nav">
+        <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("TrendAnalysis", "SupervisorDashboard")"><span>Trend Analysis</span></a>
+    </div>
 
 
 
