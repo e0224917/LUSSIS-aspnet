@@ -28,6 +28,16 @@ namespace LUSSIS.Controllers
         private readonly RequisitionRepository _requisitionRepo = new RequisitionRepository();
         private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
 
+        private bool ExistDelegate
+        {
+            get
+            {
+                var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+                var current = _delegateRepo.FindExistingByDeptCode(deptCode);
+                return current != null;
+            }
+        }
+
         //for delegate and head only
         // GET: /RepAndDelegate/
         public ActionResult Index()
@@ -39,7 +49,7 @@ namespace LUSSIS.Controllers
             var staffAndRepList = _employeeRepo.GetStaffRepByDeptCode(deptCode);
             var reqListCount = _requisitionRepo.GetPendingListForHead(deptCode).Count();
             var haveDelegateToday = false;
-            if (existingDelegate != null)
+            if (ExistDelegate)
                 haveDelegateToday = existingDelegate.StartDate <= DateTime.Today;
 
             var dbDto = new DeptHeadDashBoardDTO
@@ -52,16 +62,6 @@ namespace LUSSIS.Controllers
             };
 
             return View(dbDto);
-        }
-
-        private bool ExistingDelegate
-        {
-            get
-            {
-                var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-                var current = _delegateRepo.FindExistingByDeptCode(deptCode);
-                return current != null;
-            }
         }
 
         // GET: /RepAndDelegate/DeptRep
@@ -89,7 +89,7 @@ namespace LUSSIS.Controllers
             var department = _departmentRepo.GetById(deptCode);
             var staffAndRepList = _employeeRepo.GetStaffRepByDeptCode(deptCode);
 
-            if (ExistingDelegate)
+            if (ExistDelegate)
             {
                 var staffDelegate = _employeeRepo.GetById(_delegateRepo.FindExistingByDeptCode(deptCode).EmpNum);
                 staffAndRepList.Remove(staffDelegate);
