@@ -132,7 +132,7 @@ namespace LUSSIS.Controllers
                 var newRepEmpNum = Convert.ToInt32(repEmp);
                 var newRep = _employeeRepo.GetById(newRepEmpNum);
                 var newRepEmailAdd = newRep.EmailAddress;
-                newRep.JobTitle = "rep";
+                newRep.JobTitle = "rep"; 
 
                 if (!oldRepEmpNum)
                 {
@@ -141,13 +141,14 @@ namespace LUSSIS.Controllers
                     department.RepEmpNum = newRepEmpNum;
                     _departmentRepo.Update(department);
                     
+                    //update aspnetroles
                     var newRepUser = context.Users.FirstOrDefault(u => u.Email == newRep.EmailAddress);
                     userManager.RemoveFromRole(newRepUser?.Id, "staff");
                     userManager.AddToRole(newRepUser?.Id, "rep");
                 }
                 else
                 {
-                    //switch roles rep and staff
+                    //switch roles rep and staff. update both aspnetroles and jobtitles
                     var oldEmpNum = department.RepEmpNum;
                     var oldRep = _employeeRepo.GetById((int)oldEmpNum);
                     var oldRepEmailAdd = oldRep.EmailAddress;
@@ -167,6 +168,7 @@ namespace LUSSIS.Controllers
                     userManager.RemoveFromRole(newRepUser?.Id, "staff");
                     userManager.AddToRole(newRepUser?.Id, "rep");
 
+                    //email to old rep
                     var emailToOldRep = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(oldRepEmailAdd).ForOldRepresentative().Build();
 
@@ -208,6 +210,7 @@ namespace LUSSIS.Controllers
 
                 _delegateRepo.Add(del);
 
+                //email to new delegate
                 var emailToNewDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(newDelegateEmailAdd).ForNewDelegate().Build();
 
@@ -230,6 +233,7 @@ namespace LUSSIS.Controllers
                 var loginUser = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
                 var sender = _employeeRepo.GetById(loginUser);
 
+                //email to old delegate
                 var emailToOldDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(oldDelegateEmailAdd).ForOldDelegate().Build();
 
