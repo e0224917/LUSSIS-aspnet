@@ -70,12 +70,12 @@ namespace LUSSIS.Controllers
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var department = _departmentRepo.GetById(deptCode);
-            var staffAndRepList = _employeeRepo.GetStaffRepByDeptCode(deptCode);
+            var deptRep = department.RepEmployee;
 
             var radDto = new RepAndDelegateDTO
             {
                 Department = department,
-                StaffAndRepList = staffAndRepList,
+                DeptRep = deptRep,
             };
 
             return View(radDto);
