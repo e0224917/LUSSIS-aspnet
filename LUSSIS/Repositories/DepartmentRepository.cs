@@ -6,7 +6,7 @@ using LUSSIS.Models;
 
 namespace LUSSIS.Repositories
 {
-    //Authors: Ong Xin Ying
+    //Authors: Koh Meng Guan
     public class DepartmentRepository : Repository<Department, string>
     {
         public List<String> GetAllDepartmentCode()
