@@ -192,7 +192,7 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PurchaseOrderDTO purchaseOrderDto)
+        public async Task<ActionResult> Create(PurchaseOrderDTO purchaseOrderDto)
         {
             try
             {
@@ -200,10 +200,11 @@ namespace LUSSIS.Controllers
                 //validate PO
                 if (purchaseOrderDto.SupplierContact == null)
                     throw new Exception("Please input the supplier contact");
-                if (purchaseOrderDto.SupplierAddress == "\r\n\r\n")
+                if (purchaseOrderDto.SupplierAddress.Trim() == "")
                     throw new Exception("Please input the supplier address");
                 else if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
+
                 //fill any missing data with default values
                 var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
                 var fullName = Request.Cookies["Employee"]?["Name"];
@@ -215,7 +216,7 @@ namespace LUSSIS.Controllers
                 purchaseOrderDto.CreatePurchaseOrder(out var purchaseOrder);
 
                 //save to database
-                _poRepo.Add(purchaseOrder);
+                Task<int> addPoAsync=_poRepo.AddAsync(purchaseOrder);
 
                 //send email to supervisor
                 var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
@@ -235,6 +236,7 @@ namespace LUSSIS.Controllers
                     EmailHelper.SendEmail(email2);
                 }
 
+                await addPoAsync;
                 return RedirectToAction("Summary");
             }
             catch (Exception e)
