@@ -71,7 +71,7 @@ namespace LUSSIS.Models.WebDTO
         public string Description { get; set; }
         public string UnitOfMeasure { get; set; }
         //stock qty
-        public int AvailableQty { get; set; }
+        public int CurrentQty { get; set; }
         //assocaited approved requisition qty
         public int RequestedQty { get; set; }
         //qty short from unfullfilled disbursement
@@ -83,7 +83,7 @@ namespace LUSSIS.Models.WebDTO
             BinNum = stationery.BinNum;
             Description = stationery.Description;
             UnitOfMeasure = stationery.UnitOfMeasure;
-            AvailableQty = stationery.AvailableQty;
+            CurrentQty = stationery.CurrentQty;
             RequestedQty = 0;
             RemainingQty = 0;
         }
@@ -96,7 +96,7 @@ namespace LUSSIS.Models.WebDTO
             BinNum = stationery.BinNum;
             Description = stationery.Description;
             UnitOfMeasure = stationery.UnitOfMeasure;
-            AvailableQty = stationery.AvailableQty;
+            CurrentQty = stationery.CurrentQty;
             RequestedQty = 0;
             RemainingQty = 0;
 
@@ -115,7 +115,7 @@ namespace LUSSIS.Models.WebDTO
             BinNum = stationery.BinNum;
             Description = stationery.Description;
             UnitOfMeasure = stationery.UnitOfMeasure;
-            AvailableQty = stationery.AvailableQty;
+            CurrentQty = stationery.CurrentQty;
             RequestedQty = 0;
             RemainingQty = 0;
 
