@@ -608,7 +608,7 @@ namespace LUSSIS.Controllers
                             
                     EmailHelper.SendEmail(email);
 
-                    return PartialView();
+                    return PartialView(req);
                 }
 
                 return PartialView(RADTO);
