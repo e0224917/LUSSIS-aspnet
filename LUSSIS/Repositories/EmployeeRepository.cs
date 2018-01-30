@@ -17,22 +17,22 @@ namespace LUSSIS.Repositories
 
         public Employee GetStoreManager()
         {
-            return LUSSISContext.Employees.FirstOrDefault(x => x.JobTitle == "manager");
+            return LUSSISContext.Employees.FirstOrDefault(x => x.JobTitle == Role.Manager);
         }
 
         public Employee GetStoreSupervisor()
         {
-            return LUSSISContext.Employees.FirstOrDefault(x => x.JobTitle == "supervisor");
+            return LUSSISContext.Employees.FirstOrDefault(x => x.JobTitle == Role.Supervisor);
         }
 
         public Employee GetDepartmentHead(string deptCode)
         {
-            return LUSSISContext.Employees.SingleOrDefault(e => e.DeptCode == deptCode && e.JobTitle == "head");
+            return LUSSISContext.Employees.SingleOrDefault(e => e.DeptCode == deptCode && e.JobTitle == Role.DepartmentHead);
         }
 
         public Employee GetRepByDeptCode(string deptCode)
         {
-            return LUSSISContext.Employees.SingleOrDefault(e => e.DeptCode == deptCode && e.JobTitle == "rep");
+            return LUSSISContext.Employees.SingleOrDefault(e => e.DeptCode == deptCode && e.JobTitle == Role.Representative);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace LUSSIS.CustomAuthority
             var email = httpContext.User.Identity.Name;
             var isDelegate = _delegateRepo.FindCurrentByEmail(email) != null;
 
-            if (httpContext.User.IsInRole("head") || httpContext.User.IsInRole("staff") && isDelegate)
+            if (httpContext.User.IsInRole(Role.DepartmentHead) || httpContext.User.IsInRole(Role.Staff) && isDelegate)
             {
                     return true;
             }

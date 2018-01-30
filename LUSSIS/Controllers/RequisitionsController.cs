@@ -8,10 +8,13 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Constants;
 using LUSSIS.Models.WebDTO;
 using PagedList;
 using LUSSIS.Emails;
 using LUSSIS.CustomAuthority;
+using static LUSSIS.Constants.RequisitionStatus;
+using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers
 {
@@ -48,14 +51,14 @@ namespace LUSSIS.Controllers
 
         // GET: Requisition
         //Authors: Koh Meng Guan
-        [CustomAuthorize("head", "staff")]
+        [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         public ActionResult Pending()
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var req = _requistionRepo.GetPendingListForHead(deptCode);
 
             //If user is head and there is delegate
-            if (User.IsInRole("head") && HasDelegate)
+            if (User.IsInRole(Role.DepartmentHead) && HasDelegate)
             {
                 ViewBag.HasDelegate = HasDelegate;
             }
@@ -64,18 +67,18 @@ namespace LUSSIS.Controllers
         }
 
         //Authors: Koh Meng Guan
-        [CustomAuthorize("head", "staff")]
+        [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpGet]
         public ActionResult Details(int reqId)
         {
             //If user is head and there is delegate
-            if (User.IsInRole("head") && HasDelegate)
+            if (User.IsInRole(Role.DepartmentHead) && HasDelegate)
             {
                 ViewBag.HasDelegate = HasDelegate;
             }
 
             var req = _requistionRepo.GetById(reqId);
-            if (req != null && req.Status == "pending")
+            if (req != null && req.Status == RequisitionStatus.Pending)
             {
                 ViewBag.Pending = "Pending";
                 return View(req);
@@ -87,7 +90,7 @@ namespace LUSSIS.Controllers
             return new HttpNotFoundResult();
         }
 
-        [CustomAuthorize("head", "staff")]
+        [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         //Authors: Koh Meng Guan
         public ActionResult All(string searchString, string currentFilter, int? page)
         {
@@ -118,20 +121,20 @@ namespace LUSSIS.Controllers
 
 
         //Authors: Koh Meng Guan
-        [CustomAuthorize("head", "staff")]
+        [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpPost]
         public async Task<ActionResult> Details(
             [Bind(Include =
                 "RequisitionId,RequisitionEmpNum,RequisitionDate,RequestRemarks,ApprovalRemarks,Status,DeptCode")]
             Requisition requisition, string statuses)
         {
-            if (requisition.Status == "pending")
+            if (requisition.Status == RequisitionStatus.Pending)
             {
                 //requisition must be pending for any approval and reject
                 var deptCode = Request.Cookies["Employee"]?["DeptCode"];
                 var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
 
-                if (User.IsInRole("head") && !HasDelegate || IsDelegate)
+                if (User.IsInRole(Role.DepartmentHead) && !HasDelegate || IsDelegate)
                 {
                     //if (user is head and there is no delegate) or (user is currently delegate)
                     if (deptCode != _departmentRepo.GetDepartmentByEmpNum(requisition.RequisitionEmpNum).DeptCode)
@@ -167,7 +170,7 @@ namespace LUSSIS.Controllers
 
 
         // GET: DeptEmpReqs
-        [DelegateStaffCustomAuth("staff", "rep")]
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         public ActionResult Index(string searchString, string currentFilter, int? page)
         {
             if (searchString != null)
@@ -194,7 +197,7 @@ namespace LUSSIS.Controllers
         }
 
         // POST: /Requisitions/AddToCart
-        [DelegateStaffCustomAuth("staff", "rep")]
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpPost]
         public ActionResult AddToCart(string id, int qty)
         {
@@ -206,7 +209,7 @@ namespace LUSSIS.Controllers
         }
 
         // GET: /Requisitions/MyRequisitions
-        [DelegateStaffCustomAuth("staff", "rep")]
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         public ActionResult MyRequisitions(string currentFilter, int? page)
         {
             var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
@@ -218,7 +221,7 @@ namespace LUSSIS.Controllers
         }
 
         // GET: Requisitions/EmpReqDetail/5
-        [DelegateStaffCustomAuth("staff", "rep")]
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpGet]
         public ActionResult MyRequisitionDetails(int id)
         {
@@ -226,7 +229,7 @@ namespace LUSSIS.Controllers
             return View(requisitionDetail);
         }
 
-        [DelegateStaffCustomAuth("staff", "rep")]
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpPost]
         public ActionResult SubmitReq()
         {
@@ -244,7 +247,7 @@ namespace LUSSIS.Controllers
                     RequestRemarks = Request["remarks"],
                     RequisitionDate = DateTime.Today,
                     RequisitionEmpNum = empNum,
-                    Status = "pending",
+                    Status = RequisitionStatus.Pending,
                     DeptCode = deptCode
                 };
                 _requistionRepo.Add(requisition);
@@ -280,14 +283,14 @@ namespace LUSSIS.Controllers
             return RedirectToAction("MyCart");
         }
 
-        [DelegateStaffCustomAuth("staff", "rep")]
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         public ActionResult MyCart()
         {
             var mycart = (ShoppingCart) Session["MyCart"];
             return View(mycart.GetAllCartItem());
         }
 
-        [DelegateStaffCustomAuth("staff", "rep")]
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpPost]
         public ActionResult DeleteCartItem(string id, int qty)
         {
@@ -297,7 +300,7 @@ namespace LUSSIS.Controllers
             return Json(id);
         }
 
-        [DelegateStaffCustomAuth("staff", "rep")]
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpPost]
         public ActionResult UpdateCartItem(string id, int qty)
         {
@@ -321,7 +324,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("MyCart");
         }
 
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         public ActionResult Consolidated(int? page)
         {
             int pageSize = 15;
@@ -339,7 +342,7 @@ namespace LUSSIS.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         [ValidateAntiForgeryToken]
         public ActionResult Retrieve([Bind(Include = "collectionDate")] RetrievalItemsWithDateDTO listWithDate)
         {
@@ -374,7 +377,7 @@ namespace LUSSIS.Controllers
         {
             var itemsToRetrieve = new RetrievalListDTO();
 
-            var approvedRequisitionDetails = _requistionRepo.GetRequisitionDetailsByStatus("approved");
+            var approvedRequisitionDetails = _requistionRepo.GetRequisitionDetailsByStatus(RequisitionStatus.Approved);
             var consolidateNewRequisitions = ConsolidateNewRequisitions(approvedRequisitionDetails);
 
             itemsToRetrieve.AddRange(consolidateNewRequisitions);
@@ -410,7 +413,7 @@ namespace LUSSIS.Controllers
                 //when disbursement is created, update the requisition status
                 foreach (var requisition in requisitions)
                 {
-                    requisition.Status = "processed";
+                    requisition.Status = RequisitionStatus.Processed;
                     _disbursementRepo.UpdateRequisition(requisition);
                 }
 
@@ -455,10 +458,10 @@ namespace LUSSIS.Controllers
                 _disbursementRepo.Add(d);
             }
 
-            var unfulfilledDisList = _disbursementRepo.GetDisbursementByStatus("unfulfilled").ToList();
+            var unfulfilledDisList = _disbursementRepo.GetDisbursementByStatus(DisbursementStatus.Unfulfilled).ToList();
             foreach (var unfd in unfulfilledDisList)
             {
-                unfd.Status = "fulfilled";
+                unfd.Status = DisbursementStatus.Fulfilled;
                 _disbursementRepo.Update(unfd);
             }
 
@@ -508,14 +511,14 @@ namespace LUSSIS.Controllers
         }
 
         
-        [Authorize(Roles = "clerk")]
+        [Authorize(Roles = Role.Clerk)]
         public ActionResult RetrievalInProcess()
         {
             return View(_disbursementRepo.GetRetrievalInProcess());
         }
 
         //Authors: Koh Meng Guan
-        [CustomAuthorize("head", "staff")]
+        [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpGet]
         public PartialViewResult _ApproveReq(int Id, string Status)
         {
@@ -525,7 +528,7 @@ namespace LUSSIS.Controllers
                 Status = Status
             };
             
-            if (User.IsInRole("head") && !HasDelegate || IsDelegate)
+            if (User.IsInRole(Role.DepartmentHead) && !HasDelegate || IsDelegate)
             {
                 return PartialView("_ApproveReq", reqDto);
             }
@@ -535,19 +538,19 @@ namespace LUSSIS.Controllers
 
 
         //Authors: Koh Meng Guan
-        [CustomAuthorize("head", "staff")]
+        [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpPost]
         public PartialViewResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]
             ReqApproveRejectDTO RADTO)
         {
             var req = _requistionRepo.GetById(RADTO.RequisitionId);
-            if (req == null || req.Status != "pending") return PartialView("_unauthoriseAccess");
+            if (req == null || req.Status != RequisitionStatus.Pending) return PartialView("_unauthoriseAccess");
 
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
 
             //must be pending for approval and reject
-            if (User.IsInRole("head") && !HasDelegate || IsDelegate)
+            if (User.IsInRole(Role.DepartmentHead) && !HasDelegate || IsDelegate)
             {
                 //if (user is head and there is no delegate) or (user is currently delegate)
                 if (deptCode != _departmentRepo.GetDepartmentByEmpNum(req.RequisitionEmpNum).DeptCode)

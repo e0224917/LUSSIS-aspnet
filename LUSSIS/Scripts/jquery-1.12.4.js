@@ -9804,7 +9804,7 @@ jQuery.extend( {
 				}
 
 				// if no content
-				if ( status === 204 || s.type === "HEAD" ) {
+				if ( status === 204 || s.type === Role.DepartmentHead ) {
 					statusText = "nocontent";
 
 				// if not modified
@@ -10393,7 +10393,7 @@ jQuery.ajaxTransport( "script", function( s ) {
 	if ( s.crossDomain ) {
 
 		var script,
-			head = document.head || jQuery( "head" )[ 0 ] || document.documentElement;
+			head = document.head || jQuery( Role.DepartmentHead )[ 0 ] || document.documentElement;
 
 		return {
 

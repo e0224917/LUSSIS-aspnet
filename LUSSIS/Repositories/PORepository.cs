@@ -18,29 +18,26 @@ namespace LUSSIS.Repositories
     {
         public List<PurchaseOrder> GetPendingApprovalPO()
         {
-            IEnumerable<PurchaseOrder> list = GetAll().Where(x => x.Status == "pending");
-            return list.ToList();
+            return GetAll().Where(x => x.Status == Pending).ToList();
         }
 
         public List<PurchaseOrder> GetApprovedPO()
         {
-            var list = GetAll().Where(x => x.Status == "approved");
+            var list = GetAll().Where(x => x.Status == Approved);
             return list.ToList();
         }
 
         public List<PurchaseOrder> GetPOByStatus(string status)
         {
-            var list = GetAll().Where(x => x.Status == status);
+            var list = GetAll().Where(x => x.Status.ToUpper() == status.ToUpper());
             return list.ToList();
         }
 
         public int GetPendingPOCount()
         {
-            List<PurchaseOrder> list = GetPendingApprovalPO();
-            return list.Capacity;
+            return GetPendingApprovalPO().Count;
         }
-        /////
-
+        
         public List<PendingPurchaseOrderDTO> GetPendingApprovalPODTO()
         {
             var list = GetPendingApprovalPO();
@@ -89,29 +86,31 @@ namespace LUSSIS.Repositories
         }
 
 
-        public double GetPOTotalAmount()
+        public double GetPOTotalAmount(List<String>fromList)
         {
-            // DateTime toDate = DateTime.ParseExact(DateTime.Today, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            DateTime toDate = DateTime.Parse("2018-01-31");
-            DateTime fromDate = DateTime.Parse("2017-11-01");
             double result = 0;
-            var q = from t1 in LUSSISContext.ReceiveTrans
-                    join t2 in LUSSISContext.ReceiveTransDetails
-                    on t1.ReceiveId equals t2.ReceiveId
-                    join t3 in LUSSISContext.Stationeries
-                    on t2.ItemNum equals t3.ItemNum
-                    where t1.ReceiveId == t2.ReceiveId
-                    && (t1.ReceiveDate >= fromDate && t1.ReceiveDate <= toDate)
-                    select new
-                    {
-                        price = (int)t3.AverageCost,
-                        qty = (double)t2.Quantity
-                    };
-
-            foreach (var a in q)
+            foreach (String from in fromList)
             {
-                result += a.qty*a.price;
+                DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                var q = from t1 in LUSSISContext.ReceiveTrans
+                        join t2 in LUSSISContext.ReceiveTransDetails
+                        on t1.ReceiveId equals t2.ReceiveId
+                        join t3 in LUSSISContext.Stationeries
+                        on t2.ItemNum equals t3.ItemNum
+                        where t1.ReceiveId == t2.ReceiveId
+                        && (t1.ReceiveDate.Month==fromDate.Month && t1.ReceiveDate.Year==fromDate.Year)
+                        select new
+                        {
+                            price = (int)t3.AverageCost,
+                            qty = (double)t2.Quantity
+                        };
+
+                foreach (var a in q)
+                {
+                    result += a.qty * a.price;
+                }
             }
+           
             return result;
         }
 
@@ -123,63 +122,40 @@ namespace LUSSIS.Repositories
             Update(p);
         }
 
-        /* public double GetPOAmountByCategory(int categoryId, List<String>itemList)
-         {
-             double total = 0;
-             foreach (var e in itemList)
-             {
-                 var pdList = LUSSISContext.PurchaseOrderDetails.Where(x => x.ItemNum.Equals(e)).ToList();
-                 foreach (var pod in pdList)
-                 {
-                     var qty = pod.OrderQty;
-                     var unitPrice = pod.UnitPrice;
-                     total += qty * unitPrice;
-
-                 }
-             }
-
-             return total;
-         }
-
-         public List<double> GetPOByCategory()
-         {
-             var list = new List<double>();
-             var categoryIds = LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
-
-             foreach (var id in categoryIds)
-             {
-                 var itemList = LUSSISContext.Stationeries.Where(x => x.CategoryId == id)
-                     .Select(x => x.ItemNum).ToList();
-                 list.Add(GetPOAmountByCategory(id, itemList));
-             }
-
-             return list;
-         }*/
+       
         public List<double> GetPOByCategory()
         {
             var list = new List<double>();
-            DateTime toDate = DateTime.Parse("2018-01-31");
-            DateTime fromDate = DateTime.Parse("2017-11-01");
+            List<String> fromList = new List<String>();
+            fromList.Add(DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy"));
+            fromList.Add(DateTime.Now.AddMonths(-2).ToString("dd/MM/yyyy"));
+            fromList.Add(DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy"));
             var categoryIds = LUSSISContext.Categories.Select(x => x.CategoryId).ToList();
+
             foreach (int catId in categoryIds)
             {
                 double total = 0;
-                var q = from t1 in LUSSISContext.ReceiveTrans
-                        join t2 in LUSSISContext.ReceiveTransDetails
-                        on t1.ReceiveId equals t2.ReceiveId
-                        join t3 in LUSSISContext.Stationeries
-                        on t2.ItemNum equals t3.ItemNum
-                        where t3.CategoryId == catId 
-                        && (t1.ReceiveDate <= toDate && t1.ReceiveDate >= fromDate)
-                        select new
-                        {
-                            price = (int)t3.AverageCost,
-                            Qty = (double)t2.Quantity
-                        };
-
-                foreach (var a in q)
+                foreach (String from in fromList)
                 {
-                    total += a.price * a.Qty;
+                DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    var q = from t1 in LUSSISContext.ReceiveTrans
+                            join t2 in LUSSISContext.ReceiveTransDetails
+                            on t1.ReceiveId equals t2.ReceiveId
+                            join t3 in LUSSISContext.Stationeries
+                            on t2.ItemNum equals t3.ItemNum
+                            where t3.CategoryId == catId
+                            && (t1.ReceiveDate.Month==fromDate.Month && t1.ReceiveDate.Year==fromDate.Year)
+                            select new
+                            {
+                                price = (int)t3.AverageCost,
+                                Qty = (double)t2.Quantity
+                            };
+
+                    foreach (var a in q)
+                    {
+                        total += a.price * a.Qty;
+                    }
+                   
                 }
                 list.Add(total);
             }
@@ -193,7 +169,7 @@ namespace LUSSIS.Repositories
 
         public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsByStatus(string status)
         {
-            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status == status);
+            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status.ToUpper() == status.ToUpper());
         }
 
        

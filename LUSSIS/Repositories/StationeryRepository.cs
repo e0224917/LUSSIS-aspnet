@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Constants;
 
 namespace LUSSIS.Repositories
 {
@@ -22,15 +23,7 @@ namespace LUSSIS.Repositories
             return (runningNum.Last() + 1);
         }
 
-
-
- 
-
         
-
-
-       
-
         public IEnumerable<Stationery> GetByCategory(string category)
         {
             return LUSSISContext.Stationeries.Where(s => s.Category.CategoryName == category);
@@ -39,9 +32,6 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.Stationeries.Where(s => s.Description.Contains(Description));
         }
-
-
-
 
         public IEnumerable<String> GetAllItemNum()
         {
@@ -58,9 +48,6 @@ namespace LUSSIS.Repositories
             return q.AsEnumerable<Stationery>();
         }
 
-
-
-
         private class PendingPOQuantityByItem
         {
             public string ItemNum { get; set; }
@@ -75,9 +62,9 @@ namespace LUSSIS.Repositories
             var p = from t1 in LUSSISContext.PurchaseOrderDetails
                     join t2 in LUSSISContext.PurchaseOrders
                     on t1.PoNum equals t2.PoNum
-                    where t2.Status == "pending" ||
-                    t2.Status == "ordered" ||
-                    t2.Status == "approved"
+                    where t2.Status == POStatus.Pending ||
+                    t2.Status == POStatus.Ordered ||
+                    t2.Status == POStatus.Approved
                     group t1 by t1.ItemNum into t3
                     select new PendingPOQuantityByItem
                     {
