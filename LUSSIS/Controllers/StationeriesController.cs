@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using LUSSIS.Constants;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
@@ -14,6 +15,7 @@ using PagedList;
 namespace LUSSIS.Controllers
 {
     //Authors: Maddireddi Venkata Rajeswari
+    [Authorize(Roles = Role.Clerk)]
     public class StationeriesController : Controller
     {
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
