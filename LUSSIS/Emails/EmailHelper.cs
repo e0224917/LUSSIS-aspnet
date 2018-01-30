@@ -251,17 +251,17 @@ namespace LUSSIS.Emails
                 return this;
             }
 
-            public Builder ForNewDisbursement(Disbursement disbursement)
+            public Builder ForNewDisbursement(Disbursement disbursement, CollectionPoint collectionPoint)
             {
                 Subject = string.Format("Stationery Collection for " + disbursement.Department.DeptName + " on " +
                                         disbursement.CollectionDate.ToShortDateString() +
-                                        " at " + disbursement.CollectionPoint.CollectionName);
+                                        " at " + collectionPoint.CollectionName);
 
                 var body = new StringBuilder();
                 body.AppendLine("We have an upcoming collection for " + disbursement.Department.DeptName);
                 body.AppendLine();
-                body.AppendLine("Date: \t\t\t" + disbursement.CollectionDate + " " + disbursement.CollectionPoint.Time);
-                body.AppendLine("Location: \t" + disbursement.CollectionPoint.CollectionName);
+                body.AppendLine("Date: \t\t\t" + disbursement.CollectionDate + " " + collectionPoint.Time);
+                body.AppendLine("Location: \t" + collectionPoint.CollectionName);
                 body.AppendLine(
                     "For more details, please log in LUSSIS to view: https://localhost:44303/Collection/Index");
 
@@ -269,18 +269,18 @@ namespace LUSSIS.Emails
                 return this;
             }
 
-            public Builder ForUpdateDisbursement(Disbursement disbursement)
+            public Builder ForUpdateDisbursement(Disbursement disbursement, CollectionPoint collectionPoint)
             {
                 Subject = string.Format("Stationery Collection for " + disbursement.Department.DeptName + " on " +
-                                        ((DateTime)disbursement.CollectionDate).ToShortDateString() +
+                                        disbursement.CollectionDate.ToShortDateString() +
                                         " has been updated");
 
                 var body = new StringBuilder();
                 body.AppendLine("The upcoming collection for " + disbursement.Department.DeptName +
                                 " has been updated as follow: ");
                 body.AppendLine();
-                body.AppendLine("Date: \t\t\t" + disbursement.CollectionDate + " " + disbursement.CollectionPoint.Time);
-                body.AppendLine("Location: \t" + disbursement.CollectionPoint.CollectionName);
+                body.AppendLine("Date: \t\t\t" + disbursement.CollectionDate + " " + collectionPoint.Time);
+                body.AppendLine("Location: \t" + collectionPoint.CollectionName);
                 body.AppendLine();
                 body.AppendLine(
                     "For more details, please log in LUSSIS to view: https://localhost:44303/Collection/Index");
