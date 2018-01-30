@@ -112,20 +112,21 @@
     }
 </table>
 
-<p>
-
+<div class="row">
+    <div class="text-right col-12">
     @if (Model.Status == POStatus.Approved)
     {
-        @Html.ActionLink("Order", "Order", new {p = Model.PoNum}, new {@class = "btn btn-success"})
-        <br/>
+        @Html.ActionLink("Order", "Order", new { p = Model.PoNum }, new { @class = "btn btn-success btn-lg" })
     }
     @if (Model.Status == POStatus.Ordered)
     {
-        @Html.ActionLink("Receive", "Receive", new {p = Model.PoNum}, new {@class = "btn btn-success"})
-        <br/>
+        @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum }, new { @class = "btn btn-success btn-lg" })
     }
-    @Html.ActionLink("View as PDF", "PrintPo", new {id = Model.PoNum}, new {@class = "btn btn-success", target = "_blank"})
-</p>
+    @Html.ActionLink("View as PDF", "PrintPo", new { id = Model.PoNum }, new { @class = "btn btn-info btn-lg", target = "_blank" })
+    </div>
+</div>
+
+
 
 @section scripts
 {

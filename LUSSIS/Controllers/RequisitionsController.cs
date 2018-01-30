@@ -580,10 +580,6 @@ namespace LUSSIS.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    if (req.ApprovalEmpNum == empNum)
-                    {
-                        return PartialView("_unauthoriseAccess");
-                    }
 
                     req.Status = RADTO.Status;
                     req.ApprovalRemarks = RADTO.ApprovalRemarks;

@@ -12,6 +12,7 @@ namespace LUSSIS.Controllers.WebAPI
     public class DisbursementController : ApiController
     {
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
+        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
 
         [HttpGet]
         [Route("api/Disbursement/")]
@@ -53,11 +54,19 @@ namespace LUSSIS.Controllers.WebAPI
                 return BadRequest("Wrong department.");
             }
 
+            //check if disbursement is fulfilled or not and update status
             var isFulfilled = disbursement.DisbursementDetails.All(item => item.ActualQty == item.RequestedQty);
-
             disbursement.Status = isFulfilled ? Fulfilled : Unfulfilled;
-
             disbursement.AcknowledgeEmpNum = employee.EmpNum;
+            _disbursementRepo.Update(disbursement);
+
+            //update current quantity of stationery
+            foreach (var disbursementDetail in disbursement.DisbursementDetails)
+            {
+                var stationery = _stationeryRepo.GetById(disbursementDetail.ItemNum);
+                stationery.CurrentQty -= disbursementDetail.ActualQty;
+                _stationeryRepo.Update(stationery);
+            }
 
             return Ok(new {Message = "Acknowledged"});
         }
@@ -67,6 +76,7 @@ namespace LUSSIS.Controllers.WebAPI
             if (disposing)
             {
                 _disbursementRepo.Dispose();
+                _stationeryRepo.Dispose();
             }
 
             base.Dispose(disposing);

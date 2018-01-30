@@ -11,7 +11,7 @@
 
         public string UnitOfMeasure { get; set; }
 
-        public int AvailableQty { get; set; }
+        public int CurrentQty { get; set; }
 
         public int RequestedQty { get; set; }
     }

@@ -25,6 +25,7 @@ namespace LUSSIS.Controllers
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
         private readonly CollectionRepository _collectionRepo = new CollectionRepository();
+        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
 
         // GET: Upcoming Disbursement
         public ActionResult Upcoming()
@@ -121,11 +122,17 @@ namespace LUSSIS.Controllers
                         .ActualQty;
                 }
                 _disbursementRepo.Update(disbursement);
-                
+
                 switch (update)
                 {
                     case "Acknowledge Manually":
                         _disbursementRepo.Acknowledge(disbursement);
+                        foreach (var dd in disbursement.DisbursementDetails)
+                        {
+                            var stationery = _stationeryRepo.GetById(dd.Stationery.ItemNum);
+                            stationery.CurrentQty -= dd.ActualQty;
+                            _stationeryRepo.Update(stationery);
+                        }
                         return RedirectToAction("Upcoming");
                     case "Generate QR Code":
                         break;
