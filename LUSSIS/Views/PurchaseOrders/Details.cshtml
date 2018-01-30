@@ -1,4 +1,5 @@
-﻿@model LUSSIS.Models.WebDTO.PurchaseOrderDTO
+﻿@using LUSSIS.Constants
+@model LUSSIS.Models.WebDTO.PurchaseOrderDTO
 @{
     ViewBag.Title = "Details";
 }
@@ -112,11 +113,11 @@
 </table>
 
 <p>
-    @if (Model.Status == "approved")
+    @if (Model.Status == POStatus.Approved)
     {
         @Html.ActionLink("Order", "Order", new { p = Model.PoNum })
     }
-    @if (Model.Status == "ordered")
+    @if (Model.Status == POStatus.Ordered)
     {
         @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum }, new { @class = "btn btn-success" })
     }

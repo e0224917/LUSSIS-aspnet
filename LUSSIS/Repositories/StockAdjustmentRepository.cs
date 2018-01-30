@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using LUSSIS.Constants;
 
 namespace LUSSIS.Repositories
 {
@@ -12,14 +13,18 @@ namespace LUSSIS.Repositories
     {
         public List<AdjVoucher> GetPendingAdjustmentList()
         {
-            return GetAll().Where(x => x.Status == "pending").ToList();
+            return GetAll().Where(x => x.Status == AdjustmentVoucherStatus.Pending).ToList();
+        }
+        public int GetPendingAdjustmentCount()
+        {
+            return GetAll().Where(x => x.Status == AdjustmentVoucherStatus.Pending).ToList().Count;
         }
 
         public List<AdjVoucher> GetPendingAdjustmentByRole(string role)
         {
             var resultList = new List<AdjVoucher>();
             var list = GetPendingAdjustmentList();
-            if (role.Equals("supervisor"))
+            if (role.Equals(Role.Supervisor))
             {
                 foreach (var ad in list)
                 {
@@ -31,7 +36,7 @@ namespace LUSSIS.Repositories
                     }
                 }
             }
-            else if (role.Equals("manager"))
+            else if (role.Equals(Role.Manager))
             {
                 foreach (var ad in list)
                 {
@@ -73,7 +78,7 @@ namespace LUSSIS.Repositories
 
         public IEnumerable<AdjVoucher> GetApprovedAdjVoucherByItem(string itemNum)
         {
-            return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == itemNum && x.Status == "approved");
+            return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == itemNum && x.Status == AdjustmentVoucherStatus.Approved);
         }
     }
 }

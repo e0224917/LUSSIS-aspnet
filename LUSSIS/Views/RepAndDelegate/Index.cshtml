@@ -1,4 +1,5 @@
 ﻿@using System.Data.Entity.Core.Objects
+@using LUSSIS.Constants
 @model LUSSIS.Models.WebDTO.DeptHeadDashBoardDTO
 @{
     ViewBag.Title = "My DashBoard";
@@ -49,7 +50,7 @@
             </div>
         </div>
     </div>
-    @if (User.IsInRole("head"))
+    @if (User.IsInRole(Role.DepartmentHead))
     {
         <div class="col-lg-4 col-md-4 text-center">
             <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem; min-height: 22rem">
@@ -186,8 +187,8 @@
                 @using (Html.BeginForm("DeptRep", "RepAndDelegate", FormMethod.Post))
                 {
 
-                    if (User.IsInRole("head") && !Model.HaveDelegateToday
-                        || User.IsInRole("staff") && Model.HaveDelegateToday)
+                    if (User.IsInRole(Role.DepartmentHead) && !Model.HaveDelegateToday
+                        || User.IsInRole(Role.Staff) && Model.HaveDelegateToday)
                     {
                         if (Model.Department.RepEmployee == null)
                         {
