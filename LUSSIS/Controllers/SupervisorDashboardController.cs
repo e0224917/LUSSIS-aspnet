@@ -32,7 +32,7 @@ namespace LUSSIS.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Message = User.IsInRole("supervisor") ? "supervisor" : "manager";
+            ViewBag.Message = User.IsInRole("supervisor") ? "Supervisor" : "Manager";
             var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add").Count;
             var totalSubtractAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract").Count;
 

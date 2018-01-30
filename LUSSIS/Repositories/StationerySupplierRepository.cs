@@ -35,6 +35,13 @@ namespace LUSSIS.Repositories
             return q.AsEnumerable<StationerySupplier>();
         }
 
+        public void UpdateAll(IEnumerable<StationerySupplier> newList)
+        {
+            IEnumerable<StationerySupplier> oldList = GetAll();
+            LUSSISContext.StationerySuppliers.RemoveRange(oldList);
+            LUSSISContext.StationerySuppliers.AddRange(newList);
+            LUSSISContext.SaveChanges();
+        }
 
     }
 }

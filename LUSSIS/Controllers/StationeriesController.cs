@@ -56,13 +56,19 @@ namespace LUSSIS.Controllers
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            //get stationery data
             var s = _stationeryRepo.GetById(id);
             if (s == null)
                 return HttpNotFound();
+            
+            //put stationery and the 3 suppliers into the view
             ViewBag.Stationery = s;
             ViewBag.Supplier1 = s.PrimarySupplier().SupplierName;
             ViewBag.Supplier2 = s.StationerySuppliers.First(x => x.Rank == 2).Supplier.SupplierName;
             ViewBag.Supplier3 = s.StationerySuppliers.First(x => x.Rank == 3).Supplier.SupplierName;
+
+            //get full list of receive+disburse+adjust transactions for the stationery and put into view
             var receiveList = _poRepo.GetReceiveTransDetailByItem(id).Select(
                 x => new StationeryTransactionDTO
                 {
