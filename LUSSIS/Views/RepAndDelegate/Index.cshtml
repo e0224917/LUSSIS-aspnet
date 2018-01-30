@@ -54,7 +54,7 @@
     {
         <div class="col-lg-4 col-md-4 text-center">
             <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 30rem; min-height: 22rem">
-                <h4 class="card-header mt-0">My @((Model.CurrentDelegate != null && Model.CurrentDelegate.StartDate < DateTime.Today) ? "Current" : null) Delegate</h4>
+                <h4 class="card-header mt-0">My @((Model.CurrentDelegate != null && Model.CurrentDelegate.StartDate <= DateTime.Today) ? "Current" : null) Delegate</h4>
 
                 @if (Model.CurrentDelegate == null)
                 {
