@@ -42,7 +42,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "@Url.Content("~/")PurchaseOrders/ApproveRejectPO",
+                    url: "@Url.Content("~/")PurchaseOrders/_ApproveRejectPO",
                     data: formdata,
                     success: function() {
                         $("#myApproveModal").modal("hide");
