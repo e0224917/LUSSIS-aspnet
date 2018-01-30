@@ -103,5 +103,16 @@ namespace LUSSIS.Controllers.WebAPI
 
             return BadRequest("Something is wrong. Please try again.");
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _employeeRepo.Dispose();
+                _delegateRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

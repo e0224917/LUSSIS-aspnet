@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using System.Web.Http.Results;
-using LUSSIS.Models;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
 
@@ -15,6 +12,7 @@ namespace LUSSIS.Controllers.WebAPI
     public class RequisitionsController : ApiController
     {
         private readonly RequisitionRepository _requistionRepo = new RequisitionRepository();
+        private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
 
         //GET: api/Requisitions/
         [Route("api/Requisitions/Pending/{dept}")]
@@ -73,7 +71,7 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Requisitions/MyReq/{empnum}")]
         public IHttpActionResult MyRequisitions(int empnum)
         {
-            var req = _requistionRepo.GetRequisitionByEmpNum(empnum);
+            var req = _requistionRepo.GetRequisitionsByEmpNum(empnum);
             var result = req.Select(item => new RequisitionDTO()
             {
                 ApprovalEmp = item.ApprovalEmployee.ToApiDTO(),
@@ -95,34 +93,29 @@ namespace LUSSIS.Controllers.WebAPI
         }
 
         [HttpGet]
-        [Route("api/Requisitions/Consolidated")]
-        public List<RetrievalItemDTO> GetConsolidatedRequisition()
-        {
-            var list = _requistionRepo.GetConsolidatedRequisition().Select(x => new RetrievalItemDTO
-            {
-                ItemNum = x.ItemNum,
-                AvailableQty = (int) x.AvailableQty,
-                BinNum = x.BinNum,
-                RequestedQty = (int) x.RequestedQty,
-                Description = x.Description,
-                UnitOfMeasure = x.UnitOfMeasure
-            });
-            return list.ToList();
-        }
-
-        [HttpGet]
         [Route("api/Requisitions/Retrieval")]
         public IEnumerable<RetrievalItemDTO> GetRetrievalList()
         {
-            return _requistionRepo.GetRetrievalInPorcess().Select(x => new RetrievalItemDTO
+            return _disbursementRepo.GetRetrievalInProcess().Select(x => new RetrievalItemDTO
             {
                 ItemNum = x.ItemNum,
-                AvailableQty = (int) x.AvailableQty,
+                AvailableQty = x.AvailableQty,
                 BinNum = x.BinNum,
-                RequestedQty = (int) x.RequestedQty,
+                RequestedQty = x.RequestedQty,
                 Description = x.Description,
                 UnitOfMeasure = x.UnitOfMeasure
             });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _requistionRepo.Dispose();
+                _disbursementRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

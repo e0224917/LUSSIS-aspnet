@@ -53,5 +53,15 @@ namespace LUSSIS.Controllers.WebAPI
         public void Delete(int id)
         {
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _stockadjustmentRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

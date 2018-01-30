@@ -44,18 +44,32 @@ namespace LUSSIS.Controllers.WebAPI
 
         // POST api/<controller>
         [Route("api/Disbursement/Acknowledge/{id}")]
-        public IHttpActionResult Acknowledge(int id, [FromBody] int empnum)
+        public IHttpActionResult Acknowledge(int id, [FromBody] EmployeeDTO employee)
         {
             var disbursement = _disbursementRepo.GetById(id);
+
+            if (employee.DeptCode != disbursement.DeptCode)
+            {
+                return BadRequest("Wrong department.");
+            }
 
             var isFulfilled = disbursement.DisbursementDetails.All(item => item.ActualQty == item.RequestedQty);
 
             disbursement.Status = isFulfilled ? Fulfilled : Unfulfilled;
 
-            disbursement.AcknowledgeEmpNum = empnum;
+            disbursement.AcknowledgeEmpNum = employee.EmpNum;
 
             return Ok(new {Message = "Acknowledged"});
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _disbursementRepo.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }
