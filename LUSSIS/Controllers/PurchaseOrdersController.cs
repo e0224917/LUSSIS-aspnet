@@ -402,7 +402,7 @@ namespace LUSSIS.Controllers
 
         [Authorize(Roles = Role.Supervisor)]
         [HttpGet]
-        public ActionResult ApproveRejectPO(string list, string status)
+        public ActionResult _ApproveRejectPO(string list, string status)
         {
             ViewBag.checkList = list;
             ViewBag.status = status;
@@ -411,7 +411,7 @@ namespace LUSSIS.Controllers
 
         [Authorize(Roles = Role.Supervisor)]
         [HttpPost]
-        public ActionResult ApproveRejectPO(string status, string checkList, string a)
+        public ActionResult _ApproveRejectPO(string status, string checkList, string a)
         {
             var list = checkList.Split(',');
             var idList = new int[list.Length];
