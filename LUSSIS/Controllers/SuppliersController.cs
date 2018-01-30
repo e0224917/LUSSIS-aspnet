@@ -128,7 +128,7 @@ namespace LUSSIS.Controllers
             }
             catch (Exception e)
             {
-                ModelState.AddModelError("", "This supplier has existed stationeries.");
+                ModelState.AddModelError("", "This supplier has existing stationeries.");
                 return View(supplier);
             }
         }
