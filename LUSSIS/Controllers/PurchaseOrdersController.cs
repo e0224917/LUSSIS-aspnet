@@ -41,7 +41,7 @@ namespace LUSSIS.Controllers
             var purchaseOrders = _poRepo.GetAll();
             ViewBag.page = page;
             //get full list of purchase ordered by most recently created
-            return View(purchaseOrders.ToList().OrderByDescending(x => x.CreateDate)
+            return View(purchaseOrders.ToList().OrderByDescending(x => x.PoNum)
                 .ToPagedList(pageNumber: Convert.ToInt32(page), pageSize: 15));
         }
 
@@ -533,7 +533,7 @@ namespace LUSSIS.Controllers
                     "inner join purchaseorderdetail q on p.ponum=q.ponum " +
                     "inner join stationery st on st.itemnum=q.itemnum " +
                     "inner join employee e on e.empnum=p.orderempnum " +
-                    "inner join employee f on f.empnum=p.approvalempnum " +
+                    "left join employee f on f.empnum=p.approvalempnum " +
                     "where p.ponum=@id";
                 using (var cmd = new SqlCommand(sqlQuery, sqlConn))
                 {
