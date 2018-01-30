@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -135,7 +136,7 @@ namespace LUSSIS.Controllers
                         {
                             PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
                             pdetails.OrderQty =
-                                Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty),
+                                Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
                                     Convert.ToInt32(stationery.ReorderQty));
                             pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
                             pdetails.ItemNum = stationery.ItemNum;
@@ -216,27 +217,11 @@ namespace LUSSIS.Controllers
                 purchaseOrderDto.CreatePurchaseOrder(out var purchaseOrder);
 
                 //save to database
-                Task<int> addPoAsync=_poRepo.AddAsync(purchaseOrder);
+                _poRepo.Add(purchaseOrder);
 
-                //send email to supervisor
-                var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
-                var email = new LUSSISEmail.Builder().From(User.Identity.Name)
-                    .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
-                EmailHelper.SendEmail(email);
+                //send email
+                await Task.Run(() => SendMailForNewPOAsync(purchaseOrder, fullName));
 
-                //send email if using non=primary supplier
-                var stationerys = purchaseOrder.PurchaseOrderDetails
-                    .Select(orderDetail => _stationeryRepo.GetById(orderDetail.ItemNum))
-                    .Where(stationery => stationery.PrimarySupplier().SupplierId != purchaseOrder.SupplierId).ToList();
-                if (stationerys.Count > 0)
-                {
-                    var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
-                    var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
-                        .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
-                    EmailHelper.SendEmail(email2);
-                }
-
-                await addPoAsync;
                 return RedirectToAction("Summary");
             }
             catch (Exception e)
@@ -494,7 +479,6 @@ namespace LUSSIS.Controllers
                                               + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + gstRate))
                                              / (stationery.CurrentQty + receiveQty);
                     stationery.CurrentQty += receiveQty;
-                    stationery.AvailableQty += receiveQty;
                     _stationeryRepo.Update(stationery);   //persist stationery data here
                 }
                 else if (receiveQty == 0)
@@ -549,6 +533,26 @@ namespace LUSSIS.Controllers
             return table;
         }
        
+        public async Task SendMailForNewPOAsync(PurchaseOrder purchaseOrder,string createdBy)
+        {
+            //send email to supervisor
+            var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
+            var email = new LUSSISEmail.Builder().From(User.Identity.Name)
+                .To(supervisorEmail).ForNewPo(purchaseOrder, createdBy).Build();
+            await EmailHelper.SendEmailAsync(email);
+
+            //send email if using non=primary supplier
+            var stationerys = purchaseOrder.PurchaseOrderDetails
+                .Select(orderDetail => _stationeryRepo.GetById(orderDetail.ItemNum))
+                .Where(stationery => stationery.PrimarySupplier().SupplierId != purchaseOrder.SupplierId).ToList();
+            if (stationerys.Count > 0)
+            {
+                var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
+                var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
+                    .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
+                await EmailHelper.SendEmailAsync(email2);
+            }
+        }
     }
 }
 
