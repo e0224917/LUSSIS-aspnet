@@ -258,12 +258,12 @@ namespace LUSSIS.Controllers
                 if(adjustment.Quantity<0)
                 {
                     st.AvailableQty = st.AvailableQty+adjustment.Quantity;
-                    st.CurrentQty = st.AvailableQty+adjustment.Quantity;
+                    st.CurrentQty = st.CurrentQty+adjustment.Quantity;
                 }
                 else
                 {
                     st.AvailableQty = st.AvailableQty-adjustment.Quantity;
-                    st.CurrentQty = st.AvailableQty-adjustment.Quantity;
+                    st.CurrentQty = st.CurrentQty-adjustment.Quantity;
                 }
                 _stationeryRepo.Update(st);
                 adjustment.Remark = comment;
