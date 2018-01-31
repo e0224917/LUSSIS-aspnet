@@ -44,7 +44,7 @@ else
                         @(item.RequestedQty + item.RemainingQty)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.AvailableQty)
+                        @Html.DisplayFor(modelItem => item.CurrentQty)
                     </td>
                     <td>
                         @Html.ActionLink("Adjust Stock", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new { target = "_blank", type = "submit", @class = "btn btn-success btn-sm" })

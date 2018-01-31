@@ -32,11 +32,6 @@ namespace LUSSIS.Repositories
             var list = GetAll().Where(x => x.Status.ToUpper() == status.ToUpper());
             return list.ToList();
         }
-
-        public int GetPendingPOCount()
-        {
-            return GetPendingApprovalPO().Count;
-        }
         
         public List<PendingPurchaseOrderDTO> GetPendingApprovalPODTO()
         {
@@ -92,23 +87,17 @@ namespace LUSSIS.Repositories
             foreach (String from in fromList)
             {
                 DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                var q = from t1 in LUSSISContext.ReceiveTrans
-                        join t2 in LUSSISContext.ReceiveTransDetails
-                        on t1.ReceiveId equals t2.ReceiveId
-                        join t3 in LUSSISContext.Stationeries
-                        on t2.ItemNum equals t3.ItemNum
-                        where t1.ReceiveId == t2.ReceiveId
-                        && (t1.ReceiveDate.Month==fromDate.Month && t1.ReceiveDate.Year==fromDate.Year)
-                        select new
-                        {
-                            price = (int)t3.AverageCost,
-                            qty = (double)t2.Quantity
-                        };
+                List<PurchaseOrderDetail> allList = LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.OrderDate.Value.Month == fromDate.Month 
+                && x.PurchaseOrder.OrderDate.Value.Year == fromDate.Year
+                && x.PurchaseOrder.Status !=Rejected 
+                && x.PurchaseOrder.Status != Pending).ToList();
+               
 
-                foreach (var a in q)
+                foreach(PurchaseOrderDetail pd in allList)
                 {
-                    result += a.qty * a.price;
+                    result += pd.UnitPrice * pd.ReceiveQty;
                 }
+                      
             }
            
             return result;
@@ -139,24 +128,17 @@ namespace LUSSIS.Repositories
                 foreach (String from in fromList)
                 {
                 DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var q = from t1 in LUSSISContext.ReceiveTrans
-                            join t2 in LUSSISContext.ReceiveTransDetails
-                            on t1.ReceiveId equals t2.ReceiveId
-                            join t3 in LUSSISContext.Stationeries
-                            on t2.ItemNum equals t3.ItemNum
-                            where t3.CategoryId == catId
-                            && (t1.ReceiveDate.Month==fromDate.Month && t1.ReceiveDate.Year==fromDate.Year)
-                            select new
-                            {
-                                price = (int)t3.AverageCost,
-                                Qty = (double)t2.Quantity
-                            };
-
-                    foreach (var a in q)
+               List<PurchaseOrderDetail> allList = LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.OrderDate.Value.Month == fromDate.Month
+               && x.PurchaseOrder.OrderDate.Value.Year == fromDate.Year
+               && x.Stationery.CategoryId==catId
+               && x.PurchaseOrder.Status != Pending &&
+                x.PurchaseOrder.Status != Rejected ).ToList();
+                    foreach (PurchaseOrderDetail pd in allList)
                     {
-                        total += a.price * a.Qty;
+                        total += pd.UnitPrice * pd.ReceiveQty;
                     }
-                   
+
+                    
                 }
                 list.Add(total);
             }
@@ -172,10 +154,11 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status.ToUpper() == status.ToUpper());
         }
-        public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsById(int poNo)
+        public IEnumerable<PurchaseOrderDetail> GetAllPurchaseOrderDetails()
         {
-            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.PoNum == poNo);
+            return LUSSISContext.PurchaseOrderDetails.ToList();
         }
+
 
 
     }

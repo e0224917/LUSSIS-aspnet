@@ -8,7 +8,7 @@
 <h2>Consolidated Stationery Requisitions</h2>
 <hr />
 
-@if (Model.retrievalItems == null || !Model.retrievalItems.Any())
+@if (Model.RetrievalItems == null || !Model.RetrievalItems.Any())
 {
 <div class="alert alert-dismissible alert-info">
     <br />
@@ -19,7 +19,7 @@ else
 {
     @*We are able to generate multiple batches of disbursements, however retrieval in process list will combine all disbursement that are inprocess.
         Since generating multiple batches of retrieval is not a business requirement, we will omit this funtion *@
-    if (Model.hasInprocessDisbursement)
+    if (Model.HasInprocessDisbursement)
     {
         <div class="alert alert-dismissible alert-info">
             <br />
@@ -37,9 +37,9 @@ else
             {
                 @Html.AntiForgeryToken()
 
-                @Html.LabelFor(model => model.collectionDate, "Select a collection date", new { @class = "nav-item nav-link", style = "color:whitesmoke" })
+                @Html.LabelFor(model => model.CollectionDate, "Select a collection date", new { @class = "nav-item nav-link", style = "color:whitesmoke" })
                 <input type="text" class="form-control" name="collectionDate" id="collectionDate" onkeydown="return false">
-                @Html.ValidationMessageFor(model => model.collectionDate, "must be later than today", new { @class = "invalid-feedback" })
+                @Html.ValidationMessageFor(model => model.CollectionDate, "must be later than today", new { @class = "invalid-feedback" })
 
                 <div class="nav-item nav-link"><button type="submit" class="btn btn-success my-2 my-sm-0">Arrange Retrieval and Disbursment</button></div>
             }
@@ -48,7 +48,7 @@ else
 
     }
 
-    @Html.Partial("_Consolidated", Model.retrievalItems)
+    @Html.Partial("_Consolidated", Model.RetrievalItems)
 
 }
 
@@ -68,7 +68,6 @@ else
 
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
-
 
 @*Authors: Tang Xiaowen*@
 

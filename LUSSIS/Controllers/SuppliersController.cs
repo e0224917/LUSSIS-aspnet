@@ -140,14 +140,13 @@ namespace LUSSIS.Controllers
             {
                 _supplierRepo.Dispose();
                 _stationeryRepo.Dispose();
+                _stationerySupplierRepo.Dispose();
             }
 
             base.Dispose(disposing);
         }
 
-
         #region Quotations
-
         //GET: Suppliers/Quotation
         [HttpGet]
         public ActionResult Quotation()
@@ -290,7 +289,6 @@ namespace LUSSIS.Controllers
                     throw new Exception("Stationery with duplicated supplier/ranks detected");
             }
         }
-
         #endregion
     }
 }

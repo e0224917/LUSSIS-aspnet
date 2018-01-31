@@ -122,7 +122,7 @@ else
             }
             else {
                 $("#showError").hide();
-                var url = "@Url.Content("~/")PurchaseOrders/ApproveRejectPO?list=" + CheckList + "&status=Reject";
+                var url = "@Url.Content("~/")PurchaseOrders/_ApproveRejectPO?list=" + CheckList + "&status=Reject";
 
                 $("#myApproveModalBodyDiv").load(url, function () {
                     $("#myApproveModal").modal("show");

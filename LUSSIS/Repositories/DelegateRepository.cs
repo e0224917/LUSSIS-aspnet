@@ -9,17 +9,21 @@ namespace LUSSIS.Repositories
     //Authors: Ong Xin Ying
     public class DelegateRepository : Repository<Delegate, int>
     {
+        /// <summary>
+        /// Delete the delegate that exists now.
+        /// </summary>
+        /// <param name="deptCode"></param>
         public void DeleteByDeptCode(string deptCode)
         {
             var del = FindExistingByDeptCode(deptCode);
             Delete(del);
         }
 
-        public Delegate GetByDeptCode(string deptCode)
-        {
-            return LUSSISContext.Delegates.LastOrDefault(d => d.Employee.DeptCode == deptCode);
-        }
-
+        /// <summary>
+        /// Find a delegate by employee number. The delegate can be in the future.
+        /// </summary>
+        /// <param name="empNum"></param>
+        /// <returns></returns>
         public Delegate FindCurrentByEmpNum(int empNum)
         {
             return LUSSISContext.Delegates
@@ -27,6 +31,11 @@ namespace LUSSIS.Repositories
                                      && d.StartDate <= DateTime.Today && d.EndDate >= DateTime.Today);
         }
 
+        /// <summary>
+        /// Find a delegate by email. The delegate can be in the future.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public Delegate FindCurrentByEmail(string email)
         {
             return LUSSISContext.Delegates
@@ -34,6 +43,11 @@ namespace LUSSIS.Repositories
                                      && d.StartDate <= DateTime.Today && d.EndDate >= DateTime.Today);
         }
 
+        /// <summary>
+        /// Find the latest delegate in a department. The delegate can be in the future.
+        /// </summary>
+        /// <param name="deptCode"></param>
+        /// <returns></returns>
         public Delegate FindCurrentByDeptCode(string deptCode)
         {
             return LUSSISContext.Delegates
@@ -41,6 +55,11 @@ namespace LUSSIS.Repositories
                                      && d.StartDate <= DateTime.Today && d.EndDate >= DateTime.Today);
         }
 
+        /// <summary>
+        /// Find the delegate that exist and available as of today.
+        /// </summary>
+        /// <param name="deptCode"></param>
+        /// <returns></returns>
         public Delegate FindExistingByDeptCode(string deptCode)
         {
             return LUSSISContext.Delegates

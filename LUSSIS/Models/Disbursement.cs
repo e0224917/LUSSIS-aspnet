@@ -55,16 +55,16 @@ namespace LUSSIS.Models
             "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DisbursementDetail> DisbursementDetails { get; set; }
 
-        public Disbursement(List<RequisitionDetail> requisitionDetails, DateTime collectionDate)
+        public Disbursement(List<RequisitionDetail> requisitionDetailsForOneDept, DateTime collectionDate)
         {
-            var department = requisitionDetails.First().Requisition.RequisitionEmployee.Department;
+            var department = requisitionDetailsForOneDept.First().Requisition.RequisitionEmployee.Department;
             Status = InProcess;
             CollectionDate = collectionDate;
             DeptCode = department.DeptCode;
             CollectionPointId = department.CollectionPointId;
 
-            this.DisbursementDetails = new HashSet<DisbursementDetail>();
-            foreach (var requisitionDetail in requisitionDetails)
+            DisbursementDetails = new HashSet<DisbursementDetail>();
+            foreach (var requisitionDetail in requisitionDetailsForOneDept)
             {
                 //Convert from requisitionDetail to disbursementDetail 
                 var disbursementDetail = new DisbursementDetail(requisitionDetail);

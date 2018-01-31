@@ -15,7 +15,8 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Diagnostics;
 using LUSSIS.Constants;
-
+using static LUSSIS.Constants.POStatus;
+using static LUSSIS.Constants.DisbursementStatus;
 namespace LUSSIS.Controllers
 {
     //Authors: May Zin Ko Authors: Douglas Lee Kiat Hui
@@ -43,7 +44,7 @@ namespace LUSSIS.Controllers
             var dash = new SupervisorDashboardDTO
             {
                 PendingPOTotalAmount = _poRepo.GetPendingPOTotalAmount(),
-                PendingPOCount = _poRepo.GetPendingPOCount(),
+                PendingPOCount = _poRepo.GetPendingApprovalPO().Count,
                 POTotalAmount = _poRepo.GetPOTotalAmount(fromList),
                 PendingStockAdjAddQty = totalAddAdjustmentQty,
                 PendingStockAdjSubtractQty = totalSubtractAdjustmentQty,
@@ -62,35 +63,11 @@ namespace LUSSIS.Controllers
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetBarchartJson()
-        {
-            var deptNames = _departmentRepo.GetAll().Select(item => item.DeptName).ToList();
-            var deptCodes = _departmentRepo.GetAll().Select(item => item.DeptCode).ToList();
-
-            var deptValues = new List<double>();
-            foreach (var deptCode in deptCodes)
-            {
-                deptValues.Add(_disbursementRepo.GetDisbursementTotalAmountOfDept(deptCode));
-            }
-
-            return Json(new { firstList = deptNames, secondList = deptValues },
-                JsonRequestBehavior.AllowGet);
-        }
-
-
-
-        public JsonResult GetReportJSON(String supplier_values, String category_values, String date)
-        {
-            List<String> pileName = _categoryRepo.GetAllCategoryName().ToList();
-            List<double> pileValue = _poRepo.GetPOByCategory();
-
-            return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
-        }
+      
         public JsonResult GetStackJSON()
         {
             List<String> depList = _departmentRepo.GetAllDepartmentCode();
             List<int> catList = _categoryRepo.GetAllCategoryIds();
-
             List<String> fromList = new List<String>();
             List<String> toList = new List<String>();
 
@@ -129,23 +106,6 @@ namespace LUSSIS.Controllers
 
         }
 
-    protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _poRepo.Dispose();
-                _stockAdjustmentRepo.Dispose();
-                _stationeryRepo.Dispose();
-                _employeeRepo.Dispose();
-                _departmentRepo.Dispose();
-                _categoryRepo.Dispose();
-                _supplierRepo.Dispose();
-                _disbursementRepo.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
         [Authorize(Roles = "manager,supervisor")]
         public ActionResult TrendAnalysis()
         {
@@ -155,6 +115,7 @@ namespace LUSSIS.Controllers
 
             return View();
         }
+
         public ActionResult ReturnJsonData()
         {
             //get post results from ajax
@@ -173,7 +134,7 @@ namespace LUSSIS.Controllers
             //get data
             IEnumerable<Detail> allList;
             if (filter.IsDisburse)
-                allList = _disbursementRepo.GetDisbursementDetailsByStatus("fulfilled")
+                allList = _disbursementRepo.GetAllDisbursementDetails().Where(x=>x.Disbursement.Status!=InProcess)
                     .Select(x => new Detail
                     {
                         Date = x.Disbursement.CollectionDate,
@@ -183,12 +144,12 @@ namespace LUSSIS.Controllers
                         Group = x.Disbursement.DeptCode
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);
             else
-                allList = _poRepo.GetPurchaseOrderDetailsByStatus("fulfilled")
+                allList = _poRepo.GetAllPurchaseOrderDetails().Where(x=>x.PurchaseOrder.Status!=Rejected && x.PurchaseOrder.Status!=Pending)
                     .Select(x => new Detail
                     {
                         Date = x.PurchaseOrder.CreateDate,
-                        Qty = x.OrderQty,
-                        Cost = x.UnitPrice * x.OrderQty,
+                        Qty = x.ReceiveQty,
+                        Cost = x.UnitPrice * x.ReceiveQty,
                         CategoryId = x.Stationery.CategoryId,
                         Group = x.PurchaseOrder.SupplierId.ToString()
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);
@@ -256,7 +217,24 @@ namespace LUSSIS.Controllers
             return Json(new { arr, arr1, arrTotal }, JsonRequestBehavior.AllowGet);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _poRepo.Dispose();
+                _stockAdjustmentRepo.Dispose();
+                _stationeryRepo.Dispose();
+                _employeeRepo.Dispose();
+                _departmentRepo.Dispose();
+                _categoryRepo.Dispose();
+                _supplierRepo.Dispose();
+                _disbursementRepo.Dispose();
+            }
 
+            base.Dispose(disposing);
+        }
+
+        #region Helpers
         public class AjaxInputFilter
         {
             public AjaxInputFilter(string input)
@@ -327,7 +305,7 @@ namespace LUSSIS.Controllers
                 return list.Where(x => x.Date.ToString("yyyyMM") == yyyymm);
             }
         }
-
+        #endregion
     }
 
 }

@@ -63,7 +63,7 @@ namespace LUSSIS.Controllers
             var s = _stationeryRepo.GetById(id);
             if (s == null)
                 return HttpNotFound();
-            
+
             //put stationery and the 3 suppliers into the view
             ViewBag.Stationery = s;
             ViewBag.Supplier1 = s.PrimarySupplier().SupplierName;
@@ -123,11 +123,11 @@ namespace LUSSIS.Controllers
             {
                 //This is to check if supplier are unique
                 var theList = new List<string>
-         {
-             stationeryDto.SupplierName1,
-             stationeryDto.SupplierName2,
-             stationeryDto.SupplierName3
-         };
+                {
+                    stationeryDto.SupplierName1,
+                    stationeryDto.SupplierName2,
+                    stationeryDto.SupplierName3
+                };
                 var isUnique = theList.Distinct().Count() == theList.Count();
                 if (isUnique == false)
                 {
@@ -191,7 +191,7 @@ namespace LUSSIS.Controllers
             return View(stationeryDto);
         }
 
-        //dPOST: Stationeries/Edit/
+        // POST: Stationeries/Edit/
         [HttpGet]
         public ActionResult Edit(string id) //Edit in MVC architecture
         {
@@ -237,11 +237,11 @@ namespace LUSSIS.Controllers
             if (ModelState.IsValid)
             {
                 var theList = new List<string>
-         {
-             stationeryDto.SupplierName1,
-             stationeryDto.SupplierName2,
-             stationeryDto.SupplierName3
-         };
+                {
+                    stationeryDto.SupplierName1,
+                    stationeryDto.SupplierName2,
+                    stationeryDto.SupplierName3
+                };
                 var isUnique = theList.Distinct().Count() == theList.Count();
                 if (isUnique == false)
                 {
@@ -297,7 +297,6 @@ namespace LUSSIS.Controllers
             return View(stationeryDto);
         }
 
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -311,32 +310,7 @@ namespace LUSSIS.Controllers
 
             base.Dispose(disposing);
         }
-        //GET: Stationeries/Delete/5
-        //public ActionResult Delete(string id)
-        //       {
-        //           if (id == null)
-        //           {
-        //               return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //           }
-        //           Stationery stationery = db.Stationeries.Find(id);
-        //           if (stationery == null)
-        //           {
-        //               return HttpNotFound();
-        //           }
-        //           return View(stationery);
-        //       }
-
-        //       POST: Stationeries/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //       [ValidateAntiForgeryToken]
-        //       public ActionResult DeleteConfirmed(string id)
-        //       {
-        //           Stationery stationery = db.Stationeries.Find(id);
-        //           db.Stationeries.Remove(stationery);
-        //           db.SaveChanges();
-        //           return RedirectToAction("Index");
+        
     }
-
-
 }
 
