@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using LUSSIS.Emails;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
 using Delegate = LUSSIS.Models.Delegate;
@@ -14,6 +16,7 @@ namespace LUSSIS.Controllers.WebAPI
     {
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
         private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
 
         // GET api/Delegate/COMM
         [HttpGet]
@@ -21,7 +24,7 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(DelegateDTO))]
         public IHttpActionResult Get([FromUri] string dept)
         {
-            var d = _delegateRepo.GetAll().LastOrDefault(de => de.Employee.DeptCode == dept);
+            var d = _delegateRepo.FindExistingByDeptCode(dept);
 
             if (d == null) return BadRequest("No delegate available.");
 
@@ -47,45 +50,45 @@ namespace LUSSIS.Controllers.WebAPI
         }
 
         [HttpPost]
-        [Route("api/Delegate/{dept}")]
+        [Route("api/Delegate/")]
         // POST api/Delegate
-        public async Task<IHttpActionResult> Post(string dept, [FromBody] DelegateDTO del)
+        public IHttpActionResult Post([FromBody] DelegateDTO delegateDto)
         {
             var d = new Delegate()
             {
-                StartDate = del.StartDate,
-                EndDate = del.EndDate,
-                EmpNum = del.Employee.EmpNum
+                StartDate = delegateDto.StartDate,
+                EndDate = delegateDto.EndDate,
+                EmpNum = delegateDto.Employee.EmpNum
             };
 
-            await _delegateRepo.AddAsync(d);
+            _delegateRepo.Add(d);
 
-            var id = _delegateRepo.GetByDeptCode(dept).DelegateId;
-            del.DelegateId = id;
+            //Send email on new thread
+            var headEmail = _employeeRepo.GetDepartmentHead(delegateDto.Employee.DeptCode);
+            var email = new LUSSISEmail.Builder().From(headEmail).To(delegateDto.Employee.EmailAddress)
+                .ForNewDelegate().Build();
+            var thread = new Thread(delegate() { EmailHelper.SendEmail(email); });
+            thread.Start();
 
-            return Ok(del);
-        }
+            var id = _delegateRepo.FindExistingByDeptCode(delegateDto.Employee.DeptCode).DelegateId;
+            delegateDto.DelegateId = id;
 
-        [HttpPut]
-        [Route("api/Delegate/{dept}")]
-        public IHttpActionResult Put(string dept, [FromBody] DelegateDTO del)
-        {
-            var d = _delegateRepo.GetByDeptCode(dept);
-            d.EmpNum = del.Employee.EmpNum;
-            d.StartDate = del.StartDate;
-            d.EndDate = del.EndDate;
-
-            _delegateRepo.Update(d);
-
-            return Ok(new {Message = "Delegate has been editted"});
+            return Ok(delegateDto);
         }
 
         [HttpDelete]
-        [Route("api/Delegate/{dept}")]
-        // DELETE api/Delegate/COMM
-        public IHttpActionResult Delete(string dept)
+        [Route("api/Delegate/")]
+        // DELETE api/Delegate/
+        public IHttpActionResult Delete([FromBody] DelegateDTO delegateDto)
         {
-            _delegateRepo.DeleteByDeptCode(dept);
+            _delegateRepo.DeleteByDeptCode(delegateDto.Employee.DeptCode);
+
+            //Send email
+            var headEmail = _employeeRepo.GetDepartmentHead(delegateDto.Employee.DeptCode);
+            var email = new LUSSISEmail.Builder().From(headEmail).To(delegateDto.Employee.EmailAddress)
+                .ForOldDelegate().Build();
+            var thread = new Thread(delegate() { EmailHelper.SendEmail(email); });
+            thread.Start();
 
             return Ok(new {Message = "Delegate has been revoked"});
         }

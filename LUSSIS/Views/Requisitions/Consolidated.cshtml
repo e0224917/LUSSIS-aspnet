@@ -1,5 +1,4 @@
 ﻿@using LUSSIS.Models.WebDTO
-@using PagedList.Mvc
 @model RetrievalItemsWithDateDTO
 
 
@@ -53,23 +52,22 @@ else
 
 }
 
-    @section scripts {
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script>
-            $(function () {
-                $("#collectionDate")
-                    .datepicker({
-                        minDate: 1,
-                        maxDate: "+1M +10D",
-                        dateFormat: "dd/mm/yy",
-                    }).datepicker("setDate", "+2d");
-            });
-        </script>
+@section scripts {
+    <script>
+        $(function () {
+            $("#collectionDate")
+                .datepicker({
+                    minDate: 1,
+                    maxDate: "+1M +10D",
+                    dateFormat: "dd/mm/yy",
+                }).datepicker("setDate", "+2d");
+        });
+    </script>
 
-    }
+}
 
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 
 @*Authors: Tang Xiaowen*@

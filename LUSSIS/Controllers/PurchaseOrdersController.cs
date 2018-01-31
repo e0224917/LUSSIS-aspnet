@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -87,8 +88,6 @@ namespace LUSSIS.Controllers
             //catch error from redirect (from POST) and display back into page
             ViewBag.Error = error;
 
-            var po = new PurchaseOrderDTO(); //view model
-
             if (supplierId == null) //allow user to select supplier if non is chosen yet
             {
                 var emptySupplier = new Supplier
@@ -106,12 +105,18 @@ namespace LUSSIS.Controllers
 
             //get supplier
             var supplier = _supplierRepo.GetById(Convert.ToInt32(supplierId));
-            po.Supplier = supplier;
-            po.SupplierId = supplier.SupplierId;
-            po.CreateDate = DateTime.Today;
-            po.SupplierAddress = supplier.Address1 + Environment.NewLine + supplier.Address2 + Environment.NewLine +
-                                 supplier.Address3;
-            po.SupplierContact = supplier.ContactName;
+
+            //create view model
+            var po = new PurchaseOrderDTO()
+            {
+                Supplier = supplier,
+                SupplierId = supplier.SupplierId,
+                CreateDate = DateTime.Today,
+                SupplierAddress = supplier.Address1 + Environment.NewLine
+                                + supplier.Address2 + Environment.NewLine
+                                + supplier.Address3,
+                SupplierContact = supplier.ContactName
+            };
 
             //set empty Stationery template for dropdown
             var emptyStationery = new Stationery
@@ -122,27 +127,23 @@ namespace LUSSIS.Controllers
                 AverageCost = 0.00
             };
 
+
             //get list of recommended for purchase stationery and put in purchase order details
-            var a = _stationeryRepo.GetOutstandingStationeryByAllSupplier();
-            foreach (KeyValuePair<Supplier, List<Stationery>> kvp in a)
+            foreach (KeyValuePair<Supplier, List<Stationery>> kvp in _stationeryRepo.GetOutstandingStationeryByAllSupplier())
             {
-                if (kvp.Key.SupplierId == supplier.SupplierId)
+                if (kvp.Key.SupplierId == supplierId)
                 {
                     foreach (Stationery stationery in kvp.Value)
                     {
-                        if (stationery.CurrentQty < stationery.ReorderLevel &&
-                            stationery.PrimarySupplier().SupplierId == supplierId)
+                        po.PurchaseOrderDetailsDTO.Add(new PurchaseOrderDetailDTO()
                         {
-                            PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
-                            pdetails.OrderQty =
-                                Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty),
-                                    Convert.ToInt32(stationery.ReorderQty));
-                            pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
-                            pdetails.ItemNum = stationery.ItemNum;
-                            po.PurchaseOrderDetailsDTO.Add(pdetails);
-                        }
+                            OrderQty =
+                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
+                                Convert.ToInt32(stationery.ReorderQty)),
+                            UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId)),
+                            ItemNum = stationery.ItemNum
+                        });
                     }
-
                     break;
                 }
             }
@@ -151,7 +152,6 @@ namespace LUSSIS.Controllers
             var countOfLines = Math.Max(po.PurchaseOrderDetailsDTO.Count, 1);
             //no ofstationery that belong to supplier
             var countOfStationery = Math.Max(po.PurchaseOrderDetailsDTO.Count, 0);
-
 
             //create empty puchase details so user can add up to 100 line items per PO
             for (int i = countOfLines; i < 100; i++)
@@ -172,7 +172,6 @@ namespace LUSSIS.Controllers
                 Price = emptyStationery.AverageCost,
                 Stationery = emptyStationery
             };
-
             var sslist = new List<StationerySupplier> { stationerySupplier };
             sslist.AddRange(_stationerySupplierRepo.GetStationerySupplierBySupplierId(supplierId).ToList());
             ViewBag.Stationery = sslist;
@@ -192,7 +191,7 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(PurchaseOrderDTO purchaseOrderDto)
+        public ActionResult Create(PurchaseOrderDTO purchaseOrderDto)
         {
             try
             {
@@ -215,14 +214,13 @@ namespace LUSSIS.Controllers
                 //create PO
                 purchaseOrderDto.CreatePurchaseOrder(out var purchaseOrder);
 
-                //save to database
-                Task<int> addPoAsync=_poRepo.AddAsync(purchaseOrder);
-
                 //send email to supervisor
-                var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
+                var supervisorEmail = new EmployeeRepository().GetStoreSupervisor().EmailAddress;
                 var email = new LUSSISEmail.Builder().From(User.Identity.Name)
-                    .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
-                EmailHelper.SendEmail(email);
+                .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
+                //start new thread to send email
+                new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+
 
                 //send email if using non=primary supplier
                 var stationerys = purchaseOrder.PurchaseOrderDetails
@@ -233,10 +231,10 @@ namespace LUSSIS.Controllers
                     var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
                     var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
                         .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
-                    EmailHelper.SendEmail(email2);
+                    new Thread(delegate () { EmailHelper.SendEmail(email2); }).Start();
                 }
 
-                await addPoAsync;
+
                 return RedirectToAction("Summary");
             }
             catch (Exception e)
@@ -315,30 +313,30 @@ namespace LUSSIS.Controllers
         }
 
         public ActionResult PrintPo(int id, double? orderDate)
-         {
+        {
 
             //prepare crystal report to be published in pdf, using datatable format
-             DataSet ds = new DataSet();
-             ReportDocument rd = new ReportDocument();
-             rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
-             if (orderDate != null)
-             {
-                 var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                     .AddMilliseconds(Convert.ToDouble(orderDate)).ToLocalTime();
-                 ds.Tables.Add(GetPo(id, date));
-             }
-             else
-             {
-                 ds.Tables.Add(GetPo(id));
-             }
+            DataSet ds = new DataSet();
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Path.Combine(Server.MapPath("~/Reports/PoCrystalReport.rpt")));
+            if (orderDate != null)
+            {
+                var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                    .AddMilliseconds(Convert.ToDouble(orderDate)).ToLocalTime();
+                ds.Tables.Add(GetPo(id, date));
+            }
+            else
+            {
+                ds.Tables.Add(GetPo(id));
+            }
 
-             rd.SetDataSource(ds);
-             Response.Buffer = false;
-             Response.ClearContent();
-             Response.ClearHeaders();
-             var stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-             stream.Seek(0, SeekOrigin.Begin);
-             return File(stream, "application/pdf");
+            rd.SetDataSource(ds);
+            Response.Buffer = false;
+            Response.ClearContent();
+            Response.ClearHeaders();
+            var stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+            stream.Seek(0, SeekOrigin.Begin);
+            return File(stream, "application/pdf");
         }
 
 
@@ -422,25 +420,29 @@ namespace LUSSIS.Controllers
 
             foreach (int id in idList)
             {
+                HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
+                String empNum = cookie["EmpNum"];
+                _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE"? Approved : Rejected,empNum);
                 
-                _poRepo.UpDatePOStatus(id, status.ToUpper() == "APPROVE"? Approved : Rejected);
-                List<PurchaseOrderDetail>pDetail=_poRepo.GetPurchaseOrderDetailsById(id).ToList();
-
-                foreach(var p in pDetail)
+                if(status.ToUpper() == "REJECT")
                 {
-                    Stationery st=new Stationery();
-                    st = _stationeryRepo.GetById(p.ItemNum);
-                    st.AvailableQty = p.OrderQty+st.AvailableQty;
-                    _stationeryRepo.Update(st);
-                }
+                    List<PurchaseOrderDetail> pDetail = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
 
+                    foreach (var p in pDetail)
+                    {
+                        Stationery st = new Stationery();
+                        st = _stationeryRepo.GetById(p.ItemNum);
+                        st.AvailableQty = st.AvailableQty - p.OrderQty;
+                        _stationeryRepo.Update(st);
+                    }
+                }
             }
 
             return PartialView("_ApproveRejectPO");
         }
         //[Authorize(Roles = Role.Supervisor)]
         //[HttpPost]
-        
+
         //public ActionResult DeleteItem(string id)
         //{
 
@@ -505,7 +507,6 @@ namespace LUSSIS.Controllers
                                               + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + gstRate))
                                              / (stationery.CurrentQty + receiveQty);
                     stationery.CurrentQty += receiveQty;
-                    stationery.AvailableQty += receiveQty;
                     _stationeryRepo.Update(stationery);   //persist stationery data here
                 }
                 else if (receiveQty == 0)
@@ -559,7 +560,6 @@ namespace LUSSIS.Controllers
             table.TableName = "PurchaseOrder";
             return table;
         }
-       
     }
 }
 
