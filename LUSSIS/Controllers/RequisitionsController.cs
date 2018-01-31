@@ -18,7 +18,7 @@ using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan, Guo Rui
+    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan
     [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {
@@ -443,7 +443,7 @@ namespace LUSSIS.Controllers
                     req.ApprovalDate = DateTime.Today;
 
 
-                    if (reqApprovalDto.Status == "approved")
+                    if (reqApprovalDto.Status == Approved)
                     {
                         foreach (var requisitionDetail in req.RequisitionDetails)
                         {
@@ -459,8 +459,7 @@ namespace LUSSIS.Controllers
                     var toEmail = req.RequisitionEmployee.EmailAddress;
                     var email = new LUSSISEmail.Builder().From(User.Identity.Name)
                         .To(toEmail).ForRequisitionApproval(req).Build();
-                    var thread = new Thread(delegate () { EmailHelper.SendEmail(email); });
-                    thread.Start();
+                    new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
 
                     return RedirectToAction("Pending");
                 }
