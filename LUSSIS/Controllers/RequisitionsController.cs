@@ -493,7 +493,7 @@ namespace LUSSIS.Controllers
             var itemsToRetrieve = new RetrievalListDTO();
 
             //adding remaining qty from unfulfilled disbursement
-            var unfulfilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetailList().ToList();
+            var unfulfilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetails().ToList();
             var consolidatedUnfulfilledDisbursements = ConsolidateUnfulfilledDisbursements(unfulfilledDisbursementDetails);
             itemsToRetrieve.AddRange(consolidatedUnfulfilledDisbursements);
 
@@ -560,7 +560,7 @@ namespace LUSSIS.Controllers
             
             GenerateDisbursementsWithApprovedRequisitions(disbursements, collectionDate);
 
-            GenerateDisbursementsWithUnfullfilledDisbursements(disbursements, collectionDate);
+            GenerateDisbursementsWithUnfullfilled(disbursements, collectionDate);
 
             //persist to database
             foreach (var d in disbursements)
@@ -606,9 +606,9 @@ namespace LUSSIS.Controllers
         /*
         * helper method step 2
         */
-        private List<Disbursement> GenerateDisbursementsWithUnfullfilledDisbursements(List<Disbursement> targetDisbursementsList, DateTime collectionDate)
+        private List<Disbursement> GenerateDisbursementsWithUnfullfilled(List<Disbursement> targetDisbursementsList, DateTime collectionDate)
         {
-            var unfufilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetailList().ToList();
+            var unfufilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetails().ToList();
             foreach (var ufdDetail in unfufilledDisbursementDetails)
             {
                 //refactor the remaining qty from unfulfilled details into the new disbursement details
