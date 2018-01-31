@@ -287,7 +287,7 @@ namespace LUSSIS.Controllers
                 var email = new LUSSISEmail.Builder().From(User.Identity.Name)
                     .To(headEmail).ForNewRequistion(fullName, requisition, stationerys).Build();
 
-                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                EmailHelper.SendEmail(email);
 
                 return RedirectToAction("MyRequisitions");
             }
@@ -371,7 +371,7 @@ namespace LUSSIS.Controllers
                     var collectionPoint = _collectionRepo.GetById((int) disbursement.CollectionPointId);
                     var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
                         .ForNewDisbursement(disbursement, collectionPoint).Build();
-                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                    EmailHelper.SendEmail(email);
                 }
 
                 return RedirectToAction("RetrievalInProcess");
@@ -603,7 +603,7 @@ namespace LUSSIS.Controllers
                     var email = new LUSSISEmail.Builder().From(User.Identity.Name)
                         .To(toEmail).ForRequisitionApproval(req).Build();
                             
-                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                    EmailHelper.SendEmail(email);
 
                     return PartialView(req);
                 }

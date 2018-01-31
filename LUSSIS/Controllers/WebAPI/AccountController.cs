@@ -93,7 +93,7 @@ namespace LUSSIS.Controllers.WebAPI
                     string subject = "Reset password for " + model.Email;
                     string body = "Please reset your password by clicking <a href=" + callbackUrl + ">here</a>";
                     string to = "minhnhattonthat@gmail.com";
-                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(to,subject,body); }).Start();
+                    EmailHelper.SendEmail(to, subject, body);
                 }
                 catch (Exception e)
                 {
