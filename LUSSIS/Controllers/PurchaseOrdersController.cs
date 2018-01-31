@@ -422,9 +422,9 @@ namespace LUSSIS.Controllers
             {
                 HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
                 String empNum = cookie["EmpNum"];
-                _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE" ? Approved : Rejected, empNum);
-
-                if (status.ToUpper() == "APPROVE")
+                _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE"? Approved : Rejected,empNum);
+                
+                if(status.ToUpper() == "REJECT")
                 {
                     List<PurchaseOrderDetail> pDetail = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
 
@@ -432,7 +432,7 @@ namespace LUSSIS.Controllers
                     {
                         Stationery st = new Stationery();
                         st = _stationeryRepo.GetById(p.ItemNum);
-                        st.AvailableQty = p.OrderQty + st.AvailableQty;
+                        st.AvailableQty = st.AvailableQty - p.OrderQty;
                         _stationeryRepo.Update(st);
                     }
                 }
@@ -507,7 +507,6 @@ namespace LUSSIS.Controllers
                                               + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + gstRate))
                                              / (stationery.CurrentQty + receiveQty);
                     stationery.CurrentQty += receiveQty;
-                    stationery.AvailableQty += receiveQty;
                     _stationeryRepo.Update(stationery);   //persist stationery data here
                 }
                 else if (receiveQty == 0)
