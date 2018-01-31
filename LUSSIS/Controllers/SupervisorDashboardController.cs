@@ -16,6 +16,7 @@ using System.Collections;
 using System.Diagnostics;
 using LUSSIS.Constants;
 using static LUSSIS.Constants.POStatus;
+using static LUSSIS.Constants.DisbursementStatus;
 namespace LUSSIS.Controllers
 {
     //Authors: May Zin Ko Authors: Douglas Lee Kiat Hui
@@ -67,7 +68,6 @@ namespace LUSSIS.Controllers
         {
             List<String> depList = _departmentRepo.GetAllDepartmentCode();
             List<int> catList = _categoryRepo.GetAllCategoryIds();
-
             List<String> fromList = new List<String>();
             List<String> toList = new List<String>();
 
@@ -134,7 +134,7 @@ namespace LUSSIS.Controllers
             //get data
             IEnumerable<Detail> allList;
             if (filter.IsDisburse)
-                allList = _disbursementRepo.GetDisbursementDetailsByStatus("fulfilled")
+                allList = _disbursementRepo.GetAllDisbursementDetails().Where(x=>x.Disbursement.Status!=InProcess)
                     .Select(x => new Detail
                     {
                         Date = x.Disbursement.CollectionDate,

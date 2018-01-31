@@ -29,9 +29,10 @@ namespace LUSSIS.Models
         [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime CreateDate { get; set; }
 
+        
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
-        public DateTime OrderDate { get; set; }
+        public DateTime? OrderDate { get; set; }
 
         [Required]
         [StringLength(20)]

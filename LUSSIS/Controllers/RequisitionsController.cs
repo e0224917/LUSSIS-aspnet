@@ -643,7 +643,7 @@ namespace LUSSIS.Controllers
                 _disbursementRepo.UpdateDisbursementDetail(detail);
             }
             
-            var unfulfilledDisList = _disbursementRepo.GetUnfullfilledDisbursements().ToList();
+            var unfulfilledDisList = _disbursementRepo.GetUnfulfilledDisbursements().ToList();
             foreach (var unfd in unfulfilledDisList)
             {
                 unfd.Status = DisbursementStatus.Fulfilled;
