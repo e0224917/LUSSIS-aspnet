@@ -98,19 +98,6 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements.Any(d => d.Status == InProcess);
         }
 
-      /*  public double GetAmountByDisbursement(Disbursement d)
-        {
-            double result = 0;
-            var detailList = d.DisbursementDetails.ToList();
-            foreach (DisbursementDetail f in detailList)
-            {
-                int qty = f.ActualQty;
-                double unitPrice = f.UnitPrice;
-                result += (qty * unitPrice);
-            }
-
-            return result;
-        }*/
 
         public DisbursementDetail GetDisbursementDetailByIdAndItem(string id, string itemNum)
         {

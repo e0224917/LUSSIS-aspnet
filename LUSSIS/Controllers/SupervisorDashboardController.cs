@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Diagnostics;
 using LUSSIS.Constants;
-
+using static LUSSIS.Constants.POStatus;
 namespace LUSSIS.Controllers
 {
     //Authors: May Zin Ko Authors: Douglas Lee Kiat Hui
@@ -160,7 +160,7 @@ namespace LUSSIS.Controllers
                         Group = x.Disbursement.DeptCode
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);
             else
-                allList = _poRepo.GetPurchaseOrderDetailsByStatus("fulfilled")
+                allList = _poRepo.GetPurchaseOrderDetailsByStatus(Ordered)
                     .Select(x => new Detail
                     {
                         Date = x.PurchaseOrder.CreateDate,

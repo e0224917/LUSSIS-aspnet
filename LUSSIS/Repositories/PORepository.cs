@@ -92,17 +92,15 @@ namespace LUSSIS.Repositories
             foreach (String from in fromList)
             {
                 DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                var q = from t1 in LUSSISContext.ReceiveTrans
-                        join t2 in LUSSISContext.ReceiveTransDetails
-                        on t1.ReceiveId equals t2.ReceiveId
-                        join t3 in LUSSISContext.Stationeries
-                        on t2.ItemNum equals t3.ItemNum
-                        where t1.ReceiveId == t2.ReceiveId
-                        && (t1.ReceiveDate.Month==fromDate.Month && t1.ReceiveDate.Year==fromDate.Year)
+                var q = from t1 in LUSSISContext.PurchaseOrders
+                        join t2 in LUSSISContext.PurchaseOrderDetails
+                        on t1.PoNum equals t2.PoNum
+                        where t1.Status==Ordered
+                        && (t1.OrderDate.Month==fromDate.Month && t1.OrderDate.Year==fromDate.Year)
                         select new
                         {
-                            price = (int)t3.AverageCost,
-                            qty = (double)t2.Quantity
+                            price = (int)t2.UnitPrice,
+                            qty = (double)t2.OrderQty
                         };
 
                 foreach (var a in q)
@@ -139,17 +137,17 @@ namespace LUSSIS.Repositories
                 foreach (String from in fromList)
                 {
                 DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var q = from t1 in LUSSISContext.ReceiveTrans
-                            join t2 in LUSSISContext.ReceiveTransDetails
-                            on t1.ReceiveId equals t2.ReceiveId
+                    var q = from t1 in LUSSISContext.PurchaseOrders
+                            join t2 in LUSSISContext.PurchaseOrderDetails
+                            on t1.PoNum equals t2.PoNum
                             join t3 in LUSSISContext.Stationeries
                             on t2.ItemNum equals t3.ItemNum
                             where t3.CategoryId == catId
-                            && (t1.ReceiveDate.Month==fromDate.Month && t1.ReceiveDate.Year==fromDate.Year)
+                            && (t1.OrderDate.Month==fromDate.Month && t1.OrderDate.Year==fromDate.Year)
                             select new
                             {
-                                price = (int)t3.AverageCost,
-                                Qty = (double)t2.Quantity
+                                price = (int)t2.UnitPrice,
+                                Qty = (double)t2.OrderQty
                             };
 
                     foreach (var a in q)
