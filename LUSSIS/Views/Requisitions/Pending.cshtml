@@ -90,21 +90,29 @@ else
     <script>
         var ApproveReq = function (requisitionId) {
             document.getElementById("ApprovalTitle").textContent = "Approve";
-            var url = "@Url.Content("~/")Requisitions/_ApproveReq?id=" + requisitionId + "&status=approved";
-
-            $("#myApproveModalBodyDiv").load(url,
-                function() {
+            var url = "@Url.Content("~/")Requisitions/ApproveReq?id=" + requisitionId + "&status=approved";
+            $.ajax({
+                type: "GET",
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+                    $("#myApproveModalBodyDiv").html(data);
                     $("#myApproveModal").modal("show");
-                });
+                }
+            });
         }
         var RejectReq = function (requisitionId) {
             document.getElementById("ApprovalTitle").textContent = "Reject";
-            var url = "@Url.Content("~/")Requisitions/_ApproveReq?id=" + requisitionId + "&status=rejected";
-
-            $("#myApproveModalBodyDiv").load(url,
-                function() {
+            var url = "@Url.Content("~/")Requisitions/ApproveReq?id=" + requisitionId + "&status=rejected";
+            $.ajax({
+                type: "GET",
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $("#myApproveModalBodyDiv").html(data);
                     $("#myApproveModal").modal("show");
-                });
+                }
+            });
         }
     </script>
 }
