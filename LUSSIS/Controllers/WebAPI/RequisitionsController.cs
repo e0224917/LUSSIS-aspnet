@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using LUSSIS.Constants;
 using LUSSIS.Emails;
 using LUSSIS.Models;
 using LUSSIS.Models.WebAPI;
@@ -55,21 +56,29 @@ namespace LUSSIS.Controllers.WebAPI
 
         [HttpPost]
         [Route("api/Requisitions/Process")]
-        public async Task<IHttpActionResult> Process([FromBody] RequisitionDTO requisition)
+        public async Task<IHttpActionResult> Process([FromBody]RequisitionDTO requisition)
         {
-            if (requisition.RequisitionEmp.EmpNum == requisition.ApprovalEmp.EmpNum)
+            if (requisition.RequisitionEmpNum == requisition.ApprovalEmpNum)
             {
                 return BadRequest("Employee cannot process its own requisition.");
             }
             try
             {
                 var req = await _requistionRepo.GetByIdAsync(requisition.RequisitionId);
-                req.ApprovalEmpNum = requisition.ApprovalEmp.EmpNum;
+                req.ApprovalEmpNum = requisition.ApprovalEmpNum;
                 req.ApprovalRemarks = requisition.ApprovalRemarks;
                 req.ApprovalDate = DateTime.Today;
                 req.Status = requisition.Status;
 
                 await _requistionRepo.UpdateAsync(req);
+
+                //Send email
+                var toEmail = _employeeRepo.GetById(requisition.RequisitionEmpNum).EmailAddress;
+                var approvalEmail = _employeeRepo.GetById(requisition.ApprovalEmpNum).EmailAddress;
+                var email = new LUSSISEmail.Builder().From(approvalEmail).To(toEmail)
+                    .ForRequisitionApproval(req).Build();
+                new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+
                 return Ok(new {Message = "Updated"});
             }
             catch (Exception e)
@@ -121,11 +130,12 @@ namespace LUSSIS.Controllers.WebAPI
 
         [HttpPost]
         [Route("api/Requisitions/Create")]
-        public IHttpActionResult Create([FromBody] RequisitionDTO requisitionDto)
+        public IHttpActionResult CreateRequisition([FromBody]RequisitionDTO requisitionDto)
         {
-            var empNum = requisitionDto.RequisitionEmp.EmpNum;
-            var isDelegated = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
+            var empNum = requisitionDto.RequisitionEmpNum;
+            var employee = _employeeRepo.GetById(empNum);
 
+            var isDelegated = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
             if (isDelegated) return BadRequest("Delegated staff cannot make request");
 
             var detail = requisitionDto.RequisitionDetails.First();
@@ -138,24 +148,20 @@ namespace LUSSIS.Controllers.WebAPI
 
             var requisition = new Requisition()
             {
-                RequisitionEmpNum = requisitionDto.RequisitionEmp.EmpNum,
-                DeptCode = requisitionDto.RequisitionEmp.DeptCode,
+                RequisitionEmpNum = requisitionDto.RequisitionEmpNum,
+                DeptCode = employee.DeptCode,
                 RequestRemarks = requisitionDto.RequestRemarks,
                 RequisitionDate = DateTime.Today,
-                Status = "inprogress",
+                Status = RequisitionStatus.Pending,
                 RequisitionDetails = new List<RequisitionDetail>() {requisitionDetail}
             };
-
             _requistionRepo.Add(requisition);
 
             //Send email on new thread
-            var fullName = requisitionDto.RequisitionEmp.FirstName + " " + requisitionDto.RequisitionEmp.LastName;
-
-            var headEmail = _employeeRepo.GetDepartmentHead(requisitionDto.RequisitionEmp.DeptCode);
-            var email = new LUSSISEmail.Builder().From(headEmail).To(requisitionDto.RequisitionEmp.EmailAddress)
-                .ForNewRequistion(fullName, requisition).Build();
-            var thread = new Thread(delegate () { EmailHelper.SendEmail(email); });
-            thread.Start();
+            var headEmail = _employeeRepo.GetDepartmentHead(employee.DeptCode);
+            var email = new LUSSISEmail.Builder().From(headEmail).To(employee.EmailAddress)
+                .ForNewRequistion(employee.FullName, requisition).Build();
+            new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
 
             return Ok(new {Message = "Requisition created"});
         }

@@ -15,6 +15,8 @@ namespace LUSSIS.Controllers.WebAPI
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
 
         // GET: api/Stationeries
+        [HttpGet]
+        [Route("api/Stationeries")]
         public IEnumerable<StationeryDTO> GetStationeries()
         {
             return _stationeryRepo.GetAll().Select(item => new StationeryDTO()
@@ -32,6 +34,8 @@ namespace LUSSIS.Controllers.WebAPI
         }
 
         // GET: api/Stationeries/C001
+        [HttpGet]
+        [Route("api/Stationeries/{id}")]
         [ResponseType(typeof(StationeryDTO))]
         public async Task<IHttpActionResult> GetStationery(string id)
         {
@@ -57,6 +61,8 @@ namespace LUSSIS.Controllers.WebAPI
         }
 
         // PUT: api/Stationeries/C001
+        [HttpPut]
+        [Route("api/Stationeries/{id}")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutStationery(string id, StationeryDTO stationery)
         {

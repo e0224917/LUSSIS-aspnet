@@ -8,11 +8,15 @@ namespace LUSSIS.Models.WebAPI
     {
         public int RequisitionId { get; set; }
 
+        public int RequisitionEmpNum { get; set; }
+
         public EmployeeDTO RequisitionEmp { get; set; }
 
         public DateTime RequisitionDate { get; set; }
 
         public string RequestRemarks { get; set; }
+
+        public int ApprovalEmpNum { get; set; }
 
         public EmployeeDTO ApprovalEmp { get; set; }
 

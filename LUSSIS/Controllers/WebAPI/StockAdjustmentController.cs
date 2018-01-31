@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
+using LUSSIS.Constants;
 using LUSSIS.Models;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
@@ -24,7 +25,7 @@ namespace LUSSIS.Controllers.WebAPI
                 CreateDate = DateTime.Today,
                 Quantity = adjustment.Quantity,
                 Reason = adjustment.Reason,
-                Status = "pending",
+                Status = AdjustmentVoucherStatus.Pending,
                 RequestEmpNum = adjustment.RequestEmpNum
             };
 
