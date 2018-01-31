@@ -97,20 +97,5 @@ namespace LUSSIS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Requisition> Requisitions1 { get; set; }
 
-        public EmployeeDTO ToApiDTO()
-        {
-            return new EmployeeDTO()
-            {
-                DeptCode = DeptCode,
-                DeptName = Department.DeptName,
-                EmailAddress = EmailAddress,
-                EmpNum = EmpNum,
-                FirstName = FirstName,
-                IsDelegated = false,
-                JobTitle = JobTitle,
-                LastName = LastName,
-                Title = Title
-            };
-        }
     }
 }

@@ -11,6 +11,11 @@ namespace LUSSIS.Repositories
     //Authors: Koh Meng Guan
     public class StationeryRepository : Repository<Stationery, string>, IStationeryRepository
     {
+        /// <summary>
+        /// Method to generate the next item number for stationery
+        /// </summary>
+        /// <param name="initial"></param>
+        /// <returns></returns>
         public int GetLastRunningPlusOne(string initial)
         {
             List<Stationery> st = LUSSISContext.Stationeries.Where(x => x.ItemNum.StartsWith(initial)).ToList();
@@ -23,11 +28,11 @@ namespace LUSSIS.Repositories
             return (runningNum.Last() + 1);
         }
 
-
         public IEnumerable<Stationery> GetByCategory(string category)
         {
             return LUSSISContext.Stationeries.Where(s => s.Category.CategoryName == category);
         }
+
         public IEnumerable<Stationery> GetByDescription(string Description)
         {
             return LUSSISContext.Stationeries.Where(s => s.Description.Contains(Description));
@@ -45,9 +50,8 @@ namespace LUSSIS.Repositories
                     on t1.ItemNum equals t2.ItemNum
                     where t2.Supplier.SupplierId == id
                     select t1;
-            return q.AsEnumerable<Stationery>();
+            return q.AsEnumerable();
         }
-
 
         public Dictionary<Supplier, List<Stationery>> GetOutstandingStationeryByAllSupplier()
         {
@@ -76,6 +80,7 @@ namespace LUSSIS.Repositories
             }
             return dic;
         }
+
         public List<String> GetItembyCategory(int c)
         {
             return GetAll().Where(x => x.CategoryId == c).Select(x => x.ItemNum).ToList();

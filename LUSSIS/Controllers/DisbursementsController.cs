@@ -112,9 +112,9 @@ namespace LUSSIS.Controllers
 
             if (ModelState.IsValid)
             { 
-                //Disbursement d = disbursementDTO.CurrentDisbursement;
-                var disbursementId = disbursementDTO.CurrentDisbursement.DisbursementId;
-                var disbursement = _disbursementRepo.GetById(disbursementId);
+                var disbursement = _disbursementRepo.GetById(disbursementDTO.CurrentDisbursement.DisbursementId);
+
+                //set the actual qty of its detail list items to the updated qty, and update it in database
                 foreach (var disbursementDetail in disbursement.DisbursementDetails)
                 {
                     disbursementDetail.ActualQty = disbursementDTO.DisDetailList
@@ -125,6 +125,7 @@ namespace LUSSIS.Controllers
 
                 switch (update)
                 {
+                    //confirm items disbursed and update stationery qty
                     case "Acknowledge Manually":
                         _disbursementRepo.Acknowledge(disbursement);
                         foreach (var dd in disbursement.DisbursementDetails)
@@ -134,6 +135,8 @@ namespace LUSSIS.Controllers
                             _stationeryRepo.Update(stationery);
                         }
                         return RedirectToAction("Upcoming");
+                    
+                    //only updates actual qty and leave changing status and deduct stock qty to WebAPI
                     case "Generate QR Code":
                         break;
                 }
@@ -199,6 +202,9 @@ namespace LUSSIS.Controllers
             if (disposing)
             {
                 _disbursementRepo.Dispose();
+                _collectionRepo.Dispose();
+                _employeeRepo.Dispose();
+                _stationeryRepo.Dispose();
             }
 
             base.Dispose(disposing);

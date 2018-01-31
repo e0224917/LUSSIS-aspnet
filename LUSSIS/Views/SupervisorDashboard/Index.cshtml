@@ -168,17 +168,7 @@
 
 @section scripts
 {
-    @*<script>
-            window.onload = function ()
-            {
-            if ((@User.IsInRole(Role.Supervisor)).ToLower()) {
-                document.getElementById("notShowManager").style.display = "block";
-            } else {
-                document.getElementById("notShowManager").style.display = "none";
-            }
-        }
-        </script>*@
-
+   
     @Scripts.Render("https://www.gstatic.com/charts/loader.js")
 
     <script type="text/javascript">

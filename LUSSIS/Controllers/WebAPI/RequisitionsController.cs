@@ -29,7 +29,7 @@ namespace LUSSIS.Controllers.WebAPI
             var result = list.Select(item => new RequisitionDTO()
             {
                 RequisitionId = item.RequisitionId,
-                RequisitionEmp = item.RequisitionEmployee.ToApiDTO(),
+                RequisitionEmp = new EmployeeDTO(item.RequisitionEmployee),
                 RequisitionDate = item.RequisitionDate,
                 ApprovalEmp = null,
                 ApprovalRemarks = item.ApprovalRemarks ?? "",
@@ -85,11 +85,11 @@ namespace LUSSIS.Controllers.WebAPI
             var req = _requistionRepo.GetRequisitionsByEmpNum(empnum);
             var result = req.Select(item => new RequisitionDTO()
             {
-                ApprovalEmp = item.ApprovalEmployee.ToApiDTO(),
+                ApprovalEmp = item.ApprovalEmployee != null ? new EmployeeDTO(item.ApprovalEmployee) : null,
                 ApprovalRemarks = item.ApprovalRemarks,
                 RequestRemarks = item.RequestRemarks,
                 RequisitionDate = item.RequisitionDate,
-                RequisitionEmp = item.RequisitionEmployee.ToApiDTO(),
+                RequisitionEmp = new EmployeeDTO(item.RequisitionEmployee),
                 RequisitionId = item.RequisitionId,
                 Status = item.Status,
                 RequisitionDetails = item.RequisitionDetails.Select(detail => new RequisitionDetailDTO()
