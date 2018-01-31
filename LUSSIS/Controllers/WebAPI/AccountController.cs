@@ -44,7 +44,7 @@ namespace LUSSIS.Controllers.WebAPI
 
                 var isDelegated = false;
 
-                if (emp.JobTitle.Equals(Constants.Role.Staff))
+                if (emp.JobTitle.Equals(Role.Staff))
                 {
                     isDelegated = _delegateRepo.FindCurrentByEmpNum(emp.EmpNum) != null;
                 }
@@ -92,7 +92,7 @@ namespace LUSSIS.Controllers.WebAPI
 
                     string subject = "Reset password for " + model.Email;
                     string body = "Please reset your password by clicking <a href=" + callbackUrl + ">here</a>";
-                    string to = "minhnhattonthat@gmail.com";
+                    string to = model.Email;
                     new System.Threading.Thread(delegate () { EmailHelper.SendEmail(to,subject,body); }).Start();
                 }
                 catch (Exception e)

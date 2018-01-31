@@ -43,7 +43,7 @@ namespace LUSSIS.Controllers
             var dash = new SupervisorDashboardDTO
             {
                 PendingPOTotalAmount = _poRepo.GetPendingPOTotalAmount(),
-                PendingPOCount = _poRepo.GetPendingPOCount(),
+                PendingPOCount = _poRepo.GetPendingApprovalPO().Count,
                 POTotalAmount = _poRepo.GetPOTotalAmount(fromList),
                 PendingStockAdjAddQty = totalAddAdjustmentQty,
                 PendingStockAdjSubtractQty = totalSubtractAdjustmentQty,
@@ -76,8 +76,6 @@ namespace LUSSIS.Controllers
             return Json(new { firstList = deptNames, secondList = deptValues },
                 JsonRequestBehavior.AllowGet);
         }
-
-
 
         public JsonResult GetReportJSON(String supplier_values, String category_values, String date)
         {
@@ -129,23 +127,6 @@ namespace LUSSIS.Controllers
 
         }
 
-    protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _poRepo.Dispose();
-                _stockAdjustmentRepo.Dispose();
-                _stationeryRepo.Dispose();
-                _employeeRepo.Dispose();
-                _departmentRepo.Dispose();
-                _categoryRepo.Dispose();
-                _supplierRepo.Dispose();
-                _disbursementRepo.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
         [Authorize(Roles = "manager,supervisor")]
         public ActionResult TrendAnalysis()
         {
@@ -155,6 +136,7 @@ namespace LUSSIS.Controllers
 
             return View();
         }
+
         public ActionResult ReturnJsonData()
         {
             //get post results from ajax
@@ -256,7 +238,24 @@ namespace LUSSIS.Controllers
             return Json(new { arr, arr1, arrTotal }, JsonRequestBehavior.AllowGet);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _poRepo.Dispose();
+                _stockAdjustmentRepo.Dispose();
+                _stationeryRepo.Dispose();
+                _employeeRepo.Dispose();
+                _departmentRepo.Dispose();
+                _categoryRepo.Dispose();
+                _supplierRepo.Dispose();
+                _disbursementRepo.Dispose();
+            }
 
+            base.Dispose(disposing);
+        }
+
+        #region Helpers
         public class AjaxInputFilter
         {
             public AjaxInputFilter(string input)
@@ -327,7 +326,7 @@ namespace LUSSIS.Controllers
                 return list.Where(x => x.Date.ToString("yyyyMM") == yyyymm);
             }
         }
-
+        #endregion
     }
 
 }

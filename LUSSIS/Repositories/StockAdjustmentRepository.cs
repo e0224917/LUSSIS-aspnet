@@ -15,6 +15,7 @@ namespace LUSSIS.Repositories
         {
             return GetAll().Where(x => x.Status == AdjustmentVoucherStatus.Pending).ToList();
         }
+
         public int GetPendingAdjustmentCount()
         {
             return GetAll().Where(x => x.Status == AdjustmentVoucherStatus.Pending).ToList().Count;

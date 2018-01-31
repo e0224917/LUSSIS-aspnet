@@ -87,8 +87,7 @@ namespace LUSSIS.Controllers.WebAPI
             var headEmail = _employeeRepo.GetDepartmentHead(delegateDto.Employee.DeptCode);
             var email = new LUSSISEmail.Builder().From(headEmail).To(delegateDto.Employee.EmailAddress)
                 .ForOldDelegate().Build();
-            var thread = new Thread(delegate() { EmailHelper.SendEmail(email); });
-            thread.Start();
+            new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 
             return Ok(new {Message = "Delegate has been revoked"});
         }

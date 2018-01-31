@@ -21,6 +21,12 @@ namespace LUSSIS.Repositories
             return list;
         }
 
+        /// <summary>
+        /// Return results for search box
+        /// </summary>
+        /// <param name="term"></param>
+        /// <param name="deptCode"></param>
+        /// <returns></returns>
         public IEnumerable<Requisition> FindRequisitionsByDeptCodeAndText(string term, string deptCode)
         {
             return LUSSISContext.Requisitions
@@ -57,10 +63,15 @@ namespace LUSSIS.Repositories
             return stationery;
         }
 
+        /// <summary>
+        /// Return the list of all pending requisitions in a department
+        /// </summary>
+        /// <param name="deptCode"></param>
+        /// <returns></returns>
         public IEnumerable<Requisition> GetPendingListForHead(string deptCode)
         {
             var list = LUSSISContext.Requisitions
-                .Where(r => r.DeptCode == deptCode && r.Status == POStatus.Pending).ToList();
+                .Where(r => r.DeptCode == deptCode && r.Status == RequisitionStatus.Pending).ToList();
             list.Reverse();
             return list;
         }

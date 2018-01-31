@@ -52,7 +52,7 @@ namespace LUSSIS.Repositories
         }
 
         /// <summary>
-        /// /for supervisoer' dashboard
+        /// /for supervisor's dashboard
         /// </summary>
         /// <returns></returns>
         public double GetDisbursementTotalAmount(List<String>fromList)

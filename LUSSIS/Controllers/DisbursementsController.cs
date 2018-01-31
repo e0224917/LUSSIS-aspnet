@@ -199,6 +199,9 @@ namespace LUSSIS.Controllers
             if (disposing)
             {
                 _disbursementRepo.Dispose();
+                _collectionRepo.Dispose();
+                _employeeRepo.Dispose();
+                _stationeryRepo.Dispose();
             }
 
             base.Dispose(disposing);
