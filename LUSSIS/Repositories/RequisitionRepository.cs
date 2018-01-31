@@ -49,10 +49,12 @@ namespace LUSSIS.Repositories
             return LUSSISContext.RequisitionDetails.Where(s => s.RequisitionId == requisitionId);
         }
 
-        public void AddRequisitionDetail(RequisitionDetail requisitionDetail)
+        public Stationery AddRequisitionDetail(RequisitionDetail requisitionDetail)
         {
-            LUSSISContext.Set<RequisitionDetail>().Add(requisitionDetail);
+            LUSSISContext.Set<RequisitionDetail>().Include("Stationery");
+            var stationery = LUSSISContext.Set<RequisitionDetail>().Add(requisitionDetail).Stationery;
             LUSSISContext.SaveChanges();
+            return stationery;
         }
 
         public IEnumerable<Requisition> GetPendingListForHead(string deptCode)

@@ -119,7 +119,7 @@ namespace LUSSIS.Controllers
                 for (int i = 0; i <depList.Count; i++)
                 {
 
-                    temp = _disbursementRepo.GetDisAmountByDate(depList[i], catList, fromList[j]);
+                    temp = _disbursementRepo.GetDisAmountByDep(depList[i], catList, fromList[j]);
                     xvalue.Add(temp);
                 }
                 rto.xvalue = xvalue;
