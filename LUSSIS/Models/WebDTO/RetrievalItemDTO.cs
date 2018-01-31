@@ -6,7 +6,7 @@ using System.Web;
 namespace LUSSIS.Models.WebDTO
 {
     /*
-    *Same item from requisition detai table become ONE object of this class. 
+    *Same item from requisition details table become ONE object of this class. 
     *this DTO is used to facilitate retrieval
     */
     public class RetrievalListDTO

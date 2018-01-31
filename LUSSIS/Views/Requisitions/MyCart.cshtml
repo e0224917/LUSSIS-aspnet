@@ -83,7 +83,7 @@ else
 @section scripts {
     <script type="text/javascript">
         $(function () {
-            $("#btn-remove").click(function () {
+            $(".RemoveLink").click(function () {
                 // Get the id from the link
                 var stationeryToDelete = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
@@ -97,7 +97,7 @@ else
             });
         });
         $(function () {
-            $("#btn-update").click(function ()
+            $(".UpdateLink").click(function ()
             {
                 var stationeryToUpdate = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
