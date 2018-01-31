@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Constants;
@@ -31,6 +30,10 @@ namespace LUSSIS.Controllers
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
         private readonly CollectionRepository _collectionRepo = new CollectionRepository();
 
+
+        /// <summary>
+        /// Return true if a department has available delegate, including in the future.
+        /// </summary>
         private bool HasDelegate
         {
             get
@@ -41,6 +44,9 @@ namespace LUSSIS.Controllers
             }
         }
 
+        /// <summary>
+        /// Return true if the employee is delegated, including in the future.
+        /// </summary>
         private bool IsDelegate
         {
             get
@@ -278,8 +284,7 @@ namespace LUSSIS.Controllers
                 var headEmail = _employeeRepo.GetDepartmentHead(deptCode).EmailAddress;
                 var email = new LUSSISEmail.Builder().From(User.Identity.Name)
                     .To(headEmail).ForNewRequistion(fullName, requisition).Build();
-                var thread = new Thread(delegate() { EmailHelper.SendEmail(email); });
-                thread.Start();
+                new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 
                 return RedirectToAction("MyRequisitions");
             }

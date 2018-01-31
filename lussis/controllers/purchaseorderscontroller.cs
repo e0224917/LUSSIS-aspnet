@@ -105,16 +105,14 @@ namespace LUSSIS.Controllers
 
             //get supplier
             var supplier = _supplierRepo.GetById(Convert.ToInt32(supplierId));
-
-            //create view model
             var po = new PurchaseOrderDTO()
-            {
+            {   //view model
                 Supplier = supplier,
                 SupplierId = supplier.SupplierId,
                 CreateDate = DateTime.Today,
                 SupplierAddress = supplier.Address1 + Environment.NewLine
-                                + supplier.Address2 + Environment.NewLine
-                                + supplier.Address3,
+                    + supplier.Address2 + Environment.NewLine
+                    + supplier.Address3,
                 SupplierContact = supplier.ContactName
             };
 
@@ -135,14 +133,13 @@ namespace LUSSIS.Controllers
                 {
                     foreach (Stationery stationery in kvp.Value)
                     {
-                        po.PurchaseOrderDetailsDTO.Add(new PurchaseOrderDetailDTO()
-                        {
-                            OrderQty =
-                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
-                                Convert.ToInt32(stationery.ReorderQty)),
-                            UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId)),
-                            ItemNum = stationery.ItemNum
-                        });
+                        PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
+                        pdetails.OrderQty =
+                                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
+                                                Convert.ToInt32(stationery.ReorderQty));
+                        pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
+                        pdetails.ItemNum = stationery.ItemNum;
+                        po.PurchaseOrderDetailsDTO.Add(pdetails);
                     }
                     break;
                 }
@@ -422,9 +419,9 @@ namespace LUSSIS.Controllers
             {
                 HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
                 String empNum = cookie["EmpNum"];
-                _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE"? Approved : Rejected,empNum);
-                
-                if(status.ToUpper() == "REJECT")
+                _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE" ? Approved : Rejected, empNum);
+
+                if (status.ToUpper() == "APPROVE")
                 {
                     List<PurchaseOrderDetail> pDetail = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
 
@@ -432,7 +429,7 @@ namespace LUSSIS.Controllers
                     {
                         Stationery st = new Stationery();
                         st = _stationeryRepo.GetById(p.ItemNum);
-                        st.AvailableQty = st.AvailableQty - p.OrderQty;
+                        st.AvailableQty = p.OrderQty + st.AvailableQty;
                         _stationeryRepo.Update(st);
                     }
                 }
@@ -507,6 +504,7 @@ namespace LUSSIS.Controllers
                                               + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + gstRate))
                                              / (stationery.CurrentQty + receiveQty);
                     stationery.CurrentQty += receiveQty;
+                    stationery.AvailableQty += receiveQty;
                     _stationeryRepo.Update(stationery);   //persist stationery data here
                 }
                 else if (receiveQty == 0)
