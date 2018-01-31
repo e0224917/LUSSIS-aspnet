@@ -35,8 +35,8 @@ namespace LUSSIS.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = User.IsInRole(Role.Supervisor) ? Role.Supervisor : Role.Manager;
-            var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add").Count;
-            var totalSubtractAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract").Count;
+            var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add",ViewBag.Message).Count;
+            var totalSubtractAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract",ViewBag.Message).Count;
             List<String> fromList = new List<String>();
             fromList.Add(DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy"));
             fromList.Add(DateTime.Now.AddMonths(-2).ToString("dd/MM/yyyy"));
