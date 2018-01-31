@@ -80,5 +80,12 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == itemNum && x.Status == AdjustmentVoucherStatus.Approved);
         }
+
+       public Stationery AddStockAdjustment(AdjVoucher adjVoucher)
+        {
+            LUSSISContext.Set<AdjVoucher>().Add(adjVoucher);
+            LUSSISContext.SaveChanges();
+            return LUSSISContext.Set<Stationery>().Find(adjVoucher.ItemNum);
+        }
     }
 }
