@@ -49,7 +49,8 @@ namespace LUSSIS.Controllers
                 PendingStockAdjAddQty = totalAddAdjustmentQty,
                 PendingStockAdjSubtractQty = totalSubtractAdjustmentQty,
                 PendingStockAdjCount = _stockAdjustmentRepo.GetPendingAdjustmentList().Count,
-                TotalDisbursementAmount = _disbursementRepo.GetDisbursementTotalAmount(fromList)
+                TotalDisbursementAmount = _disbursementRepo.GetDisbursementTotalAmount(fromList),
+                GetPendingAdjustmentByRole = _stockAdjustmentRepo.GetPendingAdjustmentByRole(ViewBag.Message).Count
             };
 
             return View(dash);

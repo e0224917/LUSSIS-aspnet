@@ -19,19 +19,43 @@
                 }
                 else
                 {
+                    
                     <table class="table mt-3">
                         <tr>
-                            <th><small>No. of requests&nbsp;&nbsp;&nbsp;</small> @Model.PendingStockAdjCount </th>
+                            <th>
+                                <small>No. of requests&nbsp;&nbsp;&nbsp;</small>
+                                @Model.GetPendingAdjustmentByRole
+                            </th>
                         </tr>
 
                         <tr>
                             <td>
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-6">
-                                        <h3 class="mt-2 mb-0 text-muted">+ @Model.PendingStockAdjAddQty</h3>
+                                        <h3 class="mt-2 mb-0 text-muted">
+                                            +
+                                            @if(Model.GetPendingAdjustmentByRole == 0)
+                                            {
+                                               <text>0</text>
+                                            }
+                                            else
+                                            {
+                                                 @Model.PendingStockAdjAddQty
+                                            }
+                                        </h3>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6">
-                                        <h3 class="mt-2 mb-0 text-muted">- @Model.PendingStockAdjSubtractQty</h3>
+                                        <h3 class="mt-2 mb-0 text-muted">
+                                            -
+                                            @if (Model.GetPendingAdjustmentByRole == 0)
+                                            {
+                                                <text>0</text>
+                                            }
+                                            else
+                                            {
+                                                @Model.PendingStockAdjSubtractQty
+                                            }
+                                        </h3>
                                     </div>
                                 </div>
                             </td>
