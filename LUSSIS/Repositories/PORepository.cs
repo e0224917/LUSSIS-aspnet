@@ -158,7 +158,10 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.PurchaseOrderDetails.ToList();
         }
-
+        public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsById(int id)
+        {
+            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.PoNum == id);
+        }
 
 
     }
