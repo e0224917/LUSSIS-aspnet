@@ -7,7 +7,7 @@
 <h2>Pending Requisition</h2>
 <hr />
 
-@if (!@Model.Any() || @Model == null)
+@if (!Model.Any() || Model == null)
 {
 <div class="alert alert-dismissible alert-info">
     <br />
@@ -88,18 +88,18 @@ else
 @section scripts
 {
     <script>
-        var ApproveReq = function (RequisitionId) {
+        var ApproveReq = function (requisitionId) {
             document.getElementById("ApprovalTitle").textContent = "Approve";
-            var url = "@Url.Content("~/")Requisitions/_ApproveReq?Id=" + RequisitionId + "&Status=approved";
+            var url = "@Url.Content("~/")Requisitions/_ApproveReq?id=" + requisitionId + "&status=approved";
 
             $("#myApproveModalBodyDiv").load(url,
                 function() {
                     $("#myApproveModal").modal("show");
                 });
         }
-        var RejectReq = function (RequisitionId) {
+        var RejectReq = function (requisitionId) {
             document.getElementById("ApprovalTitle").textContent = "Reject";
-            var url = "@Url.Content("~/")Requisitions/_ApproveReq?Id=" + RequisitionId + "&Status=rejected";
+            var url = "@Url.Content("~/")Requisitions/_ApproveReq?id=" + requisitionId + "&status=rejected";
 
             $("#myApproveModalBodyDiv").load(url,
                 function() {

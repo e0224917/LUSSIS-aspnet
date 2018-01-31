@@ -42,29 +42,6 @@ namespace LUSSIS.Emails
         {
             SendEmail(email.FromEmail, email.Subject, email.Body);
         }
-
-        public static async Task SendEmailAsync(string destinationEmail, string subject, string body)
-        {
-            var client = new SmtpClient("smtp.gmail.com", 587)
-            {
-                Credentials = new System.Net.NetworkCredential(@"sa45team7@gmail.com", "Password!123"),
-                EnableSsl = true
-            };
-            var mm = new MailMessage("sa45team7@gmail.com", destinationEmail)
-            {
-                Subject = subject,
-                Body = body
-            };
-            await client.SendMailAsync(mm);
-        }
-        public static async Task SendEmailAsync(LUSSISEmail email)
-        {
-            await SendEmailAsync(email.FromEmail, email.Subject, email.Body);
-        }
-        public static async void SendEmailAsync(string subject, string body)
-        {
-            await SendEmailAsync("sa45team7@gmail.com", subject, body);
-        }
     }
 
     public class LUSSISEmail
@@ -249,6 +226,26 @@ namespace LUSSIS.Emails
                     body.AppendLine(stationery?.Description.PadRight(30, ' ') + "\t\t" +
                                     stationery?.UnitOfMeasure.PadRight(30, ' ') +
                             "\t\t" + detail.Quantity.ToString().PadRight(30, ' '));
+                }
+
+                Body = body.ToString();
+                return this;
+            }
+
+            public Builder ForNewRequistion(string fullName, Requisition requisition)
+            {
+                Subject = "New requisition from" + fullName;
+
+                var body = new StringBuilder();
+                body.AppendLine("Description".PadRight(30, ' ') + "\t\t" + "UOM".PadRight(30, ' ') + "\t\t" +
+                                "Quantity".PadRight(30, ' '));
+                foreach (var detail in requisition.RequisitionDetails)
+                {
+                    var stationery = detail.Stationery;
+
+                    body.AppendLine(stationery?.Description.PadRight(30, ' ') + "\t\t" +
+                                    stationery?.UnitOfMeasure.PadRight(30, ' ') +
+                                    "\t\t" + detail.Quantity.ToString().PadRight(30, ' '));
                 }
 
                 Body = body.ToString();
