@@ -32,11 +32,6 @@ namespace LUSSIS.Repositories
             var list = GetAll().Where(x => x.Status.ToUpper() == status.ToUpper());
             return list.ToList();
         }
-
-        public int GetPendingPOCount()
-        {
-            return GetPendingApprovalPO().Count;
-        }
         
         public List<PendingPurchaseOrderDTO> GetPendingApprovalPODTO()
         {

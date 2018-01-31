@@ -24,6 +24,7 @@ namespace LUSSIS.Emails
                 EnableSsl = true
             };
 
+            destinationEmail = "sa45team7@gmail.com";
             var mm = new MailMessage("sa45team7@gmail.com", destinationEmail)
             {
                 Subject = subject,
@@ -50,7 +51,12 @@ namespace LUSSIS.Emails
         public string Body { get; }
         public string FromEmail { get; }
         public string ToEmail { get; }
-
+        
+        /// <summary>
+        /// Builder class to make an email. 
+        /// Should include three methods: From(), To() and For...(), 
+        /// then Build() to create a LUSSISEmail object.
+        /// </summary>
         public class Builder
         {
             public string Subject { get; private set; }
@@ -211,27 +217,7 @@ namespace LUSSIS.Emails
                 Body = body.ToString();
                 return this;
             }
-
-            public Builder ForNewRequistion(string fullName, Requisition requisition, List<Stationery> stationerys)
-            {
-                Subject = "New requisition from" + fullName;
-
-                var body = new StringBuilder();
-                body.AppendLine("Description".PadRight(30, ' ') + "\t\t" + "UOM".PadRight(30, ' ') + "\t\t" +
-                              "Quantity".PadRight(30, ' '));
-                foreach (var detail in requisition.RequisitionDetails)
-                {
-                    var stationery = stationerys.SingleOrDefault(s => s.ItemNum == detail.ItemNum);
-
-                    body.AppendLine(stationery?.Description.PadRight(30, ' ') + "\t\t" +
-                                    stationery?.UnitOfMeasure.PadRight(30, ' ') +
-                            "\t\t" + detail.Quantity.ToString().PadRight(30, ' '));
-                }
-
-                Body = body.ToString();
-                return this;
-            }
-
+            
             public Builder ForNewRequistion(string fullName, Requisition requisition)
             {
                 Subject = "New requisition from" + fullName;
@@ -318,9 +304,13 @@ namespace LUSSIS.Emails
 
         private LUSSISEmail(Builder builder)
         {
+            if (string.IsNullOrEmpty(builder.FromEmail)) throw new MissingFieldException();
             FromEmail = builder.FromEmail;
+            if (string.IsNullOrEmpty(builder.ToEmail)) throw new MissingFieldException();
             ToEmail = builder.ToEmail;
+            if (string.IsNullOrEmpty(builder.Subject)) throw new MissingFieldException();
             Subject = builder.Subject;
+            if (string.IsNullOrEmpty(builder.Body)) throw new MissingFieldException();
             Body = builder.Body;
         }
     }

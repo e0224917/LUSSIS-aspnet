@@ -11,6 +11,11 @@ namespace LUSSIS.Repositories
     //Authors: Koh Meng Guan
     public class StationeryRepository : Repository<Stationery, string>, IStationeryRepository
     {
+        /// <summary>
+        /// Method to generate the next item number for stationery
+        /// </summary>
+        /// <param name="initial"></param>
+        /// <returns></returns>
         public int GetLastRunningPlusOne(string initial)
         {
             List<Stationery> st = LUSSISContext.Stationeries.Where(x => x.ItemNum.StartsWith(initial)).ToList();
@@ -23,11 +28,11 @@ namespace LUSSIS.Repositories
             return (runningNum.Last() + 1);
         }
 
-
         public IEnumerable<Stationery> GetByCategory(string category)
         {
             return LUSSISContext.Stationeries.Where(s => s.Category.CategoryName == category);
         }
+
         public IEnumerable<Stationery> GetByDescription(string Description)
         {
             return LUSSISContext.Stationeries.Where(s => s.Description.Contains(Description));
@@ -45,32 +50,22 @@ namespace LUSSIS.Repositories
                     on t1.ItemNum equals t2.ItemNum
                     where t2.Supplier.SupplierId == id
                     select t1;
-            return q.AsEnumerable<Stationery>();
+            return q.AsEnumerable();
         }
-
 
         public Dictionary<Supplier, List<Stationery>> GetOutstandingStationeryByAllSupplier()
         {
             Dictionary<Supplier, List<Stationery>> dic = new Dictionary<Supplier, List<Stationery>>();
 
 
-            //get qty of PO not approved yet
-            var pendingQty = LUSSISContext.PurchaseOrderDetails
-                .Where(x => x.PurchaseOrder.Status == "pending")
-                .GroupBy(x=>x.ItemNum)
-                .ToDictionary(x=>x.Key,x=> x.Sum(y => y.OrderQty));
-
             //get list of pending PO stationery and qty
-            List<Stationery> slist = GetAll().Where(x => x.AvailableQty + (pendingQty.ContainsKey(x.ItemNum)?pendingQty[x.ItemNum]:0) < x.ReorderLevel).ToList();
+            List<Stationery> slist = GetAll().Where(x => x.AvailableQty < x.ReorderLevel).ToList();
 
             //fill dictionary
             if (slist != null)
             {
                 foreach (Stationery s in slist)
                 {
-                    //i am using current qty here to pass to purchase order create method
-                    //do NOT show to user or persist this currentqty into the database
-                    s.CurrentQty = s.AvailableQty + (pendingQty.ContainsKey(s.ItemNum) ? pendingQty[s.ItemNum] : 0);
                     Supplier primarySupplier = s.PrimarySupplier();
                     if (dic.ContainsKey(primarySupplier))
                     {
@@ -85,6 +80,7 @@ namespace LUSSIS.Repositories
             }
             return dic;
         }
+
         public List<String> GetItembyCategory(int c)
         {
             return GetAll().Where(x => x.CategoryId == c).Select(x => x.ItemNum).ToList();
