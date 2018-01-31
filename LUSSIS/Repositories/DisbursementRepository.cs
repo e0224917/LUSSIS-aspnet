@@ -44,7 +44,7 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements.Where(x => x.Status == status);
         }
 
-        public IEnumerable<DisbursementDetail> GetUnfulfilledDisbursementDetailList()
+        public IEnumerable<DisbursementDetail> GetUnfulfilledDisbursementDetails()
         {
             return LUSSISContext.DisbursementDetails.Where(d =>
                     d.Disbursement.Status == Unfulfilled && d.RequestedQty - d.ActualQty > 0)

@@ -88,8 +88,6 @@ namespace LUSSIS.Controllers
             //catch error from redirect (from POST) and display back into page
             ViewBag.Error = error;
 
-            var po = new PurchaseOrderDTO(); //view model
-
             if (supplierId == null) //allow user to select supplier if non is chosen yet
             {
                 var emptySupplier = new Supplier
@@ -127,8 +125,8 @@ namespace LUSSIS.Controllers
                 AverageCost = 0.00
             };
 
+
             //get list of recommended for purchase stationery and put in purchase order details
-            List<Stationery> sList;
             foreach (KeyValuePair<Supplier, List<Stationery>> kvp in _stationeryRepo.GetOutstandingStationeryByAllSupplier())
             {
                 if (kvp.Key.SupplierId == supplierId)
@@ -213,22 +211,13 @@ namespace LUSSIS.Controllers
                 //create PO
                 purchaseOrderDto.CreatePurchaseOrder(out var purchaseOrder);
 
-                //save to database po and the updated available qty
-                _poRepo.Add(purchaseOrder);
-                foreach (PurchaseOrderDetail pdetail in purchaseOrder.PurchaseOrderDetails)
-                {
-                    Stationery stationery = _stationeryRepo.GetById(pdetail.ItemNum);
-                    stationery.AvailableQty += pdetail.OrderQty;
-                    _stationeryRepo.Update(stationery);
-                }
-
                 //send email to supervisor
                 var supervisorEmail = new EmployeeRepository().GetStoreSupervisor().EmailAddress;
                 var email = new LUSSISEmail.Builder().From(User.Identity.Name)
                 .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
                 //start new thread to send email
                 new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
-                
+
 
                 //send email if using non=primary supplier
                 var stationerys = purchaseOrder.PurchaseOrderDetails
