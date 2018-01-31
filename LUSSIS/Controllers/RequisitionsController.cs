@@ -18,7 +18,7 @@ using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan, Guo Rui
+    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan
     [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {
@@ -298,16 +298,14 @@ namespace LUSSIS.Controllers
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         public ActionResult MyCart()
         {
-            var mycart = (ShoppingCart) Session["MyCart"];
-            return View(mycart.GetAllCartItem());
+            return View(((ShoppingCart)Session["MyCart"]).GetAllCartItem());
         }
 
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpPost]
         public ActionResult DeleteCartItem(string id, int qty)
         {
-            var myCart = Session["MyCart"] as ShoppingCart;
-            myCart?.deleteCart(id);
+            (Session["MyCart"] as ShoppingCart)?.deleteCart(id);
 
             return Json(id);
         }
@@ -342,13 +340,11 @@ namespace LUSSIS.Controllers
             int pageSize = 15;
             int pageNumber = (page ?? 1);
 
-            var itemsList = CreateRetrievalList().List.ToPagedList(pageNumber, pageSize);
-
-
             return View(new RetrievalItemsWithDateDTO
             {
-                retrievalItems = itemsList,
+                retrievalItems = CreateRetrievalList().List.ToPagedList(pageNumber, pageSize),
                 collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
+                //enable "arrange a disbursement" if there is no inprocess disbursement
                 hasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
             });
         }
@@ -389,16 +385,19 @@ namespace LUSSIS.Controllers
         private RetrievalListDTO CreateRetrievalList()
         {
             var itemsToRetrieve = new RetrievalListDTO();
+            
+            //add unfullfilled disbursement remaining qty
+            var unfulfilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetailList();
+            var consolidateUnfulfilledDisbursements = ConsolidateUnfulfilledDisbursements(unfulfilledDisbursementDetails);
 
+            itemsToRetrieve.AddRange(consolidateUnfulfilledDisbursements);
+
+            //add new requisition approved qty
             var approvedRequisitionDetails = _requisitionRepo.GetRequisitionDetailsByStatus(RequisitionStatus.Approved);
             var consolidateNewRequisitions = ConsolidateNewRequisitions(approvedRequisitionDetails);
 
             itemsToRetrieve.AddRange(consolidateNewRequisitions);
-
-            var unfulfilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetailList();
-            var consolidateUnfulfilledDisbursements = ConsolidateUnfulfilledDisbursements(unfulfilledDisbursementDetails);
-            itemsToRetrieve.AddRange(consolidateUnfulfilledDisbursements);
-
+            
             return itemsToRetrieve;
         }
 
