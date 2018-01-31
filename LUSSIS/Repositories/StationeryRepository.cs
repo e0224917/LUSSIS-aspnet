@@ -48,31 +48,37 @@ namespace LUSSIS.Repositories
             return q.AsEnumerable<Stationery>();
         }
 
-        private class PendingPOQuantityByItem
-        {
-            public string ItemNum { get; set; }
-            public int? Qty { get; set; }
-        }
+
         public Dictionary<Supplier, List<Stationery>> GetOutstandingStationeryByAllSupplier()
         {
-            //get stationery which has available qty<reorder level
             Dictionary<Supplier, List<Stationery>> dic = new Dictionary<Supplier, List<Stationery>>();
-            //get list of pending PO stationery and qty
-            List<Stationery> slist = GetAll().Where(x => x.AvailableQty < x.ReorderLevel).ToList();
 
-            //get dictionary of supplier and stationery
+
+            //get qty of PO not approved yet
+            var pendingQty = LUSSISContext.PurchaseOrderDetails
+                .Where(x => x.PurchaseOrder.Status == "pending")
+                .GroupBy(x=>x.ItemNum)
+                .ToDictionary(x=>x.Key,x=> x.Sum(y => y.OrderQty));
+
+            //get list of pending PO stationery and qty
+            List<Stationery> slist = GetAll().Where(x => x.AvailableQty + (pendingQty.ContainsKey(x.ItemNum)?pendingQty[x.ItemNum]:0) < x.ReorderLevel).ToList();
+
+            //fill dictionary
             if (slist != null)
             {
-                for (int i = 0; i < slist.Count(); i++)
+                foreach (Stationery s in slist)
                 {
-                    Supplier primarySupplier = slist[i].PrimarySupplier();
+                    //i am using current qty here to pass to purchase order create method
+                    //do NOT show to user or persist this currentqty into the database
+                    s.CurrentQty = s.AvailableQty + (pendingQty.ContainsKey(s.ItemNum) ? pendingQty[s.ItemNum] : 0);
+                    Supplier primarySupplier = s.PrimarySupplier();
                     if (dic.ContainsKey(primarySupplier))
                     {
-                        dic[primarySupplier].Add(slist[i]);
+                        dic[primarySupplier].Add(s);
                     }
                     else
                     {
-                        dic.Add(primarySupplier, new List<Stationery>() { slist[i] });
+                        dic.Add(primarySupplier, new List<Stationery>() { s });
                     }
 
                 }
