@@ -125,7 +125,6 @@ namespace LUSSIS.Controllers
                 AverageCost = 0.00
             };
 
-
             //get list of recommended for purchase stationery and put in purchase order details
             foreach (KeyValuePair<Supplier, List<Stationery>> kvp in _stationeryRepo.GetOutstandingStationeryByAllSupplier())
             {
@@ -210,6 +209,15 @@ namespace LUSSIS.Controllers
 
                 //create PO
                 purchaseOrderDto.CreatePurchaseOrder(out var purchaseOrder);
+
+                //save to database po and the updated available qty
+                _poRepo.Add(purchaseOrder);
+                foreach (PurchaseOrderDetail pdetail in purchaseOrder.PurchaseOrderDetails)
+                {
+                    Stationery stationery = _stationeryRepo.GetById(pdetail.ItemNum);
+                    stationery.AvailableQty += pdetail.OrderQty;
+                    _stationeryRepo.Update(stationery);
+                }
 
                 //send email to supervisor
                 var supervisorEmail = new EmployeeRepository().GetStoreSupervisor().EmailAddress;
