@@ -166,16 +166,15 @@ namespace LUSSIS.Repositories
         }
 
         
-
         public IEnumerable<RetrievalItemDTO> GetRetrievalInProcess()
         {
             var itemsToRetrieve = new List<RetrievalItemDTO>();
-
-            //use disbursement as resource to generate retrieval in process
-
-            var inProcessDisDetailsGroupedByItem = GetDisbursementDetailsByStatus(InProcess)
+            
+            //group inprocess disbursement by stationery
+            List<List<DisbursementDetail>> inProcessDisDetailsGroupedByItem = GetDisbursementDetailsByStatus(InProcess)
                 .GroupBy(x => x.ItemNum).Select(grp => grp.ToList()).ToList();
 
+            //list for each stationery forms one RetrievalItemDTO
             foreach (var disDetailForOneItem in inProcessDisDetailsGroupedByItem)
             {
                 var stat = disDetailForOneItem.First().Stationery;
