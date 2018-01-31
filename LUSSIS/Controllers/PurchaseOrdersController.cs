@@ -138,10 +138,13 @@ namespace LUSSIS.Controllers
                         po.PurchaseOrderDetailsDTO.Add(new PurchaseOrderDetailDTO()
                         {
                             OrderQty =
-                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
+                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty),  
+                            //this CurrentQty is not real CurrentQty, but AvailableQty+PendingPoQty
+                            //do not show to user or persist this CurrentQty
                                 Convert.ToInt32(stationery.ReorderQty)),
                             UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId)),
-                            ItemNum = stationery.ItemNum
+                            ItemNum = stationery.ItemNum,
+                            ReorderQty = stationery.ReorderQty
                         });
                     }
                     break;
@@ -213,6 +216,7 @@ namespace LUSSIS.Controllers
 
                 //create PO
                 purchaseOrderDto.CreatePurchaseOrder(out var purchaseOrder);
+                _poRepo.Add(purchaseOrder);
 
                 //send email to supervisor
                 var supervisorEmail = new EmployeeRepository().GetStoreSupervisor().EmailAddress;

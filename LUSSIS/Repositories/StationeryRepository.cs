@@ -68,7 +68,9 @@ namespace LUSSIS.Repositories
             {
                 foreach (Stationery s in slist)
                 {
-                    s.AvailableQty += pendingQty.ContainsKey(s.ItemNum) ? pendingQty[s.ItemNum] : 0;
+                    //i am using current qty here to pass to purchase order create method
+                    //do NOT show to user or persist this currentqty into the database
+                    s.CurrentQty = s.AvailableQty + (pendingQty.ContainsKey(s.ItemNum) ? pendingQty[s.ItemNum] : 0);
                     Supplier primarySupplier = s.PrimarySupplier();
                     if (dic.ContainsKey(primarySupplier))
                     {
