@@ -54,21 +54,14 @@ namespace LUSSIS.Repositories
             Dictionary<Supplier, List<Stationery>> dic = new Dictionary<Supplier, List<Stationery>>();
 
 
-            //get qty of PO not approved yet
-            var pendingQty = LUSSISContext.PurchaseOrderDetails
-                .Where(x => x.PurchaseOrder.Status == "pending")
-                .GroupBy(x=>x.ItemNum)
-                .ToDictionary(x=>x.Key,x=> x.Sum(y => y.OrderQty));
-
             //get list of pending PO stationery and qty
-            List<Stationery> slist = GetAll().Where(x => x.AvailableQty + (pendingQty.ContainsKey(x.ItemNum)?pendingQty[x.ItemNum]:0) < x.ReorderLevel).ToList();
+            List<Stationery> slist = GetAll().Where(x => x.AvailableQty < x.ReorderLevel).ToList();
 
             //fill dictionary
             if (slist != null)
             {
                 foreach (Stationery s in slist)
                 {
-                    s.AvailableQty += pendingQty.ContainsKey(s.ItemNum) ? pendingQty[s.ItemNum] : 0;
                     Supplier primarySupplier = s.PrimarySupplier();
                     if (dic.ContainsKey(primarySupplier))
                     {
