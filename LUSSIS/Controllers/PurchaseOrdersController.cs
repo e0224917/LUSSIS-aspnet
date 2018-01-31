@@ -88,8 +88,6 @@ namespace LUSSIS.Controllers
             //catch error from redirect (from POST) and display back into page
             ViewBag.Error = error;
 
-            var po = new PurchaseOrderDTO(); //view model
-
             if (supplierId == null) //allow user to select supplier if non is chosen yet
             {
                 var emptySupplier = new Supplier
@@ -107,12 +105,18 @@ namespace LUSSIS.Controllers
 
             //get supplier
             var supplier = _supplierRepo.GetById(Convert.ToInt32(supplierId));
-            po.Supplier = supplier;
-            po.SupplierId = supplier.SupplierId;
-            po.CreateDate = DateTime.Today;
-            po.SupplierAddress = supplier.Address1 + Environment.NewLine + supplier.Address2 + Environment.NewLine +
-                                 supplier.Address3;
-            po.SupplierContact = supplier.ContactName;
+
+            //create view model
+            var po = new PurchaseOrderDTO()
+            {
+                Supplier = supplier,
+                SupplierId = supplier.SupplierId,
+                CreateDate = DateTime.Today,
+                SupplierAddress = supplier.Address1 + Environment.NewLine
+                                + supplier.Address2 + Environment.NewLine
+                                + supplier.Address3,
+                SupplierContact = supplier.ContactName
+            };
 
             //set empty Stationery template for dropdown
             var emptyStationery = new Stationery
@@ -123,21 +127,25 @@ namespace LUSSIS.Controllers
                 AverageCost = 0.00
             };
 
+
             //get list of recommended for purchase stationery and put in purchase order details
-            List<Stationery> sList;
             foreach (KeyValuePair<Supplier, List<Stationery>> kvp in _stationeryRepo.GetOutstandingStationeryByAllSupplier())
             {
                 if (kvp.Key.SupplierId == supplierId)
                 {
                     foreach (Stationery stationery in kvp.Value)
                     {
-                        PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
-                        pdetails.OrderQty =
-                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
-                                Convert.ToInt32(stationery.ReorderQty));
-                        pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
-                        pdetails.ItemNum = stationery.ItemNum;
-                        po.PurchaseOrderDetailsDTO.Add(pdetails);
+                        po.PurchaseOrderDetailsDTO.Add(new PurchaseOrderDetailDTO()
+                        {
+                            OrderQty =
+                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.CurrentQty),  
+                            //this CurrentQty is not real CurrentQty, but AvailableQty+PendingPoQty
+                            //do not show to user or persist this CurrentQty
+                                Convert.ToInt32(stationery.ReorderQty)),
+                            UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId)),
+                            ItemNum = stationery.ItemNum,
+                            ReorderQty = stationery.ReorderQty
+                        });
                     }
                     break;
                 }
@@ -208,15 +216,7 @@ namespace LUSSIS.Controllers
 
                 //create PO
                 purchaseOrderDto.CreatePurchaseOrder(out var purchaseOrder);
-
-                //save to database po and the updated available qty
                 _poRepo.Add(purchaseOrder);
-                foreach (PurchaseOrderDetail pdetail in purchaseOrder.PurchaseOrderDetails)
-                {
-                    Stationery stationery = _stationeryRepo.GetById(pdetail.ItemNum);
-                    stationery.AvailableQty += pdetail.OrderQty;
-                    _stationeryRepo.Update(stationery);
-                }
 
                 //send email to supervisor
                 var supervisorEmail = new EmployeeRepository().GetStoreSupervisor().EmailAddress;
@@ -224,7 +224,7 @@ namespace LUSSIS.Controllers
                 .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
                 //start new thread to send email
                 new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
-                
+
 
                 //send email if using non=primary supplier
                 var stationerys = purchaseOrder.PurchaseOrderDetails
@@ -428,7 +428,7 @@ namespace LUSSIS.Controllers
                 String empNum = cookie["EmpNum"];
                 _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE"? Approved : Rejected,empNum);
                 
-                if(status.ToUpper() == "APPROVE")
+                if(status.ToUpper() == "REJECT")
                 {
                     List<PurchaseOrderDetail> pDetail = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
 
@@ -436,7 +436,7 @@ namespace LUSSIS.Controllers
                     {
                         Stationery st = new Stationery();
                         st = _stationeryRepo.GetById(p.ItemNum);
-                        st.AvailableQty = p.OrderQty + st.AvailableQty;
+                        st.AvailableQty = st.AvailableQty - p.OrderQty;
                         _stationeryRepo.Update(st);
                     }
                 }
@@ -511,7 +511,6 @@ namespace LUSSIS.Controllers
                                               + (receiveQty * po.PurchaseOrderDetails.ElementAt(i).UnitPrice) * (1 + gstRate))
                                              / (stationery.CurrentQty + receiveQty);
                     stationery.CurrentQty += receiveQty;
-                    stationery.AvailableQty += receiveQty;
                     _stationeryRepo.Update(stationery);   //persist stationery data here
                 }
                 else if (receiveQty == 0)
