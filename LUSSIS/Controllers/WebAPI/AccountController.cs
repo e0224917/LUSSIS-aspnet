@@ -9,7 +9,6 @@ using LUSSIS.Constants;
 using LUSSIS.Emails;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
-using LUSSIS.Constants;
 
 namespace LUSSIS.Controllers.WebAPI
 {
@@ -49,18 +48,11 @@ namespace LUSSIS.Controllers.WebAPI
                     isDelegated = _delegateRepo.FindCurrentByEmpNum(emp.EmpNum) != null;
                 }
 
-                var e = new EmployeeDTO
+                var e = new EmployeeDTO(emp)
                 {
-                    EmpNum = emp.EmpNum,
-                    Title = emp.Title,
-                    FirstName = emp.FirstName,
-                    LastName = emp.LastName,
-                    EmailAddress = emp.EmailAddress,
-                    JobTitle = emp.JobTitle,
-                    DeptCode = emp.DeptCode,
-                    DeptName = emp.Department.DeptName,
                     IsDelegated = isDelegated
                 };
+
                 return Ok(e);
             }
             catch (Exception e)

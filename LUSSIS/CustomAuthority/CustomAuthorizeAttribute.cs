@@ -1,9 +1,4 @@
-﻿using LUSSIS.Constants;
-using LUSSIS.DAL;
-using LUSSIS.Models;
-using LUSSIS.Repositories;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
+﻿using LUSSIS.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

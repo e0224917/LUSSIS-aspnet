@@ -15,7 +15,6 @@ namespace LUSSIS.Controllers.WebAPI
     public class DelegateController : ApiController
     {
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
-        private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
 
         // GET api/Delegate/COMM
@@ -24,26 +23,18 @@ namespace LUSSIS.Controllers.WebAPI
         [ResponseType(typeof(DelegateDTO))]
         public IHttpActionResult Get([FromUri] string dept)
         {
-            var d = _delegateRepo.FindExistingByDeptCode(dept);
+            var @delegate = _delegateRepo.FindExistingByDeptCode(dept);
 
-            if (d == null) return BadRequest("No delegate available.");
+            if (@delegate == null) return BadRequest("No delegate available.");
 
             var result = new DelegateDTO()
             {
-                DelegateId = d.DelegateId,
-                StartDate = d.StartDate,
-                EndDate = d.EndDate,
-                Employee = new EmployeeDTO()
+                DelegateId = @delegate.DelegateId,
+                StartDate = @delegate.StartDate,
+                EndDate = @delegate.EndDate,
+                Employee = new EmployeeDTO(@delegate.Employee)
                 {
-                    DeptCode = d.Employee.DeptCode,
-                    DeptName = d.Employee.Department.DeptName,
-                    EmailAddress = d.Employee.EmailAddress,
-                    EmpNum = d.EmpNum,
-                    FirstName = d.Employee.FirstName,
-                    LastName = d.Employee.LastName,
-                    IsDelegated = true,
-                    JobTitle = d.Employee.JobTitle,
-                    Title = d.Employee.Title
+                    IsDelegated = true
                 }
             };
             return Ok(result);
@@ -67,8 +58,7 @@ namespace LUSSIS.Controllers.WebAPI
             var headEmail = _employeeRepo.GetDepartmentHead(delegateDto.Employee.DeptCode);
             var email = new LUSSISEmail.Builder().From(headEmail).To(delegateDto.Employee.EmailAddress)
                 .ForNewDelegate().Build();
-            var thread = new Thread(delegate() { EmailHelper.SendEmail(email); });
-            thread.Start();
+            new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 
             var id = _delegateRepo.FindExistingByDeptCode(delegateDto.Employee.DeptCode).DelegateId;
             delegateDto.DelegateId = id;
@@ -96,28 +86,17 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Delegate/Employee/{dept}")]
         public IEnumerable<EmployeeDTO> GetEmployeeList(string dept)
         {
-            var list = _departmentRepo.GetById(dept).Employees;
+            var list = _employeeRepo.GetStaffRepByDeptCode(dept);
 
-            return list.Select(item => new EmployeeDTO()
-            {
-                DeptCode = item.DeptCode,
-                DeptName = item.Department.DeptName,
-                EmailAddress = item.EmailAddress,
-                EmpNum = item.EmpNum,
-                FirstName = item.FirstName,
-                LastName = item.LastName,
-                IsDelegated = false,
-                JobTitle = item.JobTitle,
-                Title = item.Title
-            });
+            return list.Select(item => new EmployeeDTO(item));
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _departmentRepo.Dispose();
-                _departmentRepo.Dispose();
+                _delegateRepo.Dispose();
+                _employeeRepo.Dispose();
             }
 
             base.Dispose(disposing);
