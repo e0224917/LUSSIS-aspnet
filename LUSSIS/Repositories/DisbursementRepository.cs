@@ -69,7 +69,7 @@ namespace LUSSIS.Repositories
             LUSSISContext.SaveChanges();
         }
 
-        public IEnumerable<Disbursement> GetUnfullfilledDisbursements()
+        public IEnumerable<Disbursement> GetUnfulfilledDisbursements()
         {
             return GetDisbursementByStatus(Unfulfilled);
         }
