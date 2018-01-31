@@ -181,15 +181,13 @@ namespace LUSSIS.Controllers
                     //email to old rep
                     var emailToOldRep = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(oldRepEmailAdd).ForOldRepresentative().Build();
-
-                    EmailHelper.SendEmail(emailToOldRep);
+                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(emailToOldRep); }).Start();
                 }
 
                 //email to new rep
                 var emailToNewRep = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(newRepEmailAdd).ForNewRepresentative().Build();
-
-                EmailHelper.SendEmail(emailToNewRep);
+                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(emailToNewRep); }).Start();
 
             }
 
@@ -224,7 +222,7 @@ namespace LUSSIS.Controllers
                 var emailToNewDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(newDelegateEmailAdd).ForNewDelegate().Build();
 
-                EmailHelper.SendEmail(emailToNewDelegate);
+                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(emailToNewDelegate); }).Start();
             }
 
             return RedirectToAction("MyDelegate");
@@ -247,7 +245,7 @@ namespace LUSSIS.Controllers
                 var emailToOldDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(oldDelegateEmailAdd).ForOldDelegate().Build();
 
-                EmailHelper.SendEmail(emailToOldDelegate);
+                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(emailToOldDelegate); }).Start();
 
                 _delegateRepo.DeleteByDeptCode(deptCode);             
             }
