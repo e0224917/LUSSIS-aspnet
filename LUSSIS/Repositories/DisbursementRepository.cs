@@ -84,19 +84,12 @@ namespace LUSSIS.Repositories
             foreach (String from in fromList)
             {
                 DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                var q = from t1 in LUSSISContext.Disbursements
-                        join t2 in LUSSISContext.DisbursementDetails
-                        on t1.DisbursementId equals t2.DisbursementId
-                        where t1.Status != InProcess
-                        && t1.CollectionDate.Month == fromDate.Month && t1.CollectionDate.Year == fromDate.Year
-                        select new
-                        {
-                            price = (int)t2.UnitPrice,
-                            Qty = (double)t2.ActualQty
-                        };
-                foreach (var a in q)
+                List<DisbursementDetail> disList = LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status != InProcess
+                  && x.Disbursement.CollectionDate.Month == fromDate.Month && x.Disbursement.CollectionDate.Year == fromDate.Year).ToList();
+               
+                foreach(DisbursementDetail d in disList)
                 {
-                    result += a.price * a.Qty;
+                    result += d.UnitPrice * d.ActualQty;
                 }
 
             }
@@ -148,25 +141,18 @@ namespace LUSSIS.Repositories
 
             foreach (int catId in cat)
             {
-                var q = from t1 in LUSSISContext.Disbursements
-                    join t2 in LUSSISContext.DisbursementDetails
-                        on t1.DisbursementId equals t2.DisbursementId
-                    join t3 in LUSSISContext.Stationeries
-                        on t2.ItemNum equals t3.ItemNum
-                    where t3.CategoryId == catId &&
-                          t1.Status != InProcess &&
-                          t1.DeptCode == dep && t1.CollectionDate.Month==fromDate.Month && t1.CollectionDate.Year==fromDate.Year
-                         // && (t1.CollectionDate <= toDate && t1.CollectionDate >= fromDate)
-                    select new
-                    {
-                        price = (int) t2.UnitPrice,
-                        Qty = (double) t2.ActualQty
-                    };
+               
+                List<DisbursementDetail> disList = LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status != InProcess
+                 && x.Disbursement.CollectionDate.Month == fromDate.Month 
+                 && x.Disbursement.CollectionDate.Year == fromDate.Year
+                 && x.Disbursement.DeptCode==dep
+                 && x.Stationery.CategoryId==catId ).ToList();
 
-                foreach (var a in q)
+                foreach(DisbursementDetail d in disList)
                 {
-                    total += a.price * a.Qty;
+                    total += d.UnitPrice * d.ActualQty;
                 }
+
             }
 
             return total;
@@ -201,6 +187,10 @@ namespace LUSSIS.Repositories
             }
 
             return itemsToRetrieve;
+        }
+        public IEnumerable<DisbursementDetail> GetAllDisbursementDetails()
+        {
+            return LUSSISContext.DisbursementDetails.ToList();
         }
     }
 }
