@@ -7,6 +7,8 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -221,7 +223,7 @@ namespace LUSSIS.Controllers
                 var email = new LUSSISEmail.Builder().From(User.Identity.Name)
                 .To(supervisorEmail).ForNewPo(purchaseOrder, fullName).Build();
                 //start new thread to send email
-                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
                 
 
                 //send email if using non=primary supplier
@@ -233,7 +235,7 @@ namespace LUSSIS.Controllers
                     var supplierName = _supplierRepo.GetById(purchaseOrder.SupplierId).SupplierName;
                     var email2 = new LUSSISEmail.Builder().From(User.Identity.Name).To(supervisorEmail)
                         .ForNonPrimaryNewPo(supplierName, purchaseOrder, stationerys).Build();
-                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email2); }).Start();
+                    new Thread(delegate () { EmailHelper.SendEmail(email2); }).Start();
                 }
 
 
