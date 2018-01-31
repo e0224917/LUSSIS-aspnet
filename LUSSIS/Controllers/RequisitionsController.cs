@@ -364,7 +364,7 @@ namespace LUSSIS.Controllers
                     var collectionPoint = _collectionRepo.GetById((int) disbursement.CollectionPointId);
                     var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
                         .ForNewDisbursement(disbursement, collectionPoint).Build();
-                    EmailHelper.SendEmail(email);
+                    new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
                 }
 
                 return RedirectToAction("RetrievalInProcess");
@@ -459,7 +459,7 @@ namespace LUSSIS.Controllers
                         .To(toEmail).ForRequisitionApproval(req).Build();
                     var thread = new Thread(delegate() { EmailHelper.SendEmail(email); });
                     thread.Start();
-
+                    
                     return RedirectToAction("Pending");
                 }
 

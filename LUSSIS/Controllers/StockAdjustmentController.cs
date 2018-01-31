@@ -116,8 +116,8 @@ namespace LUSSIS.Controllers
                     var email2 = new LUSSISEmail.Builder().From(self.EmailAddress)
                         .To(supervisorEmail).ForNewStockAdjustments(self.FullName, vouchers).Build();
 
-                    EmailHelper.SendEmail(email1);
-                    EmailHelper.SendEmail(email2);
+                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email1); }).Start();
+                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email2); }).Start();
 
                     return RedirectToAction("History");
                 }
@@ -189,8 +189,8 @@ namespace LUSSIS.Controllers
                 var email2 = new LUSSISEmail.Builder().From(self.EmailAddress)
                     .To(supervisorEmail).ForNewStockAdjustment(self.FullName, adjustment).Build();
 
-                EmailHelper.SendEmail(email1);
-                EmailHelper.SendEmail(email2);
+                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email1); }).Start();
+                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email2); }).Start();
 
                 return RedirectToAction("History");
             }
