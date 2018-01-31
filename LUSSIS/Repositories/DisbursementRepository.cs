@@ -36,19 +36,42 @@ namespace LUSSIS.Repositories
 
         public IEnumerable<DisbursementDetail> GetDisbursementDetailsByStatus(string status)
         {
-            return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status).ToList();
+            return LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status == status);
         }
 
         public IEnumerable<Disbursement> GetDisbursementByStatus(string status)
         {
-            return LUSSISContext.Disbursements.Where(x => x.Status == status).ToList();
+            return LUSSISContext.Disbursements.Where(x => x.Status == status);
         }
 
-        public List<DisbursementDetail> GetUnfulfilledDisbursementDetailList()
+        public IEnumerable<DisbursementDetail> GetUnfulfilledDisbursementDetailList()
         {
             return LUSSISContext.DisbursementDetails.Where(d =>
                     d.Disbursement.Status == Unfulfilled && d.RequestedQty - d.ActualQty > 0)
-                .Include(d => d.Stationery).ToList();
+                .Include(d => d.Stationery);
+        }
+
+        public List<RequisitionDetail> GetApprovedRequisitionDetailsByDeptCode(string deptCode)
+        {
+            return LUSSISContext.RequisitionDetails
+                .Where(r => r.Requisition.DeptCode == deptCode
+                            && r.Requisition.Status == RequisitionStatus.Approved).ToList();
+        }
+
+        public IEnumerable<Requisition> GetApprovedRequisitions()
+        {
+            return LUSSISContext.Requisitions.Where(r => r.Status == RequisitionStatus.Approved).ToList();
+        }
+
+        public void UpdateRequisition(Requisition requisition)
+        {
+            LUSSISContext.Entry(requisition).State = EntityState.Modified;
+            LUSSISContext.SaveChanges();
+        }
+
+        public IEnumerable<Disbursement> GetUnfullfilledDisbursements()
+        {
+            return GetDisbursementByStatus(Unfulfilled);
         }
 
         /// <summary>
@@ -183,23 +206,7 @@ namespace LUSSIS.Repositories
             LUSSISContext.SaveChanges();
         }
 
-        public List<RequisitionDetail> GetApprovedRequisitionDetailsByDeptCode(string deptCode)
-        {
-            return LUSSISContext.RequisitionDetails
-                .Where(r => r.Requisition.DeptCode == deptCode
-                            && r.Requisition.Status == RequisitionStatus.Approved).ToList();
-        }
-
-        public IEnumerable<Requisition> GetApprovedRequisitions()
-        {
-            return LUSSISContext.Requisitions.Where(r => r.Status == RequisitionStatus.Approved).ToList();
-        }
-
-        public void UpdateRequisition(Requisition requisition)
-        {
-            LUSSISContext.Entry(requisition).State = EntityState.Modified;
-            LUSSISContext.SaveChanges();
-        }
+        
 
         public IEnumerable<RetrievalItemDTO> GetRetrievalInProcess()
         {
