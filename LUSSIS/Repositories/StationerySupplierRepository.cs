@@ -32,7 +32,7 @@ namespace LUSSIS.Repositories
                     on t1.ItemNum equals t2.ItemNum
                     where t2.Supplier.SupplierId == id
                     select t2;
-            return q.AsEnumerable<StationerySupplier>();
+            return q.AsEnumerable();
         }
 
         public void UpdateAll(IEnumerable<StationerySupplier> newList)

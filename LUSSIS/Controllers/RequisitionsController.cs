@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Constants;
@@ -18,7 +18,7 @@ using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan, Guo Rui
+    //Authors: Cui Runze, Tang Xiaowen, Koh Meng Guan
     [Authorize(Roles = "head, staff, clerk, rep")]
     public class RequisitionsController : Controller
     {
@@ -30,6 +30,10 @@ namespace LUSSIS.Controllers
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
         private readonly CollectionRepository _collectionRepo = new CollectionRepository();
 
+
+        /// <summary>
+        /// Return true if a department has available delegate, including in the future.
+        /// </summary>
         private bool HasDelegate
         {
             get
@@ -40,6 +44,9 @@ namespace LUSSIS.Controllers
             }
         }
 
+        /// <summary>
+        /// Return true if the employee is delegated, including in the future.
+        /// </summary>
         private bool IsDelegate
         {
             get
@@ -79,16 +86,10 @@ namespace LUSSIS.Controllers
             }
 
             var req = _requisitionRepo.GetById(reqId);
-            if (req != null && req.Status == RequisitionStatus.Pending)
-            {
-                ViewBag.Pending = "Pending";
-                return View(req);
-            }
-            else if(req != null){
-                return View(req);
-            }
+            if (req == null) return new HttpNotFoundResult();
 
-            return new HttpNotFoundResult();
+            ViewBag.Pending = req.Status == RequisitionStatus.Pending ? "Pending" : null;
+            return View(req);
         }
 
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
@@ -159,11 +160,11 @@ namespace LUSSIS.Controllers
                         if (requisition.Status == "approved")
                         {
                             Requisition req = _requisitionRepo.GetById(requisition.RequisitionId);
-                            foreach (RequisitionDetail rd in req.RequisitionDetails)
+                            foreach (var requisitionDetail in req.RequisitionDetails)
                             {
-                                Stationery st = _stationeryRepo.GetById(rd.ItemNum);
-                                st.AvailableQty = st.AvailableQty - rd.Quantity;
-                                _stationeryRepo.Update(st);
+                                var stationery = _stationeryRepo.GetById(requisitionDetail.ItemNum);
+                                stationery.AvailableQty = stationery.AvailableQty - requisitionDetail.Quantity;
+                                _stationeryRepo.Update(stationery);
                             }
                         }
 
@@ -180,7 +181,6 @@ namespace LUSSIS.Controllers
         }
 
 
-
         // GET: DeptEmpReqs
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         public ActionResult Index(string searchString, string currentFilter, int? page)
@@ -194,9 +194,8 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
 
-            var stationerys = !string.IsNullOrEmpty(searchString)
-                ? _stationeryRepo.GetByDescription(searchString).ToList()
-                : _stationeryRepo.GetAll().ToList();
+            var stationerys = string.IsNullOrEmpty(searchString)
+                ? _stationeryRepo.GetAll().ToList() : _stationeryRepo.GetByDescription(searchString).ToList();
 
             var stationeryList = stationerys.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
@@ -241,12 +240,13 @@ namespace LUSSIS.Controllers
             return View(requisitionDetail);
         }
 
+        // POST: Requisitions/SubmitReq
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpPost]
         public ActionResult SubmitReq()
         {
-            var itemNums = (List<string>) Session["itemNums"];
-            var itemQty = (List<int>) Session["itemQty"];
+            var itemNums = (List<string>)Session["itemNums"];
+            var itemQty = (List<int>)Session["itemQty"];
 
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
@@ -264,7 +264,6 @@ namespace LUSSIS.Controllers
                 };
                 _requisitionRepo.Add(requisition);
 
-                var stationerys = new List<Stationery>();
                 for (var i = 0; i < itemNums.Count; i++)
                 {
                     var requisitionDetail = new RequisitionDetail()
@@ -273,21 +272,18 @@ namespace LUSSIS.Controllers
                         ItemNum = itemNums[i],
                         Quantity = itemQty[i]
                     };
-                    _requisitionRepo.AddRequisitionDetail(requisitionDetail);
-
-                    stationerys.Add(_stationeryRepo.GetById(requisitionDetail.ItemNum));
+                    requisitionDetail.Stationery = _requisitionRepo.AddRequisitionDetail(requisitionDetail);
                 }
 
                 Session["itemNums"] = null;
                 Session["itemQty"] = null;
                 Session["MyCart"] = new ShoppingCart();
 
+                //Send email
                 var headEmail = _employeeRepo.GetDepartmentHead(deptCode).EmailAddress;
-
                 var email = new LUSSISEmail.Builder().From(User.Identity.Name)
-                    .To(headEmail).ForNewRequistion(fullName, requisition, stationerys).Build();
-
-                EmailHelper.SendEmail(email);
+                    .To(headEmail).ForNewRequistion(fullName, requisition).Build();
+                new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 
                 return RedirectToAction("MyRequisitions");
             }
@@ -295,13 +291,15 @@ namespace LUSSIS.Controllers
             return RedirectToAction("MyCart");
         }
 
+        // GET: Requisitions/MyCart
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         public ActionResult MyCart()
         {
-            var mycart = (ShoppingCart) Session["MyCart"];
+            var mycart = (ShoppingCart)Session["MyCart"];
             return View(mycart.GetAllCartItem());
         }
 
+        // POST: Requisitions/DeleteCartItem
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpPost]
         public ActionResult DeleteCartItem(string id, int qty)
@@ -312,6 +310,7 @@ namespace LUSSIS.Controllers
             return Json(id);
         }
 
+        // POST: Requisitions/UpdateCartItem
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpPost]
         public ActionResult UpdateCartItem(string id, int qty)
@@ -320,12 +319,10 @@ namespace LUSSIS.Controllers
             var c = new Cart();
             foreach (var cart in mycart.shoppingCart)
             {
-                if (cart.stationery.ItemNum == id)
-                {
-                    c = cart;
-                    cart.quantity = qty;
-                    break;
-                }
+                if (cart.stationery.ItemNum != id) continue;
+                c = cart;
+                cart.quantity = qty;
+                break;
             }
 
             if (c.quantity <= 0)
@@ -342,25 +339,23 @@ namespace LUSSIS.Controllers
             int pageSize = 15;
             int pageNumber = (page ?? 1);
 
-            var itemsList = CreateRetrievalList().List.ToPagedList(pageNumber, pageSize);
-
-
             return View(new RetrievalItemsWithDateDTO
             {
-                retrievalItems = itemsList,
-                collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
-                hasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
+                RetrievalItems = CreateRetrievalList().List.ToPagedList(pageNumber, pageSize),
+                CollectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
+                //enables arranging for disbursement in UI once there is no inprocess disbursement
+                HasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
             });
         }
 
         [HttpPost]
         [Authorize(Roles = Role.Clerk)]
         [ValidateAntiForgeryToken]
-        public ActionResult Retrieve([Bind(Include = "collectionDate")] RetrievalItemsWithDateDTO listWithDate)
+        public ActionResult Retrieve([Bind(Include = "CollectionDate")] RetrievalItemsWithDateDTO listWithDate)
         {
             if (ModelState.IsValid)
             {
-                var selectedDate = DateTime.ParseExact(listWithDate.collectionDate, "dd/MM/yyyy",
+                var selectedDate = DateTime.ParseExact(listWithDate.CollectionDate, "dd/MM/yyyy",
                     CultureInfo.InvariantCulture);
 
                 var disbursements = CreateDisbursement(selectedDate);
@@ -368,162 +363,24 @@ namespace LUSSIS.Controllers
                 foreach (var disbursement in disbursements)
                 {
                     var repEmail = _employeeRepo.GetRepByDeptCode(disbursement.DeptCode);
-                    var collectionPoint = _collectionRepo.GetById((int) disbursement.CollectionPointId);
+                    var collectionPoint = _collectionRepo.GetById((int)disbursement.CollectionPointId);
                     var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
                         .ForNewDisbursement(disbursement, collectionPoint).Build();
-                    EmailHelper.SendEmail(email);
+                    new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
                 }
 
                 return RedirectToAction("RetrievalInProcess");
             }
 
-            
+
             return View("Consolidated", new RetrievalItemsWithDateDTO
             {
-                retrievalItems = CreateRetrievalList().List.ToPagedList(1, 15),
-                collectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
-                hasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
+                RetrievalItems = CreateRetrievalList().List.ToPagedList(1, 15),
+                CollectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
+                HasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
             });
         }
 
-        private RetrievalListDTO CreateRetrievalList()
-        {
-            var itemsToRetrieve = new RetrievalListDTO();
-
-            var approvedRequisitionDetails = _requisitionRepo.GetRequisitionDetailsByStatus(RequisitionStatus.Approved);
-            var consolidateNewRequisitions = ConsolidateNewRequisitions(approvedRequisitionDetails);
-
-            itemsToRetrieve.AddRange(consolidateNewRequisitions);
-
-            var unfulfilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetailList();
-            var consolidateUnfulfilledDisbursements = ConsolidateUnfulfilledDisbursements(unfulfilledDisbursementDetails);
-            itemsToRetrieve.AddRange(consolidateUnfulfilledDisbursements);
-
-            return itemsToRetrieve;
-        }
-
-        public List<Disbursement> CreateDisbursement(DateTime collectionDate)
-        {
-            var disbursements = new List<Disbursement>();
-
-            //group requisition requests by dept and create disbursement list based on it
-            var approvedRequisitions = _disbursementRepo.GetApprovedRequisitions().ToList();
-
-            List<List<Requisition>> reqGroupByDept = approvedRequisitions.GroupBy(r => r.RequisitionEmployee.DeptCode)
-                .Select(grp => grp.ToList()).ToList();
-
-            foreach (var requisitions in reqGroupByDept)
-            {
-                //Get all approved requisition details in one department
-                var deptCode = requisitions.First().DeptCode;
-                var requisitionDetails = _disbursementRepo.GetApprovedRequisitionDetailsByDeptCode(deptCode);
-
-                //convert requisitions to disbursment
-                var disbursement = new Disbursement(requisitionDetails, collectionDate);
-
-                disbursements.Add(disbursement);
-
-                //when disbursement is created, update the requisition status
-                foreach (var requisition in requisitions)
-                {
-                    requisition.Status = RequisitionStatus.Processed;
-                    _disbursementRepo.UpdateRequisition(requisition);
-                }
-
-            }
-
-            //unfulfilled disburstment from last time will be added to this time's disbursment
-            var unfufilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetailList();
-
-            foreach (var detail in unfufilledDisbursementDetails)
-            {
-                //convert the unfulfilled to a new disbursement detail
-                var unfulfilledDetail = new DisbursementDetail(detail);
-                var isDisbursementExisted = false;
-                foreach (var d in disbursements)
-                {
-                    if (d.DeptCode == detail.Disbursement.DeptCode)
-                    {
-                        d.Add(unfulfilledDetail);
-                        isDisbursementExisted = true;
-                        break;
-                    }
-                }
-
-                if (isDisbursementExisted) continue;
-
-                var disbursement = new Disbursement(detail.Disbursement, collectionDate);
-                disbursement.Add(unfulfilledDetail);
-                disbursements.Add(disbursement);
-            }
-
-            foreach (var detail in unfufilledDisbursementDetails)
-            {
-                //the unfulfill detail now need to update its requested quantity to match its actual quantity
-                //the requested qty will tally with the newly made disbursement detail
-                detail.RequestedQty = detail.ActualQty;
-                _disbursementRepo.UpdateDisbursementDetail(detail);
-            }
-
-            //persist to database
-            foreach (var d in disbursements)
-            {
-                _disbursementRepo.Add(d);
-            }
-
-            var unfulfilledDisList = _disbursementRepo.GetDisbursementByStatus(DisbursementStatus.Unfulfilled).ToList();
-            foreach (var unfd in unfulfilledDisList)
-            {
-                unfd.Status = DisbursementStatus.Fulfilled;
-                _disbursementRepo.Update(unfd);
-            }
-
-            return disbursements;
-        }
-
-        /*
-         * helper method to consolidate each [approved requisitions for one item] into [one RetrievalItemDTO]
-        */
-        private static RetrievalListDTO ConsolidateNewRequisitions(IEnumerable<RequisitionDetail> requisitionDetailList)
-        {
-            var itemsToRetrieve = new RetrievalListDTO();
-            //group RequisitionDetail list by item: e.g.: List<ReqDetail>-for-pen, List<ReqDetail>-for-Paper, and store these lists in List:
-            List<List<RequisitionDetail>> groupedReqListByItem = requisitionDetailList
-                .GroupBy(rd => rd.ItemNum).Select(grp => grp.ToList()).ToList();
-
-            //each list merge into ONE RetrievalItemDTO. e.g.: List<ReqDetail>-for-pen to be converted into ONE RetrievalItemDTO. 
-            foreach (List<RequisitionDetail> reqListForOneItem in groupedReqListByItem)
-            {
-                var retrievalItem = new RetrievalItemDTO(reqListForOneItem);
-
-                itemsToRetrieve.Add(retrievalItem);
-            }
-
-            return itemsToRetrieve;
-        }
-
-        /*
-         * helper method to consolidate each [unfullfilled Disbursements for one item] add to / into [one RetrievalItemDTO]
-        */
-        private static RetrievalListDTO ConsolidateUnfulfilledDisbursements(IEnumerable<DisbursementDetail> unfullfilledDisDetailList)
-        {
-            var itemsToRetrieve = new RetrievalListDTO();
-
-            //group DisbursementDetail list by item: e.g.: List<DisDetail>-for-pen, List<DisDetail>-for-Paper, and store these lists in List:
-            List<List<DisbursementDetail>> groupedDisListByItem = unfullfilledDisDetailList.GroupBy(rd => rd.ItemNum).Select(grp => grp.ToList()).ToList();
-
-            //each list merge into ONE RetrievalItemDTO. e.g.: List<DisDetail>-for-pen to be converted into ONE RetrievalItemDTO. 
-            foreach (List<DisbursementDetail> disListForOneItem in groupedDisListByItem)
-            {
-                var retrievalItem = new RetrievalItemDTO(disListForOneItem);
-
-                itemsToRetrieve.Add(retrievalItem);
-            }
-
-            return itemsToRetrieve;
-        }
-
-        
         [Authorize(Roles = Role.Clerk)]
         public ActionResult RetrievalInProcess()
         {
@@ -533,14 +390,14 @@ namespace LUSSIS.Controllers
         //Authors: Koh Meng Guan
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpGet]
-        public PartialViewResult _ApproveReq(int Id, string Status)
+        public PartialViewResult _ApproveReq(int id, string status)
         {
             var reqDto = new ReqApproveRejectDTO
             {
-                RequisitionId = Id,
-                Status = Status
+                RequisitionId = id,
+                Status = status
             };
-            
+
             if (User.IsInRole(Role.DepartmentHead) && !HasDelegate || IsDelegate)
             {
                 return PartialView("_ApproveReq", reqDto);
@@ -553,10 +410,10 @@ namespace LUSSIS.Controllers
         //Authors: Koh Meng Guan
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpPost]
-        public PartialViewResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]
-            ReqApproveRejectDTO RADTO)
+        public ActionResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]
+            ReqApproveRejectDTO reqApprovalDto)
         {
-            var req = _requisitionRepo.GetById(RADTO.RequisitionId);
+            var req = _requisitionRepo.GetById(reqApprovalDto.RequisitionId);
             if (req == null || req.Status != RequisitionStatus.Pending) return PartialView("_unauthoriseAccess");
 
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
@@ -580,39 +437,37 @@ namespace LUSSIS.Controllers
 
                 if (ModelState.IsValid)
                 {
-
-                    req.Status = RADTO.Status;
-                    req.ApprovalRemarks = RADTO.ApprovalRemarks;
+                    req.Status = reqApprovalDto.Status;
+                    req.ApprovalRemarks = reqApprovalDto.ApprovalRemarks;
                     req.ApprovalEmpNum = empNum;
                     req.ApprovalDate = DateTime.Today;
 
 
-                    if(RADTO.Status == "approved")
+                    if (reqApprovalDto.Status == Approved)
                     {
-                        foreach(RequisitionDetail rd in req.RequisitionDetails)
+                        foreach (var requisitionDetail in req.RequisitionDetails)
                         {
-                            Stationery st = _stationeryRepo.GetById(rd.ItemNum);
-                            st.AvailableQty = st.AvailableQty - rd.Quantity;
-                            _stationeryRepo.Update(st);
+                            var stationery = _stationeryRepo.GetById(requisitionDetail.ItemNum);
+                            stationery.AvailableQty = stationery.AvailableQty - requisitionDetail.Quantity;
+                            _stationeryRepo.Update(stationery);
                         }
                     }
-                    _requisitionRepo.Update(req);
-                
-                    var toEmail = req.RequisitionEmployee.EmailAddress;
 
+                    _requisitionRepo.Update(req);
+
+                    //Send email
+                    var toEmail = req.RequisitionEmployee.EmailAddress;
                     var email = new LUSSISEmail.Builder().From(User.Identity.Name)
                         .To(toEmail).ForRequisitionApproval(req).Build();
-                            
-                    EmailHelper.SendEmail(email);
+                    new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
 
-                    return PartialView(req);
+                    return RedirectToAction("Pending");
                 }
 
-                return PartialView(RADTO);
+                return PartialView(reqApprovalDto);
             }
 
             return PartialView("_hasDelegate");
-
         }
 
         protected override void Dispose(bool disposing)
@@ -630,5 +485,175 @@ namespace LUSSIS.Controllers
 
             base.Dispose(disposing);
         }
+
+        #region Create Retrieval List / Consolidated Requisition List logic
+
+        private RetrievalListDTO CreateRetrievalList()
+        {
+            var itemsToRetrieve = new RetrievalListDTO();
+
+            //adding remaining qty from unfulfilled disbursement
+            var unfulfilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetails().ToList();
+            var consolidatedUnfulfilledDisbursements = ConsolidateUnfulfilledDisbursements(unfulfilledDisbursementDetails);
+            itemsToRetrieve.AddRange(consolidatedUnfulfilledDisbursements);
+
+            //adding requested qty from newly approved requisitions
+            var approvedRequisitionDetails = _requisitionRepo.GetApprovedRequisitionDetails().ToList();
+            var consolidatedNewRequisitions = ConsolidateNewRequisitions(approvedRequisitionDetails);
+            itemsToRetrieve.AddRange(consolidatedNewRequisitions);
+
+            return itemsToRetrieve;
+        }
+
+        /*
+         * helper method to consolidate each [unfullfilled Disbursements for one item] add to / into [one RetrievalItemDTO]
+        */
+        private static RetrievalListDTO ConsolidateUnfulfilledDisbursements(
+            List<DisbursementDetail> unfullfilledDisDetailList)
+        {
+            var itemsToRetrieve = new RetrievalListDTO();
+
+            //group DisbursementDetail list by item: e.g.: List<DisDetail>-for-pen, List<DisDetail>-for-Paper, and store these lists in List:
+            List<List<DisbursementDetail>> groupedDisListByItem =
+                unfullfilledDisDetailList.GroupBy(rd => rd.ItemNum).Select(grp => grp.ToList()).ToList();
+
+            //each list merge into ONE RetrievalItemDTO. e.g.: List<DisDetail>-for-pen to be converted into ONE RetrievalItemDTO. 
+            foreach (List<DisbursementDetail> disListForOneItem in groupedDisListByItem)
+            {
+                var retrievalItem = new RetrievalItemDTO(disListForOneItem);
+
+                itemsToRetrieve.Add(retrievalItem);
+            }
+
+            return itemsToRetrieve;
+        }
+        
+        /*
+         * helper method to consolidate each [approved requisitions for one item] into [one RetrievalItemDTO]
+        */
+        private static RetrievalListDTO ConsolidateNewRequisitions(List<RequisitionDetail> requisitionDetailList)
+        {
+            var itemsToRetrieve = new RetrievalListDTO();
+
+            //group RequisitionDetail list by item: e.g.: List<ReqDetail>-for-pen, List<ReqDetail>-for-Paper, and store these lists in List:
+            List<List<RequisitionDetail>> groupedReqListByItem = requisitionDetailList
+                .GroupBy(rd => rd.ItemNum).Select(grp => grp.ToList()).ToList();
+
+            //each list merge into ONE RetrievalItemDTO. e.g.: List<ReqDetail>-for-pen to be converted into ONE RetrievalItemDTO. 
+            foreach (List<RequisitionDetail> reqListForOneItem in groupedReqListByItem)
+            {
+                var retrievalItem = new RetrievalItemDTO(reqListForOneItem);
+
+                itemsToRetrieve.Add(retrievalItem);
+            }
+
+            return itemsToRetrieve;
+        }
+
+        #endregion
+
+        #region Create Disburesement logic
+        
+        public List<Disbursement> CreateDisbursement(DateTime collectionDate)
+        {
+            var disbursements = new List<Disbursement>();
+            
+            GenerateDisbursementsWithApprovedRequisitions(disbursements, collectionDate);
+
+            GenerateDisbursementsWithUnfullfilled(disbursements, collectionDate);
+
+            //persist to database
+            foreach (var d in disbursements)
+            {
+                _disbursementRepo.Add(d);
+            }
+
+            return disbursements;
+        }
+
+        /*
+          * helper method step 1
+          */
+        private List<Disbursement> GenerateDisbursementsWithApprovedRequisitions(List<Disbursement> targetDisbursementsList, DateTime collectionDate)
+        {
+            List<List<Requisition>> reqGroupByDept = _disbursementRepo.GetApprovedRequisitions()
+                .GroupBy(r => r.RequisitionEmployee.DeptCode)
+                .Select(grp => grp.ToList()).ToList();
+
+            // and create disbursement list based on it
+            foreach (var requisitionsForOneDept in reqGroupByDept)
+            {
+                //Get all approved requisition details in one department
+                var deptCode = requisitionsForOneDept.First().DeptCode;
+                var requisitionDetailsForOneDept = _disbursementRepo.GetApprovedRequisitionDetailsByDeptCode(deptCode);
+
+                //construct disbursment based on the requisition list
+                var disbursement = new Disbursement(requisitionDetailsForOneDept, collectionDate);
+
+                targetDisbursementsList.Add(disbursement);
+
+                //as respective disbursement is created, update the requisition status
+                foreach (var requisition in requisitionsForOneDept)
+                {
+                    requisition.Status = RequisitionStatus.Processed;
+                    _disbursementRepo.UpdateRequisition(requisition);
+                }
+            }
+
+            return targetDisbursementsList;
+        }
+
+        /*
+        * helper method step 2
+        */
+        private List<Disbursement> GenerateDisbursementsWithUnfullfilled(List<Disbursement> targetDisbursementsList, DateTime collectionDate)
+        {
+            var unfufilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetails().ToList();
+            foreach (var ufdDetail in unfufilledDisbursementDetails)
+            {
+                //refactor the remaining qty from unfulfilled details into the new disbursement details
+                var unfulfilledDetail = new DisbursementDetail(ufdDetail);
+                var isDisbursementForSameDept = false;
+                foreach (var d in targetDisbursementsList)
+                {
+                    if (d.DeptCode == ufdDetail.Disbursement.DeptCode)
+                    {
+                        unfulfilledDetail.Stationery = ufdDetail.Stationery;
+                        //depends on itemNum, add qty or add as new detail
+                        d.Add(unfulfilledDetail);
+                        isDisbursementForSameDept = true;
+                        break;
+                    }
+                }
+
+                if (isDisbursementForSameDept) continue;
+
+                //if not for same dept, construct a new disbursement
+                var disbursement = new Disbursement(ufdDetail.Disbursement, collectionDate);
+                disbursement.Add(unfulfilledDetail);
+                targetDisbursementsList.Add(disbursement);
+            }
+
+            //since the remaining qty (if any) has been factored into the new disbursement details' requested qty 
+            //mark processed unfulfilled disbursements fulfilled, and their detail lists' requested qty to be updated to tally status
+
+            foreach (var detail in unfufilledDisbursementDetails)
+            {
+                detail.RequestedQty = detail.ActualQty;
+                _disbursementRepo.UpdateDisbursementDetail(detail);
+            }
+            
+            var unfulfilledDisList = _disbursementRepo.GetUnfullfilledDisbursements().ToList();
+            foreach (var unfd in unfulfilledDisList)
+            {
+                unfd.Status = DisbursementStatus.Fulfilled;
+                _disbursementRepo.Update(unfd);
+            }
+            
+            return targetDisbursementsList;
+        }
+
+
+        #endregion
     }
 }

@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Diagnostics;
 using LUSSIS.Constants;
-
+using static LUSSIS.Constants.POStatus;
 namespace LUSSIS.Controllers
 {
     //Authors: May Zin Ko Authors: Douglas Lee Kiat Hui
@@ -43,7 +43,7 @@ namespace LUSSIS.Controllers
             var dash = new SupervisorDashboardDTO
             {
                 PendingPOTotalAmount = _poRepo.GetPendingPOTotalAmount(),
-                PendingPOCount = _poRepo.GetPendingPOCount(),
+                PendingPOCount = _poRepo.GetPendingApprovalPO().Count,
                 POTotalAmount = _poRepo.GetPOTotalAmount(fromList),
                 PendingStockAdjAddQty = totalAddAdjustmentQty,
                 PendingStockAdjSubtractQty = totalSubtractAdjustmentQty,
@@ -62,30 +62,7 @@ namespace LUSSIS.Controllers
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetBarchartJson()
-        {
-            var deptNames = _departmentRepo.GetAll().Select(item => item.DeptName).ToList();
-            var deptCodes = _departmentRepo.GetAll().Select(item => item.DeptCode).ToList();
-
-            var deptValues = new List<double>();
-            foreach (var deptCode in deptCodes)
-            {
-                deptValues.Add(_disbursementRepo.GetDisbursementTotalAmountOfDept(deptCode));
-            }
-
-            return Json(new { firstList = deptNames, secondList = deptValues },
-                JsonRequestBehavior.AllowGet);
-        }
-
-
-
-        public JsonResult GetReportJSON(String supplier_values, String category_values, String date)
-        {
-            List<String> pileName = _categoryRepo.GetAllCategoryName().ToList();
-            List<double> pileValue = _poRepo.GetPOByCategory();
-
-            return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
-        }
+      
         public JsonResult GetStackJSON()
         {
             List<String> depList = _departmentRepo.GetAllDepartmentCode();
@@ -119,7 +96,7 @@ namespace LUSSIS.Controllers
                 for (int i = 0; i <depList.Count; i++)
                 {
 
-                    temp = _disbursementRepo.GetDisAmountByDate(depList[i], catList, fromList[j]);
+                    temp = _disbursementRepo.GetDisAmountByDep(depList[i], catList, fromList[j]);
                     xvalue.Add(temp);
                 }
                 rto.xvalue = xvalue;
@@ -127,23 +104,6 @@ namespace LUSSIS.Controllers
             }
             return Json(new { title = titlevalue, ListOne = Listone }, JsonRequestBehavior.AllowGet);
 
-        }
-
-    protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _poRepo.Dispose();
-                _stockAdjustmentRepo.Dispose();
-                _stationeryRepo.Dispose();
-                _employeeRepo.Dispose();
-                _departmentRepo.Dispose();
-                _categoryRepo.Dispose();
-                _supplierRepo.Dispose();
-                _disbursementRepo.Dispose();
-            }
-
-            base.Dispose(disposing);
         }
 
         [Authorize(Roles = "manager,supervisor")]
@@ -155,6 +115,7 @@ namespace LUSSIS.Controllers
 
             return View();
         }
+
         public ActionResult ReturnJsonData()
         {
             //get post results from ajax
@@ -183,7 +144,7 @@ namespace LUSSIS.Controllers
                         Group = x.Disbursement.DeptCode
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);
             else
-                allList = _poRepo.GetPurchaseOrderDetailsByStatus("fulfilled")
+                allList = _poRepo.GetPurchaseOrderDetailsByStatus(Ordered)
                     .Select(x => new Detail
                     {
                         Date = x.PurchaseOrder.CreateDate,
@@ -256,7 +217,24 @@ namespace LUSSIS.Controllers
             return Json(new { arr, arr1, arrTotal }, JsonRequestBehavior.AllowGet);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _poRepo.Dispose();
+                _stockAdjustmentRepo.Dispose();
+                _stationeryRepo.Dispose();
+                _employeeRepo.Dispose();
+                _departmentRepo.Dispose();
+                _categoryRepo.Dispose();
+                _supplierRepo.Dispose();
+                _disbursementRepo.Dispose();
+            }
 
+            base.Dispose(disposing);
+        }
+
+        #region Helpers
         public class AjaxInputFilter
         {
             public AjaxInputFilter(string input)
@@ -327,7 +305,7 @@ namespace LUSSIS.Controllers
                 return list.Where(x => x.Date.ToString("yyyyMM") == yyyymm);
             }
         }
-
+        #endregion
     }
 
 }

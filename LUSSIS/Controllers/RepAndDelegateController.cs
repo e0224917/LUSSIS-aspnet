@@ -1,7 +1,5 @@
-﻿using LUSSIS.Models;
-using LUSSIS.Models.WebDTO;
+﻿using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +8,6 @@ using System.Web.Mvc;
 using System.Globalization;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
-using System.Web.Security;
 using LUSSIS.Constants;
 using LUSSIS.DAL;
 using LUSSIS.CustomAuthority;
@@ -28,6 +25,9 @@ namespace LUSSIS.Controllers
         private readonly RequisitionRepository _requisitionRepo = new RequisitionRepository();
         private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
 
+        /// <summary>
+        /// Return true if a delegate is active as of now.
+        /// </summary>
         private bool ExistDelegate
         {
             get
@@ -182,14 +182,14 @@ namespace LUSSIS.Controllers
                     var emailToOldRep = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(oldRepEmailAdd).ForOldRepresentative().Build();
 
-                    EmailHelper.SendEmail(emailToOldRep);
+                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(emailToOldRep); }).Start();
                 }
 
                 //email to new rep
                 var emailToNewRep = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(newRepEmailAdd).ForNewRepresentative().Build();
 
-                EmailHelper.SendEmail(emailToNewRep);
+                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(emailToNewRep); }).Start();
 
             }
 
@@ -223,8 +223,7 @@ namespace LUSSIS.Controllers
                 //email to new delegate
                 var emailToNewDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(newDelegateEmailAdd).ForNewDelegate().Build();
-
-                EmailHelper.SendEmail(emailToNewDelegate);
+                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(emailToNewDelegate); }).Start();
             }
 
             return RedirectToAction("MyDelegate");
@@ -246,8 +245,7 @@ namespace LUSSIS.Controllers
                 //email to old delegate
                 var emailToOldDelegate = new LUSSISEmail.Builder().From(sender.EmailAddress)
                     .To(oldDelegateEmailAdd).ForOldDelegate().Build();
-
-                EmailHelper.SendEmail(emailToOldDelegate);
+                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(emailToOldDelegate); }).Start();
 
                 _delegateRepo.DeleteByDeptCode(deptCode);             
             }

@@ -9,7 +9,6 @@ using LUSSIS.Constants;
 using LUSSIS.Emails;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
-using LUSSIS.Constants;
 
 namespace LUSSIS.Controllers.WebAPI
 {
@@ -44,23 +43,16 @@ namespace LUSSIS.Controllers.WebAPI
 
                 var isDelegated = false;
 
-                if (emp.JobTitle.Equals(Constants.Role.Staff))
+                if (emp.JobTitle.Equals(Role.Staff))
                 {
                     isDelegated = _delegateRepo.FindCurrentByEmpNum(emp.EmpNum) != null;
                 }
 
-                var e = new EmployeeDTO
+                var e = new EmployeeDTO(emp)
                 {
-                    EmpNum = emp.EmpNum,
-                    Title = emp.Title,
-                    FirstName = emp.FirstName,
-                    LastName = emp.LastName,
-                    EmailAddress = emp.EmailAddress,
-                    JobTitle = emp.JobTitle,
-                    DeptCode = emp.DeptCode,
-                    DeptName = emp.Department.DeptName,
                     IsDelegated = isDelegated
                 };
+
                 return Ok(e);
             }
             catch (Exception e)
@@ -92,8 +84,8 @@ namespace LUSSIS.Controllers.WebAPI
 
                     string subject = "Reset password for " + model.Email;
                     string body = "Please reset your password by clicking <a href=" + callbackUrl + ">here</a>";
-                    string to = "minhnhattonthat@gmail.com";
-                    EmailHelper.SendEmail(to, subject, body);
+                    string to = model.Email;
+                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(to,subject,body); }).Start();
                 }
                 catch (Exception e)
                 {

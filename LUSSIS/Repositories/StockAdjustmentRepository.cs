@@ -15,6 +15,7 @@ namespace LUSSIS.Repositories
         {
             return GetAll().Where(x => x.Status == AdjustmentVoucherStatus.Pending).ToList();
         }
+
         public int GetPendingAdjustmentCount()
         {
             return GetAll().Where(x => x.Status == AdjustmentVoucherStatus.Pending).ToList().Count;
@@ -79,6 +80,13 @@ namespace LUSSIS.Repositories
         public IEnumerable<AdjVoucher> GetApprovedAdjVoucherByItem(string itemNum)
         {
             return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == itemNum && x.Status == AdjustmentVoucherStatus.Approved);
+        }
+
+       public Stationery AddStockAdjustment(AdjVoucher adjVoucher)
+        {
+            LUSSISContext.Set<AdjVoucher>().Add(adjVoucher);
+            LUSSISContext.SaveChanges();
+            return LUSSISContext.Set<Stationery>().Find(adjVoucher.ItemNum);
         }
     }
 }
