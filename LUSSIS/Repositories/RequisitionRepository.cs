@@ -14,11 +14,9 @@ namespace LUSSIS.Repositories
     //Authors: Tang Xiaowen, Cui Runze
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
-        public List<Requisition> GetAllByDeptCode(string deptCode)
+        public IEnumerable<Requisition> GetAllByDeptCode(string deptCode)
         {
-            var list = LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode).ToList();
-            list.Reverse();
-            return list;
+            return LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode).Reverse();
         }
 
         /// <summary>
@@ -42,7 +40,25 @@ namespace LUSSIS.Repositories
         public IEnumerable<RequisitionDetail> GetRequisitionDetailsByStatus(string status)
         {
             return LUSSISContext.RequisitionDetails
-                .Where(r => r.Requisition.Status == status).ToList();
+                .Where(r => r.Requisition.Status == status);
+        }
+
+        public IEnumerable<RequisitionDetail> GetApprovedRequisitionDetails()
+        {
+            return LUSSISContext.RequisitionDetails
+                .Where(r => r.Requisition.Status == RequisitionStatus.Approved);
+        }
+
+        public List<RequisitionDetail> GetApprovedRequisitionDetailsByDeptCode(string deptCode)
+        {
+            return LUSSISContext.RequisitionDetails
+                .Where(r => r.Requisition.DeptCode == deptCode
+                            && r.Requisition.Status == RequisitionStatus.Approved).ToList();
+        }
+
+        public IEnumerable<Requisition> GetApprovedRequisitions()
+        {
+            return LUSSISContext.Requisitions.Where(r => r.Status == RequisitionStatus.Approved);
         }
 
         public IEnumerable<Requisition> GetRequisitionsByEmpNum(int empNum)
@@ -70,13 +86,9 @@ namespace LUSSIS.Repositories
         /// <returns></returns>
         public IEnumerable<Requisition> GetPendingListForHead(string deptCode)
         {
-            var list = LUSSISContext.Requisitions
-                .Where(r => r.DeptCode == deptCode && r.Status == RequisitionStatus.Pending).ToList();
-            list.Reverse();
-            return list;
+            return LUSSISContext.Requisitions
+                .Where(r => r.DeptCode == deptCode && r.Status == POStatus.Pending).Reverse();
         }
 
     }
-
-
 }
