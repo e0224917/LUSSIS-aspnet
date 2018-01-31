@@ -62,28 +62,7 @@ namespace LUSSIS.Controllers
             return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetBarchartJson()
-        {
-            var deptNames = _departmentRepo.GetAll().Select(item => item.DeptName).ToList();
-            var deptCodes = _departmentRepo.GetAll().Select(item => item.DeptCode).ToList();
-
-            var deptValues = new List<double>();
-            foreach (var deptCode in deptCodes)
-            {
-                deptValues.Add(_disbursementRepo.GetDisbursementTotalAmountOfDept(deptCode));
-            }
-
-            return Json(new { firstList = deptNames, secondList = deptValues },
-                JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult GetReportJSON(String supplier_values, String category_values, String date)
-        {
-            List<String> pileName = _categoryRepo.GetAllCategoryName().ToList();
-            List<double> pileValue = _poRepo.GetPOByCategory();
-
-            return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
-        }
+      
         public JsonResult GetStackJSON()
         {
             List<String> depList = _departmentRepo.GetAllDepartmentCode();

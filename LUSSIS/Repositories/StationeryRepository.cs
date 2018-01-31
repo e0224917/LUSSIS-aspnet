@@ -55,24 +55,25 @@ namespace LUSSIS.Repositories
 
         public Dictionary<Supplier, List<Stationery>> GetOutstandingStationeryByAllSupplier()
         {
-            //get stationery which has available qty<reorder level
             Dictionary<Supplier, List<Stationery>> dic = new Dictionary<Supplier, List<Stationery>>();
+
+
             //get list of pending PO stationery and qty
             List<Stationery> slist = GetAll().Where(x => x.AvailableQty < x.ReorderLevel).ToList();
 
-            //get dictionary of supplier and stationery
+            //fill dictionary
             if (slist != null)
             {
-                for (int i = 0; i < slist.Count(); i++)
+                foreach (Stationery s in slist)
                 {
-                    Supplier primarySupplier = slist[i].PrimarySupplier();
+                    Supplier primarySupplier = s.PrimarySupplier();
                     if (dic.ContainsKey(primarySupplier))
                     {
-                        dic[primarySupplier].Add(slist[i]);
+                        dic[primarySupplier].Add(s);
                     }
                     else
                     {
-                        dic.Add(primarySupplier, new List<Stationery>() { slist[i] });
+                        dic.Add(primarySupplier, new List<Stationery>() { s });
                     }
 
                 }

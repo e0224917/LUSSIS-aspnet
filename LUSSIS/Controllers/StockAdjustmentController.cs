@@ -100,7 +100,7 @@ namespace LUSSIS.Controllers
                             CreateDate = DateTime.Today
                         };
 
-                        _stockAdjustmentRepo.Add(adjustment);
+                        adjustment.Stationery = _stockAdjustmentRepo.AddStockAdjustment(adjustment);
                         vouchers.Add(adjustment);
                     }
                     //Although there is a threshold of $250, both supervisor and manager will be informed of all adjustments regardless of price
@@ -178,9 +178,10 @@ namespace LUSSIS.Controllers
                     Status = Pending,
                     RequestEmpNum = empNum,
                     CreateDate = DateTime.Today
+                   
                 };
 
-                _stockAdjustmentRepo.Add(adjustment);
+                adjustment.Stationery = _stockAdjustmentRepo.AddStockAdjustment(adjustment);
 
                 var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                 var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;

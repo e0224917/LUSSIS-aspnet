@@ -15,5 +15,6 @@ namespace LUSSIS.Models.WebDTO
         public int OrderQty { get; set; }
         public double UnitPrice { get; set; }
         public int ReceiveQty { get; set; }
+        public int ReorderQty { get; set; }
     }
 }
