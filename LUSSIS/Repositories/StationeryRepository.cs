@@ -11,6 +11,11 @@ namespace LUSSIS.Repositories
     //Authors: Koh Meng Guan
     public class StationeryRepository : Repository<Stationery, string>, IStationeryRepository
     {
+        /// <summary>
+        /// Method to generate the next item number for stationery
+        /// </summary>
+        /// <param name="initial"></param>
+        /// <returns></returns>
         public int GetLastRunningPlusOne(string initial)
         {
             List<Stationery> st = LUSSISContext.Stationeries.Where(x => x.ItemNum.StartsWith(initial)).ToList();
@@ -23,11 +28,11 @@ namespace LUSSIS.Repositories
             return (runningNum.Last() + 1);
         }
 
-
         public IEnumerable<Stationery> GetByCategory(string category)
         {
             return LUSSISContext.Stationeries.Where(s => s.Category.CategoryName == category);
         }
+
         public IEnumerable<Stationery> GetByDescription(string Description)
         {
             return LUSSISContext.Stationeries.Where(s => s.Description.Contains(Description));
@@ -45,40 +50,37 @@ namespace LUSSIS.Repositories
                     on t1.ItemNum equals t2.ItemNum
                     where t2.Supplier.SupplierId == id
                     select t1;
-            return q.AsEnumerable<Stationery>();
+            return q.AsEnumerable();
         }
 
-        private class PendingPOQuantityByItem
-        {
-            public string ItemNum { get; set; }
-            public int? Qty { get; set; }
-        }
         public Dictionary<Supplier, List<Stationery>> GetOutstandingStationeryByAllSupplier()
         {
-            //get stationery which has available qty<reorder level
             Dictionary<Supplier, List<Stationery>> dic = new Dictionary<Supplier, List<Stationery>>();
+
+
             //get list of pending PO stationery and qty
             List<Stationery> slist = GetAll().Where(x => x.AvailableQty < x.ReorderLevel).ToList();
 
-            //get dictionary of supplier and stationery
+            //fill dictionary
             if (slist != null)
             {
-                for (int i = 0; i < slist.Count(); i++)
+                foreach (Stationery s in slist)
                 {
-                    Supplier primarySupplier = slist[i].PrimarySupplier();
+                    Supplier primarySupplier = s.PrimarySupplier();
                     if (dic.ContainsKey(primarySupplier))
                     {
-                        dic[primarySupplier].Add(slist[i]);
+                        dic[primarySupplier].Add(s);
                     }
                     else
                     {
-                        dic.Add(primarySupplier, new List<Stationery>() { slist[i] });
+                        dic.Add(primarySupplier, new List<Stationery>() { s });
                     }
 
                 }
             }
             return dic;
         }
+
         public List<String> GetItembyCategory(int c)
         {
             return GetAll().Where(x => x.CategoryId == c).Select(x => x.ItemNum).ToList();

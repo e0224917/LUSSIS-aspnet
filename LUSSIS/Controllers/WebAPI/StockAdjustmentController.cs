@@ -12,19 +12,8 @@ namespace LUSSIS.Controllers.WebAPI
     public class StockAdjustmentController : ApiController
     {
         private readonly StockAdjustmentRepository _stockadjustmentRepo = new StockAdjustmentRepository();
-        // GET api/<controller>
-        public IEnumerable<string> Get()
-        {
-            return new [] { "value1", "value2" };
-        }
 
-        // GET api/<controller>/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<controller>
+        // POST api/StockAdjustment
         [HttpPost]
         [Route("api/StockAdjustment/")]
         public async Task<IHttpActionResult> Post([FromBody]AdjustmentDTO adjustment)
@@ -41,17 +30,7 @@ namespace LUSSIS.Controllers.WebAPI
 
             await _stockadjustmentRepo.AddAsync(ad);
 
-            return Ok(new {Message = "New adjusment sent."});
-        }
-
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/<controller>/5
-        public void Delete(int id)
-        {
+            return Ok(new {Message = "New adjusment sent"});
         }
 
         protected override void Dispose(bool disposing)

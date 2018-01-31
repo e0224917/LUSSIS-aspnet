@@ -75,7 +75,7 @@ namespace LUSSIS.Repositories
         }
 
         /// <summary>
-        /// /for supervisoer' dashboard
+        /// /for supervisor's dashboard
         /// </summary>
         /// <returns></returns>
         public double GetDisbursementTotalAmount(List<String>fromList)
@@ -104,21 +104,7 @@ namespace LUSSIS.Repositories
             return result;
         }
 
-        public double GetDisbursementTotalAmountOfDept(string deptCode)
-        {
-            double result = 0;
-
-            var list = GetAll().Where(x => x.Status != InProcess && x.DeptCode.Equals(deptCode)).ToList();
-            foreach (Disbursement d in list)
-            {
-                result += GetAmountByDisbursement(d);
-            }
-
-
-            return result;
-        }
-
-
+      
         public void Acknowledge(Disbursement disbursement)
         {
             var isFulfilled = disbursement.DisbursementDetails.All(item => item.ActualQty == item.RequestedQty);
@@ -135,19 +121,6 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Disbursements.Any(d => d.Status == InProcess);
         }
 
-        public double GetAmountByDisbursement(Disbursement d)
-        {
-            double result = 0;
-            var detailList = d.DisbursementDetails.ToList();
-            foreach (DisbursementDetail f in detailList)
-            {
-                int qty = f.ActualQty;
-                double unitPrice = f.UnitPrice;
-                result += (qty * unitPrice);
-            }
-
-            return result;
-        }
 
         public DisbursementDetail GetDisbursementDetailByIdAndItem(string id, string itemNum)
         {

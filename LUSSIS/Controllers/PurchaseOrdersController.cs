@@ -107,12 +107,16 @@ namespace LUSSIS.Controllers
 
             //get supplier
             var supplier = _supplierRepo.GetById(Convert.ToInt32(supplierId));
-            po.Supplier = supplier;
-            po.SupplierId = supplier.SupplierId;
-            po.CreateDate = DateTime.Today;
-            po.SupplierAddress = supplier.Address1 + Environment.NewLine + supplier.Address2 + Environment.NewLine +
-                                 supplier.Address3;
-            po.SupplierContact = supplier.ContactName;
+            var po = new PurchaseOrderDTO()
+            {   //view model
+                Supplier = supplier,
+                SupplierId = supplier.SupplierId,
+                CreateDate = DateTime.Today,
+                SupplierAddress = supplier.Address1 + Environment.NewLine
+                    + supplier.Address2 + Environment.NewLine
+                    + supplier.Address3,
+                SupplierContact = supplier.ContactName
+            };
 
             //set empty Stationery template for dropdown
             var emptyStationery = new Stationery
@@ -133,8 +137,8 @@ namespace LUSSIS.Controllers
                     {
                         PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
                         pdetails.OrderQty =
-                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
-                                Convert.ToInt32(stationery.ReorderQty));
+                                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
+                                                Convert.ToInt32(stationery.ReorderQty));
                         pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
                         pdetails.ItemNum = stationery.ItemNum;
                         po.PurchaseOrderDetailsDTO.Add(pdetails);
@@ -426,9 +430,9 @@ namespace LUSSIS.Controllers
             {
                 HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
                 String empNum = cookie["EmpNum"];
-                _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE"? Approved : Rejected,empNum);
-                
-                if(status.ToUpper() == "APPROVE")
+                _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE" ? Approved : Rejected, empNum);
+
+                if (status.ToUpper() == "APPROVE")
                 {
                     List<PurchaseOrderDetail> pDetail = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
 

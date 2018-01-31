@@ -4,7 +4,7 @@
     ViewBag.Title = "Dashboard";
 }
 <h2>My Dashboard</h2>
-<hr/>
+<hr />
 
 <div class="row">
     <div class="col-lg-3 col-md-6 text-center">
@@ -45,48 +45,51 @@
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-6 text-center" style="display:none">
-        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 22rem">
-            <h5 class="card-header mt-0">Pending P.O. </h5>
-            <div class="card-body">
-                @if (@Model.PendingPOCount == 0)
-                {
-                    <div class="alert alert-dismissible alert-info p-4">
-                        <h6>No pending purchase order at the moment.</h6>
-                    </div>
-                }
-                else
-                {
-                    <table class="table mt-3">
-                        <tr>
-                            <th><small>No. of requests&nbsp;&nbsp;&nbsp;</small> @Model.PendingPOCount</th>
-                        </tr>
+    @if (User.IsInRole(Role.Supervisor))
+    {
+        <div class="col-lg-3 col-md-6 text-center">
+            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 22rem">
+                <h5 class="card-header mt-0">Pending P.O. </h5>
+                <div class="card-body">
+                    @if (@Model.PendingPOCount == 0)
+                    {
+                        <div class="alert alert-dismissible alert-info p-4">
+                            <h6>No pending purchase order at the moment.</h6>
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table mt-3">
+                            <tr>
+                                <th><small>No. of requests&nbsp;&nbsp;&nbsp;</small> @Model.PendingPOCount</th>
+                            </tr>
 
-                        <tr>
-                            <td>
+                            <tr>
+                                <td>
 
-                                <h3 class="mt-2 mb-0 text-muted">$ @Model.PendingPOTotalAmount.ToString("0.00")</h3>
+                                    <h3 class="mt-2 mb-0 text-muted">$ @Model.PendingPOTotalAmount.ToString("0.00")</h3>
 
 
-                            </td>
+                                </td>
 
-                        </tr>
+                            </tr>
 
-                    </table>
-                }
+                        </table>
+                    }
 
-            </div>
-            <div class="card-footer text-center">
-                @Html.ActionLink("View All", "PendingPO", "PurchaseOrders", null, new { @class = "btn btn-info", style = "width:100%" })
+                </div>
+                <div class="card-footer text-center">
+                    @Html.ActionLink("View All", "PendingPO", "PurchaseOrders", null, new { @class = "btn btn-info", style = "width:100%" })
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-3 col-md-6 text-center">
-        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 22rem">
-            <h5 class="card-header mt-0">Total PO Expenditure</h5>
-            <div class="card-body">
+    }
+        <div class="col-lg-3 col-md-6 text-center">
+            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 22rem">
+                <h5 class="card-header mt-0">Total PO Expenditure</h5>
+                <div class="card-body">
 
-                <table class="table mt-3">
+                    <table class="table mt-3">
                         <tr>
                             <th>
                                 <small>As of &nbsp;&nbsp;</small>@DateTime.Today.ToShortDateString()
@@ -101,14 +104,15 @@
                             </td>
                         </tr>
                     </table>
-               
 
-            </div>
-            <div class="card-footer text-center">
-                @Html.ActionLink("Purchase Trend", "TrendAnalysis", "SupervisorDashboard", null, new { @class = "btn btn-warning", style = "width:100%" })
+
+                </div>
+                <div class="card-footer text-center">
+                    @Html.ActionLink("Purchase Trend", "TrendAnalysis", "SupervisorDashboard", null, new { @class = "btn btn-warning", style = "width:100%" })
+                </div>
             </div>
         </div>
-    </div>
+    
     <div class="col-lg-3 col-md-6 text-center">
         <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 22rem">
             <h5 class="card-header mt-0">Total ChargeBack</h5>
@@ -141,7 +145,7 @@
     </div>
 </div>
 
-<hr/>
+<hr />
 <br />
 <div class="row">
     <div class="col-lg-6 text-center">
@@ -164,17 +168,7 @@
 
 @section scripts
 {
-    <script>
-        window.onload = function ()
-        {
-        if ((@User.IsInRole(Role.Supervisor)).ToLower()) {
-            document.getElementById("notShowManager").style.display = "block";
-        } else {
-            document.getElementById("notShowManager").style.display = "none";
-        }
-    }
-    </script>
-
+   
     @Scripts.Render("https://www.gstatic.com/charts/loader.js")
 
     <script type="text/javascript">
@@ -233,7 +227,7 @@
                                 legend: {position:"bottom"}
                             }
                         );
-                        
+
                     },
                     error: function () {
                         alert("Error loading data! Please try again.");
