@@ -20,7 +20,7 @@ namespace LUSSIS.Models.WebDTO
         [Display(Name="Created Date")]
         public DateTime CreateDate { get; set; }
         [Display(Name = "Ordered Date")]
-        public DateTime OrderDate { get; set; }
+        public DateTime? OrderDate { get; set; }
         public string Status { get; set; }
         [Display(Name = "Approved Date")]
         public DateTime? ApprovalDate { get; set; }

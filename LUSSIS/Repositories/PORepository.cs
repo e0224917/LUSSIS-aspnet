@@ -91,7 +91,7 @@ namespace LUSSIS.Repositories
                         join t2 in LUSSISContext.PurchaseOrderDetails
                         on t1.PoNum equals t2.PoNum
                         where t1.Status==Ordered
-                        && (t1.OrderDate.Month==fromDate.Month && t1.OrderDate.Year==fromDate.Year)
+                        && (Convert.ToDateTime(t1.OrderDate).Month==fromDate.Month && Convert.ToDateTime(t1.OrderDate).Year==fromDate.Year)
                         select new
                         {
                             price = (int)t2.UnitPrice,
@@ -138,7 +138,7 @@ namespace LUSSIS.Repositories
                             join t3 in LUSSISContext.Stationeries
                             on t2.ItemNum equals t3.ItemNum
                             where t3.CategoryId == catId
-                            && (t1.OrderDate.Month==fromDate.Month && t1.OrderDate.Year==fromDate.Year)
+                            && (Convert.ToDateTime(t1.OrderDate).Month ==fromDate.Month && Convert.ToDateTime(t1.OrderDate).Year ==fromDate.Year)
                             select new
                             {
                                 price = (int)t2.UnitPrice,
