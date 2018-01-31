@@ -144,12 +144,12 @@ namespace LUSSIS.Controllers
                         Group = x.Disbursement.DeptCode
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);
             else
-                allList = _poRepo.GetPurchaseOrderDetailsByStatus(Ordered)
+                allList = _poRepo.GetAllPurchaseOrderDetails().Where(x=>x.PurchaseOrder.Status!=Rejected && x.PurchaseOrder.Status!=Pending)
                     .Select(x => new Detail
                     {
                         Date = x.PurchaseOrder.CreateDate,
-                        Qty = x.OrderQty,
-                        Cost = x.UnitPrice * x.OrderQty,
+                        Qty = x.ReceiveQty,
+                        Cost = x.UnitPrice * x.ReceiveQty,
                         CategoryId = x.Stationery.CategoryId,
                         Group = x.PurchaseOrder.SupplierId.ToString()
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);
