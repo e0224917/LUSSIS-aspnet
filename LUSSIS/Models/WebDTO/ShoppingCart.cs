@@ -8,53 +8,47 @@ namespace LUSSIS.Models.WebDTO
     //Authors: Cui Runze
     public class ShoppingCart
     {
-        public List<Cart> shoppingCart;
+        private List<Cart> Carts;
         public ShoppingCart()
         {
-            shoppingCart = new List<Cart>();
+            Carts = new List<Cart>();
         }
-        public void addToCart(Cart cart)
+        public void AddToCart(Cart cart)
         {
             bool status = false;
-            foreach (Cart c in shoppingCart)
+            foreach (Cart c in Carts)
             {
                 
-                if (c.stationery.ItemNum.Equals(cart.stationery.ItemNum))
+                if (c.Stationery.ItemNum.Equals(cart.Stationery.ItemNum))
                 {
-                    c.quantity = c.quantity + cart.quantity;
+                    c.Quantity = c.Quantity + cart.Quantity;
                     status = true;
                 }               
             }
             if (status == false)
             {
-                shoppingCart.Add(cart);
+                Carts.Add(cart);
             }
         }
-        public void deleteCart(string id)
+        public void DeleteCart(string id)
         {           
-            for(int i = 0; i < shoppingCart.Count; i++)
+            for(int i = 0; i < Carts.Count; i++)
             {
-                if (shoppingCart[i].stationery.ItemNum == id)
+                if (Carts[i].Stationery.ItemNum == id)
                 {
-                    shoppingCart.RemoveAt(i);
+                    Carts.RemoveAt(i);
                 }
             }
-            //foreach (Cart c in shoppingCart)
-            //{
-
-            //    if (c.stationery.ItemNum.Equals(id))
-            //    {
-            //        shoppingCart.Remove(c);
-            //    }
-            //}
         }
+
         public List<Cart> GetAllCartItem()
         {
-            return shoppingCart.ToList();
+            return Carts.ToList();
         }
+
         public int GetCartItemCount()
         {
-            return shoppingCart.Count();
+            return Carts.Count();
         }
     }
 }

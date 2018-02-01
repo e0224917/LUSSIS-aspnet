@@ -219,7 +219,7 @@ namespace LUSSIS.Controllers
             var item = _stationeryRepo.GetById(id);
             var cart = new Cart(item, qty);
             var shoppingCart = Session["MyCart"] as ShoppingCart;
-            shoppingCart?.addToCart(cart);
+            shoppingCart?.AddToCart(cart);
             return Json(shoppingCart?.GetCartItemCount());
         }
 
@@ -299,8 +299,8 @@ namespace LUSSIS.Controllers
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         public ActionResult MyCart()
         {
-            var mycart = (ShoppingCart)Session["MyCart"];
-            return View(mycart.GetAllCartItem());
+            var myCart = (ShoppingCart)Session["MyCart"];
+            return View(myCart.GetAllCartItem());
         }
 
         // POST: Requisitions/DeleteCartItem
@@ -309,7 +309,7 @@ namespace LUSSIS.Controllers
         public ActionResult DeleteCartItem(string id, int qty)
         {
             var myCart = Session["MyCart"] as ShoppingCart;
-            myCart?.deleteCart(id);
+            myCart?.DeleteCart(id);
 
             return Json(id);
         }
@@ -319,19 +319,19 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult UpdateCartItem(string id, int qty)
         {
-            var mycart = Session["MyCart"] as ShoppingCart;
+            var shoppingCart = Session["MyCart"] as ShoppingCart;
             var c = new Cart();
-            foreach (var cart in mycart.shoppingCart)
+            foreach (var cart in shoppingCart.GetAllCartItem())
             {
-                if (cart.stationery.ItemNum != id) continue;
+                if (cart.Stationery.ItemNum != id) continue;
                 c = cart;
-                cart.quantity = qty;
+                cart.Quantity = qty;
                 break;
             }
 
-            if (c.quantity <= 0)
+            if (c.Quantity <= 0)
             {
-                mycart.shoppingCart.Remove(c);
+                shoppingCart.DeleteCart(c.Stationery.ItemNum);
             }
 
             return RedirectToAction("MyCart");
