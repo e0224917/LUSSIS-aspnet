@@ -9,7 +9,7 @@ using System.Web.Http.ValueProviders;
 namespace LUSSIS.Models.WebAPI
 {
     //Authors: Ton That Minh Nhat
-    [ModelBinder(typeof(EmployeeModelBinder))]
+    //[ModelBinder(typeof(EmployeeModelBinder))]
     public class EmployeeDTO
     {
         public EmployeeDTO(Employee employee)
@@ -45,31 +45,31 @@ namespace LUSSIS.Models.WebAPI
 
     }
 
-    public class EmployeeModelBinder : IModelBinder
-    {
-        public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext)
-        {
-            if(bindingContext.ModelType != typeof(EmployeeDTO))
-            {
-                return false;
-            }
+    //public class EmployeeModelBinder : IModelBinder
+    //{
+    //    public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext)
+    //    {
+    //        if(bindingContext.ModelType != typeof(EmployeeDTO))
+    //        {
+    //            return false;
+    //        }
 
-            ValueProviderResult val = bindingContext.ValueProvider.GetValue(
-                bindingContext.ModelName);
-            if(val == null)
-            {
-                return false;
-            }
+    //        ValueProviderResult val = bindingContext.ValueProvider.GetValue(
+    //            bindingContext.ModelName);
+    //        if(val == null)
+    //        {
+    //            return false;
+    //        }
 
-            string key = val.RawValue as string;
-            if(key == null)
-            {
-                bindingContext.ModelState.AddModelError(
-                    bindingContext.ModelName, "Wrong value type");
-                return false;
-            }
+    //        string key = val.RawValue as string;
+    //        if(key == null)
+    //        {
+    //            bindingContext.ModelState.AddModelError(
+    //                bindingContext.ModelName, "Wrong value type");
+    //            return false;
+    //        }
 
-            return true;
-        }
-    }
+    //        return true;
+    //    }
+    //}
 }

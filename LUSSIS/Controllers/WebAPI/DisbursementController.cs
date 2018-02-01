@@ -13,6 +13,7 @@ namespace LUSSIS.Controllers.WebAPI
     {
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
         private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
 
         [HttpGet]
         [Route("api/Disbursement/")]
@@ -44,22 +45,18 @@ namespace LUSSIS.Controllers.WebAPI
         }
 
         // POST api/<controller>
-        [Route("api/Disbursement/Acknowledge/{id}")]
-        public IHttpActionResult Acknowledge(int id, [FromBody] EmployeeDTO employee)
+        [Route("api/Disbursement/Acknowledge/")]
+        public IHttpActionResult Acknowledge(int id, int empnum)
         {
             var disbursement = _disbursementRepo.GetById(id);
+            var employee = _employeeRepo.GetById(empnum);
 
             if (employee.DeptCode != disbursement.DeptCode)
             {
                 return BadRequest("Wrong department.");
             }
 
-            //check if disbursement is fulfilled or not and update status
-            var isFulfilled = disbursement.DisbursementDetails.All(item => item.ActualQty == item.RequestedQty);
-            disbursement.Status = isFulfilled ? Fulfilled : Unfulfilled;
-            disbursement.AcknowledgeEmpNum = employee.EmpNum;
-            _disbursementRepo.Update(disbursement);
-
+            _disbursementRepo.Acknowledge(disbursement);
             //update current quantity of stationery
             foreach (var disbursementDetail in disbursement.DisbursementDetails)
             {

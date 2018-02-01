@@ -210,7 +210,7 @@
             $(function () {
                 $.ajax({
                     type: 'GET',
-                    url: '/SupervisorDashboard/GetPiechartJson?list=aaa&date=bbbb&&e=cdefe',
+                    url: '@Url.Content("~/")SupervisorDashboard/GetPiechartJson?list=aaa&date=bbbb&&e=cdefe',
                     success: function (chartsdata)
                     {
 
@@ -234,8 +234,6 @@
 
                         // Instantiate and draw our chart, passing in some options
                         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-
-
 
                         //Draw pie chart command with data and chart options
                         chart.draw(data,
@@ -264,22 +262,18 @@
 
         function DrawStackChartLoad() {
             $(function () {
-               // alert("this is");
                 $.ajax({
                     type: 'GET',
-                    url: '/SupervisorDashboard/GetStackJSON',
+                    url: '@Url.Content("~/")SupervisorDashboard/GetStackJSON',
                     success: function (chartsdata)
                     {
-                        //alert("please");
                         var data = new google.visualization.DataTable();
 
                         var title = chartsdata.title;
                         var listone = chartsdata.ListOne;
-                       // alert(listone.length);
 
                         for (var i = 0; i < title.length + 1; i++)
                         {
-                           // alert("first");
                             if (i == 0) {
                                 data.addColumn("string", 'Time');
                             } else {
@@ -290,27 +284,17 @@
                         data.addRows(listone.length);
                         for (var j = 0; j < listone.length; j++)
                         {
-                           // alert("second" + listone.length);
-
                             var tmpTime = listone[j].timeValue;
                             var tmpXvalue = listone[j].xvalue;
                             for (var k = 0; k < title.length + 1; k++)
                             {
-
-                                //alert("" + k);
                                 if (k == 0) {
                                     data.setValue(j, k, tmpTime);
                                 }
                                 else {
-
-                                    //alert("k" + k);
-                                    //alert("value" + tmpXvalue[k - 1]);
-
                                     data.setValue(j, k, tmpXvalue[k - 1]);
-
                                 }
                             }
-
                         }
 
 

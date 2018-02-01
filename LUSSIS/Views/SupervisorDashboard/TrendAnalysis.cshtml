@@ -127,7 +127,7 @@
                 ', unit_type=' + $('#unit_type:checked').val() + '}';
 
             $.ajax({
-                url: 'https://localhost:44303/SupervisorDashboard/returnjsondata',
+                url: "@Url.Content("~/")SupervisorDashboard/ReturnJsonData",
                 data: posted_data,
                 type: 'POST',
                 dataType: 'json',
