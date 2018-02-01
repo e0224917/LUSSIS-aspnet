@@ -31,7 +31,7 @@ namespace LUSSIS.Repositories
                 {
                     var s = ad.Stationery.AverageCost;
                     var qty = ad.Quantity;
-                    if (s * qty <= 250)
+                    if (s * Math.Abs(qty) < 250)
                     {
                         resultList.Add(ad);
                     }
@@ -43,7 +43,8 @@ namespace LUSSIS.Repositories
                 {
                     var s = ad.Stationery.AverageCost;
                     var qty = ad.Quantity;
-                    if (s * qty > 250)
+                   
+                    if (s * Math.Abs(qty) >= 250)
                     {
                         resultList.Add(ad);
                     }
@@ -53,16 +54,16 @@ namespace LUSSIS.Repositories
             return resultList;
         }
 
-        public List<AdjVoucher> GetPendingAdjustmentByType(string type)
+        public List<AdjVoucher> GetPendingAdjustmentByType(string type,String role)
         {
             switch (type)
             {
                 case "add":
-                    return GetPendingAdjustmentList().Where(a => a.Quantity > 0).ToList();
+                    return GetPendingAdjustmentByRole(role).Where(a => a.Quantity > 0).ToList();
                 case "subtract":
-                    return GetPendingAdjustmentList().Where(a => a.Quantity < 0).ToList();
+                    return GetPendingAdjustmentByRole(role).Where(a => a.Quantity < 0).ToList();
                 default:
-                    return GetPendingAdjustmentList();
+                    return GetPendingAdjustmentByRole(role);
             }
         }
         
