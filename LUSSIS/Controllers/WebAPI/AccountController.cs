@@ -28,6 +28,7 @@ namespace LUSSIS.Controllers.WebAPI
 
         [HttpPost]
         [AllowAnonymous]
+        [Route("api/auth/Login")]
         [ResponseType(typeof(EmployeeDTO))]
         public async Task<IHttpActionResult> Login(LoginViewModel model)
         {
@@ -62,6 +63,7 @@ namespace LUSSIS.Controllers.WebAPI
         }
 
         [HttpPost]
+        [Route("api/auth/ForgotPassword")]
         public async Task<IHttpActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)

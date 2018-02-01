@@ -8,30 +8,34 @@
 <div class="container">
     <div class="row" id="filter_criteria">
         <div class="col-3">
-            Date Range<br />
-            Date Type: <select id="custom_date_range">
-                <option value="0">Custom</option>
-                <option value="1">Last Month</option>
-                <option value="3">Past 3 Months</option>
-                <option value="6">Past 6 Months</option>
-                <option value="12">Past 12 Months</option>
-            </select><br />
-            From: <input type="date" id="from_date" class="chart_builder" /><br />
-            To: <input type="date" id="to_date" class="chart_builder" />
+            <strong>Date Range</strong><br />
+            Date Type: <br />
+                       <select id="custom_date_range" class="form-control">
+                           <option value="0">Custom</option>
+                           <option value="-1">Current Month</option>
+                           <option value="1">Last Month</option>
+                           <option value="3">Past 3 Months</option>
+                           <option value="6">Past 6 Months</option>
+                           <option value="12">Past 12 Months</option>
+                       </select>
+            From: 
+            <br /><input type="date" id="from_date" class="chart_builder form-control" />
+            To: 
+            <br /><input type="date" id="to_date" class="chart_builder form-control" />
         </div>
         <div class="col-3">
-            Chart Type<br />
+            <strong>Chart Type</strong><br />
             Data Type:<br />
-            <input type="radio" id="data_type" name="data_type" value="disburse" checked="checked" class="chart_builder" /><label>Disbursement</label>
+            <input type="radio" id="data_type" name="data_type" value="disburse" checked="checked" class="chart_builder" /><label>Disbursement</label><br />
             <input type="radio" id="data_type" name="data_type" value="po" class="chart_builder" /><label>Purchase Order</label>
-            <br />
+            <br /><br />
             Unit Type:<br />
-            <input type="radio" id="unit_type" name="unit_type" value="qty" checked="checked" class="chart_builder" /><label>Qty</label>
+            <input type="radio" id="unit_type" name="unit_type" value="qty" checked="checked" class="chart_builder" /><label>Qty</label><br />
             <input type="radio" id="unit_type" name="unit_type" value="cost" class="chart_builder" /><label>Cost</label>
             <br />
         </div>
         <div class="col-3" id="department">
-            Department<br />
+            <strong>Department</strong><br />
             @Html.ListBox("Departments", new SelectList(ViewBag.Departments, "DeptCode", "DeptName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder" })
         </div>
         <div class="col-3" id="supplier">
@@ -39,7 +43,7 @@
             @Html.ListBox("Suppliers", new SelectList(ViewBag.Suppliers, "SupplierId", "SupplierName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder" })
         </div>
         <div class="col-3" id="category">
-            Category<br />
+            <strong>Category</strong><br />
             @Html.ListBox("Categories", new SelectList(ViewBag.Categories, "CategoryId", "CategoryName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder" })
         </div>
     </div>
@@ -88,14 +92,20 @@
             });
             $('#supplier').hide();
             $('#custom_date_range').on('change', function () {
-                if ($(this).val() != '0') {
+                if (Number($(this).val()) > 0) {
                     var mydate = new Date();
                     mydate.setDate(0);
                     $('#to_date').val(mydate.toISOString().substr(0, 10));
                     mydate.setMonth(mydate.getMonth() - Number($(this).val()));
+                    mydate.setDate(mydate.getDate() + 1);
                     $('#from_date').val(mydate.toISOString().substr(0, 10));
                     //because it does not run automatically when the dates are changed
                     update_chart();
+                } else if ($(this).val() == '-1') {
+                    var mydate = new Date();
+                    $('#to_date').val(mydate.toISOString().substr(0, 10));
+                    mydate.setDate(1);
+                    $('#from_date').val(mydate.toISOString().substr(0, 10));
                 }
             })
         })
