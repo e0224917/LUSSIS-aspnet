@@ -91,6 +91,10 @@ namespace LUSSIS.Controllers
                         {
                             adjVoucherDto.Quantity = adjVoucherDto.Quantity * -1;
                         }
+                        var st = _stationeryRepo.GetById(adjVoucherDto.ItemNum);
+                        st.AvailableQty = st.AvailableQty + adjVoucherDto.Quantity;
+                        st.CurrentQty = st.CurrentQty + adjVoucherDto.Quantity;
+                        _stationeryRepo.Update(st);
 
                         var adjustment = new AdjVoucher
                         {
@@ -171,6 +175,10 @@ namespace LUSSIS.Controllers
                 {
                     adjVoucherDto.Quantity = adjVoucherDto.Quantity * -1;
                 }
+                var st = _stationeryRepo.GetById(adjVoucherDto.ItemNum);
+                st.AvailableQty = st.AvailableQty + adjVoucherDto.Quantity;
+                st.CurrentQty = st.CurrentQty + adjVoucherDto.Quantity;
+                _stationeryRepo.Update(st);
 
                 var adjustment = new AdjVoucher
                 {
@@ -183,7 +191,9 @@ namespace LUSSIS.Controllers
                    
                 };
 
+
                 adjustment.Stationery = _stockAdjustmentRepo.AddStockAdjustment(adjustment);
+                
 
                 var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                 var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
