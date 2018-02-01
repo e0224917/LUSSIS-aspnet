@@ -265,7 +265,7 @@ namespace LUSSIS.Controllers
             }
             HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
             String empNum = cookie["EmpNum"];
-            if(status=="Reject")
+            if(status=="rejected")
             {
                 foreach (var id in idList)
                 {
