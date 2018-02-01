@@ -20,30 +20,36 @@
         </tr>
         </thead><tbody>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnitOfMeasure)
-            </td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitOfMeasure)
+                </td>
 
-            <td>
-                <input type="number" class="form-control form-control-sm" name="qty" min="1" max="1000" step="1" value="1" id="qty-@item.ItemNum">
-            </td>
-            <td>
-                <input type="submit" value="Add To Cart" class="AddLink btn btn-success btn-sm" data-id="@item.ItemNum" />
-
-            </td>
-
-        </tr>
-    }</tbody>
-</table>
+                <td>
+                    <input type="number" class="form-control form-control-sm" name="qty" min="1" max="1000" step="1" value="1" id="qty-@item.ItemNum">
+                </td>
+                <td>
+                    <input type="submit" value="Add To Cart" class="AddLink btn btn-success btn-sm" data-id="@item.ItemNum" />
+                    &nbsp;<small class="hidden text-right" id="msg-added-@item.ItemNum"><strong>Added</strong></small></td>
+                
+            </tr>
+        }</tbody>
+    </table>
 
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Index", new {page, currentFilter = ViewBag.CurrentFilter}))
 </div>
+
+<style>
+    .hidden
+    {
+        color:transparent
+    }
+</style>
 
 @*Authors: Tang Xiaowen*@
