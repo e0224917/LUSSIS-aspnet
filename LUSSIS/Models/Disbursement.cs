@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Linq;
 using LUSSIS.Models.WebAPI;
-using LUSSIS.Validations;
 using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Models

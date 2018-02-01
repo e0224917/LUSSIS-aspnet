@@ -110,7 +110,7 @@ namespace LUSSIS.Controllers
             ViewBag.CurrentFilter = searchString;
 
             var requistions = !string.IsNullOrEmpty(searchString)
-                ? _requisitionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode).Reverse().ToList()
+                ? _requisitionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode)
                 : _requisitionRepo.GetAllByDeptCode(deptCode);
 
             var reqAll = requistions.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
