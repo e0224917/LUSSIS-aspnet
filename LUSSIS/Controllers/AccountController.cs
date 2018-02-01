@@ -248,7 +248,7 @@ namespace LUSSIS.Controllers
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             Session["Name"] = "";
             Session["Roles"] = new List<string>();
-            ShoppingCart sc = new ShoppingCart();
+            ShoppingCartDTO sc = new ShoppingCartDTO();
             Session["MyCart"] = sc;
             return RedirectToAction("Index", "Home");
         }

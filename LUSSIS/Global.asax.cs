@@ -26,7 +26,7 @@ namespace LUSSIS
         }
         void Session_Start(object sender, EventArgs e)
         {
-            ShoppingCart shoppingCart = new ShoppingCart();
+            ShoppingCartDTO shoppingCart = new ShoppingCartDTO();
             Session["MyCart"] = shoppingCart;
             Session["Name"] = "";
             Session["Roles"] = new List<string>();
