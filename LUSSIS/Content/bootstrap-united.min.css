@@ -80,7 +80,7 @@ body {
 }
 
 body {
-    background-image: url('../Images/images2.jpg');
+    background-image: url('../Images/background-image.jpg');
     background-size: cover;
     background-repeat: repeat-x;
     -webkit-background-size: cover; /* For WebKit*/
@@ -256,6 +256,7 @@ textarea {
     -ms-touch-action: manipulation;
     touch-action: manipulation;
 }
+
 
 table {
     border-collapse: collapse;
@@ -5701,12 +5702,13 @@ button.close {
 }
 
 .modal-backdrop {
-    position: fixed;
+    /*position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: #000;
+    background-color: #000;*/
+    display: none
 }
 
     .modal-backdrop.fade {
