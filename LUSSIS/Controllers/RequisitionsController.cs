@@ -217,8 +217,8 @@ namespace LUSSIS.Controllers
         public ActionResult AddToCart(string id, int qty)
         {
             var item = _stationeryRepo.GetById(id);
-            var cart = new Cart(item, qty);
-            var shoppingCart = Session["MyCart"] as ShoppingCart;
+            var cart = new CartDTO(item, qty);
+            var shoppingCart = Session["MyCart"] as ShoppingCartDTO;
             shoppingCart?.AddToCart(cart);
             return Json(shoppingCart?.GetCartItemCount());
         }
@@ -281,7 +281,7 @@ namespace LUSSIS.Controllers
 
                 Session["itemNums"] = null;
                 Session["itemQty"] = null;
-                Session["MyCart"] = new ShoppingCart();
+                Session["MyCart"] = new ShoppingCartDTO();
 
                 //Send email
                 var headEmail = _employeeRepo.GetDepartmentHead(deptCode).EmailAddress;
@@ -299,8 +299,8 @@ namespace LUSSIS.Controllers
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         public ActionResult MyCart()
         {
-            var myCart = (ShoppingCart)Session["MyCart"];
-            return View(myCart.GetAllCartItem());
+            var mycart = (ShoppingCartDTO)Session["MyCart"];
+            return View(mycart.GetAllCartItem());
         }
 
         // POST: Requisitions/DeleteCartItem
@@ -308,9 +308,10 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult DeleteCartItem(string id)
         {
-            (Session["MyCart"] as ShoppingCart).DeleteCart(id);
+            var myCart = Session["MyCart"] as ShoppingCartDTO;
+            myCart?.DeleteCart(id);
 
-            var count = (Session["MyCart"] as ShoppingCart).GetCartItemCount();
+            var count = (Session["MyCart"] as ShoppingCartDTO).GetCartItemCount();
 
             return Json(count);
         }
@@ -320,13 +321,13 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult UpdateCartItem(string id, int qty)
         {
-            var shoppingCart = Session["MyCart"] as ShoppingCart;
-            var c = new Cart();
-            foreach (var cart in shoppingCart.GetAllCartItem())
+            var mycart = Session["MyCart"] as ShoppingCartDTO;
+           
+            foreach (var cart in mycart.shoppingCart)
             {
-                if (cart.Stationery.ItemNum != id) continue;
-                c = cart;
-                cart.Quantity = qty;
+                if (cart.stationery.ItemNum != id) continue;
+               
+                cart.quantity = qty;
                 break;
             }
 

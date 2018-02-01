@@ -85,7 +85,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.SupplierName1, htmlAttributes: new { @class = "control-label col-md-12" })
                     <div class="col-md-10">
-                        @Html.DropDownListFor(model => model.SupplierName1, Model.SupplierList, "Select supplier")
+                        @Html.DropDownListFor(model => model.SupplierName1, Model.SupplierList, "Select supplier", htmlAttributes: new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.SupplierName1, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.SupplierName2, htmlAttributes: new { @class = "control-label col-md-12" })
                     <div class="col-md-10">
-                        @Html.DropDownListFor(model => model.SupplierName2, Model.SupplierList, "Select supplier")
+                        @Html.DropDownListFor(model => model.SupplierName2, Model.SupplierList, "Select supplier", htmlAttributes: new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.SupplierName2, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -119,9 +119,9 @@
         <div class="card col-lg-4 border-dark">
             <div class="card-body">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.SupplierName3, htmlAttributes: new { @class = "cocntrol-label col-md-12" })
+                    @Html.LabelFor(model => model.SupplierName3, htmlAttributes: new { @class = "control-label col-md-12" })
                     <div class="col-md-10">
-                        @Html.DropDownListFor(model => model.SupplierName3, Model.SupplierList, "Select supplier")
+                        @Html.DropDownListFor(model => model.SupplierName3, Model.SupplierList, "Select supplier",htmlAttributes: new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.SupplierName3, "", new { @class = "text-danger" })
                     </div>
                 </div>

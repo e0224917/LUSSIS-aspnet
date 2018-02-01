@@ -6,10 +6,10 @@ using System.Web;
 namespace LUSSIS.Models.WebDTO
 {
     //Authors: Cui Runze
-    public class ShoppingCart
+    public class ShoppingCartDTO
     {
-        private List<Cart> Carts;
-        public ShoppingCart()
+        public List<CartDTO> Carts;
+        public ShoppingCartDTO()
         {
             Carts = new List<Cart>();
         }
@@ -41,7 +41,7 @@ namespace LUSSIS.Models.WebDTO
             }
         }
 
-        public List<Cart> GetAllCartItem()
+        public List<CartDTO> GetAllCartItem()
         {
             return Carts.ToList();
         }

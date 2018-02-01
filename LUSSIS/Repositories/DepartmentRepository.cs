@@ -11,7 +11,7 @@ namespace LUSSIS.Repositories
     {
         public List<String> GetAllDepartmentCode()
         {
-            return LUSSISContext.Departments.Select(x => x.DeptCode).ToList();
+            return LUSSISContext.Departments.Where(x=>x.DeptCode != "STNR").Select(x=>x.DeptCode).ToList();
         }
 
         public Department GetDepartmentByEmpNum(int empNum)
