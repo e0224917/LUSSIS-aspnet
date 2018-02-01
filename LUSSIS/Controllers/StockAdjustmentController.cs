@@ -253,9 +253,11 @@ namespace LUSSIS.Controllers
             {
                 idList[i] = int.Parse(list[i]);
             }
-
+            HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
+            String empNum = cookie["EmpNum"];
             foreach (var id in idList)
             {
+                
                 var adjustment = _stockAdjustmentRepo.GetById(id);
                 adjustment.Status = status;
                 String item = adjustment.ItemNum;
@@ -269,6 +271,7 @@ namespace LUSSIS.Controllers
 
                 adjustment.Remark = comment;
                 adjustment.ApprovalDate = DateTime.Today;
+                adjustment.ApprovalEmpNum = Convert.ToInt32(empNum);
                 _stockAdjustmentRepo.Update(adjustment);
             }
 
