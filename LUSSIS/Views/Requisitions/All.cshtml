@@ -17,7 +17,7 @@
         }))
         {
             <span class="d-inline nav-item nav-link" style="color:whitesmoke">Find in history </span>
-            @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
+            @Html.TextBox("searchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
             <button type="submit" class="btn btn-secondary my-2 my-sm-0 d-inline">Search</button>
 
         }
@@ -29,8 +29,8 @@
         }))
         {
             <div class="nav-item active nav-link">
-
                 <input type="submit" value="Show All" class="btn btn-secondary my-2 my-sm-0" />
+                <input type="hidden" name="page" value="1" />
             </div>
         }
     </div>
