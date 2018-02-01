@@ -255,26 +255,30 @@ namespace LUSSIS.Controllers
             }
             HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
             String empNum = cookie["EmpNum"];
-            foreach (var id in idList)
+            if(status=="Reject")
             {
-                
-                var adjustment = _stockAdjustmentRepo.GetById(id);
-                adjustment.Status = status;
-                String item = adjustment.ItemNum;
-                Stationery st = new Stationery();
-                    st=_stationeryRepo.GetById(item);
-              
-                    st.AvailableQty = st.AvailableQty+adjustment.Quantity;
-                    st.CurrentQty = st.CurrentQty+adjustment.Quantity;
-               
-                _stationeryRepo.Update(st);
+                foreach (var id in idList)
+                {
+                    var adjustment = _stockAdjustmentRepo.GetById(id);
+                    adjustment.Status = status;
+                    String item = adjustment.ItemNum;
+                    Stationery st = new Stationery();
+                    st = _stationeryRepo.GetById(item);
 
-                adjustment.Remark = comment;
-                adjustment.ApprovalDate = DateTime.Today;
-                adjustment.ApprovalEmpNum = Convert.ToInt32(empNum);
-                _stockAdjustmentRepo.Update(adjustment);
+                   
+                    st.AvailableQty = st.AvailableQty - adjustment.Quantity;
+                    st.CurrentQty = st.CurrentQty - adjustment.Quantity;
+
+
+                    _stationeryRepo.Update(st);
+
+                    adjustment.Remark = comment;
+                    adjustment.ApprovalDate = DateTime.Today;
+                    adjustment.ApprovalEmpNum = Convert.ToInt32(empNum);
+                    _stockAdjustmentRepo.Update(adjustment);
+                }
             }
-
+           
             return PartialView();
         }
 
