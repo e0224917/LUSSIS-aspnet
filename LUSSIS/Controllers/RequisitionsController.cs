@@ -249,14 +249,11 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult SubmitReq()
         {
-            var itemNums = (List<string>)Session["itemNums"];
-            var itemQty = (List<int>)Session["itemQty"];
-
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
             var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
             var fullName = Request.Cookies["Employee"]?["Name"];
 
-            if (itemNums != null)
+            if (Session["MyCart"] is ShoppingCartDTO shoppingCart && shoppingCart.GetCartItemCount() > 0)
             {
                 var requisition = new Requisition()
                 {
@@ -266,28 +263,27 @@ namespace LUSSIS.Controllers
                     Status = RequisitionStatus.Pending,
                     DeptCode = deptCode
                 };
+
                 _requisitionRepo.Add(requisition);
 
-                for (var i = 0; i < itemNums.Count; i++)
+                foreach (var cart in shoppingCart.GetAllCartItem())
                 {
                     var requisitionDetail = new RequisitionDetail()
                     {
                         RequisitionId = requisition.RequisitionId,
-                        ItemNum = itemNums[i],
-                        Quantity = itemQty[i]
+                        ItemNum = cart.Stationery.ItemNum,
+                        Quantity = cart.Quantity
                     };
                     requisitionDetail.Stationery = _requisitionRepo.AddRequisitionDetail(requisitionDetail);
                 }
 
-                Session["itemNums"] = null;
-                Session["itemQty"] = null;
                 Session["MyCart"] = new ShoppingCartDTO();
 
                 //Send email
                 var headEmail = _employeeRepo.GetDepartmentHead(deptCode).EmailAddress;
                 var email = new LUSSISEmail.Builder().From(User.Identity.Name)
                     .To(headEmail).ForNewRequistion(fullName, requisition).Build();
-                new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
+                new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
 
                 return RedirectToAction("MyRequisitions");
             }
@@ -322,16 +318,16 @@ namespace LUSSIS.Controllers
         public ActionResult UpdateCartItem(string id, int qty)
         {
             var mycart = Session["MyCart"] as ShoppingCartDTO;
-           
-            foreach (var cart in mycart.shoppingCart)
+
+            foreach (var cart in mycart.Carts)
             {
-                if (cart.stationery.ItemNum != id) continue;
+                if (cart.Stationery.ItemNum != id) continue;
                
-                cart.quantity = qty;
+                cart.Quantity = qty;
                 break;
             }
 
-            return Json((Session["MyCart"] as ShoppingCart).GetCartItemCount());
+            return Json(qty);
         }
 
         [Authorize(Roles = Role.Clerk)]

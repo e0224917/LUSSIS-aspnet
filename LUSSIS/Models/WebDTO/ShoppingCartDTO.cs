@@ -11,12 +11,12 @@ namespace LUSSIS.Models.WebDTO
         public List<CartDTO> Carts;
         public ShoppingCartDTO()
         {
-            Carts = new List<Cart>();
+            Carts = new List<CartDTO>();
         }
-        public void AddToCart(Cart cart)
+        public void AddToCart(CartDTO cart)
         {
             bool status = false;
-            foreach (Cart c in Carts)
+            foreach (CartDTO c in Carts)
             {
                 
                 if (c.Stationery.ItemNum.Equals(cart.Stationery.ItemNum))

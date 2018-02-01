@@ -1,9 +1,6 @@
 ﻿@model IEnumerable<LUSSIS.Models.WebDTO.CartDTO>
-@using LUSSIS.Models.WebDTO
 @{
     ViewBag.Title = "My Cart";
-    var itemNums = new List<string>();
-    var itemQty = new List<int>();
 
 }
 
@@ -42,20 +39,14 @@
                     </td>
                     <td>
                         <div class="row">
-                            <input type="number" class="Qty form-control form-control-sm col-md-6" name="qty-@item.Stationery.ItemNum" min="1" max="1000" value="@item.Quantity" id="qty-@item.Stationery.ItemNum">
-                            <input type="submit" value="Update" id="btn-update" class="UpdateLink btn btn-warning btn-sm" data-id="@item.Stationery.ItemNum" />
+                            <input type="number" class="Qty form-control form-control-sm col-md-6" data-id="@item.Stationery.ItemNum"
+                                   name="qty-@item.Stationery.ItemNum" min="1" max="1000" value="@item.Quantity" id="qty-@item.Stationery.ItemNum">
                         </div>
                     </td>
                     <td>
                         <input type="submit" value="Delete" id="btn-remove" class="RemoveLink btn btn-danger btn-sm" data-id="@item.Stationery.ItemNum" />
                     </td>
                 </tr>
-                {
-                    itemNums.Add(@item.Stationery.ItemNum);
-                    Session["itemNums"] = itemNums;
-                    itemQty.Add(@item.Quantity);
-                    Session["itemQty"] = itemQty;
-                }
             }
         </tbody>
     </table>
@@ -105,7 +96,7 @@ else
         $(function () {
             $(".Qty").change(function ()
             {
-                var stationeryToUpdate = $(this).attr("id");
+                var stationeryToUpdate = $(this).attr("data-id");
                 var qty = $(this).val();
 
                 if (qty <= 0) {
@@ -114,8 +105,8 @@ else
                 else
                 {
                     $.post("@Url.Content("~/")Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
-                        function (count) {
-                            $(this).val(count);
+                        function (qty){
+                            $(this).val(qty);
                         });
                 }
 
