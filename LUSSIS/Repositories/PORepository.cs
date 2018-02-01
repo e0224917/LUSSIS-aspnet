@@ -87,21 +87,17 @@ namespace LUSSIS.Repositories
             foreach (String from in fromList)
             {
                 DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                var q = from t1 in LUSSISContext.PurchaseOrders
-                        join t2 in LUSSISContext.PurchaseOrderDetails
-                        on t1.PoNum equals t2.PoNum
-                        where t1.Status==Ordered
-                        && (Convert.ToDateTime(t1.OrderDate).Month==fromDate.Month && Convert.ToDateTime(t1.OrderDate).Year==fromDate.Year)
-                        select new
-                        {
-                            price = (int)t2.UnitPrice,
-                            qty = (double)t2.OrderQty
-                        };
+                List<PurchaseOrderDetail> allList = LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.OrderDate.Value.Month == fromDate.Month 
+                && x.PurchaseOrder.OrderDate.Value.Year == fromDate.Year
+                && x.PurchaseOrder.Status !=Rejected 
+                && x.PurchaseOrder.Status != Pending).ToList();
+               
 
-                foreach (var a in q)
+                foreach(PurchaseOrderDetail pd in allList)
                 {
-                    result += a.qty * a.price;
+                    result += pd.UnitPrice * pd.ReceiveQty;
                 }
+                      
             }
            
             return result;
@@ -132,24 +128,17 @@ namespace LUSSIS.Repositories
                 foreach (String from in fromList)
                 {
                 DateTime fromDate = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var q = from t1 in LUSSISContext.PurchaseOrders
-                            join t2 in LUSSISContext.PurchaseOrderDetails
-                            on t1.PoNum equals t2.PoNum
-                            join t3 in LUSSISContext.Stationeries
-                            on t2.ItemNum equals t3.ItemNum
-                            where t3.CategoryId == catId
-                            && (Convert.ToDateTime(t1.OrderDate).Month ==fromDate.Month && Convert.ToDateTime(t1.OrderDate).Year ==fromDate.Year)
-                            select new
-                            {
-                                price = (int)t2.UnitPrice,
-                                Qty = (double)t2.OrderQty
-                            };
-
-                    foreach (var a in q)
+               List<PurchaseOrderDetail> allList = LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.OrderDate.Value.Month == fromDate.Month
+               && x.PurchaseOrder.OrderDate.Value.Year == fromDate.Year
+               && x.Stationery.CategoryId==catId
+               && x.PurchaseOrder.Status != Pending &&
+                x.PurchaseOrder.Status != Rejected ).ToList();
+                    foreach (PurchaseOrderDetail pd in allList)
                     {
-                        total += a.price * a.Qty;
+                        total += pd.UnitPrice * pd.ReceiveQty;
                     }
-                   
+
+                    
                 }
                 list.Add(total);
             }
@@ -165,9 +154,13 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status.ToUpper() == status.ToUpper());
         }
-        public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsById(int poNo)
+        public IEnumerable<PurchaseOrderDetail> GetAllPurchaseOrderDetails()
         {
-            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.PoNum == poNo);
+            return LUSSISContext.PurchaseOrderDetails.ToList();
+        }
+        public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsById(int id)
+        {
+            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.PoNum == id);
         }
 
 

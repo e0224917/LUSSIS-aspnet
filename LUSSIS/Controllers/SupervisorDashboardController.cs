@@ -16,6 +16,7 @@ using System.Collections;
 using System.Diagnostics;
 using LUSSIS.Constants;
 using static LUSSIS.Constants.POStatus;
+using static LUSSIS.Constants.DisbursementStatus;
 namespace LUSSIS.Controllers
 {
     //Authors: May Zin Ko Authors: Douglas Lee Kiat Hui
@@ -34,8 +35,8 @@ namespace LUSSIS.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = User.IsInRole(Role.Supervisor) ? Role.Supervisor : Role.Manager;
-            var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add").Count;
-            var totalSubtractAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract").Count;
+            var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add",ViewBag.Message).Count;
+            var totalSubtractAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract",ViewBag.Message).Count;
             List<String> fromList = new List<String>();
             fromList.Add(DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy"));
             fromList.Add(DateTime.Now.AddMonths(-2).ToString("dd/MM/yyyy"));
@@ -48,7 +49,8 @@ namespace LUSSIS.Controllers
                 PendingStockAdjAddQty = totalAddAdjustmentQty,
                 PendingStockAdjSubtractQty = totalSubtractAdjustmentQty,
                 PendingStockAdjCount = _stockAdjustmentRepo.GetPendingAdjustmentList().Count,
-                TotalDisbursementAmount = _disbursementRepo.GetDisbursementTotalAmount(fromList)
+                TotalDisbursementAmount = _disbursementRepo.GetDisbursementTotalAmount(fromList),
+                GetPendingAdjustmentByRole = _stockAdjustmentRepo.GetPendingAdjustmentByRole(ViewBag.Message).Count
             };
 
             return View(dash);
@@ -67,7 +69,6 @@ namespace LUSSIS.Controllers
         {
             List<String> depList = _departmentRepo.GetAllDepartmentCode();
             List<int> catList = _categoryRepo.GetAllCategoryIds();
-
             List<String> fromList = new List<String>();
             List<String> toList = new List<String>();
 
@@ -134,7 +135,7 @@ namespace LUSSIS.Controllers
             //get data
             IEnumerable<Detail> allList;
             if (filter.IsDisburse)
-                allList = _disbursementRepo.GetDisbursementDetailsByStatus("fulfilled")
+                allList = _disbursementRepo.GetAllDisbursementDetails().Where(x=>x.Disbursement.Status!=InProcess)
                     .Select(x => new Detail
                     {
                         Date = x.Disbursement.CollectionDate,
@@ -144,12 +145,12 @@ namespace LUSSIS.Controllers
                         Group = x.Disbursement.DeptCode
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);
             else
-                allList = _poRepo.GetPurchaseOrderDetailsByStatus(Ordered)
+                allList = _poRepo.GetAllPurchaseOrderDetails().Where(x=>x.PurchaseOrder.Status!=Rejected && x.PurchaseOrder.Status!=Pending)
                     .Select(x => new Detail
                     {
                         Date = x.PurchaseOrder.CreateDate,
-                        Qty = x.OrderQty,
-                        Cost = x.UnitPrice * x.OrderQty,
+                        Qty = x.ReceiveQty,
+                        Cost = x.UnitPrice * x.ReceiveQty,
                         CategoryId = x.Stationery.CategoryId,
                         Group = x.PurchaseOrder.SupplierId.ToString()
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);

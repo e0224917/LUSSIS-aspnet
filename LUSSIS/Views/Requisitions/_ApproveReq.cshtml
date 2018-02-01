@@ -1,14 +1,13 @@
 ﻿@model LUSSIS.Models.WebDTO.ReqApproveRejectDTO
 
 
-
-<form id="approveForm">
+@using (Html.BeginForm("ApproveReq", "Requisitions", FormMethod.Post))
+{
     <div class="modal-body">
         <span>Your Comment (optional):</span>
         <p></p>
         <div class="form-group col-md-10 col-sm-10">
             @Html.TextAreaFor(m => m.ApprovalRemarks, 3, 60, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.ApprovalRemarks, "", new { @class = "text-danger" })
             @Html.HiddenFor(m => m.RequisitionId)
             @Html.HiddenFor(m => m.Status)
         </div>
@@ -18,39 +17,29 @@
 
         @if (Model.Status == "approved")
         {
-            <button class="btn btn-success" id="approve">
+            <button type="submit" class="btn btn-success" id="approve">
                 Confirm Approve
             </button>
         }
         else
         {
-            <button class="btn btn-danger" id="approve">
+            <button type="submit" class="btn btn-danger" id="approve">
                 Confirm Reject
             </button>
         }
         <button class="btn btn-secondary" data-dismiss="modal"> Cancel</button>
     </div>
-</form>
+}
+
 
 
 @*putting section script annotations here will break the js*@
 <script>
-        $(document).ready(function () {
-            $("#approve").click(function () {
-                var formdata = $("#approveForm").serialize();
-
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Content("~/")Requisitions/_ApproveReq",
-                    data: formdata,
-                    success: function () {
-                        //$("#myApproveModal").modal("hide");
-                    }
-                });
-                location.reload();
-
-            });
-        })
+    $(document).ready(function() {
+        $("#approve").click(function () {
+            $("#myApproveModal").modal("hide");
+        });
+    });
 </script>
 
 @*Authors: Koh Meng Guan*@

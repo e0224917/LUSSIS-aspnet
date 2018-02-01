@@ -30,5 +30,7 @@ namespace LUSSIS.Models.WebDTO
 
         public List<double> PieValue { get; set; }
 
+        public int GetPendingAdjustmentByRole { get; set; }
+
     }
 }
