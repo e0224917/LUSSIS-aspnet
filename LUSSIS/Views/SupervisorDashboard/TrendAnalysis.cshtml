@@ -36,15 +36,15 @@
         </div>
         <div class="col-3" id="department">
             <strong>Department</strong><br />
-            @Html.ListBox("Departments", new SelectList(ViewBag.Departments, "DeptCode", "DeptName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder" })
+            @Html.ListBox("Departments", new SelectList(ViewBag.Departments, "DeptCode", "DeptName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder form-control" })
         </div>
         <div class="col-3" id="supplier">
             Supplier<br />
-            @Html.ListBox("Suppliers", new SelectList(ViewBag.Suppliers, "SupplierId", "SupplierName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder" })
+            @Html.ListBox("Suppliers", new SelectList(ViewBag.Suppliers, "SupplierId", "SupplierName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder form-control" })
         </div>
         <div class="col-3" id="category">
             <strong>Category</strong><br />
-            @Html.ListBox("Categories", new SelectList(ViewBag.Categories, "CategoryId", "CategoryName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder" })
+            @Html.ListBox("Categories", new SelectList(ViewBag.Categories, "CategoryId", "CategoryName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder form-control" })
         </div>
     </div>
     <br />

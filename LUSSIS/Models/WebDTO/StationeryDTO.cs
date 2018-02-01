@@ -19,10 +19,12 @@ namespace LUSSIS.Models.WebDTO
 
         [Required(ErrorMessage ="Reorder Level is required")]
         [Display(Name = "Reorder Level")]
+        [Range(1,Int32.MaxValue, ErrorMessage = ("Reorder Level cannot be less than 0"))]
         public int ReorderLevel { get; set; }
 
         [Required(ErrorMessage ="Reorder Quantity is required")]
         [Display(Name = "Reorder Quantity")]
+        [Range(1, Int32.MaxValue,ErrorMessage =("Reorder Quantity cannot be less than 0"))]
         public int ReorderQty { get; set; }
 
         [Required(ErrorMessage ="Bin Number is required")]
@@ -55,14 +57,17 @@ namespace LUSSIS.Models.WebDTO
 
         [Required(ErrorMessage = "Price is required")]
         [Display(Name = "Rank 1 Supplier Price")]
+        [Range(0, Int32.MaxValue, ErrorMessage = ("Price cannot be less than 0"))]
         public double Price1 { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
         [Display(Name = "Rank 2 Supplier Price")]
+        [Range(0, Int32.MaxValue, ErrorMessage = ("Price  cannot be less than 0"))]
         public double Price2 { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
         [Display(Name = "Rank 3 Supplier Price")]
+        [Range(0, Int32.MaxValue, ErrorMessage = ("Price cannot less than 0"))]
         public double Price3 { get; set; }
     }
 }
