@@ -107,6 +107,8 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
 
+            ViewBag.CurrentFilter = searchString;
+
             var requistions = !string.IsNullOrEmpty(searchString)
                 ? _requisitionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode).Reverse().ToList()
                 : _requisitionRepo.GetAllByDeptCode(deptCode);
@@ -193,6 +195,8 @@ namespace LUSSIS.Controllers
             {
                 searchString = currentFilter;
             }
+
+            ViewBag.CurrentFilter = searchString;
 
             var stationerys = string.IsNullOrEmpty(searchString)
                 ? _stationeryRepo.GetAll().ToList() : _stationeryRepo.GetByDescription(searchString).ToList();
@@ -390,7 +394,7 @@ namespace LUSSIS.Controllers
         //Authors: Koh Meng Guan
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpGet]
-        public PartialViewResult _ApproveReq(int id, string status)
+        public PartialViewResult ApproveReq(int id, string status)
         {
             var reqDto = new ReqApproveRejectDTO
             {
@@ -410,8 +414,7 @@ namespace LUSSIS.Controllers
         //Authors: Koh Meng Guan
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpPost]
-        public ActionResult _ApproveReq([Bind(Include = "RequisitionId,ApprovalRemarks,Status")]
-            ReqApproveRejectDTO reqApprovalDto)
+        public ActionResult ApproveReq(ReqApproveRejectDTO reqApprovalDto)
         {
             var req = _requisitionRepo.GetById(reqApprovalDto.RequisitionId);
             if (req == null || req.Status != RequisitionStatus.Pending) return PartialView("_unauthoriseAccess");
@@ -464,7 +467,7 @@ namespace LUSSIS.Controllers
                     return RedirectToAction("Pending");
                 }
 
-                return PartialView(reqApprovalDto);
+                return PartialView("_ApproveReq",reqApprovalDto);
             }
 
             return PartialView("_hasDelegate");
