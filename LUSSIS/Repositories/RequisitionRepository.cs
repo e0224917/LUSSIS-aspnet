@@ -14,9 +14,11 @@ namespace LUSSIS.Repositories
     //Authors: Tang Xiaowen, Cui Runze
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
-        public IEnumerable<Requisition> GetAllByDeptCode(string deptCode)
+        public List<Requisition> GetAllByDeptCode(string deptCode)
         {
-            return LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode).Reverse();
+            var list = LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode).ToList();
+            list.Reverse();
+            return list;
         }
 
         /// <summary>
@@ -33,7 +35,7 @@ namespace LUSSIS.Repositories
                                 || r.RequisitionEmployee.FirstName.ToLower().Contains(term)
                                 || r.RequisitionEmployee.LastName.ToLower().Contains(term)
                                 // || r.RequisitionDate.ToString().Contains(term) 
-                                || r.RequestRemarks.ToLower().Contains(term)));                             
+                                || r.RequestRemarks.ToLower().Contains(term))).OrderByDescending(x=>x.RequisitionDate);                             
 
         }
 
