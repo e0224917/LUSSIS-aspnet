@@ -38,6 +38,8 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
 
+            ViewBag.CurrentFilter = searchString;
+
             var result = !string.IsNullOrEmpty(searchString)
                 ? _stationeryRepo.GetByDescription(searchString).ToList()
                 : _stationeryRepo.GetAll().ToList();

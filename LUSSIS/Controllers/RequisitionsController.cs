@@ -107,6 +107,8 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
 
+            ViewBag.CurrentFilter = searchString;
+
             var requistions = !string.IsNullOrEmpty(searchString)
                 ? _requisitionRepo.FindRequisitionsByDeptCodeAndText(searchString, deptCode).Reverse().ToList()
                 : _requisitionRepo.GetAllByDeptCode(deptCode);
@@ -193,6 +195,8 @@ namespace LUSSIS.Controllers
             {
                 searchString = currentFilter;
             }
+
+            ViewBag.CurrentFilter = searchString;
 
             var stationerys = string.IsNullOrEmpty(searchString)
                 ? _stationeryRepo.GetAll().ToList() : _stationeryRepo.GetByDescription(searchString).ToList();

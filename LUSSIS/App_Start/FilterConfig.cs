@@ -15,7 +15,7 @@ namespace LUSSIS
 
         public static void RegisterApiFilters(HttpFilterCollection filters)
         {
-            filters.Add(new ValidateModelAttribute());
+            //filters.Add(new ValidateModelAttribute());
         }
     }
 }
