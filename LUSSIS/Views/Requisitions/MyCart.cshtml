@@ -78,46 +78,46 @@ else
     <script type="text/javascript">
         $(function () {
             $(".RemoveLink").click(function () {
-                // Get the id from the link
-                var itemNum = $(this).attr("data-id");
-                if (itemNum !== '') {
+                                // Get the id from the link
+                                var itemNum = $(this).attr("data-id");
+                                if (itemNum !== '') {
                     // Perform the ajax post
                     $.post("@Url.Content("~/")Requisitions/DeleteCartItem", { "id": itemNum },
                         function (count) {
                             $("#row-" + itemNum).remove();
                             $("a#cart-number").text("My Cart (" + count + ")");
-                            if (count === 0) {
-                                location.reload();
-                            }
+                                        if (count === 0) {
+                                            location.reload();
+                                        }
+                                    });
+                                }
+                            });
                         });
-                }
-            });
-        });
         $(function () {
             $(".Qty").change(function ()
             {
-                var stationeryToUpdate = $(this).attr("data-id");
-                var qty = $(this).val();
+                                var stationeryToUpdate = $(this).attr("data-id");
+                                var qty = $(this).val();
 
-                if (qty <= 0) {
-                    alert("Quantity should be more than 1");
-                }
-                else
-                {
+                                if (qty <= 0) {
+                                    alert("Quantity should be more than 1");
+                                }
+                                else
+                                {
                     $.post("@Url.Content("~/")Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
                         function (qty){
                             $(this).val(qty);
-                        });
-                }
+                                    });
+                                }
 
-            });
-        });
+                            });
+                        });
     </script>
     <script src="~/Scripts/jquery.tablesorter.min.js"></script>
     <link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css" />
 
 
-    <script>
+    @*<script>
         $(document).ready(function () {
             $("#myTable").tablesorter({
                 headers: {
@@ -131,7 +131,7 @@ else
             });
         }
         );
-    </script>
+    </script>*@
 }
 
 @*Authors: Cui Runze*@
