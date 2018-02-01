@@ -19,7 +19,7 @@ using static LUSSIS.Constants.POStatus;
 using static LUSSIS.Constants.DisbursementStatus;
 namespace LUSSIS.Controllers
 {
-    //Authors: May Zin Ko Authors: Douglas Lee Kiat Hui
+    //Authors: May Zin Ko, Douglas Lee Kiat Hui
     [Authorize(Roles = "manager, supervisor")]
     public class SupervisorDashboardController : Controller
     {

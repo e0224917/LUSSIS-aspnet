@@ -20,11 +20,11 @@ namespace LUSSIS.Controllers
             return View();
         }
 
-        public ActionResult Error()
-        {
-            Response.StatusCode = (int)System.Net.HttpStatusCode.InternalServerError;
-            Response.TrySkipIisCustomErrors = true;
-            return View();
-        }
+        //public ActionResult Error()
+        //{
+        //    Response.StatusCode = (int)System.Net.HttpStatusCode.InternalServerError;
+        //    Response.TrySkipIisCustomErrors = true;
+        //    return View();
+        //}
     }
 }

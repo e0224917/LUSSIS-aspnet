@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using LUSSIS.Constants;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
 using static LUSSIS.Constants.DisbursementStatus;
@@ -56,6 +57,11 @@ namespace LUSSIS.Controllers.WebAPI
                 return BadRequest("Wrong department.");
             }
 
+            if(disbursement.Status != DisbursementStatus.InProcess)
+            {
+                return BadRequest("This disbursement has already been acknowledged");
+            }
+
             _disbursementRepo.Acknowledge(disbursement);
             //update current quantity of stationery
             foreach (var disbursementDetail in disbursement.DisbursementDetails)
@@ -65,7 +71,7 @@ namespace LUSSIS.Controllers.WebAPI
                 _stationeryRepo.Update(stationery);
             }
 
-            return Ok(new {Message = "Acknowledged"});
+            return Ok(new {Message = "Disbursement acknowledged"});
         }
 
         protected override void Dispose(bool disposing)
@@ -74,6 +80,7 @@ namespace LUSSIS.Controllers.WebAPI
             {
                 _disbursementRepo.Dispose();
                 _stationeryRepo.Dispose();
+                _employeeRepo.Dispose();
             }
 
             base.Dispose(disposing);
