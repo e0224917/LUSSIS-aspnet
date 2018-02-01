@@ -27,8 +27,13 @@ namespace LUSSIS.Controllers
         private readonly StationerySupplierRepository _stationerySupplierRepo = new StationerySupplierRepository();
 
         // GET: Stationeries
-        public ActionResult Index(string searchString, string currentFilter, int? page)
+        public ActionResult Index(string searchString, string currentFilter, int? page, string sortOrder)
         {
+            ViewBag.BinSortParm = String.IsNullOrEmpty(sortOrder) ? "bin_desc" : "";
+            ViewBag.CatSortParm = String.IsNullOrEmpty(sortOrder) ? "cat_desc" : "";
+            ViewBag.DesSortParm = String.IsNullOrEmpty(sortOrder) ? "des_desc" : "";
+            //ViewBag.UomSortParm= String.IsNullOrEmpty(sortOrder) ? "uom_desc" : "";
+            ViewBag.QtySortParm = sortOrder == "qty" ? "qty_desc" : "qty";
             if (searchString != null)
             {
                 page = 1;
@@ -43,7 +48,25 @@ namespace LUSSIS.Controllers
             var result = !string.IsNullOrEmpty(searchString)
                 ? _stationeryRepo.GetByDescription(searchString).ToList()
                 : _stationeryRepo.GetAll().ToList();
+            switch (sortOrder)
+            {
 
+                case "bin_desc":
+                    result = result.OrderByDescending(s => s.BinNum).ToList();
+                    break;
+                case "cat_desc":
+                    result = result.OrderByDescending(s => s.CategoryId).ToList();
+                    break;
+                case "des_desc":
+                    result = result.OrderByDescending(s => s.Description).ToList();
+                    break;
+                case "qty_desc":
+                    result = result.OrderByDescending(s => s.CurrentQty).ToList();
+                    break;
+                default:
+                    result = result.ToList();
+                    break;
+            }
             var stationeryAll = result.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
             if (Request.IsAjaxRequest())
@@ -312,7 +335,7 @@ namespace LUSSIS.Controllers
 
             base.Dispose(disposing);
         }
-        
+
     }
 }
 

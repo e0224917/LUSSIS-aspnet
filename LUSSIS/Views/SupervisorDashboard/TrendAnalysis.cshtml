@@ -7,46 +7,90 @@
 <hr />
 <div class="container">
     <div class="row" id="filter_criteria">
-        <div class="col-3">
-            <strong>Date Range</strong><br />
-            Date Type: <br />
-            <select id="custom_date_range" class="form-control">
-                <option value="0">Custom</option>
-                <option value="-1">Current Month</option>
-                <option value="1">Last Month</option>
-                <option value="3">Past 3 Months</option>
-                <option value="6">Past 6 Months</option>
-                <option value="12">Past 12 Months</option>
-            </select>
-            From:
-            <br /><input type="date" id="from_date" class="chart_builder form-control" />
-            To:
-            <br /><input type="date" id="to_date" class="chart_builder form-control" />
+        <div class="col-lg-3 col-md-6 text-center">
+            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 20rem">
+                <h5 class="card-header mt-0">Date Range</h5>
+                <div class="card-body">
+                    <div class="text-left mb-1">Date Type</div>
+                    <select id="custom_date_range" class="form-control col-12 mb-2">
+                        <option value="0">Custom</option>
+                        <option value="-1">Current Month</option>
+                        <option value="1">Last Month</option>
+                        <option value="3">Past 3 Months</option>
+                        <option value="6">Past 6 Months</option>
+                        <option value="12">Past 12 Months</option>
+                    </select>
+                    <div class="text-left mb-1">
+                        From
+                    </div>
+                    <input type="date" id="from_date" class="chart_builder form-control col-12 mb-2" />
+                    <div class="text-left mb-1">
+                        To
+                    </div>
+                    <input type="date" id="to_date" class="chart_builder form-control col-12" />
+                </div>
+            </div>
         </div>
-        <div class="col-3">
-            <strong>Chart Type</strong><br />
-            Data Type:<br />
-            <input type="radio" id="data_type" name="data_type" value="disburse" checked="checked" class="chart_builder" /><label>Disbursement</label><br />
-            <input type="radio" id="data_type" name="data_type" value="po" class="chart_builder" /><label>Purchase Order</label>
-            <br /><br />
-            Unit Type:<br />
-            <input type="radio" id="unit_type" name="unit_type" value="qty" checked="checked" class="chart_builder" /><label>Qty</label><br />
-            <input type="radio" id="unit_type" name="unit_type" value="cost" class="chart_builder" /><label>Cost</label>
-            <br />
+        <div class="col-lg-3 col-md-6 text-center">
+            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 20rem">
+                <h5 class="card-header mt-0">Chart Type</h5>
+                <div class="card-body">
+                    <div class="text-left mb-1">
+                        Data Type
+                    </div>
+                    <ul class="list-group list-group-flush bg-transparent" data-toggle="buttons" style="list-style: none;">
+                        <li class="m-0">
+                            <label class="btn btn-outline-dark text-center col-12 m-0"><input type="radio" id="data_type" name="data_type" value="disburse" checked="checked" class="chart_builder" />Disbursement</label>
+                        </li>
+                        <li>
+                            <label class="btn btn-outline-dark text-center col-12 m-0"><input type="radio" id="data_type" name="data_type" value="po" class="chart_builder" />Purchase Order</label>
+                        </li>
+                    </ul>
+                    <div class="text-left mt-3 mb-1">
+                        Unit Type
+                    </div>
+                    <ul class="list-group list-group-flush bg-transparent" data-toggle="buttons" style="list-style: none;">
+                        <li class="m-0">
+                            <label class="btn btn-outline-dark text-center col-12 m-0">
+                                <input type="radio" id="unit_type" name="unit_type" value="qty" checked="checked" class="chart_builder" />Qty
+                            </label><br />
+                        </li>
+                        <li>
+                            <label class="btn btn-outline-dark text-center col-12 m-0">
+                                <input type="radio" id="unit_type" name="unit_type" value="cost" class="chart_builder" />Cost
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="col-3" id="department">
-            <strong>Department</strong><br />
-            @Html.ListBox("Departments", new SelectList(ViewBag.Departments, "DeptCode", "DeptName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder form-control" })
+        
+        <div class="col-lg-3 col-md-6 text-center" id="department">
+            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 20rem">
+                <h5 class="card-header mt-0">Department</h5>
+                <div class="card-body">
+                    @Html.ListBox("Departments", new SelectList(ViewBag.Departments, "DeptCode", "DeptName", "All"), new { size = 8, @style = "width:100%; height:100%", @class = "chart_builder form-control multi-list" })
+                </div>
+            </div>
         </div>
-        <div class="col-3" id="supplier">
-            Supplier<br />
-            @Html.ListBox("Suppliers", new SelectList(ViewBag.Suppliers, "SupplierId", "SupplierName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder form-control" })
+        <div class="col-lg-3 col-md-6 text-center" id="supplier">
+            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 20rem">
+                <h5 class="card-header mt-0">Supplier</h5>
+                <div class="card-body">
+                    @Html.ListBox("Suppliers", new SelectList(ViewBag.Suppliers, "SupplierId", "SupplierName", "All"), new { size = 8, @style = "width:100%; height:100%", @class = "chart_builder form-control multi-list" })
+                </div>
+            </div>
         </div>
-        <div class="col-3" id="category">
-            <strong>Category</strong><br />
-            @Html.ListBox("Categories", new SelectList(ViewBag.Categories, "CategoryId", "CategoryName", "All"), new { size = 8, @style = "width:100%;", @class = "chart_builder form-control" })
+        <div class="col-lg-3 col-md-6 text-center" id="category">
+            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 20rem">
+                <h5 class="card-header mt-0">Category</h5>
+                <div class="card-body">
+                    @Html.ListBox("Categories", new SelectList(ViewBag.Categories, "CategoryId", "CategoryName", "All"), new { size = 6, @style = "width:100%; height:100%", @class = "chart_builder form-control multi-list" })
+                </div>
+            </div>
         </div>
     </div>
+    <hr />
     <br />
     <div class="row text-center">
         <div class="col-12">
@@ -66,14 +110,18 @@
 </div>
 @section scripts
 {
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
+    <link href="~/Content/Listbox.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/jquery.listbox.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
 
-
-
+    <script>
+        $(function() {
+            $('.multi-list').listbox({ 'searchbar': true });
+        });
         $(document).ready(function () {
             var mydate = new Date();
             mydate.setDate(0);
+            $('#data_type').button('toggle')
             $('input[type=radio][name=data_type]').on('change', function () {
                 if ($('#data_type:checked').val() == 'po') {
                     $('#supplier').show();
@@ -89,7 +137,7 @@
             mydate.setDate(mydate.getDate() + 1);
             $('#from_date').val(mydate.toISOString().substr(0, 10));
             $('.chart_builder').each(function (i, obj) {
-                $(obj).on('change', function () { update_chart()(); })
+                $(obj).on('change', function () { update_chart(); })
             });
             $('#supplier').hide();
             $('#custom_date_range').on('change', function () {

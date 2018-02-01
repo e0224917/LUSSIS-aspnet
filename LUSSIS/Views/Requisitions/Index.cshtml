@@ -50,7 +50,7 @@
     <link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css" />
 
 
-    <script>
+    @*<script>
         $(document).ready(function () {
                 $("#myTable").tablesorter({
                     headers: {
@@ -60,12 +60,12 @@
                         3: {
                             sorter:false
                         },
-
+                        
                     }
                 });
             }
         );
-    </script>
+    </script>*@
     <script type="text/javascript">
         $(function () {
             // Document.ready -> link up remove event handler
@@ -73,6 +73,7 @@
                 // Get the id from the link
                 var stationeryToAdd = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
+                var myid = 'msg-added-' + $(this).attr("data-id");
                 if (qty <= 0) {
                     alert("Please input a valid quantity");
                 }
@@ -81,9 +82,18 @@
                     $.post("@Url.Content("~/")Requisitions/AddToCart",
                         { "id": stationeryToAdd, "qty": qty },
                         function (data) {
-                            $("a#cart-number").text("My Cart (" + data + ")");
-                        });
+                            $("#cart-number").text("My Cart (" + data + ")");
+                            
+                            $('#' + myid).removeClass("hidden").addClass("text-danger");
+                            setTimeout(function() {
+                                $('#' + myid).addClass("hidden").removeClass("text-danger");
+                            }, 800);
+                        }
+                    );
                 }
+                
+                
+
             });
         });
     </script>
