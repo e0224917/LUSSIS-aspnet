@@ -21,7 +21,7 @@
                 Set New Collection Point
             </h5>
             <div class="card-body">
-                <small class="card-subtitle text-muted">New collection point is effective from the next upcoming collection<br /> (current upcoming collection will not be affected)</small>
+                <small class="card-subtitle text-muted">New collection point is effective from the next upcoming collection<br /> (current collection will not be affected)</small>
             </div>@*@using (Html.BeginForm("UpdateCollection", "Collection", FormMethod.Post))*@
 
             <ul class="list-group list-group-flush bg-transparent">
@@ -39,7 +39,8 @@
 
                 <li class="list-group-item bg-transparent">
                     <input type="submit" value="Set New Collection Point" class="btn btn-success" style="padding: 0.5rem 3rem" />
-                </li>
+                    </li>
+
             </ul>
 
             <div class="embed-responsive embed-responsive-16by9">

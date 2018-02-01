@@ -9,6 +9,11 @@
             <h5 class="card-subtitle text-muted">
                 @Html.DisplayFor(model => model.Time)
             </h5>
+            &nbsp;<small class="text-danger" id="message">@ViewData["message"]</small>
         </div>
     </div>
 </div>
+<script>
+    $("#message").show();
+    setTimeout(function () { $("#message").hide(); }, 500);
+</script>

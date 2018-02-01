@@ -8,7 +8,7 @@
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         var name = Request.Cookies["Employee"]?["Name"];
-        var cartQty = ((ShoppingCart) Session["MyCart"]).GetCartItemCount();
+        var cartQty = ((ShoppingCartDTO) Session["MyCart"]).GetCartItemCount();
         var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
         var isDelegate = new DelegateRepository().FindCurrentByEmpNum(empNum) != null;
         @Html.AntiForgeryToken()

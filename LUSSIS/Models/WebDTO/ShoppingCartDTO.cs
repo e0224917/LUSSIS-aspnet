@@ -6,17 +6,17 @@ using System.Web;
 namespace LUSSIS.Models.WebDTO
 {
     //Authors: Cui Runze
-    public class ShoppingCart
+    public class ShoppingCartDTO
     {
-        public List<Cart> shoppingCart;
-        public ShoppingCart()
+        public List<CartDTO> shoppingCart;
+        public ShoppingCartDTO()
         {
-            shoppingCart = new List<Cart>();
+            shoppingCart = new List<CartDTO>();
         }
-        public void addToCart(Cart cart)
+        public void AddToCart(CartDTO cart)
         {
             bool status = false;
-            foreach (Cart c in shoppingCart)
+            foreach (CartDTO c in shoppingCart)
             {
                 
                 if (c.stationery.ItemNum.Equals(cart.stationery.ItemNum))
@@ -30,7 +30,7 @@ namespace LUSSIS.Models.WebDTO
                 shoppingCart.Add(cart);
             }
         }
-        public void deleteCart(string id)
+        public void DeleteCart(string id)
         {           
             for(int i = 0; i < shoppingCart.Count; i++)
             {
@@ -38,17 +38,9 @@ namespace LUSSIS.Models.WebDTO
                 {
                     shoppingCart.RemoveAt(i);
                 }
-            }
-            //foreach (Cart c in shoppingCart)
-            //{
-
-            //    if (c.stationery.ItemNum.Equals(id))
-            //    {
-            //        shoppingCart.Remove(c);
-            //    }
-            //}
+            }            
         }
-        public List<Cart> GetAllCartItem()
+        public List<CartDTO> GetAllCartItem()
         {
             return shoppingCart.ToList();
         }

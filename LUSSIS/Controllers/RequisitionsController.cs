@@ -217,9 +217,9 @@ namespace LUSSIS.Controllers
         public ActionResult AddToCart(string id, int qty)
         {
             var item = _stationeryRepo.GetById(id);
-            var cart = new Cart(item, qty);
-            var shoppingCart = Session["MyCart"] as ShoppingCart;
-            shoppingCart?.addToCart(cart);
+            var cart = new CartDTO(item, qty);
+            var shoppingCart = Session["MyCart"] as ShoppingCartDTO;
+            shoppingCart?.AddToCart(cart);
             return Json(shoppingCart?.GetCartItemCount());
         }
 
@@ -281,7 +281,7 @@ namespace LUSSIS.Controllers
 
                 Session["itemNums"] = null;
                 Session["itemQty"] = null;
-                Session["MyCart"] = new ShoppingCart();
+                Session["MyCart"] = new ShoppingCartDTO();
 
                 //Send email
                 var headEmail = _employeeRepo.GetDepartmentHead(deptCode).EmailAddress;
@@ -299,7 +299,7 @@ namespace LUSSIS.Controllers
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         public ActionResult MyCart()
         {
-            var mycart = (ShoppingCart)Session["MyCart"];
+            var mycart = (ShoppingCartDTO)Session["MyCart"];
             return View(mycart.GetAllCartItem());
         }
 
@@ -308,8 +308,8 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult DeleteCartItem(string id, int qty)
         {
-            var myCart = Session["MyCart"] as ShoppingCart;
-            myCart?.deleteCart(id);
+            var myCart = Session["MyCart"] as ShoppingCartDTO;
+            myCart?.DeleteCart(id);
 
             return Json(id);
         }
@@ -319,20 +319,16 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult UpdateCartItem(string id, int qty)
         {
-            var mycart = Session["MyCart"] as ShoppingCart;
-            var c = new Cart();
+            var mycart = Session["MyCart"] as ShoppingCartDTO;
+           
             foreach (var cart in mycart.shoppingCart)
             {
                 if (cart.stationery.ItemNum != id) continue;
-                c = cart;
+               
                 cart.quantity = qty;
                 break;
             }
 
-            if (c.quantity <= 0)
-            {
-                mycart.shoppingCart.Remove(c);
-            }
 
             return RedirectToAction("MyCart");
         }

@@ -46,7 +46,8 @@ namespace LUSSIS.Controllers
 
                 department.CollectionPointId = manageCollectionDto.DeptCollectionPointId;
                 _departmentRepo.Update(department);
-                
+
+                ViewData["message"] = "Collection Point updated successfully";
                 return PartialView("_SetCollection", department.CollectionPoint);
                 
             }
