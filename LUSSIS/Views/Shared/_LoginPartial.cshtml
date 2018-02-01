@@ -24,7 +24,7 @@
                 <li class="nav-item">
                 @Html.ActionLink("Welcome, " + name, "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage Account", @class = "nav-item nav-link btn btn-primary" })
             </li>
-            <li class="nav-item"><a class="nav-item nav-link btn btn-primary" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+            <li class="nav-item"><a type="submit" class="nav-item nav-link btn btn-primary" href="#" id="log-off">Log off</a></li>
         </ul>
     }
 }
@@ -35,3 +35,9 @@ else
         <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
     </ul>
 }
+
+<script>
+    $('#log-off').click(function () {
+        $('#logoutForm').submit();
+    })
+</script>
