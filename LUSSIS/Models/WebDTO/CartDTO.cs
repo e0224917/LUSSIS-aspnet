@@ -6,12 +6,12 @@ using System.Web;
 namespace LUSSIS.Models.WebDTO
 {
     //Authors: Cui Runze
-    public class Cart
+    public class CartDTO
     {
         public Stationery stationery { get; set; }
         public int quantity { get; set; }
-        public Cart() { }
-        public Cart(Stationery stationery, int quantity)
+        public CartDTO() { }
+        public CartDTO(Stationery stationery, int quantity)
         {
             this.stationery = stationery;
             this.quantity = quantity;

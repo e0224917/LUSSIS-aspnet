@@ -9,7 +9,7 @@ using LUSSIS.Models;
 
 namespace LUSSIS.Emails
 {
-    //Authors: Guo Rui, Ton That Minh Nhat
+    //Authors: Guo Rui, Ton That Minh Nhat, Tang Xiaowen, Cui Run Ze
     public static class EmailHelper
     {
         public static string DestinationEmail { get; set; }
