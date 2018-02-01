@@ -146,6 +146,7 @@ namespace LUSSIS.Controllers
             base.Dispose(disposing);
         }
 
+        //Authors: Douglas Lee Kiat Hui
         #region Quotations
         //GET: Suppliers/Quotation
         [HttpGet]

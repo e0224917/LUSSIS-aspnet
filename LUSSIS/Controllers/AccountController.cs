@@ -12,6 +12,7 @@ using LUSSIS.Models;
 using System.Collections.Generic;
 using LUSSIS.Repositories;
 using LUSSIS.Models.WebDTO;
+using LUSSIS.Emails;
 
 namespace LUSSIS.Controllers
 {
@@ -176,13 +177,14 @@ namespace LUSSIS.Controllers
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
-
-                // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                // Send an email with reset link
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new {userId = user.Id, code }, protocol: Request.Url.Scheme);
+                var fullName = _employeeRepo.GetEmployeeByEmail(model.Email).FullName;
+                var email = new LUSSISEmail.Builder().From("sa45team7@gmail.com").To(model.Email)
+                    .ForResetPassword(fullName, callbackUrl).Build();
+                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form

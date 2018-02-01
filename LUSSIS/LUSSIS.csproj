@@ -286,6 +286,7 @@
     <Compile Include="Constants\Status.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CollectionController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\StationeriesController.cs" />
     <Compile Include="Controllers\SupervisorDashboardController.cs" />
     <Compile Include="Controllers\WebAPI\StockAdjustmentController.cs" />
@@ -604,10 +605,12 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Collection\_SetCollection.cshtml" />
     <Content Include="Views\StockAdjustment\ApproveReject.cshtml" />
+    <Content Include="Views\Shared\NotFound.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Exceptions\" />
+    <Folder Include="Views\Error\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

@@ -76,18 +76,14 @@ namespace LUSSIS.Controllers.WebAPI
                     {
                         return BadRequest("No email exists in the database.");
                     }
-
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
+                    // Send an email with the reset password link
                     string code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Link("Default",
                         new { controller = "Account", action = "ResetPassword", userId = user.Id, code });
-                    // await userManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    string subject = "Reset password for " + model.Email;
-                    string body = "Please reset your password by clicking <a href=" + callbackUrl + ">here</a>";
-                    string to = model.Email;
-                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(to,subject,body); }).Start();
+                    var fullName = _employeeRepo.GetEmployeeByEmail(model.Email).FullName;
+                    var email = new LUSSISEmail.Builder().From("sa45team7@gmail.com").To(model.Email)
+                        .ForResetPassword(fullName, callbackUrl).Build();
+                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
                 }
                 catch (Exception e)
                 {
