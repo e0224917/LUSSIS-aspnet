@@ -271,15 +271,12 @@ namespace LUSSIS.Controllers
                 {
                     var adjustment = _stockAdjustmentRepo.GetById(id);
                     adjustment.Status = status;
+
                     String item = adjustment.ItemNum;
                     Stationery st = new Stationery();
                     st = _stationeryRepo.GetById(item);
-
-                   
                     st.AvailableQty = st.AvailableQty - adjustment.Quantity;
                     st.CurrentQty = st.CurrentQty - adjustment.Quantity;
-
-
                     _stationeryRepo.Update(st);
 
                     adjustment.Remark = comment;
@@ -287,6 +284,19 @@ namespace LUSSIS.Controllers
                     adjustment.ApprovalEmpNum = Convert.ToInt32(empNum);
                     _stockAdjustmentRepo.Update(adjustment);
                 }
+            }
+            else
+            {
+                foreach(var id in idList)
+                {
+                    var adjustment = _stockAdjustmentRepo.GetById(id);
+                    adjustment.Status = status;
+                    adjustment.Remark = comment;
+                    adjustment.ApprovalDate = DateTime.Today;
+                    adjustment.ApprovalEmpNum = Convert.ToInt32(empNum);
+                    _stockAdjustmentRepo.Update(adjustment);
+                }
+                
             }
            
             return PartialView();
