@@ -30,30 +30,9 @@ namespace LUSSIS.Controllers
         // GET: Upcoming Disbursement
         public ActionResult Upcoming()
         {
-            var disbursements = _disbursementRepo.GetDisbursementByStatus(InProcess);
-            return View(disbursements.ToList());
+            return View(_disbursementRepo.GetDisbursementByStatus(InProcess).ToList());
         }
-
-        // GET: Disbursement/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            var disbursement = _disbursementRepo.GetById((int) id);
-
-            var disDetailDto = new DisbursementDetailDTO {CurrentDisbursement = disbursement};
-            if (disDetailDto.CurrentDisbursement == null)
-            {
-                return HttpNotFound();
-            }
-
-            disDetailDto.DisDetailList = disDetailDto.CurrentDisbursement.DisbursementDetails.ToList();
-            return View(disDetailDto);
-        }
-
+        
         // GET: Disbursement/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
@@ -98,6 +77,30 @@ namespace LUSSIS.Controllers
                 "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
+        
+        // GET: Disbursement/Details/5
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var disbursement = _disbursementRepo.GetById((int)id);
+
+            if (disbursement == null)
+            {
+                return HttpNotFound();
+            }
+
+            var disDetailDto = new DisbursementDetailDTO
+            {
+                CurrentDisbursement = disbursement,
+                DisDetailList = disbursement.DisbursementDetails.ToList()
+            };
+            
+            return View(disDetailDto);
+        }
 
         [OverrideAuthorization]
         [Authorize(Roles = "clerk, rep")]
@@ -125,7 +128,7 @@ namespace LUSSIS.Controllers
 
                 switch (update)
                 {
-                    //confirm items disbursed and update stationery qty
+                    //case 1: confirm items disbursed and update stationery qty
                     case "Acknowledge Manually":
                         _disbursementRepo.Acknowledge(disbursement);
                         foreach (var dd in disbursement.DisbursementDetails)
@@ -136,7 +139,7 @@ namespace LUSSIS.Controllers
                         }
                         return RedirectToAction("Upcoming");
                     
-                    //only updates actual qty and leave changing status and deduct stock qty to WebAPI
+                    //case 2: only updates actual qty and leave changing status and deduct stock qty to WebAPI
                     case "Generate QR Code":
                         break;
                 }
@@ -148,10 +151,8 @@ namespace LUSSIS.Controllers
 
         public PartialViewResult _QR(string id)
         {
-            var qrGen = new QRCodeGenerator();
-            var qrCodeData = qrGen.CreateQrCode(id, QRCodeGenerator.ECCLevel.Q);
-            var qrCode = new Base64QRCode(qrCodeData);
-            var qr = qrCode.GetGraphic(20);
+            var qrCodeData = new QRCodeGenerator().CreateQrCode(id, QRCodeGenerator.ECCLevel.Q);
+            var qr = new Base64QRCode(qrCodeData).GetGraphic(20);
             ViewBag.generatedQrCode = qr;
             return PartialView();
         }
@@ -167,9 +168,11 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
 
-            var disbursements = !string.IsNullOrEmpty(searchString)
-                ? _disbursementRepo.GetDisbursementsByDeptName(searchString).ToList()
-                : _disbursementRepo.GetAll().OrderByDescending(d => d.CollectionDate).ToList();
+            ViewBag.CurrentFilter = searchString;
+
+            var disbursements = string.IsNullOrEmpty(searchString)? 
+                _disbursementRepo.GetAll().OrderByDescending(d => d.CollectionDate).ToList():
+                _disbursementRepo.GetDisbursementsByDeptName(searchString).ToList();
 
             var disHistory = disbursements.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 

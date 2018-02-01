@@ -19,9 +19,9 @@ namespace LUSSIS.Controllers.WebAPI
 
         // GET api/Delegate/COMM
         [HttpGet]
-        [Route("api/Delegate/{dept}")]
+        [Route("api/Delegate/Get/{dept}")]
         [ResponseType(typeof(DelegateDTO))]
-        public IHttpActionResult Get([FromUri] string dept)
+        public IHttpActionResult GetDelegate([FromUri]string dept)
         {
             var @delegate = _delegateRepo.FindExistingByDeptCode(dept);
 
@@ -41,41 +41,46 @@ namespace LUSSIS.Controllers.WebAPI
         }
 
         [HttpPost]
-        [Route("api/Delegate/")]
-        // POST api/Delegate
-        public IHttpActionResult Post([FromBody] DelegateDTO delegateDto)
+        [Route("api/Delegate/Create/{empnum}")]
+        // POST api/Delegate/Create
+        public IHttpActionResult CreateDelegate(int empnum, [FromBody]DelegateDTO delegateDto)
         {
             var d = new Delegate()
             {
                 StartDate = delegateDto.StartDate,
                 EndDate = delegateDto.EndDate,
-                EmpNum = delegateDto.Employee.EmpNum
+                EmpNum = empnum
             };
 
             _delegateRepo.Add(d);
 
             //Send email on new thread
-            var headEmail = _employeeRepo.GetDepartmentHead(delegateDto.Employee.DeptCode);
-            var email = new LUSSISEmail.Builder().From(headEmail).To(delegateDto.Employee.EmailAddress)
+            var employee = _employeeRepo.GetById(empnum);
+            var headEmail = _employeeRepo.GetDepartmentHead(employee.DeptCode);
+            var email = new LUSSISEmail.Builder().From(headEmail).To(employee.EmailAddress)
                 .ForNewDelegate().Build();
             new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 
-            var id = _delegateRepo.FindExistingByDeptCode(delegateDto.Employee.DeptCode).DelegateId;
+            //return delegate with id included
+            var id = _delegateRepo.FindExistingByDeptCode(employee.DeptCode).DelegateId;
             delegateDto.DelegateId = id;
 
             return Ok(delegateDto);
         }
 
-        [HttpDelete]
-        [Route("api/Delegate/")]
-        // DELETE api/Delegate/
-        public IHttpActionResult Delete([FromBody] DelegateDTO delegateDto)
+        [HttpPost]
+        [Route("api/Delegate/Delete")]
+        // POST api/Delegate/Delete
+        public IHttpActionResult DeleteDelegate([FromBody]DelegateDTO delegateDto)
         {
-            _delegateRepo.DeleteByDeptCode(delegateDto.Employee.DeptCode);
+            var del = _delegateRepo.GetById(delegateDto.DelegateId);
+            var toEmail = _employeeRepo.GetById(del.EmpNum).EmailAddress;
+            var deptCode = _employeeRepo.GetById(del.EmpNum).DeptCode;
+            _delegateRepo.Delete(del);
 
             //Send email
-            var headEmail = _employeeRepo.GetDepartmentHead(delegateDto.Employee.DeptCode);
-            var email = new LUSSISEmail.Builder().From(headEmail).To(delegateDto.Employee.EmailAddress)
+            var headEmail = _employeeRepo.GetDepartmentHead(deptCode);
+            var email = new LUSSISEmail.Builder().From(headEmail).To(toEmail)
                 .ForOldDelegate().Build();
             new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 

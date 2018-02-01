@@ -42,6 +42,8 @@ namespace LUSSIS.Controllers
                 searchString = currentFilter;
             }
 
+            ViewBag.CurrentFilter = searchString;
+
             var adjustments = !string.IsNullOrEmpty(searchString)
                 ? _stockAdjustmentRepo.FindAdjVoucherByText(searchString).Reverse().ToList()
                 : _stockAdjustmentRepo.GetAll().Reverse().ToList();

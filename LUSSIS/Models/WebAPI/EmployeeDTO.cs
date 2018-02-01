@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Http.Controllers;
+using System.Web.Http.ModelBinding;
+using System.Web.Http.ValueProviders;
 
 namespace LUSSIS.Models.WebAPI
 {
     //Authors: Ton That Minh Nhat
+    [ModelBinder(typeof(EmployeeModelBinder))]
     public class EmployeeDTO
     {
         public EmployeeDTO(Employee employee)
@@ -39,5 +43,33 @@ namespace LUSSIS.Models.WebAPI
 
         public bool IsDelegated { get; set; }
 
+    }
+
+    public class EmployeeModelBinder : IModelBinder
+    {
+        public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext)
+        {
+            if(bindingContext.ModelType != typeof(EmployeeDTO))
+            {
+                return false;
+            }
+
+            ValueProviderResult val = bindingContext.ValueProvider.GetValue(
+                bindingContext.ModelName);
+            if(val == null)
+            {
+                return false;
+            }
+
+            string key = val.RawValue as string;
+            if(key == null)
+            {
+                bindingContext.ModelState.AddModelError(
+                    bindingContext.ModelName, "Wrong value type");
+                return false;
+            }
+
+            return true;
+        }
     }
 }
