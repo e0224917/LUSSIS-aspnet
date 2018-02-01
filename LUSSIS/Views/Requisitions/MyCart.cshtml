@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LUSSIS.Models.WebDTO.Cart>
+﻿@model IEnumerable<LUSSIS.Models.WebDTO.CartDTO>
 
 @{
     ViewBag.Title = "My Cart";
@@ -103,7 +103,7 @@ else
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
 
                 if (qty <= 0) {
-                    Alert("Quantity should be more than 1");
+                    alert("Quantity should be more than 1");
                 }
                 else 
                 {

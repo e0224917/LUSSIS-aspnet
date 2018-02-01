@@ -346,7 +346,7 @@
     <Compile Include="Models\WebAPI\RequisitionDTO.cs" />
     <Compile Include="Models\WebAPI\RetrievalItemDTO.cs" />
     <Compile Include="Models\WebDTO\AdjVoucherColView.cs" />
-    <Compile Include="Models\WebDTO\Cart.cs" />
+    <Compile Include="Models\WebDTO\CartDTO.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\CollectionPoint.cs" />
     <Compile Include="Models\Delegate.cs" />
@@ -373,7 +373,7 @@
     <Compile Include="Models\WebDTO\ReportTransferDTO.cs" />
     <Compile Include="Models\WebDTO\ReqApproveRejectDTO.cs" />
     <Compile Include="Models\WebDTO\RetrievalItemsWithDateDTO.cs" />
-    <Compile Include="Models\WebDTO\ShoppingCart.cs" />
+    <Compile Include="Models\WebDTO\ShoppingCartDTO.cs" />
     <Compile Include="Models\Stationery.cs" />
     <Compile Include="Models\StationerySupplier.cs" />
     <Compile Include="Models\Supplier.cs" />
