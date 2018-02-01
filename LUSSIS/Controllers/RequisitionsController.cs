@@ -306,12 +306,13 @@ namespace LUSSIS.Controllers
         // POST: Requisitions/DeleteCartItem
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
         [HttpPost]
-        public ActionResult DeleteCartItem(string id, int qty)
+        public ActionResult DeleteCartItem(string id)
         {
-            var myCart = Session["MyCart"] as ShoppingCart;
-            myCart?.DeleteCart(id);
+            (Session["MyCart"] as ShoppingCart).DeleteCart(id);
 
-            return Json(id);
+            var count = (Session["MyCart"] as ShoppingCart).GetCartItemCount();
+
+            return Json(count);
         }
 
         // POST: Requisitions/UpdateCartItem
@@ -329,12 +330,7 @@ namespace LUSSIS.Controllers
                 break;
             }
 
-            if (c.Quantity <= 0)
-            {
-                shoppingCart.DeleteCart(c.Stationery.ItemNum);
-            }
-
-            return RedirectToAction("MyCart");
+            return Json((Session["MyCart"] as ShoppingCart).GetCartItemCount());
         }
 
         [Authorize(Roles = Role.Clerk)]

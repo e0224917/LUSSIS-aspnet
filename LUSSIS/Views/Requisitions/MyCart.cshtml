@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<LUSSIS.Models.WebDTO.Cart>
-
+@using LUSSIS.Models.WebDTO
 @{
     ViewBag.Title = "My Cart";
     var itemNums = new List<string>();
@@ -14,49 +14,51 @@
 {
     <table class="table table-striped table-hover tablesorter" id="myTable">
         <thead>
-        <tr class="table-active">
-            <th>
-                Stationery Item
-            </th>
-            <th>
-                UOM
-            </th>
-            <th>
-                Quantity
-            </th>
-            <th>
-                Delete
-            </th>
-        </tr>
-        </thead><tbody>
-    @foreach (var item in Model)
+            <tr class="table-active">
+                <th>
+                    Stationery Item
+                </th>
+                <th>
+                    UOM
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Delete
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
 
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.stationery.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.stationery.UnitOfMeasure)
-            </td>
-            <td>
-                <div class="row">
-                    <input type="number" class="form-control form-control-sm col-md-6" name="qty-@item.stationery.ItemNum" min="1" max="1000" value="@item.quantity" id="qty-@item.stationery.ItemNum">
-                    <input type="submit" value="Update" id="btn-update" class="UpdateLink btn btn-warning btn-sm" data-id="@item.stationery.ItemNum" />
-                </div>
-            </td>
-            <td>
-                <input type="submit" value="Delete" id="btn-remove" class="RemoveLink btn btn-danger btn-sm" data-id="@item.stationery.ItemNum" />
-            </td>
-        </tr>
-        {
-            itemNums.Add(@item.stationery.ItemNum);
-            Session["itemNums"] = itemNums;
-            itemQty.Add(@item.quantity);
-            Session["itemQty"] = itemQty;
-        }
-    }</tbody>
-</table>
+            {
+                <tr id="row-@item.Stationery.ItemNum">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Stationery.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
+                    </td>
+                    <td>
+                        <div class="row">
+                            <input type="number" class="Qty form-control form-control-sm col-md-6" name="qty-@item.Stationery.ItemNum" min="1" max="1000" value="@item.Quantity" id="qty-@item.Stationery.ItemNum">
+                            <input type="submit" value="Update" id="btn-update" class="UpdateLink btn btn-warning btn-sm" data-id="@item.Stationery.ItemNum" />
+                        </div>
+                    </td>
+                    <td>
+                        <input type="submit" value="Delete" id="btn-remove" class="RemoveLink btn btn-danger btn-sm" data-id="@item.Stationery.ItemNum" />
+                    </td>
+                </tr>
+                {
+                    itemNums.Add(@item.Stationery.ItemNum);
+                    Session["itemNums"] = itemNums;
+                    itemQty.Add(@item.Quantity);
+                    Session["itemQty"] = itemQty;
+                }
+            }
+        </tbody>
+    </table>
 
     using (Html.BeginForm("SubmitReq", "Requisitions"))
     {
@@ -86,22 +88,25 @@ else
         $(function () {
             $(".RemoveLink").click(function () {
                 // Get the id from the link
-                var stationeryToDelete = $(this).attr("data-id");
-                var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
-                if (stationeryToDelete !== '') {
+                var itemNum = $(this).attr("data-id");
+                if (itemNum !== '') {
                     // Perform the ajax post
-                    $.post("@Url.Content("~/")Requisitions/DeleteCartItem", { "id": stationeryToDelete, "qty": qty },
-                        function () {
-                            location.reload();
+                    $.post("@Url.Content("~/")Requisitions/DeleteCartItem", { "id": itemNum },
+                        function (count) {
+                            $("#row-" + itemNum).remove();
+                            $("a#cart-number").text("My Cart (" + count + ")");
+                            if (count === 0) {
+                                location.reload();
+                            }
                         });
                 }
             });
         });
         $(function () {
-            $(".UpdateLink").click(function ()
+            $(".Qty").change(function ()
             {
-                var stationeryToUpdate = $(this).attr("data-id");
-                var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
+                var stationeryToUpdate = $(this).attr("id");
+                var qty = $(this).val();
 
                 if (qty <= 0) {
                     Alert("Quantity should be more than 1");
@@ -109,8 +114,8 @@ else
                 else
                 {
                     $.post("@Url.Content("~/")Requisitions/UpdateCartItem", { "id": stationeryToUpdate, "qty": qty },
-                        function () {
-                            location.reload();
+                        function (count) {
+                            $(this).val(count);
                         });
                 }
 
@@ -126,10 +131,10 @@ else
             $("#myTable").tablesorter({
                 headers: {
                     2: {
-                        sorter:false
+                        sorter: false
                     },
                     3: {
-                        sorter:false
+                        sorter: false
                     }
                 }
             });
