@@ -14,7 +14,7 @@ namespace LUSSIS.Repositories
     //Authors: Tang Xiaowen, Cui Runze
     public class RequisitionRepository : Repository<Requisition, int>, IRequisitionRepository
     {
-        public IEnumerable<Requisition> GetAllByDeptCode(string deptCode)
+        public List<Requisition> GetAllByDeptCode(string deptCode)
         {
             var list = LUSSISContext.Requisitions.Where(r => r.DeptCode == deptCode).ToList();
             list.Reverse();

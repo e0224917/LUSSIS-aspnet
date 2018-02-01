@@ -1,9 +1,9 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Stationery>
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
 @{
     ViewBag.Title = "Stationery List";
 }
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
 <h2>Stationery List</h2>
 <hr />
 
@@ -43,6 +43,22 @@
 @section scripts {
     <script src="~/Scripts/jquery.unobstrusive-ajax.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.tablesorter.min.js"></script>
+    <link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+    <script>
+        $(document).ready(function () {
+            $("#myTable").tablesorter({
+                headers: {
+                    5: {
+                        sorter: false
+                    }
+                }
+            });
+            }
+        );
+    </script>
 }
 
 @*Authors: Koh Meng Guan*@

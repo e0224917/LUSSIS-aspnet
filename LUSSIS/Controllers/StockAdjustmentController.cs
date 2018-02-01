@@ -253,28 +253,25 @@ namespace LUSSIS.Controllers
             {
                 idList[i] = int.Parse(list[i]);
             }
-
+            HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
+            String empNum = cookie["EmpNum"];
             foreach (var id in idList)
             {
+                
                 var adjustment = _stockAdjustmentRepo.GetById(id);
                 adjustment.Status = status;
                 String item = adjustment.ItemNum;
                 Stationery st = new Stationery();
                     st=_stationeryRepo.GetById(item);
-                if(adjustment.Quantity<0)
-                {
+              
                     st.AvailableQty = st.AvailableQty+adjustment.Quantity;
                     st.CurrentQty = st.CurrentQty+adjustment.Quantity;
-                }
-                else
-                {
-                    st.AvailableQty = st.AvailableQty-adjustment.Quantity;
-                    st.CurrentQty = st.CurrentQty-adjustment.Quantity;
-                }
+               
                 _stationeryRepo.Update(st);
 
                 adjustment.Remark = comment;
                 adjustment.ApprovalDate = DateTime.Today;
+                adjustment.ApprovalEmpNum = Convert.ToInt32(empNum);
                 _stockAdjustmentRepo.Update(adjustment);
             }
 
