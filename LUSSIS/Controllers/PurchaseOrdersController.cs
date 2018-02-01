@@ -219,7 +219,6 @@ namespace LUSSIS.Controllers
                     _stationeryRepo.Update(stationery);
                 }
 
-
                 //send email to supervisor
                 var supervisorEmail = new EmployeeRepository().GetStoreSupervisor().EmailAddress;
                 var email = new LUSSISEmail.Builder().From(User.Identity.Name)

@@ -225,13 +225,14 @@ namespace LUSSIS.Controllers
                     //fill header
                     string[] headerString = new string[]
                         {"Item Code", "Item Name", "Unit Price", "Rank", "Supplier Code", "Supplier Name"};
-                    for (int i = 1; i < 6; i++)
+                    for (int i = 1; i < 7; i++)
                     {
                         ws.Cells[1, i].Value = headerString[i - 1];
                     }
 
                     //fill data
                     ws.Cells["A2"].LoadFromCollection(slist);
+                    ws.Cells["A1:F100"].AutoFitColumns();
                     filecontent = pk.GetAsByteArray();
                 }
 
