@@ -60,8 +60,15 @@ namespace LUSSIS.Controllers.WebAPI
         {
             if (requisition.RequisitionEmpNum == requisition.ApprovalEmpNum)
             {
-                return BadRequest("Employee cannot process its own requisition.");
+                return BadRequest("Employee cannot process its own requisition");
             }
+
+            var employee = _employeeRepo.GetById(requisition.ApprovalEmpNum);
+            if(_delegateRepo.FindCurrentByDeptCode(employee.DeptCode) != null)
+            {
+                return BadRequest("Must revoke current delegate to approve.");
+            }
+
             try
             {
                 var req = await _requistionRepo.GetByIdAsync(requisition.RequisitionId);

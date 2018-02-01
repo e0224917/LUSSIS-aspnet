@@ -8,45 +8,47 @@ namespace LUSSIS.Models.WebDTO
     //Authors: Cui Runze
     public class ShoppingCartDTO
     {
-        public List<CartDTO> shoppingCart;
+        public List<CartDTO> Carts;
         public ShoppingCartDTO()
         {
-            shoppingCart = new List<CartDTO>();
+            Carts = new List<CartDTO>();
         }
         public void AddToCart(CartDTO cart)
         {
             bool status = false;
-            foreach (CartDTO c in shoppingCart)
+            foreach (CartDTO c in Carts)
             {
                 
-                if (c.stationery.ItemNum.Equals(cart.stationery.ItemNum))
+                if (c.Stationery.ItemNum.Equals(cart.Stationery.ItemNum))
                 {
-                    c.quantity = c.quantity + cart.quantity;
+                    c.Quantity = c.Quantity + cart.Quantity;
                     status = true;
                 }               
             }
             if (status == false)
             {
-                shoppingCart.Add(cart);
+                Carts.Add(cart);
             }
         }
         public void DeleteCart(string id)
         {           
-            for(int i = 0; i < shoppingCart.Count; i++)
+            for(int i = 0; i < Carts.Count; i++)
             {
-                if (shoppingCart[i].stationery.ItemNum == id)
+                if (Carts[i].Stationery.ItemNum == id)
                 {
-                    shoppingCart.RemoveAt(i);
+                    Carts.RemoveAt(i);
                 }
-            }            
+            }
         }
+
         public List<CartDTO> GetAllCartItem()
         {
-            return shoppingCart.ToList();
+            return Carts.ToList();
         }
+
         public int GetCartItemCount()
         {
-            return shoppingCart.Count();
+            return Carts.Count();
         }
     }
 }

@@ -19,27 +19,6 @@ namespace LUSSIS
             config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(converter);
 
             config.MapHttpAttributeRoutes();
-
-            //config.Routes.MapHttpRoute(
-            //    name: "AuthApi",
-            //    routeTemplate: "api/auth/{action}",
-            //    defaults: new
-            //    {
-            //        controller = "Account",
-            //        action = RouteParameter.Optional
-            //    }
-            //);
-
-            //config.Routes.MapHttpRoute(
-            //    name: "DefaultApi",
-            //    routeTemplate: "api/{controller}/{id}",
-            //    defaults: new
-            //    {
-            //        controller="Stationeries",
-            //        id = RouteParameter.Optional
-            //    }
-            //);
-
         }
     }
 }

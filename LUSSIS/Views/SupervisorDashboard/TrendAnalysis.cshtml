@@ -134,6 +134,7 @@
             })
             $('#to_date').val(mydate.toISOString().substr(0, 10));
             mydate.setMonth(mydate.getMonth() - 1);
+            mydate.setDate(mydate.getDate() + 1);
             $('#from_date').val(mydate.toISOString().substr(0, 10));
             $('.chart_builder').each(function (i, obj) {
                 $(obj).on('change', function () { update_chart(); })
@@ -185,7 +186,7 @@
                 ', unit_type=' + $('#unit_type:checked').val() + '}';
 
             $.ajax({
-                url: 'https://localhost:44303/SupervisorDashboard/returnjsondata',
+                url: "@Url.Content("~/")SupervisorDashboard/ReturnJsonData",
                 data: posted_data,
                 type: 'POST',
                 dataType: 'json',

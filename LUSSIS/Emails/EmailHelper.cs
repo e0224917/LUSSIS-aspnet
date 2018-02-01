@@ -94,6 +94,13 @@ namespace LUSSIS.Emails
                 return this;
             }
 
+            public Builder ForResetPassword(string fullName, string callbackUrl)
+            {
+                Subject = "Reset password for " + fullName;
+                Body = "Please reset your password by clicking <a href=" + callbackUrl + ">here</a>";
+                return this;
+            }
+
             public Builder ForNewPo(PurchaseOrder purchaseOrder, string fullName)
             {
                 Subject = "New Purchase Order";

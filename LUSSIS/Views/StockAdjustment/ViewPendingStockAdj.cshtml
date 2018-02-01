@@ -144,7 +144,7 @@ else
             else {
                 $("#showError").hide();
                 document.getElementById("ApprovalTitle").textContent = "Reject";
-                var url = "@Url.Content("~/")StockAdjustment/ApproveReject?List=" + checkList + "&Status=rejected";
+                var url = "@Url.Content("~/")StockAdjustment/ApproveReject?list=" + checkList + "&Status=rejected";
 
                 $("#myApproveModalBodyDiv").load(url, function() {
                         $("#myApproveModal").modal("show");

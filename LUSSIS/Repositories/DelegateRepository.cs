@@ -20,7 +20,7 @@ namespace LUSSIS.Repositories
         }
 
         /// <summary>
-        /// Find a delegate by employee number. The delegate can be in the future.
+        /// Find a delegate by employee number.
         /// </summary>
         /// <param name="empNum"></param>
         /// <returns></returns>
@@ -32,7 +32,7 @@ namespace LUSSIS.Repositories
         }
 
         /// <summary>
-        /// Find a delegate by email. The delegate can be in the future.
+        /// Find a delegate by email.
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
@@ -44,7 +44,7 @@ namespace LUSSIS.Repositories
         }
 
         /// <summary>
-        /// Find the latest delegate in a department. The delegate can be in the future.
+        /// Find the latest delegate in a department.
         /// </summary>
         /// <param name="deptCode"></param>
         /// <returns></returns>
@@ -56,7 +56,7 @@ namespace LUSSIS.Repositories
         }
 
         /// <summary>
-        /// Find the delegate that exist and available as of today.
+        /// Find the delegate that exist and available as of today. The delegate can be in the future.
         /// </summary>
         /// <param name="deptCode"></param>
         /// <returns></returns>

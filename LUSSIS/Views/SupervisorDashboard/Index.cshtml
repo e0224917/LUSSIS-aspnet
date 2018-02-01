@@ -210,7 +210,7 @@
             $(function () {
                 $.ajax({
                     type: 'GET',
-                    url: '/SupervisorDashboard/GetPiechartJson?list=aaa&date=bbbb&&e=cdefe',
+                    url: '@Url.Content("~/")SupervisorDashboard/GetPiechartJson?list=aaa&date=bbbb&&e=cdefe',
                     success: function (chartsdata)
                     {
 
@@ -235,8 +235,6 @@
                         // Instantiate and draw our chart, passing in some options
                         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
 
-
-
                         //Draw pie chart command with data and chart options
                         chart.draw(data,
                             {
@@ -246,7 +244,7 @@
                                 width: "100%",
                                 height: "100%",
                                 fontName: "Ubuntu, -apple - system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sansserif",
-                                colors: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f', '#a6cee3', '#1f78b4', '#73bfe5', '#88d6f8', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ffff99', '#b15928', '#d1ae2b', '#b38849', '#d8a35c', '#636466', '#a09f9f', '#31536e', '#4c7ea4', '#73bfe5', '#88d6f8'],
+                              colors: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f', '#a6cee3', '#1f78b4', '#73bfe5', '#88d6f8', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ffff99', '#b15928', '#d1ae2b', '#b38849', '#d8a35c', '#636466', '#a09f9f', '#31536e', '#4c7ea4', '#73bfe5', '#88d6f8'],
                                 backgroundColor: "#f2fcf5",
                                 legend: {position:"bottom"}
                             }
@@ -264,22 +262,18 @@
 
         function DrawStackChartLoad() {
             $(function () {
-               // alert("this is");
                 $.ajax({
                     type: 'GET',
-                    url: '/SupervisorDashboard/GetStackJSON',
+                    url: '@Url.Content("~/")SupervisorDashboard/GetStackJSON',
                     success: function (chartsdata)
                     {
-                        //alert("please");
                         var data = new google.visualization.DataTable();
 
                         var title = chartsdata.title;
                         var listone = chartsdata.ListOne;
-                       // alert(listone.length);
 
                         for (var i = 0; i < title.length + 1; i++)
                         {
-                           // alert("first");
                             if (i == 0) {
                                 data.addColumn("string", 'Time');
                             } else {
@@ -290,27 +284,17 @@
                         data.addRows(listone.length);
                         for (var j = 0; j < listone.length; j++)
                         {
-                           // alert("second" + listone.length);
-
                             var tmpTime = listone[j].timeValue;
                             var tmpXvalue = listone[j].xvalue;
                             for (var k = 0; k < title.length + 1; k++)
                             {
-
-                                //alert("" + k);
                                 if (k == 0) {
                                     data.setValue(j, k, tmpTime);
                                 }
                                 else {
-
-                                    //alert("k" + k);
-                                    //alert("value" + tmpXvalue[k - 1]);
-
                                     data.setValue(j, k, tmpXvalue[k - 1]);
-
                                 }
                             }
-
                         }
 
 
@@ -323,7 +307,7 @@
                             legend: { position: 'top', maxLines: 3 },
                             bar: { groupWidth: '75%' },
                             isStacked: true,
-                            colors: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6'],
+                           colors: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6'],
                             backgroundColor: "#f2fcf5",
                         };
 

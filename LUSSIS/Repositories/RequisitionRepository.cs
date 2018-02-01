@@ -29,14 +29,15 @@ namespace LUSSIS.Repositories
         /// <returns></returns>
         public IEnumerable<Requisition> FindRequisitionsByDeptCodeAndText(string term, string deptCode)
         {
-            return LUSSISContext.Requisitions
+            var list = LUSSISContext.Requisitions
                 .Where(r => r.DeptCode == deptCode
                             && (r.Status.ToLower().Contains(term)
                                 || r.RequisitionEmployee.FirstName.ToLower().Contains(term)
                                 || r.RequisitionEmployee.LastName.ToLower().Contains(term)
                                 // || r.RequisitionDate.ToString().Contains(term) 
-                                || r.RequestRemarks.ToLower().Contains(term))).OrderByDescending(x=>x.RequisitionDate);                             
-
+                                || r.RequestRemarks.ToLower().Contains(term))).ToList();
+            list.Reverse();
+            return list;                    
         }
 
         public IEnumerable<RequisitionDetail> GetRequisitionDetailsByStatus(string status)

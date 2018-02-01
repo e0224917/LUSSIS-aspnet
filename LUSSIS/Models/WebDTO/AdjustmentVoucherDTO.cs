@@ -10,8 +10,10 @@ namespace LUSSIS.Models.WebDTO
 {
     //Authors: Koh Meng Guan
     [NotMapped]
-    public class AdjustmentVoucherDTO
+    public class AdjustmentVoucherDTO : IValidatableObject
     {
+
+
         [ItemNumValidator]
         [Display(Name = "Item Code")]
         [Required(ErrorMessage = "This field is required")]
@@ -20,7 +22,7 @@ namespace LUSSIS.Models.WebDTO
 
 
         [Required(ErrorMessage = "This field is required")]
-        [Range (1,10000, ErrorMessage="Please enter a valid quantity")]
+        [Range (1,10000, ErrorMessage="Please enter a valid  between 1 to 10000")]
         public int Quantity { get; set; }
 
 
@@ -38,6 +40,18 @@ namespace LUSSIS.Models.WebDTO
 
         public IList<AdjustmentVoucherDTO> MyList { get; set; }
 
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            StationeryRepository sr = new StationeryRepository();
+            var ItemCurrentQuantity = sr.GetById(ItemNum).CurrentQty;
+            var isPositive = true ;
+            if (Sign != null) {isPositive= Convert.ToBoolean(Sign); }
+            if ( !isPositive && Quantity > ItemCurrentQuantity)
+            {
+                yield return new ValidationResult("Number exceed current quantity", new List<string> { "Quantity" });
+            }
+        }
+
     }
 
     public class ItemNumValidator : ValidationAttribute
@@ -50,11 +64,11 @@ namespace LUSSIS.Models.WebDTO
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            StationeryRepository sr = new StationeryRepository();
+ 
             if (value != null)
             {
                 var valueAsString = value.ToString();
-
+                StationeryRepository sr = new StationeryRepository();
                 if (!sr.GetAllItemNum().ToList().Contains(valueAsString))
                 {
                     var errorMessage = FormatErrorMessage(validationContext.DisplayName);
@@ -64,5 +78,9 @@ namespace LUSSIS.Models.WebDTO
             }
             return ValidationResult.Success;
         }
+
+
     }
+
+
 }
