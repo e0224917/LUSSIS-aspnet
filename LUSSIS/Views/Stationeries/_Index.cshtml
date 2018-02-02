@@ -2,7 +2,7 @@
 @using PagedList.Mvc;
 
 <div id="stationeryList">
-    <table class="table table-striped table-hover" id="myTable">
+    <table class="table table-striped table-hover tablesorter" id="myTable">
         <thead>
         <tr class="table-active">
             <th class="header">
@@ -11,23 +11,21 @@
             </th>
             <th>
                 
-                @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CatSortParm })
+                @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CatSortParm }, new { style = "color:black" })
             </th>
             <th>
                 
-                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DesSortParm })
+                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DesSortParm }, new { style = "color:black" })
             </th>
             <th>
                 UOM               
             </th>
             <th>
                
-                @Html.ActionLink("Current Qty", "Index", new { sortOrder = ViewBag.QtySortParm })
+                @Html.ActionLink("Current Qty", "Index", new { sortOrder = ViewBag.QtySortParm }, new { style = "color:black" })
             </th>
             <th>
-                Manage
-
-            </th>
+                </th>
 
         </tr>
             </thead><tbody>
