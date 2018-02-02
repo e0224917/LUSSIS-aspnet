@@ -7,7 +7,7 @@
         <thead>
         <tr class="table-active">
             <th class="header">
-                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.NameSortParm}, new{style="color:black"})
+                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.NameSortParm,currentFilter = ViewBag.CurrentFilter }, new{style="color:black"})
             </th>
             <th>
                 UOM
