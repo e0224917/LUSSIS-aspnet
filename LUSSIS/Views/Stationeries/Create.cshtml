@@ -5,14 +5,13 @@
 }
 
 <h2>Add New Stationery</h2>
-<hr />
+<hr/>
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
 
-
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.ValidationSummary(true, "", new {@class = "text-danger"})
 
     <h5>Stationery details</h5>
     <div class="row">
@@ -20,61 +19,60 @@
             <div class="card-body row">
                 <div class="col-4 col-sm-4 col-lg-4">
                     <div class="form-group">
-                        @Html.LabelFor(model => model.CategoryId, "Category", htmlAttributes: new { @class = "control-label col-md-12" })
+                        @Html.LabelFor(model => model.CategoryId, "Category", htmlAttributes: new {@class = "control-label col-md-12"})
                         <div class="col-md-10">
-                            @Html.DropDownListFor(model => model.CategoryId, Model.CategoryList, "Select category", htmlAttributes: new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                            @Html.DropDownListFor(model => model.CategoryId, Model.CategoryList, "Select category", htmlAttributes: new {@class = "form-control"})
+                            @Html.ValidationMessageFor(model => model.CategoryId, "", new {@class = "text-danger"})
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12" })
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new {@class = "control-label col-md-12"})
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-4 col-sm-4 col-lg-4">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.ReorderLevel, htmlAttributes: new { @class = "control-label col-md-12" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.ReorderLevel, new { htmlAttributes = new { @class = "form-control", min = 1 } })
-                            @Html.ValidationMessageFor(model => model.ReorderLevel, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.ReorderQty, htmlAttributes: new { @class = "control-label col-md-12" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.ReorderQty, new { htmlAttributes = new { @class = "form-control", min = 1 } })
-                            @Html.ValidationMessageFor(model => model.ReorderQty, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Description, new {htmlAttributes = new {@class = "form-control"}})
+                            @Html.ValidationMessageFor(model => model.Description, "", new {@class = "text-danger"})
                         </div>
                     </div>
 
                 </div>
                 <div class="col-4 col-sm-4 col-lg-4">
-
                     <div class="form-group">
-                        @Html.LabelFor(model => model.UnitOfMeasure, htmlAttributes: new { @class = "control-label col-md-12" })
+                        @Html.LabelFor(model => model.ReorderLevel, htmlAttributes: new {@class = "control-label col-md-12"})
                         <div class="col-md-10">
-                            @Html.DropDownListFor(model => model.UnitOfMeasure, Model.UomList, "Select Unit of Measure", htmlAttributes: new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.UnitOfMeasure, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.ReorderLevel, new {htmlAttributes = new {@class = "form-control", min = 1}})
+                            @Html.ValidationMessageFor(model => model.ReorderLevel, "", new {@class = "text-danger"})
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.BinNum, htmlAttributes: new { @class = "control-label col-md-12" })
+                        @Html.LabelFor(model => model.ReorderQty, htmlAttributes: new {@class = "control-label col-md-12"})
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.BinNum, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.BinNum, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.ReorderQty, new {htmlAttributes = new {@class = "form-control", min = 1}})
+                            @Html.ValidationMessageFor(model => model.ReorderQty, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-4 col-sm-4 col-lg-4">
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UnitOfMeasure, htmlAttributes: new {@class = "control-label col-md-12"})
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(model => model.UnitOfMeasure, Model.UomList, "Select Unit of Measure", htmlAttributes: new {@class = "form-control"})
+                            @Html.ValidationMessageFor(model => model.UnitOfMeasure, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BinNum, htmlAttributes: new {@class = "control-label col-md-12"})
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.BinNum, new {htmlAttributes = new {@class = "form-control"}})
+                            @Html.ValidationMessageFor(model => model.BinNum, "", new {@class = "text-danger"})
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
 
 
     </div>
@@ -83,20 +81,20 @@
         <div class="card col-lg-4 border-dark">
             <div class="card-body">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.SupplierName1, htmlAttributes: new { @class = "control-label col-md-12" })
+                    @Html.LabelFor(model => model.SupplierName1, htmlAttributes: new {@class = "control-label col-md-12"})
                     <div class="col-md-10">
-                        @Html.DropDownListFor(model => model.SupplierName1, Model.SupplierList, "Select supplier", htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.SupplierName1, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.SupplierName1, Model.SupplierList, "Select supplier", htmlAttributes: new {@class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.SupplierName1, "", new {@class = "text-danger"})
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.Price1, htmlAttributes: new { @class = "control-label col-md-12" })
+                    @Html.LabelFor(model => model.Price1, htmlAttributes: new {@class = "control-label col-md-12"})
                     <div class="input-group col-md-10">
                         <div class="input-group-prepend">
                             <span class="input-group-text">S$</span>
                         </div>
-                        @Html.EditorFor(model => model.Price1, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Price1, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Price1, new {htmlAttributes = new {@class = "form-control", type="number", step=0.01}})
+                        @Html.ValidationMessageFor(model => model.Price1, "", new {@class = "text-danger"})
                     </div>
                 </div>
             </div>
@@ -104,20 +102,20 @@
         <div class="card col-lg-4 border-dark">
             <div class="card-body">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.SupplierName2, htmlAttributes: new { @class = "control-label col-md-12" })
+                    @Html.LabelFor(model => model.SupplierName2, htmlAttributes: new {@class = "control-label col-md-12"})
                     <div class="col-md-10">
-                        @Html.DropDownListFor(model => model.SupplierName2, Model.SupplierList, "Select supplier", htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.SupplierName2, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.SupplierName2, Model.SupplierList, "Select supplier", htmlAttributes: new {@class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.SupplierName2, "", new {@class = "text-danger"})
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.Price2, htmlAttributes: new { @class = "control-label col-md-12" })
+                    @Html.LabelFor(model => model.Price2, htmlAttributes: new {@class = "control-label col-md-12"})
                     <div class="input-group col-md-10">
                         <div class="input-group-prepend">
                             <span class="input-group-text">S$</span>
                         </div>
-                        @Html.EditorFor(model => model.Price2, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Price2, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Price2, new {htmlAttributes = new {@class = "form-control", type = "number", step = 0.01 } })
+                        @Html.ValidationMessageFor(model => model.Price2, "", new {@class = "text-danger"})
                     </div>
                 </div>
             </div>
@@ -125,20 +123,20 @@
         <div class="card col-lg-4 border-dark">
             <div class="card-body">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.SupplierName3, htmlAttributes: new { @class = "control-label col-md-12" })
+                    @Html.LabelFor(model => model.SupplierName3, htmlAttributes: new {@class = "control-label col-md-12"})
                     <div class="col-md-10">
-                        @Html.DropDownListFor(model => model.SupplierName3, Model.SupplierList, "Select supplier",htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.SupplierName3, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.SupplierName3, Model.SupplierList, "Select supplier", htmlAttributes: new {@class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.SupplierName3, "", new {@class = "text-danger"})
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.Price3, htmlAttributes: new { @class = "control-label col-md-12" })
+                    @Html.LabelFor(model => model.Price3, htmlAttributes: new {@class = "control-label col-md-12"})
                     <div class="input-group col-md-10">
                         <div class="input-group-prepend">
                             <span class="input-group-text">S$</span>
                         </div>
-                        @Html.EditorFor(model => model.Price1, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Price3, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Price3, new {htmlAttributes = new {@class = "form-control", type = "number", step = 0.01 } })
+                        @Html.ValidationMessageFor(model => model.Price3, "", new {@class = "text-danger"})
                     </div>
                 </div>
             </div>
@@ -146,13 +144,11 @@
     </div>
     <h2>@ViewBag.DistinctError</h2>
     <div class="row">
-        <div class="col-6">@Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary btn-lg" })</div>
+        <div class="col-6">@Html.ActionLink("Back to List", "Index", null, new {@class = "btn btn-secondary btn-lg"})</div>
         <div class="text-right col-6">
-            <input type="submit" value="Create" class="btn btn-success btn-lg" style="width:100%" />
+            <input type="submit" value="Create" class="btn btn-success btn-lg" style="width: 100%"/>
         </div>
     </div>
-
 }
 
 @*Authors: Koh Meng Guan*@
-

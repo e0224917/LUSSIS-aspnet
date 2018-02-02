@@ -42,9 +42,12 @@ namespace LUSSIS.Models
 
         public int? AcknowledgeEmpNum { get; set; }
 
-        [Required] [StringLength(20)] public string Status { get; set; }
+        [Required]
+        [StringLength(20)]
+        public string Status { get; set; }
 
-        [Display(Name = "Collection Point")] public virtual CollectionPoint CollectionPoint { get; set; }
+        [Display(Name = "Collection Point")]
+        public virtual CollectionPoint CollectionPoint { get; set; }
 
         public virtual Department Department { get; set; }
 
