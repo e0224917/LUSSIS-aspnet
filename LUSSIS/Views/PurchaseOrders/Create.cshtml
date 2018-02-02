@@ -52,7 +52,7 @@
                             <p></p>
                             <label class="control-label col-md-12">Contact Name</label>
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.SupplierContact, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.EditorFor(model => model.SupplierContact, new { htmlAttributes = new { @class = "form-control" ,@required=true} })
                                 @Html.ValidationMessageFor(model => model.SupplierContact, "", new { @class = "text-danger" })
                             </div>
                         </div>
