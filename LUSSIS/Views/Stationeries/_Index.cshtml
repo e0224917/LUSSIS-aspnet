@@ -7,21 +7,21 @@
         <tr class="table-active">
             <th class="header">
                 
-                @Html.ActionLink("#Bin", "Index", new { sortOrder = ViewBag.BinSortParm }, new { style = "color:black" })
+                @Html.ActionLink("#Bin", "Index", new { sortOrder = ViewBag.BinSortParm ,currentFilter=ViewBag.CurrentFilter}, new { style = "color:black" })
             </th>
             <th class="header">
-                
-                @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CatSortParm }, new { style = "color:black" })
+
+                @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CatSortParm ,currentFilter=ViewBag.CurrentFilter},new { style = "color:black" })
             </th>
             <th class="header">
-                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DesSortParm }, new { style = "color:black" })
+
+                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DesSortParm ,currentFilter=ViewBag.CurrentFilter},new { style = "color:black" })
             </th>
             <th>
                 UOM               
             </th>
             <th class="header">
-
-                @Html.ActionLink("Current Qty", "Index", new { sortOrder = ViewBag.QtySortParm }, new { style = "color:black" })
+                @Html.ActionLink("Current Qty", "Index", new { sortOrder = ViewBag.QtySortParm ,currentFilter=ViewBag.CurrentFilter},new { style = "color:black" })
             </th>
             <th>
                 </th>
