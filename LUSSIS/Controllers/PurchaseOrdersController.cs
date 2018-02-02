@@ -138,6 +138,7 @@ namespace LUSSIS.Controllers
                                                 Convert.ToInt32(stationery.ReorderQty));
                         pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
                         pdetails.ItemNum = stationery.ItemNum;
+                        pdetails.ReorderQty = stationery.ReorderQty;
                         po.PurchaseOrderDetailsDTO.Add(pdetails);
                     }
                     break;
