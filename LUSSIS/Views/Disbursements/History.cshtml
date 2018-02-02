@@ -54,7 +54,9 @@
 
     <script>
         $(document).ready(function () {
-            $("#myTable").tablesorter({
+            $("#myTable").tablesorter(
+                { dateFormat: "uk" },
+                {
                 headers: {
                     
                     4: {

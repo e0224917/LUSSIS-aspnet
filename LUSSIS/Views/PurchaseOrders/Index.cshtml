@@ -65,7 +65,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
     <script>
         $(document).ready(function () {
-            $("#table_with_pages").tablesorter({
+            $("#table_with_pages").tablesorter(
+                { dateFormat: "uk" },
+                {
                 headers: {
                     
                     4: {
