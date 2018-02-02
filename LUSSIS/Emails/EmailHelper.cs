@@ -105,14 +105,15 @@ namespace LUSSIS.Emails
             {
                 Subject = "New Purchase Order";
 
-                var emailForSupervisor = new StringBuilder("New Purchase Order Created");
-                emailForSupervisor.AppendLine(
+                var body = new StringBuilder();
+                body.AppendLine("New Purchase Order Created");
+                body.AppendLine(
                     "This email is automatically generated and requires no reply to the sender.");
-                emailForSupervisor.AppendLine("Purchase Order No " + purchaseOrder.PoNum);
-                emailForSupervisor.AppendLine("Created By " + fullName);
-                emailForSupervisor.AppendLine("Created On " + purchaseOrder.CreateDate.ToString("dd-MM-yyyy"));
+                body.AppendLine("Purchase Order No " + purchaseOrder.PoNum);
+                body.AppendLine("Created By " + fullName);
+                body.AppendLine("Created On " + purchaseOrder.CreateDate.ToString("dd-MM-yyyy"));
 
-                Body = emailForSupervisor.ToString();
+                Body = body.ToString();
                 return this;
             }
 
@@ -121,22 +122,21 @@ namespace LUSSIS.Emails
             {
                 Subject = "Purchasing from Non-Primary Supplier";
                 //send email if using non=primary supplier
-                var emailBody =
-                    new StringBuilder("Non-Primary Suppliers in Purchase Order " + purchaseOrder.PoNum);
-                emailBody.AppendLine(
-                    "This email is automatically generated and requires no reply to the sender.");
-                emailBody.AppendLine("Created for Supplier: " + supplierName);
+                var body = new StringBuilder();
+                body.AppendLine("Non-Primary Suppliers in Purchase Order " + purchaseOrder.PoNum);
+                body.AppendLine("This email is automatically generated and requires no reply to the sender.");
+                body.AppendLine("Created for Supplier: " + supplierName);
                 var index = 0;
                 foreach (var stationery in stationerys)
                 {
                     index++;
-                    emailBody.AppendLine("Index: " + index);
-                    emailBody.AppendLine("Stationery: " + stationery.Description);
-                    emailBody.AppendLine("Primary Supplier: " + stationery.PrimarySupplier().SupplierName);
-                    emailBody.AppendLine();
+                    body.AppendLine("Index: " + index);
+                    body.AppendLine("Stationery: " + stationery.Description);
+                    body.AppendLine("Primary Supplier: " + stationery.PrimarySupplier().SupplierName);
+                    body.AppendLine();
                 }
 
-                Body = emailBody.ToString();
+                Body = body.ToString();
                 return this;
             }
 
@@ -153,7 +153,7 @@ namespace LUSSIS.Emails
                     body.AppendLine();
                 }
 
-                body.AppendLine("by " + fullName + "on" + DateTime.Now.ToString("dd-MM-yyyy"));
+                body.AppendLine("by " + fullName + " on " + DateTime.Now.ToString("dd-MM-yyyy"));
 
                 Body = body.ToString();
                 return this;
@@ -227,7 +227,7 @@ namespace LUSSIS.Emails
             
             public Builder ForNewRequistion(string fullName, Requisition requisition)
             {
-                Subject = "New requisition from" + fullName;
+                Subject = "New requisition from " + fullName;
 
                 var body = new StringBuilder();
                 body.AppendLine("Description".PadRight(30, ' ') + "\t\t" + "UOM".PadRight(30, ' ') + "\t\t" +
@@ -249,8 +249,9 @@ namespace LUSSIS.Emails
             {
                 Subject = "Requistion " + requisition.RequisitionId + " made on " +
                                  requisition.RequisitionDate.ToString("dd-MM-yyyy") + " has been " + requisition.Status;
-                var body = new StringBuilder(
-                    "Your Requisition " + requisition.RequisitionId + " made on " +
+
+                var body = new StringBuilder();
+                body.AppendLine("Your Requisition " + requisition.RequisitionId + " made on " +
                     requisition.RequisitionDate.ToString("dd-MM-yyyy") + " has been " + requisition.Status + " by " +
                     requisition.ApprovalEmployee.FullName);
                 body.AppendLine("Requested: ");
