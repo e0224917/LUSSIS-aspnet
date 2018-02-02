@@ -196,8 +196,7 @@ namespace LUSSIS.Controllers
                 //validate PO
                 if (purchaseOrderDto.SupplierContact == null)
                     throw new Exception("Please input the supplier contact");
-                if (purchaseOrderDto.SupplierAddress.Trim() == "")
-                    throw new Exception("Please input the supplier address");
+               
                 else if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
 
