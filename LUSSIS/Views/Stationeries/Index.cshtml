@@ -30,8 +30,8 @@
         }))
         {
             <div class="nav-item active nav-link">
-
                 <input type="submit" value="Show All" class="btn btn-secondary my-2 my-sm-0" />
+                <input type="hidden" name="page" value="1" />
             </div>
         }
     </div>
@@ -47,7 +47,7 @@
     <link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
-    <script>
+    @*<script>
         $(document).ready(function () {
             $("#myTable").tablesorter({
                 headers: {
@@ -58,7 +58,7 @@
             });
             }
         );
-    </script>
+    </script>*@
 }
 
 @*Authors: Koh Meng Guan*@

@@ -37,6 +37,37 @@ namespace LUSSIS.Models.WebDTO
         [StringLength(10, ErrorMessage ="Max Length of 10 characters allowed")]
         public string UnitOfMeasure { get; set; }
 
+        public IEnumerable<SelectListItem> UomList
+        {
+            get
+            {
+                var list = new List<SelectListItem>
+                {
+                    new SelectListItem()
+                    {
+                       Text = "Box", Value = "Box"
+                    },
+                    new SelectListItem()
+                    {
+                       Text = "Dozen", Value = "Dozen"
+                    },
+                    new SelectListItem()
+                    {
+                       Text = "Each", Value = "Each"
+                    },
+                    new SelectListItem()
+                    {
+                       Text = "Packet", Value = "Packet"
+                    },
+                    new SelectListItem()
+                    {
+                       Text = "Set", Value = "Set"
+                    },
+                };
+                return list;
+            }
+        }
+
         [Required(ErrorMessage ="Item Description is required")]
         [Display(Name = "Item Description")]
         public string Description { get; set; }

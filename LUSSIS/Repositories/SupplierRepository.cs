@@ -12,7 +12,7 @@ namespace LUSSIS.Repositories
     //Authors: Ton That Minh Nhat
     public class SupplierRepository : Repository<Supplier, int>, ISupplierRepository
     {
-        public List<String>GetSupplierNamebyId(List<String>suppId)
+        public List<String> GetSupplierNamebyId(List<String>suppId)
         {
             List<String> list = new List<String>();
             foreach (String idSup in suppId)

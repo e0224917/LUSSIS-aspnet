@@ -8,7 +8,7 @@
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         var name = Request.Cookies["Employee"]?["Name"];
-        var cartQty = ((ShoppingCartDTO) Session["MyCart"]).GetCartItemCount();
+        var cartQty = ((ShoppingCartDTO)Session["MyCart"]).GetCartItemCount();
         var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
         var isDelegate = new DelegateRepository().FindCurrentByEmpNum(empNum) != null;
         @Html.AntiForgeryToken()
@@ -18,13 +18,13 @@
             @if ((User.IsInRole(Role.Staff) || User.IsInRole(Role.Representative)) && !isDelegate)
             {
                 <li class="nav-item">
-                    @Html.ActionLink("My Cart (" + cartQty + ")", "MyCart", "Requisitions", null, new { id="cart-number", title = "Current Request", @class = "nav-item nav-link btn btn-primary" })
+                    @Html.ActionLink("My Cart (" + cartQty + ")", "MyCart", "Requisitions", null, new { id = "cart-number", title = "Current Request", @class = "nav-item nav-link btn btn-primary" })
                 </li>
             }
-                <li class="nav-item">
+            <li class="nav-item">
                 @Html.ActionLink("Welcome, " + name, "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage Account", @class = "nav-item nav-link btn btn-primary" })
             </li>
-            <li class="nav-item"><a class="nav-item nav-link btn btn-primary" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+            <li class="nav-item"><a type="submit" class="nav-item nav-link btn btn-primary" href="#" id="log-off">Log off</a></li>
         </ul>
     }
 }
@@ -35,3 +35,10 @@ else
         <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
     </ul>
 }
+
+<script>
+    $('#log-off').click(function () {
+        $('#logoutForm').submit();
+    })
+</script>
+

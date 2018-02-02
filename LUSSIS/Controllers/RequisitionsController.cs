@@ -185,8 +185,9 @@ namespace LUSSIS.Controllers
 
         // GET: DeptEmpReqs
         [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
-        public ActionResult Index(string searchString, string currentFilter, int? page)
+        public ActionResult Index(string searchString, string currentFilter, int? page,string sortOrder)
         {
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             if (searchString != null)
             {
                 page = 1;
@@ -195,12 +196,20 @@ namespace LUSSIS.Controllers
             {
                 searchString = currentFilter;
             }
-
+            
             ViewBag.CurrentFilter = searchString;
 
             var stationerys = string.IsNullOrEmpty(searchString)
                 ? _stationeryRepo.GetAll().ToList() : _stationeryRepo.GetByDescription(searchString).ToList();
-
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    stationerys = stationerys.OrderByDescending(s => s.Description).ToList();
+                    break;
+                default:
+                    stationerys = stationerys.ToList();
+                    break;
+            }
             var stationeryList = stationerys.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
             if (Request.IsAjaxRequest())
