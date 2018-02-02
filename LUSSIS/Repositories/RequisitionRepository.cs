@@ -76,10 +76,9 @@ namespace LUSSIS.Repositories
 
         public Stationery AddRequisitionDetail(RequisitionDetail requisitionDetail)
         {
-            LUSSISContext.Set<RequisitionDetail>().Include("Stationery");
-            var stationery = LUSSISContext.Set<RequisitionDetail>().Add(requisitionDetail).Stationery;
+            LUSSISContext.Set<RequisitionDetail>().Add(requisitionDetail);
             LUSSISContext.SaveChanges();
-            return stationery;
+            return LUSSISContext.Stationeries.Find(requisitionDetail.ItemNum);
         }
 
         /// <summary>
