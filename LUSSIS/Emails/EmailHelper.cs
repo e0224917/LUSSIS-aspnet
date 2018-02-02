@@ -236,8 +236,8 @@ namespace LUSSIS.Emails
                 {
                     var stationery = detail.Stationery;
 
-                    body.AppendLine(stationery?.Description.PadRight(30, ' ') + "\t\t" +
-                                    stationery?.UnitOfMeasure.PadRight(30, ' ') +
+                    body.AppendLine(stationery.Description.PadRight(30, ' ') + "\t\t" +
+                                    stationery.UnitOfMeasure.PadRight(30, ' ') +
                                     "\t\t" + detail.Quantity.ToString().PadRight(30, ' '));
                 }
 
