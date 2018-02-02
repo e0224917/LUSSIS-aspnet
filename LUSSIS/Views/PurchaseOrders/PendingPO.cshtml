@@ -23,7 +23,9 @@ else
     <table class="table table-striped table-hover">
         <tr class="table-active">
             <th>
-                <input type="checkbox" id="all" onclick="onClickFunction()"/>
+                <label class="btn" data-toggle="checkbox">
+                    <input type="checkbox" id="all" onclick="onClickFunction()" />
+                </label>
             </th>
             <th>
                 @Html.DisplayName("Po No")
@@ -49,7 +51,9 @@ else
             <tr>
 
                 <td>
-                    <input class="chk" id=@item.PoNum value="@item.PoNum" type="checkbox" onclick="onClickFunction()"/>
+                    <label class="btn" data-toggle="checkbox">
+                        <input class="chk" id=@item.PoNum value="@item.PoNum" type="checkbox" onclick="onClickFunction()" />
+                    </label>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.PoNum)
@@ -67,7 +71,7 @@ else
                     $ @Html.DisplayFor(modelItem => item.TotalCost)
                 </td>
                 <td>
-                    @Html.ActionLink("View Details", "Details", new {id = item.PoNum}, new {@class = "btn btn-sm btn-info"})
+                    @Html.ActionLink("View Details", "Details", new { id = item.PoNum }, new { @class = "btn btn-sm btn-info" })
                 </td>
             </tr>
         }
@@ -96,9 +100,9 @@ else
     </div>
 }
 
-    @section scripts
+@section scripts
 {
-        <script>
+    <script>
 
         var ApproveReject = function (CheckList) {
             if (CheckList < 1) {
@@ -130,32 +134,32 @@ else
             }
 
         }
-        </script>
-        <script>
+    </script>
+    <script>
 
-            function onClickFunction() {
-                var checkBox = document.getElementById("all");
+        function onClickFunction() {
+            var checkBox = document.getElementById("all");
 
-                if (checkBox.checked == true) {
+            if (checkBox.checked == true) {
 
-                    $('.chk').attr('checked', true);
-                }
-                else {
-                    $('.chk').attr('checked', false);
-                }
+                $('.chk').attr('checked', true);
             }
-
-            function getCheckList() {
-                var chkArray = [];
-                $(".chk:checked").each(function () {
-                    chkArray.push($(this).val());
-
-                });
-                return chkArray.toString();
+            else {
+                $('.chk').attr('checked', false);
             }
+        }
+
+        function getCheckList() {
+            var chkArray = [];
+            $(".chk:checked").each(function () {
+                chkArray.push($(this).val());
+
+            });
+            return chkArray.toString();
+        }
 
 
-        </script>
-    }
+    </script>
+}
 
-    @*Authors: May Zin Ko*@
+@*Authors: May Zin Ko*@

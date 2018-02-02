@@ -21,7 +21,9 @@ else
     <table class="table table-striped table-hover">
         <tr class="table-active">
             <th>
-                <input type="checkbox" id="all" onclick="onClickFunction()" />
+                <label class="btn" data-toggle="checkbox">
+                    <input type="checkbox" id="all" onclick="onClickFunction()" />
+                </label>
             </th>
 
         <th>
@@ -47,9 +49,10 @@ else
             <tr>
 
                 <td>
-
-                    <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" onclick="onClickFunction()" />
-                </td>
+                    <label class="btn" data-toggle="checkbox">
+                        <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" onclick="onClickFunction()" />
+                    </label>
+                    </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreateDate)
                 </td>
