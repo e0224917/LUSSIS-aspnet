@@ -126,10 +126,9 @@
         {
             @Html.ActionLink("Receive", "Receive", new { p = Model.PoNum }, new { @class = "btn btn-success btn-lg" })
         }
-        @if (Model.Status != POStatus.Pending && Model.Status != POStatus.Approved && Model.Status != POStatus.Rejected)
-        {
+
             @Html.ActionLink("View as PDF", "PrintPo", new { id = Model.PoNum }, new { @class = "btn btn-info btn-lg", target = "_blank" })
-        }
+
     </div>
 </div>
 
