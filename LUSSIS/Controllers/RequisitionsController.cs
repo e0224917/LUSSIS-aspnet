@@ -188,6 +188,7 @@ namespace LUSSIS.Controllers
         public ActionResult Index(string searchString, string currentFilter, int? page,string sortOrder)
         {
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.CurrentSort = sortOrder;
             if (searchString != null)
             {
                 page = 1;
