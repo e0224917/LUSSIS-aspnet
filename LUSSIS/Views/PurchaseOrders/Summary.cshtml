@@ -5,7 +5,7 @@
 }
 
 <h2>Purchase Order Summary</h2>
-<hr />
+<hr/>
 <ul class="nav nav-tabs">
     <li class="nav-item">
         <a class="nav-link active show text-dark" data-toggle="tab" href="#tab1">Items Below Reorder Level</a>
@@ -20,127 +20,135 @@
         <a class="nav-link text-dark" data-toggle="tab" href="#tab4">Purchase Order Awaiting Fulfilment</a>
     </li>
 </ul>
-<br />
+<br/>
 <div class="tab-content">
     <div class="card border-dark bg-transparent tab-pane fade active show" id="tab1">
-        <h4 class="card-header border-dark mt-0 bg-dark" style="color:whitesmoke">Items Below Reorder Level</h4>
+        <h4 class="card-header border-dark mt-0 bg-dark" style="color: whitesmoke">Items Below Reorder Level</h4>
         <div class="card-body">
             @if (ViewBag.OutstandingStationeryList == null || ViewBag.OutstandingStationeryList.Count == 0)
-        {
-            <div class="alert alert-dismissible alert-info">
-                There are no stationeries recommended for purchase
-            </div>
-    }
-    else
-    {
-        foreach (KeyValuePair<Supplier, List<Stationery>> entry in @ViewBag.OutstandingStationeryList)
-        {
-            <h6 class="card-title">@entry.Key.SupplierName</h6>
-
-            <table class="table table-hover table-striped">
-                <tr class="table-active">
-                    <th>No</th>
-                    <th>Item Description</th>
-                    <th>Available Quantity</th>
-                    <th>Reorder Level</th>
-                    <th>Reorder Quantity</th>
-                </tr>
-                @for (int i = 0; i < entry.Value.Count; i++)
             {
-                <tr>
-                    <td>@(i + 1)</td>
-                    <td>@entry.Value[i].Description</td>
-                    <td>@entry.Value[i].AvailableQty</td>
-                    <td>@entry.Value[i].ReorderLevel</td>
-                    <td>@entry.Value[i].ReorderQty</td>
-                </tr>
-        }
-            </table>
-            <div class="text-right">
-                <a href="@Url.Action("Create", new {supplierId=entry.Key.SupplierId })" class="btn-block btn btn-success">Generate PO</a>
-            </div>
-            <br />
-    }
-}
+                <div class="alert alert-dismissible alert-info">
+                    There are no stationeries recommended for purchase
+                </div>
+            }
+            else
+            {
+                foreach (KeyValuePair<Supplier, List<Stationery>> entry in @ViewBag.OutstandingStationeryList)
+                {
+                    <h6 class="card-title">@entry.Key.SupplierName</h6>
+
+                    <table class="table table-hover table-striped">
+                        <tr class="table-active">
+                            <th>No</th>
+                            <th>Item Description</th>
+                            <th>Available Quantity</th>
+                            <th>Reorder Level</th>
+                            <th>Reorder Quantity</th>
+                        </tr>
+                        @for (int i = 0; i < entry.Value.Count; i++)
+                        {
+                            <tr>
+                                <td>@(i + 1)</td>
+                                <td>@entry.Value[i].Description</td>
+                                <td>@entry.Value[i].AvailableQty</td>
+                                <td>@entry.Value[i].ReorderLevel</td>
+                                <td>@entry.Value[i].ReorderQty</td>
+                            </tr>
+                        }
+                    </table>
+                    <div class="text-right">
+                        <a href="@Url.Action("Create", new {supplierId = entry.Key.SupplierId})" class="btn-block btn btn-success">Generate PO</a>
+                    </div>
+                    <br/>
+                }
+            }
         </div>
-        <br />
+        <br/>
     </div>
-    
+
     <div class="card border-dark bg-transparent tab-pane fade show" id="tab2">
-        <h4 class="card-header border-dark bg-dark" style="margin-top: auto;color:whitesmoke">Purchase Order Pending Approval</h4>
+        <h4 class="card-header border-dark bg-dark" style="margin-top: auto; color: whitesmoke">Purchase Order Pending Approval</h4>
 
         <div class="card-body">
 
             @if (ViewBag.PendingApprovalPOList == null || ViewBag.PendingApprovalPOList.Count == 0)
-        {
-            <div class="alert alert-dismissible alert-info">
-                There are no Purchase Orders pending approval
-            </div>
-    }
-    else
-    {
-        <table class="table table-hover table-striped">
-            <tr class="table-active">
-                <th>No</th>
-                <th>Purchase Order No</th>
-                <th>Supplier</th>
-                <th>Created Date</th>
-                <th>Created By</th>
-            </tr>
-            @for (int i = 0; i < ViewBag.pendingApprovalPOList.Count; i++)
-        {
-            <tr>
-                <td>@(i + 1)</td>
-                <td><button class="btn btn-info btn-sm"><a style="color:whitesmoke" href="@Url.Action("Details", new {id=ViewBag.PendingApprovalPOList[i].PoNum })">@ViewBag.PendingApprovalPOList[i].PoNum</a></button></td>
-                <td>@ViewBag.PendingApprovalPOList[i].Supplier.SupplierName</td>
-                <td>@ViewBag.PendingApprovalPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
-                <td>@ViewBag.PendingApprovalPOList[i].OrderEmployee.FullName</td>
-            </tr>
-    }
-        </table>
-}
+            {
+                <div class="alert alert-dismissible alert-info">
+                    There are no Purchase Orders pending approval
+                </div>
+            }
+            else
+            {
+                <table class="table table-hover table-striped">
+                    <tr class="table-active">
+                        <th>No</th>
+                        <th>Purchase Order No</th>
+                        <th>Supplier</th>
+                        <th>Created Date</th>
+                        <th>Created By</th>
+                    </tr>
+                    @for (int i = 0; i < ViewBag.pendingApprovalPOList.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>
+                                <button class="btn btn-info btn-sm">
+                                    <a style="color: whitesmoke" href="@Url.Action("Details", new {id = ViewBag.PendingApprovalPOList[i].PoNum})">@ViewBag.PendingApprovalPOList[i].PoNum</a>
+                                </button>
+                            </td>
+                            <td>@ViewBag.PendingApprovalPOList[i].Supplier.SupplierName</td>
+                            <td>@ViewBag.PendingApprovalPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
+                            <td>@ViewBag.PendingApprovalPOList[i].OrderEmployee.FullName</td>
+                        </tr>
+                    }
+                </table>
+            }
         </div>
-        <br />
+        <br/>
     </div>
-    
+
     <div class="card border-dark bg-transparent tab-pane fadeshow" id="tab3">
-        <h4 class="card-header border-dark bg-dark" style="margin-top: auto;color:whitesmoke">Approved Purchase Order</h4>
+        <h4 class="card-header border-dark bg-dark" style="margin-top: auto; color: whitesmoke">Approved Purchase Order</h4>
 
         <div class="card-body">
             @if (ViewBag.ApprovedPOList == null || ViewBag.ApprovedPOList.Count == 0)
-        {
-            <div class="alert alert-dismissible alert-info">
-                There are no Purchase Orders to be sent to suppliers
-            </div>
-    }
-    else
-    {
-        <table class="table table-hover table-striped">
-            <tr class="table-active">
-                <th>No</th>
-                <th>Purchase Order No</th>
-                <th>Supplier</th>
-                <th>Created Date</th>
-                <th>Created By</th>
-            </tr>
-            @for (int i = 0; i < ViewBag.ApprovedPOList.Count; i++)
-        {
-            <tr>
-                <td>@(i + 1)</td>
-                <td><button class="btn btn-info btn-sm"><a style="color:whitesmoke" href="@Url.Action("Order", new {p=ViewBag.ApprovedPOList[i].PoNum })">@ViewBag.ApprovedPOList[i].PoNum</a></button></td>
-                <td>@ViewBag.ApprovedPOList[i].Supplier.SupplierName</td>
-                <td>@ViewBag.ApprovedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
-                <td>@ViewBag.ApprovedPOList[i].OrderEmployee.FullName</td>
-            </tr>
-    }
-        </table>
-}
+            {
+                <div class="alert alert-dismissible alert-info">
+                    There are no Purchase Orders to be sent to suppliers
+                </div>
+            }
+            else
+            {
+                <table class="table table-hover table-striped">
+                    <tr class="table-active">
+                        <th>No</th>
+                        <th>Purchase Order No</th>
+                        <th>Supplier</th>
+                        <th>Created Date</th>
+                        <th>Created By</th>
+                    </tr>
+                    @for (int i = 0; i < ViewBag.ApprovedPOList.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>
+                                <button class="btn btn-info btn-sm">
+                                    <a style="color: whitesmoke" href="@Url.Action("Order", new {p = ViewBag.ApprovedPOList[i].PoNum})">@ViewBag.ApprovedPOList[i].PoNum</a>
+                                </button>
+                            </td>
+                            <td>@ViewBag.ApprovedPOList[i].Supplier.SupplierName</td>
+                            <td>@ViewBag.ApprovedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
+                            <td>@ViewBag.ApprovedPOList[i].OrderEmployee.FullName</td>
+                        </tr>
+                    }
+                </table>
+            }
         </div>
-        <br />
+        <br/>
     </div>
-   
+
     <div class="card border-dark bg-transparent tab-pane fade show" id="tab4">
-        <h4 class="card-header border-dark bg-dark" style="margin-top: auto;color:whitesmoke">Purchase Order Awaiting Fulfilment</h4>
+        <h4 class="card-header border-dark bg-dark" style="margin-top: auto; color: whitesmoke">Purchase Order Awaiting Fulfilment</h4>
 
         <div class="card-body">
             @if (ViewBag.OrderedPOList == null || ViewBag.OrderedPOList.Count == 0)
@@ -163,7 +171,11 @@
                     {
                         <tr>
                             <td>@(i + 1)</td>
-                            <td><button class="btn btn-info btn-sm"><a style="color:whitesmoke" href="@Url.Action("Receive", new {p=ViewBag.OrderedPOList[i].PoNum })">@ViewBag.OrderedPOList[i].PoNum</a> </button></td>
+                            <td>
+                                <button class="btn btn-info btn-sm">
+                                    <a style="color: whitesmoke" href="@Url.Action("Receive", new {p = ViewBag.OrderedPOList[i].PoNum})">@ViewBag.OrderedPOList[i].PoNum</a>
+                                </button>
+                            </td>
                             <td>@ViewBag.OrderedPOList[i].Supplier.SupplierName</td>
                             <td>@ViewBag.OrderedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
                             <td>@ViewBag.OrderedPOList[i].OrderEmployee.FullName</td>
@@ -174,4 +186,15 @@
         </div>
     </div>
 </div>
+
+@section scripts
+{
+    <script>
+        $('tr.table-active').click(function() {
+            $(this).nextUntil('tr.table-active').css('display', function(i,v){
+                return this.style.display === 'table-row' ? 'none' : 'table-row';
+            });
+        })
+    </script>
+}
 @*Authors: Douglas Lee Kiat Hui*@

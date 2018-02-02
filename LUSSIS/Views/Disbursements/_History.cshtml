@@ -22,42 +22,43 @@
         </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Department.DeptName)
-            </td>
-            <td>
-                @Html.HiddenFor(modelItem => item.AcknowledgeEmployee.Title)
-                @Html.DisplayFor(modelItem => item.CollectionPoint.CollectionName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CollectionDate)
-            </td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Department.DeptName)
+                </td>
+                <td>
+                    @Html.HiddenFor(modelItem => item.AcknowledgeEmployee.Title)
+                    @Html.DisplayFor(modelItem => item.CollectionPoint.CollectionName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CollectionDate)
+                </td>
 
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <span>
-                    <a href="@Url.Action("HistoryDetails")/@item.DisbursementId" class="btn btn-info btn-sm">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    <span>
+                        <a href="@Url.Action("HistoryDetails")/@item.DisbursementId" class="btn btn-info btn-sm">
 
-                        View Details
-                    </a>
-                </span>
+                            View Details
+                        </a>
+                    </span>
 
-            </td>
-        </tr>
-}</tbody>
-</table>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
     @Html.PagedListPager(Model, page =>
-                         Url.Action("History",
-                             new { page, currentFilter = ViewBag.CurrentFilter }))
+        Url.Action("History",
+            new {page, currentFilter = ViewBag.CurrentFilter}))
 </div>
 
 @*Authors: Tang Xiaowen*@

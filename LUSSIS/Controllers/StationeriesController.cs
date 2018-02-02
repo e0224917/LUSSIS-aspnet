@@ -29,6 +29,7 @@ namespace LUSSIS.Controllers
         // GET: Stationeries
         public ActionResult Index(string searchString, string currentFilter, int? page, string sortOrder)
         {
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.BinSortParm = String.IsNullOrEmpty(sortOrder) ? "bin_desc" : "";
             ViewBag.CatSortParm = String.IsNullOrEmpty(sortOrder) ? "cat_desc" : "";
             ViewBag.DesSortParm = String.IsNullOrEmpty(sortOrder) ? "des_desc" : "";

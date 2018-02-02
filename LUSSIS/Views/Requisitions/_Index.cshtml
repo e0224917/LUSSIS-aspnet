@@ -3,11 +3,11 @@
 
 <div id="stationeryList">
 
-    <table class="table table-striped table-hover " id="myTable">
+    <table class="table table-striped table-hover tablesorter" id="myTable">
         <thead>
         <tr class="table-active">
-            <th>
-                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.NameSortParm })
+            <th class="header">
+                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.NameSortParm,currentFilter = ViewBag.CurrentFilter }, new{style="color:black"})
             </th>
             <th>
                 UOM
@@ -42,7 +42,7 @@
     </table>
 
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-    @Html.PagedListPager(Model, page => Url.Action("Index", new {page, currentFilter = ViewBag.CurrentFilter}))
+    @Html.PagedListPager(Model, page => Url.Action("Index", new {page, currentFilter = ViewBag.CurrentFilter,sortOrder=ViewBag.CurrentSort}))
 </div>
 
 <style>

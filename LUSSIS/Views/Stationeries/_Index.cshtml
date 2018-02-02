@@ -2,32 +2,29 @@
 @using PagedList.Mvc;
 
 <div id="stationeryList">
-    <table class="table table-striped table-hover" id="myTable">
+    <table class="table table-striped table-hover tablesorter" id="myTable">
         <thead>
         <tr class="table-active">
-            <th>
+            <th class="header">
                 
-                @Html.ActionLink("#Bin", "Index", new { sortOrder = ViewBag.BinSortParm })
+                @Html.ActionLink("#Bin", "Index", new { sortOrder = ViewBag.BinSortParm ,currentFilter=ViewBag.CurrentFilter}, new { style = "color:black" })
             </th>
-            <th>
-                
-                @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CatSortParm })
+            <th class="header">
+
+                @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CatSortParm ,currentFilter=ViewBag.CurrentFilter},new { style = "color:black" })
             </th>
-            <th>
-                
-                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DesSortParm })
+            <th class="header">
+
+                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DesSortParm ,currentFilter=ViewBag.CurrentFilter},new { style = "color:black" })
             </th>
             <th>
                 UOM               
             </th>
-            <th>
-               
-                @Html.ActionLink("Current Qty", "Index", new { sortOrder = ViewBag.QtySortParm })
+            <th class="header">
+                @Html.ActionLink("Current Qty", "Index", new { sortOrder = ViewBag.QtySortParm ,currentFilter=ViewBag.CurrentFilter},new { style = "color:black" })
             </th>
             <th>
-                Manage
-
-            </th>
+                </th>
 
         </tr>
             </thead><tbody>
@@ -64,7 +61,7 @@
 
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }))
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter, sortOrder = ViewBag.CurrentSort }))
 
 </div>
 
