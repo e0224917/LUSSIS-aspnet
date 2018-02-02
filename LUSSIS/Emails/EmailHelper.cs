@@ -120,10 +120,10 @@ namespace LUSSIS.Emails
             public Builder ForNonPrimaryNewPo(string supplierName, PurchaseOrder purchaseOrder,
                 List<Stationery> stationerys)
             {
-                Subject = "Purchasing from Non-Primary Supplier";
+                Subject = "Purchasing from Secondary Supplier";
                 //send email if using non=primary supplier
                 var body = new StringBuilder();
-                body.AppendLine("Non-Primary Suppliers in Purchase Order " + purchaseOrder.PoNum);
+                body.AppendLine("Secondary Suppliers in Purchase Order " + purchaseOrder.PoNum);
                 body.AppendLine("This email is automatically generated and requires no reply to the sender.");
                 body.AppendLine("Created for Supplier: " + supplierName);
                 var index = 0;
