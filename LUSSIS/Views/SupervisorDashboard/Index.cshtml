@@ -4,7 +4,7 @@
     ViewBag.Title = "Dashboard";
 }
 <h2>My Dashboard</h2>
-<hr />
+<hr/>
 
 <div class="row">
     <div class="col-lg-3 col-md-6 text-center">
@@ -19,7 +19,6 @@
                 }
                 else
                 {
-                    
                     <table class="table mt-3">
                         <tr>
                             <th>
@@ -34,13 +33,13 @@
                                     <div class="col-lg-6 col-md-6 col-sm-6">
                                         <h3 class="mt-2 mb-0 text-muted">
                                             +
-                                            @if(Model.GetPendingAdjustmentByRole == 0)
+                                            @if (Model.GetPendingAdjustmentByRole == 0)
                                             {
-                                               <text>0</text>
+                                                <text>0</text>
                                             }
                                             else
                                             {
-                                                 @Model.PendingStockAdjAddQty
+                                                @Model.PendingStockAdjAddQty
                                             }
                                         </h3>
                                     </div>
@@ -64,7 +63,7 @@
                 }
             </div>
             <div class="card-footer text-center">
-                @Html.ActionLink("View All", "ViewPendingStockAdj", "StockAdjustment", null, new { @class = "btn btn-info", style = "width:100%" })
+                @Html.ActionLink("View All", "ViewPendingStockAdj", "StockAdjustment", null, new {@class = "btn btn-info", style = "width:100%"})
             </div>
         </div>
     </div>
@@ -85,7 +84,8 @@
                     {
                         <table class="table mt-3">
                             <tr>
-                                <th><small>No. of requests&nbsp;&nbsp;&nbsp;</small> @Model.PendingPOCount</th>
+                                <th>
+                                    <small>No. of requests&nbsp;&nbsp;&nbsp;</small> @Model.PendingPOCount</th>
                             </tr>
 
                             <tr>
@@ -103,40 +103,40 @@
 
                 </div>
                 <div class="card-footer text-center">
-                    @Html.ActionLink("View All", "PendingPO", "PurchaseOrders", null, new { @class = "btn btn-info", style = "width:100%" })
+                    @Html.ActionLink("View All", "PendingPO", "PurchaseOrders", null, new {@class = "btn btn-info", style = "width:100%"})
                 </div>
             </div>
         </div>
     }
-        <div class="col-lg-3 col-md-6 text-center">
-            <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 22rem">
-                <h5 class="card-header mt-0">Total PO Expenditure</h5>
-                <div class="card-body">
+    <div class="col-lg-3 col-md-6 text-center">
+        <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 22rem">
+            <h5 class="card-header mt-0">Total PO Expenditure</h5>
+            <div class="card-body">
 
-                    <table class="table mt-3">
-                        <tr>
-                            <th>
-                                <small>For past three months</small>
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <h3 class="mt-2 mb-0 text-muted">
-                                    $ @Model.POTotalAmount.ToString("#.00")
-                                </h3>
+                <table class="table mt-3">
+                    <tr>
+                        <th>
+                            <small>For past three months</small>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3 class="mt-2 mb-0 text-muted">
+                                $ @Model.POTotalAmount.ToString("#.00")
+                            </h3>
 
-                            </td>
-                        </tr>
-                    </table>
+                        </td>
+                    </tr>
+                </table>
 
 
-                </div>
-                <div class="card-footer text-center">
-                    @Html.ActionLink("Purchase Trend", "TrendAnalysis", "SupervisorDashboard", null, new { @class = "btn btn-warning", style = "width:100%" })
-                </div>
+            </div>
+            <div class="card-footer text-center">
+                @Html.ActionLink("Purchase Trend", "TrendAnalysis", "SupervisorDashboard", null, new {@class = "btn btn-warning", style = "width:100%"})
             </div>
         </div>
-    
+    </div>
+
     <div class="col-lg-3 col-md-6 text-center">
         <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 50rem; min-height: 22rem">
             <h5 class="card-header mt-0">Total Chargeback</h5>
@@ -160,17 +160,16 @@
                 </table>
 
 
-
             </div>
             <div class="card-footer text-center">
-                @Html.ActionLink("Demand Trend", "TrendAnalysis", "SupervisorDashboard", null, new { @class = "btn btn-success", style = "width:100%" })
+                @Html.ActionLink("Demand Trend", "TrendAnalysis", "SupervisorDashboard", null, new {@class = "btn btn-success", style = "width:100%"})
             </div>
         </div>
     </div>
 </div>
 
-<hr />
-<br />
+<hr/>
+<br/>
 <div class="row">
     <div class="col-lg-6 text-center">
         <div class="card border-dark mb-3 text-center bg-transparent" style="max-width: 100rem; min-height: 20rem">
@@ -192,27 +191,24 @@
 
 @section scripts
 {
-   
+
     @Scripts.Render("https://www.gstatic.com/charts/loader.js")
 
     <script type="text/javascript">
         google.charts.load('current', { 'packages': ['corechart'] });
 
         //Call function after Google Chart is loaded, it is required, otherwise you may get error
-       google.charts.setOnLoadCallback(DrawPieChartLoad);
+        google.charts.setOnLoadCallback(DrawPieChartLoad);
 
-      google.charts.setOnLoadCallback(DrawStackChartLoad);
+        google.charts.setOnLoadCallback(DrawStackChartLoad);
 
 
-
-        function DrawPieChartLoad()
-        {
-            $(function () {
+        function DrawPieChartLoad() {
+            $(function() {
                 $.ajax({
                     type: 'GET',
                     url: '@Url.Content("~/")SupervisorDashboard/GetPiechartJson?list=aaa&date=bbbb&&e=cdefe',
-                    success: function (chartsdata)
-                    {
+                    success: function(chartsdata) {
 
                         var first = chartsdata.ListOne;
                         var second = chartsdata.ListTwo;
@@ -225,8 +221,7 @@
                         //Loop through each list data
 
                         for (var i = 0; i < first.length; i++) {
-                            if (second[i] !== 0)
-                            {
+                            if (second[i] !== 0) {
                                 data.addRow([first[i], second[i]]);
                             }
 
@@ -238,20 +233,27 @@
                         //Draw pie chart command with data and chart options
                         chart.draw(data,
                             {
-                              @*  title: "Stationery Expenditure for Past three months",*@
+                                @*  title: "Stationery Expenditure for Past three months",*@
                                 //position: "top",
                                 fontsize: "30px",
                                 width: "100%",
                                 height: "100%",
-                                fontName: "Ubuntu, -apple - system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sansserif",
-                              colors: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f', '#a6cee3', '#1f78b4', '#73bfe5', '#88d6f8', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ffff99', '#b15928', '#d1ae2b', '#b38849', '#d8a35c', '#636466', '#a09f9f', '#31536e', '#4c7ea4', '#73bfe5', '#88d6f8'],
+                                fontName:
+                                    "Ubuntu, -apple - system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sansserif",
+                                colors: [
+                                    '#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69',
+                                    '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f', '#a6cee3', '#1f78b4',
+                                    '#73bfe5', '#88d6f8', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f',
+                                    '#ff7f00', '#cab2d6', '#6a3d9a', '#ffff99', '#b15928', '#d1ae2b', '#b38849',
+                                    '#d8a35c', '#636466', '#a09f9f', '#31536e', '#4c7ea4', '#73bfe5', '#88d6f8'
+                                ],
                                 backgroundColor: "#f2fcf5",
-                                legend: {position:"bottom"}
+                                legend: { position: "bottom" }
                             }
                         );
 
                     },
-                    error: function () {
+                    error: function() {
                         alert("Error loading data! Please try again.");
                     }
                 });
@@ -261,20 +263,18 @@
 
 
         function DrawStackChartLoad() {
-            $(function () {
+            $(function() {
                 $.ajax({
                     type: 'GET',
-                    url: '@Url.Content("~/")SupervisorDashboard/GetStackJSON',
-                    success: function (chartsdata)
-                    {
+                    url: '@Url.Content("~/")SupervisorDashboard/GetStackJson',
+                    success: function(chartsdata) {
                         var data = new google.visualization.DataTable();
 
                         var title = chartsdata.title;
                         var listone = chartsdata.ListOne;
 
-                        for (var i = 0; i < title.length + 1; i++)
-                        {
-                            if (i == 0) {
+                        for (var i = 0; i < title.length + 1; i++) {
+                            if (i === 0) {
                                 data.addColumn("string", 'Time');
                             } else {
                                 data.addColumn('number', title[i - 1]);
@@ -282,16 +282,13 @@
                         }
 
                         data.addRows(listone.length);
-                        for (var j = 0; j < listone.length; j++)
-                        {
+                        for (var j = 0; j < listone.length; j++) {
                             var tmpTime = listone[j].timeValue;
                             var tmpXvalue = listone[j].xvalue;
-                            for (var k = 0; k < title.length + 1; k++)
-                            {
-                                if (k == 0) {
+                            for (var k = 0; k < title.length + 1; k++) {
+                                if (k === 0) {
                                     data.setValue(j, k, tmpTime);
-                                }
-                                else {
+                                } else {
                                     data.setValue(j, k, tmpXvalue[k - 1]);
                                 }
                             }
@@ -299,16 +296,20 @@
 
 
                         var options = {
-                            Title:"Charge Back for each department for past three months",
+                            Title: "Charge Back for each department for past three months",
                             width: "100%",
                             fontsize: "30px",
-                            fontName: "Ubuntu, -apple - system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sansserif",
+                            fontName:
+                                "Ubuntu, -apple - system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sansserif",
                             height: "100%",
                             legend: { position: 'top', maxLines: 3 },
                             bar: { groupWidth: '75%' },
                             isStacked: true,
-                           colors: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6'],
-                            backgroundColor: "#f2fcf5",
+                            colors: [
+                                '#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00',
+                                '#cab2d6'
+                            ],
+                            backgroundColor: "#f2fcf5"
                         };
 
                         // Instantiate and draw the chart.
@@ -316,7 +317,7 @@
                         chart.draw(data, options);
 
                     },
-                    error: function () {
+                    error: function() {
                         alert("Error loading data! Please try again.");
                     }
                 });

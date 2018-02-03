@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -30,10 +28,9 @@ namespace LUSSIS.Controllers
         public ActionResult Index(string searchString, string currentFilter, int? page, string sortOrder)
         {
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.BinSortParm = String.IsNullOrEmpty(sortOrder) ? "bin_desc" : "";
-            ViewBag.CatSortParm = String.IsNullOrEmpty(sortOrder) ? "cat_desc" : "";
-            ViewBag.DesSortParm = String.IsNullOrEmpty(sortOrder) ? "des_desc" : "";
-            //ViewBag.UomSortParm= String.IsNullOrEmpty(sortOrder) ? "uom_desc" : "";
+            ViewBag.BinSortParm = string.IsNullOrEmpty(sortOrder) ? "bin_desc" : "";
+            ViewBag.CatSortParm = string.IsNullOrEmpty(sortOrder) ? "cat_desc" : "";
+            ViewBag.DesSortParm = string.IsNullOrEmpty(sortOrder) ? "des_desc" : "";
             ViewBag.QtySortParm = sortOrder == "qty" ? "qty_desc" : "qty";
             if (searchString != null)
             {
@@ -51,7 +48,6 @@ namespace LUSSIS.Controllers
                 : _stationeryRepo.GetAll().ToList();
             switch (sortOrder)
             {
-
                 case "bin_desc":
                     result = result.OrderByDescending(s => s.BinNum).ToList();
                     break;
@@ -68,6 +64,7 @@ namespace LUSSIS.Controllers
                     result = result.ToList();
                     break;
             }
+
             var stationeryAll = result.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 
             if (Request.IsAjaxRequest())
@@ -78,7 +75,6 @@ namespace LUSSIS.Controllers
             return View(stationeryAll);
         }
 
-
         // GET: Stationeries/Details/5
         public ActionResult Details(string id)
         {
@@ -86,15 +82,15 @@ namespace LUSSIS.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             //get stationery data
-            var s = _stationeryRepo.GetById(id);
-            if (s == null)
+            var stationery = _stationeryRepo.GetById(id);
+            if (stationery == null)
                 return HttpNotFound();
 
             //put stationery and the 3 suppliers into the view
-            ViewBag.Stationery = s;
-            ViewBag.Supplier1 = s.PrimarySupplier().SupplierName;
-            ViewBag.Supplier2 = s.StationerySuppliers.First(x => x.Rank == 2).Supplier.SupplierName;
-            ViewBag.Supplier3 = s.StationerySuppliers.First(x => x.Rank == 3).Supplier.SupplierName;
+            ViewBag.Stationery = stationery;
+            ViewBag.Supplier1 = stationery.PrimarySupplier().SupplierName;
+            ViewBag.Supplier2 = stationery.StationerySuppliers.First(x => x.Rank == 2).Supplier.SupplierName;
+            ViewBag.Supplier3 = stationery.StationerySuppliers.First(x => x.Rank == 3).Supplier.SupplierName;
 
             //get full list of receive+disburse+adjust transactions for the stationery and put into view
             var receiveList = _poRepo.GetReceiveTransDetailByItem(id).Select(
@@ -124,12 +120,12 @@ namespace LUSSIS.Controllers
             receiveList.AddRange(disburseList);
             receiveList.AddRange(adjustList);
             var p = receiveList.Sum(x => x.Qty);
-            ViewBag.InitBal = s.CurrentQty - p;
+            ViewBag.InitBal = stationery.CurrentQty - p;
             ViewBag.StationeryTxList = receiveList.OrderBy(x => x.Date);
 
             return View();
-
         }
+
         [HttpGet]
         public ActionResult Create()
         {
@@ -278,14 +274,14 @@ namespace LUSSIS.Controllers
                     return View(stationeryDto);
                 }
 
-                var st = _stationeryRepo.GetById(stationeryDto.ItemNum);
-                st.CategoryId = stationeryDto.CategoryId;
-                st.Description = stationeryDto.Description;
-                st.ReorderLevel = stationeryDto.ReorderLevel;
-                st.ReorderQty = stationeryDto.ReorderQty;
-                st.UnitOfMeasure = stationeryDto.UnitOfMeasure;
-                st.BinNum = stationeryDto.BinNum;
-                _stationeryRepo.Update(st);
+                var stationery = _stationeryRepo.GetById(stationeryDto.ItemNum);
+                stationery.CategoryId = stationeryDto.CategoryId;
+                stationery.Description = stationeryDto.Description;
+                stationery.ReorderLevel = stationeryDto.ReorderLevel;
+                stationery.ReorderQty = stationeryDto.ReorderQty;
+                stationery.UnitOfMeasure = stationeryDto.UnitOfMeasure;
+                stationery.BinNum = stationeryDto.BinNum;
+                _stationeryRepo.Update(stationery);
                 _stationerySupplierRepo.DeleteStationerySupplier(stationeryDto.ItemNum);
 
                 var sp1 = new StationerySupplier
@@ -336,7 +332,5 @@ namespace LUSSIS.Controllers
 
             base.Dispose(disposing);
         }
-
     }
 }
-

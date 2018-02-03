@@ -1,33 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using LUSSIS.Models;
 using LUSSIS.Repositories;
 using LUSSIS.Models.WebDTO;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Collections;
 using System.Diagnostics;
 using LUSSIS.Constants;
 using static LUSSIS.Constants.POStatus;
 using static LUSSIS.Constants.DisbursementStatus;
+
 namespace LUSSIS.Controllers
 {
     //Authors: May Zin Ko, Douglas Lee Kiat Hui
     [Authorize(Roles = "manager, supervisor")]
     public class SupervisorDashboardController : Controller
     {
-        protected PORepository _poRepo = new PORepository();
-        protected DisbursementRepository _disbursementRepo = new DisbursementRepository();
-        private StockAdjustmentRepository _stockAdjustmentRepo = new StockAdjustmentRepository();
-        private StationeryRepository _stationeryRepo = new StationeryRepository();
-        private EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private readonly PORepository _poRepo = new PORepository();
+        private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
+        private readonly StockAdjustmentRepository _stockAdjustmentRepo = new StockAdjustmentRepository();
+        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
+        private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
         private readonly SupplierRepository _supplierRepo = new SupplierRepository();
         private readonly CategoryRepository _categoryRepo = new CategoryRepository();
         private readonly DepartmentRepository _departmentRepo = new DepartmentRepository();
@@ -35,12 +29,15 @@ namespace LUSSIS.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = User.IsInRole(Role.Supervisor) ? Role.Supervisor : Role.Manager;
-            var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add",ViewBag.Message).Count;
-            var totalSubtractAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract",ViewBag.Message).Count;
-            List<String> fromList = new List<String>();
-            fromList.Add(DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy"));
-            fromList.Add(DateTime.Now.AddMonths(-2).ToString("dd/MM/yyyy"));
-            fromList.Add(DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy"));
+            var totalAddAdjustmentQty = _stockAdjustmentRepo.GetPendingAdjustmentByType("add", ViewBag.Message).Count;
+            var totalSubtractAdjustmentQty =
+                _stockAdjustmentRepo.GetPendingAdjustmentByType("subtract", ViewBag.Message).Count;
+            var fromList = new List<string>
+            {
+                DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy"),
+                DateTime.Now.AddMonths(-2).ToString("dd/MM/yyyy"),
+                DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")
+            };
             var dash = new SupervisorDashboardDTO
             {
                 PendingPOTotalAmount = _poRepo.GetPendingPOTotalAmount(),
@@ -61,21 +58,17 @@ namespace LUSSIS.Controllers
             var pileName = _categoryRepo.GetAllCategoryName().ToList();
             var pileValue = _poRepo.GetPOByCategory();
 
-            return Json(new { ListOne = pileName, ListTwo = pileValue }, JsonRequestBehavior.AllowGet);
+            return Json(new {ListOne = pileName, ListTwo = pileValue}, JsonRequestBehavior.AllowGet);
         }
 
-      
-        public JsonResult GetStackJSON()
+        public JsonResult GetStackJSon()
         {
-            List<String> depList = _departmentRepo.GetAllDepartmentCode();
-            List<int> catList = _categoryRepo.GetAllCategoryIds();
-            List<String> fromList = new List<String>();
-            List<String> toList = new List<String>();
+            var depList = _departmentRepo.GetAllDepartmentCode();
+            var catList = _categoryRepo.GetAllCategoryIds();
+            var fromList = new List<string>();
+            var toList = new List<string>();
 
-            List<String> datevalue = new List<String>();
-
-            List<double> xvalue = new List<double>();
-            List<String> titlevalue = new List<String>();
+            var datevalue = new List<string>();
 
             fromList.Add(DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy"));
             fromList.Add(DateTime.Now.AddMonths(-2).ToString("dd/MM/yyyy"));
@@ -84,27 +77,26 @@ namespace LUSSIS.Controllers
             datevalue.Add(DateTime.Now.AddMonths(-3).ToString("MMM/yyyy"));
             datevalue.Add(DateTime.Now.AddMonths(-2).ToString("MMM/yyyy"));
             datevalue.Add(DateTime.Now.AddMonths(-1).ToString("MMM/yyyy"));
-            titlevalue = depList;
-            ReportTransferDTO rto;
-            List<ReportTransferDTO> Listone = new List<ReportTransferDTO>();
-            for (int j = 0; j< fromList.Count; j++)
+
+            var titlevalue = depList;
+
+            var listOne = new List<ReportTransferDTO>();
+            for (int j = 0; j < fromList.Count; j++)
             {
                 Debug.WriteLine(j);
-                rto = new ReportTransferDTO();
-                double temp=0;
-                rto.timeValue = datevalue[j];
-                xvalue = new List<double>();
-                for (int i = 0; i <depList.Count; i++)
+                var rto = new ReportTransferDTO {timeValue = datevalue[j]};
+                var xvalue = new List<double>();
+                foreach (var department in depList)
                 {
-
-                    temp = _disbursementRepo.GetDisAmountByDep(depList[i], catList, fromList[j]);
+                    var temp = _disbursementRepo.GetDisAmountByDep(department, catList, fromList[j]);
                     xvalue.Add(temp);
                 }
-                rto.xvalue = xvalue;
-                Listone.Add(rto);
-            }
-            return Json(new { title = titlevalue, ListOne = Listone }, JsonRequestBehavior.AllowGet);
 
+                rto.xvalue = xvalue;
+                listOne.Add(rto);
+            }
+
+            return Json(new {title = titlevalue, ListOne = listOne}, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize(Roles = "manager,supervisor")]
@@ -122,20 +114,20 @@ namespace LUSSIS.Controllers
             //get post results from ajax
             Request.InputStream.Position = 0;
             var input = new StreamReader(Request.InputStream).ReadToEnd();
-            AjaxInputFilter filter = new AjaxInputFilter(input);
+            var filter = new AjaxInputFilter(input);
 
             //get Dictionary of category id and names
-            Dictionary<string, string> categoryDic = _categoryRepo.GetAll().ToDictionary(x => x.CategoryId.ToString(), x => x.CategoryName);
+            Dictionary<string, string> categoryDic =
+                _categoryRepo.GetAll().ToDictionary(x => x.CategoryId.ToString(), x => x.CategoryName);
             Dictionary<string, string> groupDic;
-            if (filter.IsDisburse)
-                groupDic = _departmentRepo.GetAll().ToDictionary(x => x.DeptCode, x => x.DeptName);
-            else
-                groupDic = _supplierRepo.GetAll().ToDictionary(x => x.SupplierId.ToString(), x => x.SupplierName);
+            groupDic = filter.IsDisburse
+                ? _departmentRepo.GetAll().ToDictionary(x => x.DeptCode, x => x.DeptName)
+                : _supplierRepo.GetAll().ToDictionary(x => x.SupplierId.ToString(), x => x.SupplierName);
 
             //get data
             IEnumerable<Detail> allList;
             if (filter.IsDisburse)
-                allList = _disbursementRepo.GetAllDisbursementDetails().Where(x=>x.Disbursement.Status!=InProcess)
+                allList = _disbursementRepo.GetAllDisbursementDetails().Where(x => x.Disbursement.Status != InProcess)
                     .Select(x => new Detail
                     {
                         Date = x.Disbursement.CollectionDate,
@@ -145,7 +137,8 @@ namespace LUSSIS.Controllers
                         Group = x.Disbursement.DeptCode
                     }).Where(x => x.Date >= filter.FromDate && x.Date <= filter.ToDate);
             else
-                allList = _poRepo.GetAllPurchaseOrderDetails().Where(x=>x.PurchaseOrder.Status!=Rejected && x.PurchaseOrder.Status!=Pending)
+                allList = _poRepo.GetAllPurchaseOrderDetails().Where(x =>
+                        x.PurchaseOrder.Status != Rejected && x.PurchaseOrder.Status != Pending)
                     .Select(x => new Detail
                     {
                         Date = x.PurchaseOrder.CreateDate,
@@ -157,7 +150,8 @@ namespace LUSSIS.Controllers
             var allList1 = allList;
             var allListTotal = allList;
 
-            int noOfMonths = (filter.ToDate.Year - filter.FromDate.Year) * 12 + filter.ToDate.Month - filter.FromDate.Month + 1;
+            int noOfMonths = (filter.ToDate.Year - filter.FromDate.Year) * 12 + filter.ToDate.Month -
+                             filter.FromDate.Month + 1;
             string[] categories = filter.Categories.Split(',');
             if (filter.Categories == "")
                 categories = categoryDic.Keys.ToArray();
@@ -201,21 +195,24 @@ namespace LUSSIS.Controllers
                     rowArr[j + 1] = Detail.FilterByYyymm(allList, rowArr[0] as string)
                         .Where(x => x.Group == groups[j]).Sum(x => filter.IsQty ? x.Qty : x.Cost);
                 }
+
                 for (int j = 0; j < categories.Length; j++)
                 {
                     rowArr1[j + 1] = Detail.FilterByYyymm(allList1, rowArr1[0] as string)
-                           .Where(x => x.CategoryId.ToString() == categories[j]).Sum(x => filter.IsQty ? x.Qty : x.Cost);
+                        .Where(x => x.CategoryId.ToString() == categories[j]).Sum(x => filter.IsQty ? x.Qty : x.Cost);
                 }
+
                 rowArrTotal[1] =
                     Detail.FilterByYyymm(
-                    Detail.FilterByCategory(
-                        Detail.FilterByGroup(allListTotal, groups), categories), rowArrTotal[0] as string)
+                            Detail.FilterByCategory(
+                                Detail.FilterByGroup(allListTotal, groups), categories), rowArrTotal[0] as string)
                         .Sum(x => filter.IsQty ? x.Qty : x.Cost);
                 arr[i + 1] = rowArr;
                 arr1[i + 1] = rowArr1;
                 arrTotal[i + 1] = rowArrTotal;
             }
-            return Json(new { arr, arr1, arrTotal }, JsonRequestBehavior.AllowGet);
+
+            return Json(new {arr, arr1, arrTotal}, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)
@@ -236,38 +233,42 @@ namespace LUSSIS.Controllers
         }
 
         #region Helpers
+
         public class AjaxInputFilter
         {
             public AjaxInputFilter(string input)
             {
                 string fromdate = new Regex(@"fromdate=([^ ]+), ").Match(input).Groups[0].Value;
-                this.FromDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToInt64(fromdate.Substring(9, fromdate.Length - 11))).ToLocalTime();
+                FromDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                    .AddMilliseconds(Convert.ToInt64(fromdate.Substring(9, fromdate.Length - 11))).ToLocalTime();
                 string todate = new Regex(@"todate=([^ ]+), ").Match(input).Groups[0].Value;
-                this.ToDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToInt64(todate.Substring(7, todate.Length - 9))).ToLocalTime();
+                ToDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                    .AddMilliseconds(Convert.ToInt64(todate.Substring(7, todate.Length - 9))).ToLocalTime();
                 string categories = new Regex(@"categories=([^ ]+), ").Match(input).Groups[0].Value;
                 if (categories == "")
                     this.Categories = "";
                 else
-                    this.Categories = categories.Substring(11, categories.Length - 13);
-                this.IsDisburse = new Regex(@"data_type=([^ ]+), ").Match(input).Groups[0].Value == "data_type=disburse, ";
+                    Categories = categories.Substring(11, categories.Length - 13);
+                IsDisburse = new Regex(@"data_type=([^ ]+), ").Match(input).Groups[0].Value ==
+                             "data_type=disburse, ";
                 if (IsDisburse)
                 {
                     string departments = new Regex(@"departments=([^ ]+) ").Match(input).Groups[0].Value;
-                    if (departments == "departments=, ")
-                        this.Group = "";
-                    else
-                        this.Group = departments.Substring(12, departments.Length - 14);
+                    Group = departments == "departments=, "
+                        ? ""
+                        : departments.Substring(12, departments.Length - 14);
                 }
                 else
                 {
                     string suppliers = new Regex(@"suppliers=([^ ]+) ").Match(input).Groups[0].Value;
-                    if (suppliers == "suppliers=, ")
-                        this.Group = "";
-                    else
-                        this.Group = suppliers.Substring(10, suppliers.Length - 12);
+                    Group = suppliers == "suppliers=, "
+                        ? ""
+                        : suppliers.Substring(10, suppliers.Length - 12);
                 }
-                this.IsQty = new Regex(@"unit_type=([^ ]+)}").Match(input).Groups[0].Value == "unit_type=qty}";
+
+                IsQty = new Regex(@"unit_type=([^ ]+)}").Match(input).Groups[0].Value == "unit_type=qty}";
             }
+
             public string Categories { get; set; }
             public string Group { get; set; }
             public bool IsDisburse { get; private set; }
@@ -283,30 +284,35 @@ namespace LUSSIS.Controllers
             public double Cost { get; set; }
             public string Group { get; set; }
             public int CategoryId { get; set; }
+
             public static IEnumerable<Detail> FilterByCategory(IEnumerable<Detail> list, string[] categories)
             {
-                List<Detail> value = new List<Detail>();
+                var value = new List<Detail>();
                 foreach (string catId in categories)
                 {
                     value.AddRange(list.Where(x => x.CategoryId == Convert.ToInt32(catId)));
                 }
+
                 return value;
             }
+
             public static IEnumerable<Detail> FilterByGroup(IEnumerable<Detail> list, string[] groups)
             {
-                List<Detail> value = new List<Detail>();
-                foreach (string groupId in groups)
+                var value = new List<Detail>();
+                foreach (var groupId in groups)
                 {
                     value.AddRange(list.Where(x => x.Group == groupId));
                 }
+
                 return value;
             }
+
             public static IEnumerable<Detail> FilterByYyymm(IEnumerable<Detail> list, string yyyymm)
             {
                 return list.Where(x => x.Date.ToString("yyyyMM") == yyyymm);
             }
         }
+
         #endregion
     }
-
 }

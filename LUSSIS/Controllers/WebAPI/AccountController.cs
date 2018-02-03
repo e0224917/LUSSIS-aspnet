@@ -1,5 +1,4 @@
-﻿using LUSSIS.Models;
-using System;
+﻿using System;
 using System.Web;
 using System.Web.Http;
 using Microsoft.AspNet.Identity.Owin;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http.Description;
 using LUSSIS.Constants;
 using LUSSIS.Emails;
+using LUSSIS.Models.Account;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
 
@@ -17,14 +17,6 @@ namespace LUSSIS.Controllers.WebAPI
     {
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
-
-        [HttpGet]
-        [AllowAnonymous]
-        [ResponseType(typeof(string))]
-        public string TestAuth()
-        {
-            return "Ok";
-        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -76,21 +68,22 @@ namespace LUSSIS.Controllers.WebAPI
                     {
                         return BadRequest("No email exists in the database.");
                     }
+
                     // Send an email with the reset password link
-                    string code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
+                    var code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Link("Default",
-                        new { controller = "Account", action = "ResetPassword", userId = user.Id, code });
+                        new {controller = "Account", action = "ResetPassword", userId = user.Id, code});
                     var fullName = _employeeRepo.GetEmployeeByEmail(model.Email).FullName;
                     var email = new LUSSISEmail.Builder().From("sa45team7@gmail.com").To(model.Email)
                         .ForResetPassword(fullName, callbackUrl).Build();
-                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                    new System.Threading.Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
                 }
                 catch (Exception e)
                 {
                     return Ok(e);
                 }
 
-                return Ok(new { Message = "Reset link sent to your email." });
+                return Ok(new {Message = "Reset link sent to your email."});
             }
 
             return BadRequest("Something is wrong. Please try again.");

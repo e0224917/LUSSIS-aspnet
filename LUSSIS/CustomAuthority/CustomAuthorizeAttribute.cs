@@ -1,7 +1,4 @@
 ﻿using LUSSIS.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -22,16 +19,16 @@ namespace LUSSIS.CustomAuthority
         }
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
-        {     
+        {
             var email = httpContext.User.Identity.Name;
             var isDelegate = _delegateRepo.FindCurrentByEmail(email) != null;
 
             if (httpContext.User.IsInRole(Role.DepartmentHead) || httpContext.User.IsInRole(Role.Staff) && isDelegate)
             {
-                    return true;
+                return true;
             }
 
-            return false;     
+            return false;
         }
 
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
@@ -39,14 +36,14 @@ namespace LUSSIS.CustomAuthority
             if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
             {
                 filterContext.Result = new RedirectToRouteResult(
-                        new RouteValueDictionary(new { controller = "Account", action = "Login" })
+                    new RouteValueDictionary(new {controller = "Account", action = "Login"})
                 );
             }
             //User is logged in but has no access
             else
             {
                 filterContext.Result = new RedirectToRouteResult(
-                        new RouteValueDictionary(new { controller = "Account", action = "NotAuthorized" })
+                    new RouteValueDictionary(new {controller = "Account", action = "NotAuthorized"})
                 );
             }
         }

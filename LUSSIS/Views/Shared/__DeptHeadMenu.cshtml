@@ -5,12 +5,22 @@
         <span>Requisition</span>
     </button>
     <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
-        <li class="dropdown-item"><a href="@Url.Action("Pending", "Requisitions")"><span>Pending Requisitions</span></a></li>
-        <li class="dropdown-item"><a href="@Url.Action("All", "Requisitions")"><span>All Requisitions</span></a></li>
+        <li class="dropdown-item">
+            <a href="@Url.Action("Pending", "Requisitions")">
+                <span>Pending Requisitions</span>
+            </a>
+        </li>
+        <li class="dropdown-item">
+            <a href="@Url.Action("All", "Requisitions")">
+                <span>All Requisitions</span>
+            </a>
+        </li>
     </ul>
 </div>
 <div class="nav navbar-nav">
-    <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("MyDelegate", "RepAndDelegate")"><span>My Delegate</span></a>
+    <a class="btn btn-primary" style="-webkit-appearance: none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("MyDelegate", "RepAndDelegate")">
+        <span>My Delegate</span>
+    </a>
 </div>
 @{
     var deptCode = Request.Cookies["Employee"]?["DeptCode"];
@@ -19,10 +29,8 @@
 @if (!hasDelegate)
 {
     <div class="nav navbar-nav">
-        <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")"><span>Department Rep</span></a>
+        <a class="btn btn-primary" style="-webkit-appearance: none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")">
+            <span>Department Rep</span>
+        </a>
     </div>
 }
-
-
-
-

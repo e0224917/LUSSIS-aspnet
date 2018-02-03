@@ -6,8 +6,8 @@
 
 @if (!isDelegate)
 {
-    @Html.ActionLink("Stationery", "Index", "Requisitions", null, new { @class = "nav-item nav-link btn btn-primary", style="color:white" })
-    @Html.ActionLink("My Requisitions", "MyRequisitions", "Requisitions", null, new { @class = "nav-item nav-link btn btn-primary", style = "color:white" })
+    @Html.ActionLink("Stationery", "Index", "Requisitions", null, new {@class = "nav-item nav-link btn btn-primary", style = "color:white"})
+    @Html.ActionLink("My Requisitions", "MyRequisitions", "Requisitions", null, new {@class = "nav-item nav-link btn btn-primary", style = "color:white"})
 }
 else
 {
@@ -16,12 +16,21 @@ else
             <span>Requisition</span>
         </button>
         <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
-            <li class="dropdown-item"><a href="@Url.Action("Pending", "Requisitions")"><span>Pending Requisitions</span></a></li>
-            <li class="dropdown-item"><a href="@Url.Action("All", "Requisitions")"><span>All Requisitions</span></a></li>
+            <li class="dropdown-item">
+                <a href="@Url.Action("Pending", "Requisitions")">
+                    <span>Pending Requisitions</span>
+                </a>
+            </li>
+            <li class="dropdown-item">
+                <a href="@Url.Action("All", "Requisitions")">
+                    <span>All Requisitions</span>
+                </a>
+            </li>
         </ul>
     </div>
     <li class="nav-item">
-        <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")"><span>Department Rep</span></a>
+        <a class="btn btn-primary" style="-webkit-appearance: none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("DeptRep", "RepAndDelegate")">
+            <span>Department Rep</span>
+        </a>
     </li>
 }
-

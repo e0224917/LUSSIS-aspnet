@@ -1,9 +1,6 @@
 ﻿using LUSSIS.Models;
+using LUSSIS.Models.Account;
 using Microsoft.AspNet.Identity.EntityFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace LUSSIS.DAL
 {

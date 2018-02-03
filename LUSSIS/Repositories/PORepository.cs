@@ -20,7 +20,6 @@ namespace LUSSIS.Repositories
         {
             return GetAll().Where(x => x.Status == Pending).ToList();
         }
-
         public List<PurchaseOrder> GetApprovedPO()
         {
             var list = GetAll().Where(x => x.Status == Approved);
@@ -52,8 +51,6 @@ namespace LUSSIS.Repositories
             return poDtoList;
         }
 
-
-
         public double GetPOAmountByPoNum(int poNum)
         {
             var pdList = LUSSISContext.PurchaseOrderDetails.Where(x => x.PoNum == poNum).ToList();
@@ -80,7 +77,6 @@ namespace LUSSIS.Repositories
             return result;
         }
 
-
         public double GetPOTotalAmount(List<String>fromList)
         {
             double result = 0;
@@ -102,16 +98,6 @@ namespace LUSSIS.Repositories
            
             return result;
         }
-
-        public void UpDatePO(int i, String status,String emp)
-        {
-            var p = GetById(i);
-            p.Status = status;
-            p.ApprovalEmpNum = Int32.Parse(emp);
-            p.ApprovalDate = DateTime.Today;
-            Update(p);
-        }
-
        
         public List<double> GetPOByCategory()
         {
@@ -154,15 +140,16 @@ namespace LUSSIS.Repositories
         {
             return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status.ToUpper() == status.ToUpper());
         }
+
         public IEnumerable<PurchaseOrderDetail> GetAllPurchaseOrderDetails()
         {
             return LUSSISContext.PurchaseOrderDetails.ToList();
         }
+
         public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsById(int id)
         {
             return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.PoNum == id);
         }
-
 
     }
 }

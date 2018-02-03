@@ -9,8 +9,6 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
-
     @Html.ValidationSummary(true, "", new {@class = "text-danger"})
 
     <h5>Stationery details</h5>
@@ -93,7 +91,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">S$</span>
                         </div>
-                        @Html.EditorFor(model => model.Price1, new {htmlAttributes = new {@class = "form-control", type="number", step=0.01}})
+                        @Html.EditorFor(model => model.Price1, new {htmlAttributes = new {@class = "form-control", type = "number", step = 0.01}})
                         @Html.ValidationMessageFor(model => model.Price1, "", new {@class = "text-danger"})
                     </div>
                 </div>
@@ -114,7 +112,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">S$</span>
                         </div>
-                        @Html.EditorFor(model => model.Price2, new {htmlAttributes = new {@class = "form-control", type = "number", step = 0.01 } })
+                        @Html.EditorFor(model => model.Price2, new {htmlAttributes = new {@class = "form-control", type = "number", step = 0.01}})
                         @Html.ValidationMessageFor(model => model.Price2, "", new {@class = "text-danger"})
                     </div>
                 </div>
@@ -135,7 +133,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">S$</span>
                         </div>
-                        @Html.EditorFor(model => model.Price3, new {htmlAttributes = new {@class = "form-control", type = "number", step = 0.01 } })
+                        @Html.EditorFor(model => model.Price3, new {htmlAttributes = new {@class = "form-control", type = "number", step = 0.01}})
                         @Html.ValidationMessageFor(model => model.Price3, "", new {@class = "text-danger"})
                     </div>
                 </div>

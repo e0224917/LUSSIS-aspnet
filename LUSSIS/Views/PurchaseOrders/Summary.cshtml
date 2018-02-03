@@ -107,7 +107,7 @@
         <br/>
     </div>
 
-    <div class="card border-dark bg-transparent tab-pane fadeshow" id="tab3">
+    <div class="card border-dark bg-transparent tab-pane fade show" id="tab3">
         <h4 class="card-header border-dark bg-dark" style="margin-top: auto; color: whitesmoke">Approved Purchase Order</h4>
 
         <div class="card-body">
@@ -191,10 +191,12 @@
 {
     <script>
         $('tr.table-active').click(function() {
-            $(this).nextUntil('tr.table-active').css('display', function(i,v){
-                return this.style.display === 'table-row' ? 'none' : 'table-row';
-            });
+            $(this).nextUntil('tr.table-active').css('display',
+                function() {
+                    return this.style.display === 'table-row' ? 'none' : 'table-row';
+                });
         })
     </script>
 }
+
 @*Authors: Douglas Lee Kiat Hui*@

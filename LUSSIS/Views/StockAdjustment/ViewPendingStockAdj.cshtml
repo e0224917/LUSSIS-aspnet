@@ -3,16 +3,16 @@
     ViewBag.Title = "Pending Adjustments";
 }
 
-<br />
+<br/>
 <h2>Pending Stock Adjustment</h2>
-<hr />
+<hr/>
 
 @if (!@Model.Any() || @Model == null)
 {
-<div class="alert alert-dismissible alert-info">
-    <br />
-    <strong>There is no pending stock adjustment at the moment</strong> <br /> <br />
-</div>
+    <div class="alert alert-dismissible alert-info">
+        <br/>
+        <strong>There is no pending stock adjustment at the moment</strong> <br/> <br/>
+    </div>
 }
 else
 {
@@ -22,25 +22,25 @@ else
         <tr class="table-active">
             <th>
                 <label class="btn" data-toggle="checkbox">
-                    <input type="checkbox" id="all" onclick="onClickFunction()" />
+                    <input type="checkbox" id="all" onclick="onClickFunction()"/>
                 </label>
             </th>
 
-        <th>
-            @Html.DisplayName("Create Date")
-        </th>
+            <th>
+                @Html.DisplayName("Create Date")
+            </th>
 
-        <th>
-            @Html.DisplayName("Description")
-        </th>
+            <th>
+                @Html.DisplayName("Description")
+            </th>
 
-        <th>
-            @Html.DisplayName("Quantity")
-        </th>
-        <th>
-            @Html.DisplayName("Reason")
-        </th>
-        <th></th>
+            <th>
+                @Html.DisplayName("Quantity")
+            </th>
+            <th>
+                @Html.DisplayName("Reason")
+            </th>
+            <th></th>
 
         </tr>
 
@@ -50,9 +50,9 @@ else
 
                 <td>
                     <label class="btn" data-toggle="checkbox">
-                        <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" onclick="onClickFunction()" />
+                        <input class="chk" id=@item.AdjVoucherId value="@item.AdjVoucherId" type="checkbox" onclick="onClickFunction()"/>
                     </label>
-                    </td>
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreateDate)
                 </td>
@@ -112,28 +112,26 @@ else
 
         function getCheckList() {
             var chkArray = [];
-            $(".chk:checked").each(function () {
+            $(".chk:checked").each(function() {
                 chkArray.push($(this).val());
 
             });
 
             return chkArray.join(',');
         }
-
     </script>
 
     <script>
-
         var approve = function(checkList) {
             if (checkList.length < 1) {
                 $("#showError").show();
-            }
-            else {
+            } else {
                 $("#showError").hide();
                 document.getElementById("ApprovalTitle").textContent = "Approve";
                 var url = "@Url.Content("~/")StockAdjustment/ApproveReject?list=" + checkList + "&status=approved";
 
-                $("#myApproveModalBodyDiv").load(url, function() {
+                $("#myApproveModalBodyDiv").load(url,
+                    function() {
                         $("#myApproveModal").modal("show");
                     });
             }
@@ -143,21 +141,19 @@ else
             if (checkList.length < 1) {
                 $("#showError").show();
 
-            }
-            else {
+            } else {
                 $("#showError").hide();
                 document.getElementById("ApprovalTitle").textContent = "Reject";
                 var url = "@Url.Content("~/")StockAdjustment/ApproveReject?list=" + checkList + "&Status=rejected";
 
-                $("#myApproveModalBodyDiv").load(url, function() {
+                $("#myApproveModalBodyDiv").load(url,
+                    function() {
                         $("#myApproveModal").modal("show");
                     });
             }
 
         }
     </script>
-
-
 }
 
 @*Authors: May Zin Ko*@

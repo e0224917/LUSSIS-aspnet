@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using LUSSIS.Constants;
 using LUSSIS.Repositories;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 
 namespace LUSSIS.CustomAuthority
 {
@@ -31,7 +26,7 @@ namespace LUSSIS.CustomAuthority
                 var isDelegate = _delegateRepo.FindCurrentByEmail(email) != null;
                 return !isDelegate;
             }
-           
+
             return false;
         }
 
@@ -40,14 +35,14 @@ namespace LUSSIS.CustomAuthority
             if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
             {
                 filterContext.Result = new RedirectToRouteResult(
-                        new RouteValueDictionary(new { controller = "Account", action = "Login" })
+                    new RouteValueDictionary(new {controller = "Account", action = "Login"})
                 );
             }
             //User is logged in but has no access
             else
             {
                 filterContext.Result = new RedirectToRouteResult(
-                        new RouteValueDictionary(new { controller = "Account", action = "NotAuthorized" })
+                    new RouteValueDictionary(new {controller = "Account", action = "NotAuthorized"})
                 );
             }
         }

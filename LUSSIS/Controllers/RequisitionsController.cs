@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Threading;
-using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Constants;
 using LUSSIS.Models.WebDTO;
@@ -14,7 +12,6 @@ using PagedList;
 using LUSSIS.Emails;
 using LUSSIS.CustomAuthority;
 using static LUSSIS.Constants.RequisitionStatus;
-using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers
 {
@@ -57,7 +54,9 @@ namespace LUSSIS.Controllers
             }
         }
 
-        // GET: Requisition
+        #region For Head & Delegate
+
+        // GET: /Requisitions/Pending
         //Authors: Koh Meng Guan
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         public ActionResult Pending()
@@ -75,25 +74,8 @@ namespace LUSSIS.Controllers
         }
 
         //Authors: Koh Meng Guan
+        // GET: /Requisisions/All
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
-        [HttpGet]
-        public ActionResult Details(int reqId)
-        {
-            //If user is head and there is delegate
-            if (User.IsInRole(Role.DepartmentHead) && HasDelegate)
-            {
-                ViewBag.HasDelegate = HasDelegate;
-            }
-
-            var req = _requisitionRepo.GetById(reqId);
-            if (req == null) return new HttpNotFoundResult();
-
-            ViewBag.Pending = req.Status == RequisitionStatus.Pending ? "Pending" : null;
-            return View(req);
-        }
-
-        [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
-        //Authors: Koh Meng Guan
         public ActionResult All(string searchString, string currentFilter, int? page)
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
@@ -123,8 +105,27 @@ namespace LUSSIS.Controllers
             return View(reqAll);
         }
 
+        //Authors: Koh Meng Guan
+        // GET: /Requisitions/Details
+        [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
+        [HttpGet]
+        public ActionResult Details(int reqId)
+        {
+            //If user is head and there is delegate
+            if (User.IsInRole(Role.DepartmentHead) && HasDelegate)
+            {
+                ViewBag.HasDelegate = HasDelegate;
+            }
+
+            var req = _requisitionRepo.GetById(reqId);
+            if (req == null) return new HttpNotFoundResult();
+
+            ViewBag.Pending = req.Status == RequisitionStatus.Pending ? "Pending" : null;
+            return View(req);
+        }
 
         //Authors: Koh Meng Guan
+        // POST: /Requisitions/Details
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpPost]
         public ActionResult Details(
@@ -182,219 +183,8 @@ namespace LUSSIS.Controllers
             return new HttpUnauthorizedResult();
         }
 
-
-        // GET: DeptEmpReqs
-        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
-        public ActionResult Index(string searchString, string currentFilter, int? page,string sortOrder)
-        {
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.CurrentSort = sortOrder;
-            if (searchString != null)
-            {
-                page = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
-            
-            ViewBag.CurrentFilter = searchString;
-
-            var stationerys = string.IsNullOrEmpty(searchString)
-                ? _stationeryRepo.GetAll().ToList() : _stationeryRepo.GetByDescription(searchString).ToList();
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    stationerys = stationerys.OrderByDescending(s => s.Description).ToList();
-                    break;
-                default:
-                    stationerys = stationerys.ToList();
-                    break;
-            }
-            var stationeryList = stationerys.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
-
-            if (Request.IsAjaxRequest())
-            {
-                return PartialView("_Index", stationeryList);
-            }
-
-            return View(stationeryList);
-        }
-
-        // POST: /Requisitions/AddToCart
-        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
-        [HttpPost]
-        public ActionResult AddToCart(string id, int qty)
-        {
-            var item = _stationeryRepo.GetById(id);
-            var cart = new CartDTO(item, qty);
-            var shoppingCart = Session["MyCart"] as ShoppingCartDTO;
-            shoppingCart?.AddToCart(cart);
-            return Json(shoppingCart?.GetCartItemCount());
-        }
-
-        // GET: /Requisitions/MyRequisitions
-        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
-        public ActionResult MyRequisitions(string currentFilter, int? page)
-        {
-            var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
-
-            var reqlist = _requisitionRepo.GetRequisitionsByEmpNum(empNum)
-                .OrderByDescending(s => s.RequisitionDate).ThenByDescending(s => s.RequisitionId).ToList();
-
-            return View(reqlist.ToPagedList(pageNumber: page ?? 1, pageSize: 15));
-        }
-
-        // GET: Requisitions/EmpReqDetail/5
-        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
-        [HttpGet]
-        public ActionResult MyRequisitionDetails(int id)
-        {
-            var requisitionDetail = _requisitionRepo.GetRequisitionDetailsById(id).ToList();
-            return View(requisitionDetail);
-        }
-
-        // POST: Requisitions/SubmitReq
-        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
-        [HttpPost]
-        public ActionResult SubmitReq()
-        {
-            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-            var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
-            var fullName = Request.Cookies["Employee"]?["Name"];
-
-            if (Session["MyCart"] is ShoppingCartDTO shoppingCart && shoppingCart.GetCartItemCount() > 0)
-            {
-                var requisition = new Requisition()
-                {
-                    RequestRemarks = Request["remarks"],
-                    RequisitionDate = DateTime.Today,
-                    RequisitionEmpNum = empNum,
-                    Status = RequisitionStatus.Pending,
-                    DeptCode = deptCode
-                };
-
-                _requisitionRepo.Add(requisition);
-
-                foreach (var cart in shoppingCart.GetAllCartItem())
-                {
-                    var requisitionDetail = new RequisitionDetail()
-                    {
-                        RequisitionId = requisition.RequisitionId,
-                        ItemNum = cart.Stationery.ItemNum,
-                        Quantity = cart.Quantity
-                    };
-                    requisitionDetail.Stationery = _requisitionRepo.AddRequisitionDetail(requisitionDetail);
-                }
-
-                Session["MyCart"] = new ShoppingCartDTO();
-
-                //Send email
-                var headEmail = _employeeRepo.GetDepartmentHead(deptCode).EmailAddress;
-                var email = new LUSSISEmail.Builder().From(User.Identity.Name)
-                    .To(headEmail).ForNewRequistion(fullName, requisition).Build();
-                new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
-
-                return RedirectToAction("MyRequisitions");
-            }
-
-            return RedirectToAction("MyCart");
-        }
-
-        // GET: Requisitions/MyCart
-        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
-        public ActionResult MyCart()
-        {
-            var mycart = (ShoppingCartDTO)Session["MyCart"];
-            return View(mycart.GetAllCartItem());
-        }
-
-        // POST: Requisitions/DeleteCartItem
-        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
-        [HttpPost]
-        public ActionResult DeleteCartItem(string id)
-        {
-            var myCart = Session["MyCart"] as ShoppingCartDTO;
-            myCart?.DeleteCart(id);
-
-            var count = (Session["MyCart"] as ShoppingCartDTO).GetCartItemCount();
-
-            return Json(count);
-        }
-
-        // POST: Requisitions/UpdateCartItem
-        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
-        [HttpPost]
-        public ActionResult UpdateCartItem(string id, int qty)
-        {
-            var mycart = Session["MyCart"] as ShoppingCartDTO;
-
-            foreach (var cart in mycart.Carts)
-            {
-                if (cart.Stationery.ItemNum != id) continue;
-               
-                cart.Quantity = qty;
-                break;
-            }
-
-            return Json(qty);
-        }
-
-        [Authorize(Roles = Role.Clerk)]
-        public ActionResult Consolidated(int? page)
-        {
-            int pageSize = 15;
-            int pageNumber = (page ?? 1);
-
-            return View(new RetrievalItemsWithDateDTO
-            {
-                RetrievalItems = CreateRetrievalList().List.ToPagedList(pageNumber, pageSize),
-                CollectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
-                //enables arranging for disbursement in UI once there is no inprocess disbursement
-                HasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
-            });
-        }
-
-        [HttpPost]
-        [Authorize(Roles = Role.Clerk)]
-        [ValidateAntiForgeryToken]
-        public ActionResult Retrieve([Bind(Include = "CollectionDate")] RetrievalItemsWithDateDTO listWithDate)
-        {
-            if (ModelState.IsValid)
-            {
-                var selectedDate = DateTime.ParseExact(listWithDate.CollectionDate, "dd/MM/yyyy",
-                    CultureInfo.InvariantCulture);
-
-                var disbursements = CreateDisbursement(selectedDate);
-
-                foreach (var disbursement in disbursements)
-                {
-                    var repEmail = _employeeRepo.GetRepByDeptCode(disbursement.DeptCode);
-                    var collectionPoint = _collectionRepo.GetById((int)disbursement.CollectionPointId);
-                    var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
-                        .ForNewDisbursement(disbursement, collectionPoint).Build();
-                    new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
-                }
-
-                return RedirectToAction("RetrievalInProcess");
-            }
-
-
-            return View("Consolidated", new RetrievalItemsWithDateDTO
-            {
-                RetrievalItems = CreateRetrievalList().List.ToPagedList(1, 15),
-                CollectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
-                HasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
-            });
-        }
-
-        [Authorize(Roles = Role.Clerk)]
-        public ActionResult RetrievalInProcess()
-        {
-            return View(_disbursementRepo.GetRetrievalInProcess());
-        }
-
         //Authors: Koh Meng Guan
+        // GET: /Requisitions/ApproveReq
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
         [HttpGet]
         public PartialViewResult ApproveReq(int id, string status)
@@ -412,7 +202,6 @@ namespace LUSSIS.Controllers
 
             return PartialView("_hasDelegate");
         }
-
 
         //Authors: Koh Meng Guan
         [CustomAuthorize(Role.DepartmentHead, Role.Staff)]
@@ -465,16 +254,241 @@ namespace LUSSIS.Controllers
                     var toEmail = req.RequisitionEmployee.EmailAddress;
                     var email = new LUSSISEmail.Builder().From(User.Identity.Name)
                         .To(toEmail).ForRequisitionApproval(req).Build();
-                    new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                    new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 
                     return RedirectToAction("Pending");
                 }
 
-                return PartialView("_ApproveReq",reqApprovalDto);
+                return PartialView("_ApproveReq", reqApprovalDto);
             }
 
             return PartialView("_hasDelegate");
         }
+
+        #endregion
+
+        #region For Staff & Rep without Delegate
+
+        // GET: Requisitions/Index
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
+        public ActionResult Index(string searchString, string currentFilter, int? page, string sortOrder)
+        {
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.CurrentSort = sortOrder;
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var stationerys = string.IsNullOrEmpty(searchString)
+                ? _stationeryRepo.GetAll().ToList()
+                : _stationeryRepo.GetByDescription(searchString).ToList();
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    stationerys = stationerys.OrderByDescending(s => s.Description).ToList();
+                    break;
+                default:
+                    stationerys = stationerys.ToList();
+                    break;
+            }
+
+            var stationeryList = stationerys.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_Index", stationeryList);
+            }
+
+            return View(stationeryList);
+        }
+
+        // POST: /Requisitions/AddToCart
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
+        [HttpPost]
+        public ActionResult AddToCart(string id, int qty)
+        {
+            var item = _stationeryRepo.GetById(id);
+            var cart = new CartDTO(item, qty);
+            var shoppingCart = Session["MyCart"] as ShoppingCartDTO;
+            shoppingCart?.AddToCart(cart);
+            return Json(shoppingCart?.GetCartItemCount());
+        }
+
+        // GET: /Requisitions/MyCart
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
+        public ActionResult MyCart()
+        {
+            var mycart = (ShoppingCartDTO) Session["MyCart"];
+            return View(mycart.GetAllCartItem());
+        }
+
+        // POST: /Requisitions/DeleteCartItem
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
+        [HttpPost]
+        public ActionResult DeleteCartItem(string id)
+        {
+            var myCart = Session["MyCart"] as ShoppingCartDTO;
+            myCart?.DeleteCart(id);
+
+            var count = ((ShoppingCartDTO) Session["MyCart"]).GetCartItemCount();
+
+            return Json(count);
+        }
+
+        // POST: Requisitions/UpdateCartItem
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
+        [HttpPost]
+        public ActionResult UpdateCartItem(string id, int qty)
+        {
+            if (Session["MyCart"] is ShoppingCartDTO mycart)
+                foreach (var cart in mycart.Carts)
+                {
+                    if (cart.Stationery.ItemNum != id) continue;
+
+                    cart.Quantity = qty;
+                    break;
+                }
+
+            return Json(qty);
+        }
+
+        // POST: /Requisitions/SubmitReq
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
+        [HttpPost]
+        public ActionResult SubmitReq()
+        {
+            var deptCode = Request.Cookies["Employee"]?["DeptCode"];
+            var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+            var fullName = Request.Cookies["Employee"]?["Name"];
+
+            if (Session["MyCart"] is ShoppingCartDTO shoppingCart && shoppingCart.GetCartItemCount() > 0)
+            {
+                var requisition = new Requisition()
+                {
+                    RequestRemarks = Request["remarks"],
+                    RequisitionDate = DateTime.Today,
+                    RequisitionEmpNum = empNum,
+                    Status = RequisitionStatus.Pending,
+                    DeptCode = deptCode
+                };
+
+                _requisitionRepo.Add(requisition);
+
+                foreach (var cart in shoppingCart.GetAllCartItem())
+                {
+                    var requisitionDetail = new RequisitionDetail()
+                    {
+                        RequisitionId = requisition.RequisitionId,
+                        ItemNum = cart.Stationery.ItemNum,
+                        Quantity = cart.Quantity
+                    };
+                    requisitionDetail.Stationery = _requisitionRepo.AddRequisitionDetail(requisitionDetail);
+                }
+
+                Session["MyCart"] = new ShoppingCartDTO();
+
+                //Send email
+                var headEmail = _employeeRepo.GetDepartmentHead(deptCode).EmailAddress;
+                var email = new LUSSISEmail.Builder().From(User.Identity.Name)
+                    .To(headEmail).ForNewRequistion(fullName, requisition).Build();
+                new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
+
+                return RedirectToAction("MyRequisitions");
+            }
+
+            return RedirectToAction("MyCart");
+        }
+
+        // GET: /Requisitions/MyRequisitions
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
+        public ActionResult MyRequisitions(string currentFilter, int? page)
+        {
+            var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+
+            var reqlist = _requisitionRepo.GetRequisitionsByEmpNum(empNum)
+                .OrderByDescending(s => s.RequisitionDate).ThenByDescending(s => s.RequisitionId).ToList();
+
+            return View(reqlist.ToPagedList(pageNumber: page ?? 1, pageSize: 15));
+        }
+
+        // GET: /Requisitions/MyRequisitionDetails/5
+        [DelegateStaffCustomAuth(Role.Staff, Role.Representative)]
+        [HttpGet]
+        public ActionResult MyRequisitionDetails(int id)
+        {
+            var requisitionDetail = _requisitionRepo.GetRequisitionDetailsById(id).ToList();
+            return View(requisitionDetail);
+        }
+
+        #endregion
+
+        #region For Clerk
+
+        // GET: /Requisitions/Consolidated
+        [Authorize(Roles = Role.Clerk)]
+        public ActionResult Consolidated(int? page)
+        {
+            int pageSize = 15;
+            int pageNumber = (page ?? 1);
+
+            return View(new RetrievalItemsWithDateDTO
+            {
+                RetrievalItems = CreateRetrievalList().List.ToPagedList(pageNumber, pageSize),
+                CollectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
+                //enables arranging for disbursement in UI once there is no inprocess disbursement
+                HasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
+            });
+        }
+
+        // POST: /Requisitions/Retrieve
+        [HttpPost]
+        [Authorize(Roles = Role.Clerk)]
+        [ValidateAntiForgeryToken]
+        public ActionResult Retrieve([Bind(Include = "CollectionDate")] RetrievalItemsWithDateDTO listWithDate)
+        {
+            if (ModelState.IsValid)
+            {
+                var selectedDate = DateTime.ParseExact(listWithDate.CollectionDate, "dd/MM/yyyy",
+                    CultureInfo.InvariantCulture);
+
+                var disbursements = CreateDisbursement(selectedDate);
+
+                foreach (var disbursement in disbursements)
+                {
+                    var repEmail = _employeeRepo.GetRepByDeptCode(disbursement.DeptCode).EmailAddress;
+                    var collectionPoint = _collectionRepo.GetById((int) disbursement.CollectionPointId);
+                    var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
+                        .ForNewDisbursement(disbursement, collectionPoint).Build();
+                    new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
+                }
+
+                return RedirectToAction("RetrievalInProcess");
+            }
+
+
+            return View("Consolidated", new RetrievalItemsWithDateDTO
+            {
+                RetrievalItems = CreateRetrievalList().List.ToPagedList(1, 15),
+                CollectionDate = DateTime.Today.ToString("dd/MM/yyyy"),
+                HasInprocessDisbursement = _disbursementRepo.HasInprocessDisbursements()
+            });
+        }
+
+        // GET: /Requisitions/RetrievalInProcess
+        [Authorize(Roles = Role.Clerk)]
+        public ActionResult RetrievalInProcess()
+        {
+            return View(_disbursementRepo.GetRetrievalInProcess());
+        }
+
+        #endregion
 
         protected override void Dispose(bool disposing)
         {
@@ -500,7 +514,8 @@ namespace LUSSIS.Controllers
 
             //adding remaining qty from unfulfilled disbursement
             var unfulfilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetails().ToList();
-            var consolidatedUnfulfilledDisbursements = ConsolidateUnfulfilledDisbursements(unfulfilledDisbursementDetails);
+            var consolidatedUnfulfilledDisbursements =
+                ConsolidateUnfulfilledDisbursements(unfulfilledDisbursementDetails);
             itemsToRetrieve.AddRange(consolidatedUnfulfilledDisbursements);
 
             //adding requested qty from newly approved requisitions
@@ -533,7 +548,7 @@ namespace LUSSIS.Controllers
 
             return itemsToRetrieve;
         }
-        
+
         /*
          * helper method to consolidate each [approved requisitions for one item] into [one RetrievalItemDTO]
         */
@@ -559,11 +574,11 @@ namespace LUSSIS.Controllers
         #endregion
 
         #region Create Disburesement logic
-        
+
         public List<Disbursement> CreateDisbursement(DateTime collectionDate)
         {
             var disbursements = new List<Disbursement>();
-            
+
             GenerateDisbursementsWithApprovedRequisitions(disbursements, collectionDate);
 
             GenerateDisbursementsWithUnfullfilled(disbursements, collectionDate);
@@ -580,7 +595,8 @@ namespace LUSSIS.Controllers
         /*
           * helper method step 1
           */
-        private List<Disbursement> GenerateDisbursementsWithApprovedRequisitions(List<Disbursement> targetDisbursementsList, DateTime collectionDate)
+        private List<Disbursement> GenerateDisbursementsWithApprovedRequisitions(
+            List<Disbursement> targetDisbursementsList, DateTime collectionDate)
         {
             List<List<Requisition>> reqGroupByDept = _disbursementRepo.GetApprovedRequisitions()
                 .GroupBy(r => r.RequisitionEmployee.DeptCode)
@@ -601,7 +617,7 @@ namespace LUSSIS.Controllers
                 //as respective disbursement is created, update the requisition status
                 foreach (var requisition in requisitionsForOneDept)
                 {
-                    requisition.Status = RequisitionStatus.Processed;
+                    requisition.Status = Processed;
                     _disbursementRepo.UpdateRequisition(requisition);
                 }
             }
@@ -612,7 +628,8 @@ namespace LUSSIS.Controllers
         /*
         * helper method step 2
         */
-        private List<Disbursement> GenerateDisbursementsWithUnfullfilled(List<Disbursement> targetDisbursementsList, DateTime collectionDate)
+        private List<Disbursement> GenerateDisbursementsWithUnfullfilled(List<Disbursement> targetDisbursementsList,
+            DateTime collectionDate)
         {
             var unfufilledDisbursementDetails = _disbursementRepo.GetUnfulfilledDisbursementDetails().ToList();
             foreach (var ufdDetail in unfufilledDisbursementDetails)
@@ -648,17 +665,16 @@ namespace LUSSIS.Controllers
                 detail.RequestedQty = detail.ActualQty;
                 _disbursementRepo.UpdateDisbursementDetail(detail);
             }
-            
+
             var unfulfilledDisList = _disbursementRepo.GetUnfulfilledDisbursements().ToList();
             foreach (var unfd in unfulfilledDisList)
             {
                 unfd.Status = DisbursementStatus.Fulfilled;
                 _disbursementRepo.Update(unfd);
             }
-            
+
             return targetDisbursementsList;
         }
-
 
         #endregion
     }

@@ -5,7 +5,7 @@
 }
 
 <h2>Purchase Order - Receive</h2>
-<hr />
+<hr/>
 @if (ViewBag.Error != null)
 {
     <div class="alert alert-danger">
@@ -23,7 +23,6 @@
     }
     else
     {
-        @Scripts.Render("~/bundles/jquery")
         <h6 type="text" class="control-label col-md-12">Select a Purchase Order to update receipt of stationery</h6>
 
         <div class="col-md-12">
@@ -41,11 +40,9 @@
 }
 else
 {
-
     using (Html.BeginForm())
     {
-
-        @Html.Hidden("PoNum", (int)@ViewBag.PurchaseOrder.PoNum)
+        @Html.Hidden("PoNum", (int) @ViewBag.PurchaseOrder.PoNum)
 
         @Html.AntiForgeryToken()
 
@@ -55,21 +52,27 @@ else
                 <div class="row">
                     <div class="col-lg-4 col-sm-4 col-md-4">
                         <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Purchase Order Number</strong></label>
+                            <label class="control-label col-md-12">
+                                <strong>Purchase Order Number</strong>
+                            </label>
                             <div class="col-md-12">
-                                <input class="form-control" type="number" value="@ViewBag.PurchaseOrder.PoNum" disabled name="PoNum" id="PoNum" />
+                                <input class="form-control" type="number" value="@ViewBag.PurchaseOrder.PoNum" disabled name="PoNum" id="PoNum"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Supplier Name</strong></label>
+                            <label class="control-label col-md-12">
+                                <strong>Supplier Name</strong>
+                            </label>
                             <div class="col-md-12">
-                                <input type="text" class="form-control" value="@ViewBag.PurchaseOrder.Supplier.SupplierName" disabled />
+                                <input type="text" class="form-control" value="@ViewBag.PurchaseOrder.Supplier.SupplierName" disabled/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Supplier Contact Name</strong></label>
+                            <label class="control-label col-md-12">
+                                <strong>Supplier Contact Name</strong>
+                            </label>
                             <div class="col-md-12">
-                                <input type="text" class="form-control" value="@ViewBag.PurchaseOrder.SupplierContact" disabled />
+                                <input type="text" class="form-control" value="@ViewBag.PurchaseOrder.SupplierContact" disabled/>
                             </div>
                         </div>
 
@@ -77,52 +80,64 @@ else
 
                     <div class="col-lg-4 col-sm-4 col-md-4">
                         <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Delivery Order Number</strong></label>
+                            <label class="control-label col-md-12">
+                                <strong>Delivery Order Number</strong>
+                            </label>
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.DeliveryOrderNum, new { htmlAttributes = new { @class = "form-control", @required = true } })
+                                @Html.EditorFor(model => model.DeliveryOrderNum, new {htmlAttributes = new {@class = "form-control", @required = true}})
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Invoice Number</strong></label>
+                            <label class="control-label col-md-12">
+                                <strong>Invoice Number</strong>
+                            </label>
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.InvoiceNum, new { htmlAttributes = new { @class = "form-control", @required = true } })
+                                @Html.EditorFor(model => model.InvoiceNum, new {htmlAttributes = new {@class = "form-control", @required = true}})
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Received Date</strong></label>
+                            <label class="control-label col-md-12">
+                                <strong>Received Date</strong>
+                            </label>
                             <div class="col-md-12">
-                                <input type="date" class="form-control" name="ReceiveDate" id="ReceiveDate" value="@Model.ReceiveDate.ToString("yyyy-MM-dd")" />
+                                <input type="date" class="form-control" name="ReceiveDate" id="ReceiveDate" value="@Model.ReceiveDate.ToString("yyyy-MM-dd")"/>
                             </div>
                         </div>
 
                     </div>
                     <div class="col-lg-4 col-sm-4 col-md-4">
                         <div class="form-group">
-                            <label class="control-label col-md-12 text-primary"><strong>Status</strong></label>
+                            <label class="control-label col-md-12 text-primary">
+                                <strong>Status</strong>
+                            </label>
                             <div class="col-md-12">
-                                <input type="text" class="form-control text-primary" value="@ViewBag.PurchaseOrder.Status" disabled />
+                                <input type="text" class="form-control text-primary" value="@ViewBag.PurchaseOrder.Status" disabled/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Approved By</strong></label>
+                            <label class="control-label col-md-12">
+                                <strong>Approved By</strong>
+                            </label>
                             <div class="col-md-12">
-                                <input type="text" class="form-control" value="@ViewBag.PurchaseOrder.ApprovalEmployee.FullName" disabled />
+                                <input type="text" class="form-control" value="@ViewBag.PurchaseOrder.ApprovalEmployee.FullName" disabled/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-12"><strong>Approved On</strong></label>
+                            <label class="control-label col-md-12">
+                                <strong>Approved On</strong>
+                            </label>
                             <div class="col-md-12">
-                                <input type="date" class="form-control" value="@ViewBag.PurchaseOrder.ApprovalDate.ToString("yyyy-MM-dd")" disabled />
+                                <input type="date" class="form-control" value="@ViewBag.PurchaseOrder.ApprovalDate.ToString("yyyy-MM-dd")" disabled/>
                             </div>
                         </div>
                     </div>
-
 
 
                 </div>
             </div>
-        </div> <br />
+        </div>
+        <br/>
         <table class="table table-hover table-striped">
             <tr class="table-active">
                 <th>No</th>
@@ -145,7 +160,7 @@ else
                         <td>@ViewBag.PurchaseOrder.PurchaseOrderDetails[i].ReceiveQty</td>
                         <td>
                             @Html.HiddenFor(model => model.ReceiveTransDetails[i].ItemNum)
-                            @Html.EditorFor(model => model.ReceiveTransDetails[i].Quantity, new { htmlAttributes = new { @class = "form-control", @min = "0" } })
+                            @Html.EditorFor(model => model.ReceiveTransDetails[i].Quantity, new {htmlAttributes = new {@class = "form-control", @min = "0"}})
                         </td>
                     </tr>
                 }
@@ -153,9 +168,8 @@ else
         </table>
 
         <div class="text-right">
-            <input type="submit" value="Confirm Receive" class="btn btn-success btn-lg" style="width:40%" />
+            <input type="submit" value="Confirm Receive" class="btn btn-success btn-lg" style="width: 40%"/>
         </div>
-
     }
 }
 
@@ -163,14 +177,15 @@ else
 {
     <script>
         //redirect page if PO selected from no-PO page
-        $(document).on('change', '#select_PO', function () {
-            if ($(this).val() != 0) {
-                var newLink = "@Url.Content("~/")PurchaseOrders/Receive?p=" + $(this).val();
-                window.location.replace(newLink);
-            }
-        });
+        $(document).on('change',
+            '#select_PO',
+            function() {
+                if ($(this).val() !== 0) {
+                    var newLink = "@Url.Content("~/")PurchaseOrders/Receive?p=" + $(this).val();
+                    window.location.replace(newLink);
+                }
+            });
     </script>
 }
 
 @*Authors: Douglas Lee Kiat Hui*@
-

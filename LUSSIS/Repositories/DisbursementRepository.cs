@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
-using System.Web;
 using LUSSIS.Constants;
 using LUSSIS.Models;
 using LUSSIS.Models.WebDTO;
 using static LUSSIS.Constants.DisbursementStatus;
-using static LUSSIS.Constants.RequisitionStatus;
 
 namespace LUSSIS.Repositories
 {
@@ -141,7 +139,6 @@ namespace LUSSIS.Repositories
 
             foreach (int catId in cat)
             {
-               
                 List<DisbursementDetail> disList = LUSSISContext.DisbursementDetails.Where(x => x.Disbursement.Status != InProcess
                  && x.Disbursement.CollectionDate.Month == fromDate.Month 
                  && x.Disbursement.CollectionDate.Year == fromDate.Year
@@ -165,7 +162,6 @@ namespace LUSSIS.Repositories
             LUSSISContext.SaveChanges();
         }
 
-        
         public IEnumerable<RetrievalItemDTO> GetRetrievalInProcess()
         {
             var itemsToRetrieve = new List<RetrievalItemDTO>();
@@ -188,6 +184,7 @@ namespace LUSSIS.Repositories
 
             return itemsToRetrieve;
         }
+
         public IEnumerable<DisbursementDetail> GetAllDisbursementDetails()
         {
             return LUSSISContext.DisbursementDetails.ToList();

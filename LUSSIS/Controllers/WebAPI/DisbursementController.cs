@@ -5,7 +5,6 @@ using System.Web.Http.Description;
 using LUSSIS.Constants;
 using LUSSIS.Models.WebAPI;
 using LUSSIS.Repositories;
-using static LUSSIS.Constants.DisbursementStatus;
 
 namespace LUSSIS.Controllers.WebAPI
 {
@@ -20,7 +19,7 @@ namespace LUSSIS.Controllers.WebAPI
         [Route("api/Disbursement/")]
         public IHttpActionResult Get()
         {
-            var disbursements = _disbursementRepo.GetDisbursementByStatus("inprocess");
+            var disbursements = _disbursementRepo.GetDisbursementByStatus(DisbursementStatus.InProcess);
             var result = disbursements.Select(item => new DisbursementDTO(item));
 
             return Ok(result);
@@ -32,7 +31,7 @@ namespace LUSSIS.Controllers.WebAPI
         {
             var disbursement = await _disbursementRepo.GetByIdAsync(id);
             return new DisbursementDTO(disbursement);
-        } 
+        }
 
         [HttpGet]
         [Route("api/Disbursement/Upcoming/{dept}")]
@@ -57,7 +56,7 @@ namespace LUSSIS.Controllers.WebAPI
                 return BadRequest("Wrong department.");
             }
 
-            if(disbursement.Status != DisbursementStatus.InProcess)
+            if (disbursement.Status != DisbursementStatus.InProcess)
             {
                 return BadRequest("This disbursement has already been acknowledged");
             }

@@ -1,13 +1,12 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Stationery>
 @{
     ViewBag.Title = "Stationery List";
-
 }
 
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css"/>
 
 <h2>Stationery List for Requisition</h2>
-<hr />
+<hr/>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between" style="border-radius: 5px;">
     <div class="navbar-nav mr-auto"></div>
 
@@ -17,12 +16,10 @@
             HttpMethod = "POST",
             InsertionMode = InsertionMode.Replace,
             UpdateTargetId = "stationeryList",
-
         }))
         {
-
-            <span class="d-inline nav-item active nav-link" style="color:whitesmoke">Find By Description </span>
-            @Html.TextBox("SearchString", null, new { @class = "form-control mr-sm-2", placeholder = "Search" })
+            <span class="d-inline nav-item active nav-link" style="color: whitesmoke">Find By Description </span>
+            @Html.TextBox("SearchString", null, new {@class = "form-control mr-sm-2", placeholder = "Search"})
             @*<span class="d-inline nav-item nav-link"><input type="submit" placeholder="Search" class="btn btn-secondary my-2 my-sm-0" /></span>*@
             <button type="submit" class="btn btn-secondary my-2 my-sm-0 d-inline">Search</button>
         }
@@ -34,20 +31,20 @@
         }))
         {
             <div class="nav-item active nav-link">
-                <input type="submit" value="Show All" class="btn btn-secondary my-2 my-sm-0" />
-                <input type="hidden" name="page" value="1" />
+                <input type="submit" value="Show All" class="btn btn-secondary my-2 my-sm-0"/>
+                <input type="hidden" name="page" value="1"/>
             </div>
         }
 
     </div>
 </nav>
-<hr />
+<hr/>
 
 @Html.Partial("_Index", Model)
 
 @section scripts {
     <script src="~/Scripts/jquery.tablesorter.min.js"></script>
-    <link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css"/>
 
 
     @*<script>
@@ -67,32 +64,31 @@
         );
     </script>*@
     <script type="text/javascript">
-        $(function () {
+        $(function() {
             // Document.ready -> link up remove event handler
-            $(".AddLink").click(function () {
+            $(".AddLink").click(function() {
                 // Get the id from the link
                 var stationeryToAdd = $(this).attr("data-id");
                 var qty = document.getElementById('qty-' + $(this).attr("data-id")).value;
                 var myid = 'msg-added-' + $(this).attr("data-id");
                 if (qty <= 0) {
                     alert("Please input a valid quantity");
-                }
-                else if (stationeryToAdd !== '') {
+                } else if (stationeryToAdd !== '') {
                     // Perform the ajax post
                     $.post("@Url.Content("~/")Requisitions/AddToCart",
                         { "id": stationeryToAdd, "qty": qty },
-                        function (data) {
+                        function(data) {
                             $("#cart-number").text("My Cart (" + data + ")");
-                            
+
                             $('#' + myid).removeClass("hidden").addClass("text-danger");
                             setTimeout(function() {
-                                $('#' + myid).addClass("hidden").removeClass("text-danger");
-                            }, 800);
+                                    $('#' + myid).addClass("hidden").removeClass("text-danger");
+                                },
+                                800);
                         }
                     );
                 }
-                
-                
+
 
             });
         });

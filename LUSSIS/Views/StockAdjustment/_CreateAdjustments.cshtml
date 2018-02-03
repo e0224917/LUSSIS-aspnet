@@ -8,35 +8,33 @@
     @using (Html.BeginCollectionItem("MyList"))
     {
         <td>
-            @*@Html.DropDownList("ItemNum", null, htmlAttributes: new { @class = "form-control" })*@
-            @Html.EditorFor(model => model.ItemNum, new { htmlAttributes = new { @class = "itemSearch form-control" } }) <br /><span style="font-size:0">a </span>
-            @Html.ValidationMessageFor(model => model.ItemNum, "", new { @class = "text-danger" })
+            @Html.EditorFor(model => model.ItemNum, new {htmlAttributes = new {@class = "itemSearch form-control"}}) <br/><span style="font-size: 0">a </span>
+            @Html.ValidationMessageFor(model => model.ItemNum, "", new {@class = "text-danger"})
         </td>
         <td>
             <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-outline-info" style="width:4rem">
+                <label class="btn btn-outline-info" style="width: 4rem">
                     @Html.RadioButtonFor(model => model.Sign, false) -
                 </label>
 
-                <label class="btn btn-outline-info" style="width:4rem">
+                <label class="btn btn-outline-info" style="width: 4rem">
                     @Html.RadioButtonFor(model => model.Sign, true) +
                 </label>
             </div>
-            @Html.ValidationMessageFor(model => model.Sign, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.Sign, "", new {@class = "text-danger"})
         </td>
         <td>
-            @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control", @min = "0" } }) <br /> <span style="font-size:0">a </span>
-            @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+            @Html.EditorFor(model => model.Quantity, new {htmlAttributes = new {@class = "form-control", @min = "0"}}) <br/> <span style="font-size: 0">a </span>
+            @Html.ValidationMessageFor(model => model.Quantity, "", new {@class = "text-danger"})
         </td>
         <td>
-            @Html.EditorFor(model => model.Reason, new { htmlAttributes = new { @class = "form-control" } }) <br /><span style="font-size:0">a </span>
-            @Html.ValidationMessageFor(model => model.Reason, "", new { @class = "text-danger" })
+            @Html.EditorFor(model => model.Reason, new {htmlAttributes = new {@class = "form-control"}}) <br/><span style="font-size: 0">a </span>
+            @Html.ValidationMessageFor(model => model.Reason, "", new {@class = "text-danger"})
         </td>
         <td>
-            <input type="button" value="Delete" class="deleteEntry btn btn-danger" />
-            <br /><span style="font-size:0">a </span>
+            <input type="button" value="Delete" class="deleteEntry btn btn-danger"/>
+            <br/><span style="font-size: 0">a </span>
         </td>
-
     }
 </tr>
 
@@ -44,12 +42,12 @@
 @section scripts
 {
     <script type="text/javascript">
-        $(document).on("click", ".deleteEntry", function () {
-            $(this).closest("tr").remove();
-        });
+        $(document).on("click",
+            ".deleteEntry",
+            function() {
+                $(this).closest("tr").remove();
+            });
     </script>
 }
 
 @*Authors: Koh Meng Guan*@
-
-

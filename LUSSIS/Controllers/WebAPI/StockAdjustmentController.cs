@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using LUSSIS.Constants;
@@ -17,9 +16,9 @@ namespace LUSSIS.Controllers.WebAPI
         // POST api/StockAdjustment
         [HttpPost]
         [Route("api/StockAdjustment/")]
-        public async Task<IHttpActionResult> Post([FromBody]AdjustmentDTO adjustment)
+        public async Task<IHttpActionResult> Post([FromBody] AdjustmentDTO adjustment)
         {
-            var ad = new AdjVoucher
+            var adjVoucher = new AdjVoucher
             {
                 ItemNum = adjustment.ItemNum,
                 CreateDate = DateTime.Today,
@@ -29,7 +28,7 @@ namespace LUSSIS.Controllers.WebAPI
                 RequestEmpNum = adjustment.RequestEmpNum
             };
 
-            await _stockadjustmentRepo.AddAsync(ad);
+            await _stockadjustmentRepo.AddAsync(adjVoucher);
 
             return Ok(new {Message = "New adjusment sent"});
         }

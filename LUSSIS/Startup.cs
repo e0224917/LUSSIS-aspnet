@@ -2,6 +2,7 @@
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(LUSSIS.Startup))]
+
 namespace LUSSIS
 {
     public partial class Startup

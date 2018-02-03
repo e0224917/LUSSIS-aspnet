@@ -1,7 +1,6 @@
 ﻿using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -82,7 +81,6 @@ namespace LUSSIS.Controllers
         public JsonResult GetEmpJson(string prefix)
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-            var department = _departmentRepo.GetById(deptCode);
             var staffAndRepList = _employeeRepo.GetStaffRepByDeptCode(deptCode);
 
             if (ExistDelegate)
@@ -103,12 +101,12 @@ namespace LUSSIS.Controllers
             return Json(selectedEmps, JsonRequestBehavior.AllowGet);
         }
 
+        // GET: /RepAndDelegate/GetEmpForDelJson
         [CustomAuthorize(Role.DepartmentHead)]
         [HttpGet]
         public JsonResult GetEmpForDelJson(string prefix)
         {
             var deptCode = Request.Cookies["Employee"]?["DeptCode"];
-            var department = _departmentRepo.GetById(deptCode);
             var staffList = _employeeRepo.GetStaffByDeptCode(deptCode);
             var selectedlist = staffList
                 .Where(e => e.FullName.Contains(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -196,6 +194,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("DeptRep");
         }
 
+        // POST: /RepAndDelegate/AddDelegate
         [CustomAuthorize(Role.DepartmentHead)]
         [HttpPost]
         public ActionResult AddDelegate(string delegateEmp, string from, string to)
@@ -229,6 +228,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("MyDelegate");
         }
 
+        // POST: /RepAndDelegate/DeleteDelegate
         [CustomAuthorize(Role.DepartmentHead)]
         [HttpPost]
         public ActionResult DeleteDelegate()
@@ -253,6 +253,7 @@ namespace LUSSIS.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: /RepAndDelegate/MyDelegate
         [CustomAuthorize(Role.DepartmentHead)]
         public ActionResult MyDelegate()
         {
@@ -272,7 +273,7 @@ namespace LUSSIS.Controllers
         [HttpPost]
         public ActionResult DirectToRequisitons()
         {
-            return RedirectToAction("_ApproveReq", "Requisitions");
+            return RedirectToAction("ApproveReq", "Requisitions");
         }
 
         protected override void Dispose(bool disposing)
