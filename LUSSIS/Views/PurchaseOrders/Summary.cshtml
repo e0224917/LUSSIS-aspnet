@@ -11,13 +11,13 @@
         <a class="nav-link active show text-dark" data-toggle="tab" href="#tab1">Items Below Reorder Level</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" data-toggle="tab" href="#tab2">Purchase Order Pending Approval</a>
+        <a class="nav-link text-dark" data-toggle="tab" href="#tab2">Pending Approval</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" data-toggle="tab" href="#tab3">Approved Purchase Order</a>
+        <a class="nav-link text-dark" data-toggle="tab" href="#tab3">Approved</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" data-toggle="tab" href="#tab4">Purchase Order Awaiting Fulfilment</a>
+        <a class="nav-link text-dark" data-toggle="tab" href="#tab4">Pending Receival</a>
     </li>
 </ul>
 <br/>
@@ -39,7 +39,6 @@
 
                     <table class="table table-hover table-striped">
                         <tr class="table-active">
-                            <th>No</th>
                             <th>Item Description</th>
                             <th>Available Quantity</th>
                             <th>Reorder Level</th>
@@ -48,7 +47,6 @@
                         @for (int i = 0; i < entry.Value.Count; i++)
                         {
                             <tr>
-                                <td>@(i + 1)</td>
                                 <td>@entry.Value[i].Description</td>
                                 <td>@entry.Value[i].AvailableQty</td>
                                 <td>@entry.Value[i].ReorderLevel</td>
@@ -81,7 +79,6 @@
             {
                 <table class="table table-hover table-striped">
                     <tr class="table-active">
-                        <th>No</th>
                         <th>Purchase Order No</th>
                         <th>Supplier</th>
                         <th>Created Date</th>
@@ -90,11 +87,8 @@
                     @for (int i = 0; i < ViewBag.pendingApprovalPOList.Count; i++)
                     {
                         <tr>
-                            <td>@(i + 1)</td>
                             <td>
-                                <button class="btn btn-info btn-sm">
-                                    <a style="color: whitesmoke" href="@Url.Action("Details", new {id = ViewBag.PendingApprovalPOList[i].PoNum})">@ViewBag.PendingApprovalPOList[i].PoNum</a>
-                                </button>
+                                <a class="btn btn-info btn-sm" style="color: whitesmoke" href="@Url.Action("Details", new {id = ViewBag.PendingApprovalPOList[i].PoNum})">@ViewBag.PendingApprovalPOList[i].PoNum</a>
                             </td>
                             <td>@ViewBag.PendingApprovalPOList[i].Supplier.SupplierName</td>
                             <td>@ViewBag.PendingApprovalPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
@@ -121,7 +115,6 @@
             {
                 <table class="table table-hover table-striped">
                     <tr class="table-active">
-                        <th>No</th>
                         <th>Purchase Order No</th>
                         <th>Supplier</th>
                         <th>Created Date</th>
@@ -130,11 +123,8 @@
                     @for (int i = 0; i < ViewBag.ApprovedPOList.Count; i++)
                     {
                         <tr>
-                            <td>@(i + 1)</td>
                             <td>
-                                <button class="btn btn-info btn-sm">
-                                    <a style="color: whitesmoke" href="@Url.Action("Order", new {p = ViewBag.ApprovedPOList[i].PoNum})">@ViewBag.ApprovedPOList[i].PoNum</a>
-                                </button>
+                                <a class="btn btn-info btn-sm" style="color: whitesmoke" href="@Url.Action("Order", new {p = ViewBag.ApprovedPOList[i].PoNum})">@ViewBag.ApprovedPOList[i].PoNum</a>
                             </td>
                             <td>@ViewBag.ApprovedPOList[i].Supplier.SupplierName</td>
                             <td>@ViewBag.ApprovedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>
@@ -161,7 +151,6 @@
             {
                 <table class="table table-hover table-striped">
                     <tr class="table-active">
-                        <th>No</th>
                         <th>Purchase Order No</th>
                         <th>Supplier</th>
                         <th>Created Date</th>
@@ -170,11 +159,8 @@
                     @for (int i = 0; i < ViewBag.OrderedPOList.Count; i++)
                     {
                         <tr>
-                            <td>@(i + 1)</td>
                             <td>
-                                <button class="btn btn-info btn-sm">
-                                    <a style="color: whitesmoke" href="@Url.Action("Receive", new {p = ViewBag.OrderedPOList[i].PoNum})">@ViewBag.OrderedPOList[i].PoNum</a>
-                                </button>
+                                <a class="btn btn-info btn-sm" style="color: whitesmoke" href="@Url.Action("Receive", new {p = ViewBag.OrderedPOList[i].PoNum})">@ViewBag.OrderedPOList[i].PoNum</a>
                             </td>
                             <td>@ViewBag.OrderedPOList[i].Supplier.SupplierName</td>
                             <td>@ViewBag.OrderedPOList[i].CreateDate.ToString("dd/MM/yyyy")</td>

@@ -1,5 +1,6 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Requisition>
 @using PagedList.Mvc;
+@using LUSSIS.Constants;
 
 @{
     ViewBag.Title = "My Requisitions";
@@ -26,7 +27,7 @@ else
             <th>
                 Date
             </th>
-            <th>
+            <th style="width: 40%">
                 Remarks
             </th>
             <th>
@@ -51,7 +52,22 @@ else
                     @Html.DisplayFor(modelItem => item.RequestRemarks)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Status)
+                    @if(item.Status.Equals(RequisitionStatus.Approved))
+                    {
+                        <strong class="text-success">@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                    else if(item.Status.Equals(RequisitionStatus.Rejected))
+                    {
+                        <strong class="text-danger">@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                    else if(item.Status.Equals(RequisitionStatus.Pending))
+                    {
+                        <strong class="text-warning">@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                    else
+                    {
+                        <strong>@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
                 </td>
                 <td>
                     @Html.ActionLink("View Details", "MyRequisitionDetails", new {id = item.RequisitionId}, new {@class = "btn btn-info btn-sm"})

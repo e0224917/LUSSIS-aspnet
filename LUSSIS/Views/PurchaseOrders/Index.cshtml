@@ -1,6 +1,7 @@
-﻿
-@model PagedList.IPagedList<LUSSIS.Models.PurchaseOrder>
+﻿@model PagedList.IPagedList<LUSSIS.Models.PurchaseOrder>
 @using PagedList.Mvc;
+@using LUSSIS.Constants;
+
 @{
     ViewBag.Title = "Index";
 }
@@ -12,10 +13,13 @@
     <thead>
         <tr class="table-active">
             <th>
-                Created Date
+                Purchase Order No
             </th>
             <th>
                 Supplier
+            </th>
+            <th>
+                Created Date
             </th>
             <th>
                 Created By
@@ -23,7 +27,6 @@
             <th>
                 Status
             </th>
-            <th>View Details</th>
         </tr>
     </thead>
     <tbody>
@@ -31,19 +34,34 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreateDate)
+                    <a class="btn btn-info btn-sm" style="color: whitesmoke" href="@Url.Action("Details", new {id = item.PoNum})">@item.PoNum</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.OrderEmployee.FullName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
-                <td>
-                    @Html.ActionLink("View Details", "Details", new { id = item.PoNum }, new { @class = "btn btn-info btn-sm" })
+                    @if(item.Status.Equals(POStatus.Approved))
+                    {
+                        <strong class="text-success">@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                    else if(item.Status.Equals(POStatus.Rejected))
+                    {
+                        <strong class="text-danger">@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                    else if(item.Status.Equals(POStatus.Pending))
+                    {
+                        <strong class="text-warning">@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                    else
+                    {
+                        <strong>@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
                 </td>
             </tr>
         }
@@ -52,24 +70,17 @@
 
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-@Html.PagedListPager(Model, page =>
-    Url.Action("Index",
-        new { page, currentFilter = ViewBag.CurrentFilter }))
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }))
 
 @section scripts {
-
     <script src="~/Scripts/jquery.tablesorter.min.js"></script>
     <link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
-
-
     <script>
         $(document).ready(function () {
-            $("#table_with_pages").tablesorter(
-                { dateFormat: "uk" },
-                {
+            $("#table_with_pages").tablesorter({
+                dateFormat: "uk",
                 headers: {
-                    
                     4: {
                         sorter: false
                     }

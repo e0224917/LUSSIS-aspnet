@@ -15,20 +15,36 @@
 }
 else
 {
-    <table class="table table-dark">
-        <tr>
+    <table class="table table-light">
+        <tr class="table-dark">
             <th>Requisition No.</th>
             <th>Requested Date</th>
             <th>Remarks</th>
-            <th class="text-warning">Status</th>
+            <th>Status</th>
         </tr>
-        <tr class="table-dark">
+        <tr>
             @if (Model.Count() != 0)
             {
                 <th>@Model.First().Requisition.RequisitionId</th>
                 <th>@Model.First().Requisition.RequisitionDate.ToShortDateString()</th>
                 <th>@Model.First().Requisition.RequestRemarks</th>
-                <th class="text-warning">@Model.First().Requisition.Status</th>
+                var status = Model.First().Requisition.Status;
+                if(status.Equals(RequisitionStatus.Approved))
+                {
+                    <th class="text-success">@Model.First().Requisition.Status</th>
+                }
+                else if(status.Equals(RequisitionStatus.Rejected))
+                {
+                    <th class="text-danger">@Model.First().Requisition.Status</th>
+                }
+                else if(status.Equals(RequisitionStatus.Pending))
+                {
+                    <th class="text-warning">@Model.First().Requisition.Status</th>
+                }
+                else
+                {
+                    <th>@Model.First().Requisition.Status</th>
+                }
             }
         </tr>
 
@@ -39,14 +55,15 @@ else
     {
         if (Model.First().Requisition.Status != RequisitionStatus.Pending)
         {
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h5>Comments from @Model.First().Requisition.ApprovalEmployee.FullName</h5>
-                </div>
-                <div class="alert alert-warning">
-                    <strong>@Model.First().Requisition.ApprovalRemarks</strong>
-                </div>
-            </div>
+    <div class="card border-dark col-sm-12 col-lg-12" style="padding: 0">
+        <div class="card-header"> 
+            @(Model.First().Requisition.Status == "rejected" ? "Rejection" : "Approval") Comments from <strong>@(Model.First().Requisition.ApprovalEmployee == null ? "" : Model.First().Requisition.ApprovalEmployee.FullName)</strong>: 
+        </div>
+        <div class="card-body">
+            @Html.DisplayFor(model => model.First().Requisition.ApprovalRemarks, new { @class = "card-text", @readonly = "readonly" })
+            <strong>@Model.First().Requisition.ApprovalRemarks</strong>
+        </div>
+    </div>
         }
     }
     <br/>

@@ -1,4 +1,6 @@
 ﻿@model LUSSIS.Models.WebDTO.PurchaseOrderDTO
+@using LUSSIS.Constants;
+
 @{
     ViewBag.Title = "Order";
 
@@ -25,8 +27,6 @@
     }
     else
     {
-        @Scripts.Render("~/bundles/jquery")
-
         <h4>Select a Purchase Order to print </h4>
         <select id="select_PO">
             <option value="0">Select a purchase order</option>
@@ -106,7 +106,26 @@ else
                         <div class="form-group">
                             <label class="control-label col-md-12 text-primary"><strong>Status</strong></label>
                             <div class="col-md-12">
-                                <input type="text" class="form-control text-primary" value="@Model.Status" disabled />
+                                @if(Model.Status.Equals(POStatus.Approved))
+                                {
+                                    <input type="text" class="form-control text-success" value="@Model.Status" disabled />
+                                }
+                                else if(Model.Status.Equals(POStatus.Rejected))
+                                {
+                                    <input type="text" class="form-control text-danger" value="@Model.Status" disabled />
+                                }
+                                else if(Model.Status.Equals(POStatus.Pending))
+                                {
+                                    <input type="text" class="form-control text-warning" value="@Model.Status" disabled />
+                                }
+                                else if(Model.Status.Equals(POStatus.Ordered))
+                                {
+                                    <input type="text" class="form-control text-primary" value="@Model.Status" disabled />
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control" value="@Model.Status" disabled />
+                                }
                             </div>
                         </div>
                         @if (Model.ApprovalEmpNum != null)
@@ -148,9 +167,9 @@ else
                     <td>@(i + 1)</td>
                     <td>@Model.PurchaseOrderDetails[i].Stationery.Description</td>
                     <td>@Model.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
-                    <td>@Model.PurchaseOrderDetails[i].UnitPrice</td>
+                    <td>$ @Model.PurchaseOrderDetails[i].UnitPrice</td>
                     <td>@(Model.PurchaseOrderDetails[i].OrderQty)</td>
-                    <td>@(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
+                    <td>$ @(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
 
                 </tr>
             }
@@ -165,7 +184,6 @@ else
 @section scripts
 {
     <script>
-
         //redirect page if PO selected from no-PO page
         $(document).on('change', '#select_PO', function () {
             if ($(this).val() != 0) {

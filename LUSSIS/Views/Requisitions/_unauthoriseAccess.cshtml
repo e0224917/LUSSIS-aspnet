@@ -1,9 +1,14 @@
 ﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
     ViewBag.Title = "Error";
 }
-<div class="jumbotron">
-    <h1 class="text-danger">Error!</h1>
-    <h2 class="text-danger">You are not allowed to approve/reject your own PO!</h2>
+<br />
+<br />
+<div class="alert alert-dismissible alert-danger">
+    <h3 class="text-danger">Error!</h3>
+    <p class="text-danger">You are not allowed to approve/reject your own PO!</p>
 </div>
 
 @*Authors: Koh Meng Guan*@

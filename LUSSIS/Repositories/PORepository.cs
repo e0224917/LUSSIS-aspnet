@@ -18,8 +18,11 @@ namespace LUSSIS.Repositories
     {
         public List<PurchaseOrder> GetPendingApprovalPO()
         {
-            return GetAll().Where(x => x.Status == Pending).ToList();
+            var list = LUSSISContext.PurchaseOrders.Where(x => x.Status == Pending).ToList();
+            list.Reverse();
+            return list;
         }
+
         public List<PurchaseOrder> GetApprovedPO()
         {
             var list = GetAll().Where(x => x.Status == Approved);
@@ -28,8 +31,9 @@ namespace LUSSIS.Repositories
 
         public List<PurchaseOrder> GetPOByStatus(string status)
         {
-            var list = GetAll().Where(x => x.Status.ToUpper() == status.ToUpper());
-            return list.ToList();
+            var list = GetAll().Where(x => x.Status.ToUpper() == status.ToUpper()).ToList();
+            list.Reverse();
+            return list;
         }
         
         public List<PendingPurchaseOrderDTO> GetPendingApprovalPODTO()
@@ -134,11 +138,6 @@ namespace LUSSIS.Repositories
         public IEnumerable<ReceiveTransDetail> GetReceiveTransDetailByItem(string id)
         {
             return LUSSISContext.ReceiveTransDetails.Where(x => x.ItemNum == id);
-        }
-
-        public IEnumerable<PurchaseOrderDetail> GetPurchaseOrderDetailsByStatus(string status)
-        {
-            return LUSSISContext.PurchaseOrderDetails.Where(x => x.PurchaseOrder.Status.ToUpper() == status.ToUpper());
         }
 
         public IEnumerable<PurchaseOrderDetail> GetAllPurchaseOrderDetails()
