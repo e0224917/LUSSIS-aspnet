@@ -19,6 +19,7 @@ namespace LUSSIS.Controllers.WebAPI
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
 
         //GET: api/Requisitions/
         [Route("api/Requisitions/Pending/{dept}")]
@@ -149,7 +150,8 @@ namespace LUSSIS.Controllers.WebAPI
             var requisitionDetail = new RequisitionDetail()
             {
                 ItemNum = detail.ItemNum,
-                Quantity = detail.Quantity
+                Quantity = detail.Quantity,
+                Stationery = _stationeryRepo.GetById(detail.ItemNum)
             };
 
             var requisition = new Requisition()
@@ -165,7 +167,7 @@ namespace LUSSIS.Controllers.WebAPI
 
             //Send email on new thread
             var headEmail = _employeeRepo.GetDepartmentHead(employee.DeptCode).EmailAddress;
-            var email = new LUSSISEmail.Builder().From(headEmail).To(employee.EmailAddress)
+            var email = new LUSSISEmail.Builder().From(employee.EmailAddress).To(headEmail)
                 .ForNewRequistion(employee.FullName, requisition).Build();
             new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 
@@ -180,6 +182,7 @@ namespace LUSSIS.Controllers.WebAPI
                 _disbursementRepo.Dispose();
                 _delegateRepo.Dispose();
                 _employeeRepo.Dispose();
+                _stationeryRepo.Dispose();
             }
 
             base.Dispose(disposing);
