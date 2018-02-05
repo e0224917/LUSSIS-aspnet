@@ -60,4 +60,21 @@
 
 </div>
 
+<script src="~/Scripts/jquery.tablesorter.min.js"></script>
+<link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css"/>
+<script>
+    $(document).ready(function() {
+            $("#myTable").tablesorter(
+                { dateFormat: "uk" },
+                {
+                    headers: {
+                        4: {
+                            sorter: false
+                        }
+                    }
+                });
+        }
+    );
+</script>
+
 @*Authors: Tang Xiaowen*@
