@@ -151,7 +151,6 @@ namespace LUSSIS.Controllers.WebAPI
             {
                 ItemNum = detail.ItemNum,
                 Quantity = detail.Quantity,
-                Stationery = _stationeryRepo.GetById(detail.ItemNum)
             };
 
             var requisition = new Requisition()
@@ -165,6 +164,7 @@ namespace LUSSIS.Controllers.WebAPI
             };
             _requistionRepo.Add(requisition);
 
+            requisition.RequisitionDetails.First().Stationery = _stationeryRepo.GetById(detail.ItemNum);
             //Send email on new thread
             var headEmail = _employeeRepo.GetDepartmentHead(employee.DeptCode).EmailAddress;
             var email = new LUSSISEmail.Builder().From(employee.EmailAddress).To(headEmail)
