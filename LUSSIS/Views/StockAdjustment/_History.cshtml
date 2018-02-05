@@ -27,43 +27,43 @@
                 Remark
             </th>
         </tr>
-       </thead><tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate, "Date of creation")
-                @Html.HiddenFor(modelItem => item.AdjVoucherId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequestEmployee.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stationery.Description, "Item")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity, "Quantity")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reason, "Reason")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status, "Status")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Remark, "Approval remark")
-            </td>
-        </tr>
-    }
-</tbody>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate, "Date of creation")
+                    @Html.HiddenFor(modelItem => item.AdjVoucherId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestEmployee.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stationery.Description, "Item")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity, "Quantity")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Reason, "Reason")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status, "Status")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Remark, "Approval remark")
+                </td>
+            </tr>
+        }
+        </tbody>
     </table>
 
 
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("History", new { page, currentFilter = ViewBag.CurrentFilter }))
+    @Html.PagedListPager(Model, page => Url.Action("History", new {page, currentFilter = ViewBag.CurrentFilter}))
 
 </div>
 
 @*Authors: Koh Meng Guan*@
-

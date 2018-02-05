@@ -5,14 +5,14 @@
 }
 
 <h2>Pending Requisition</h2>
-<hr />
+<hr/>
 
 @if (!Model.Any() || Model == null)
 {
-<div class="alert alert-dismissible alert-info">
-    <br />
-    <strong>There is no requisition yet</strong> <br /> <br />
-</div>
+    <div class="alert alert-dismissible alert-info">
+        <br/>
+        <strong>There is no requisition yet</strong> <br/> <br/>
+    </div>
 }
 else
 {
@@ -24,7 +24,7 @@ else
             <th>
                 @Html.DisplayName("Employee")
             </th>
-            <th>
+            <th style="width: 40%">
                 @Html.DisplayNameFor(model => model.RequestRemarks)
             </th>
             <th>
@@ -83,12 +83,12 @@ else
             </div>
         </div>
     </div>
-
 }
+
 @section scripts
 {
     <script>
-        var ApproveReq = function (requisitionId) {
+        var ApproveReq = function(requisitionId) {
             document.getElementById("ApprovalTitle").textContent = "Approve";
             var url = "@Url.Content("~/")Requisitions/ApproveReq?id=" + requisitionId + "&status=approved";
             $.ajax({
@@ -101,14 +101,14 @@ else
                 }
             });
         }
-        var RejectReq = function (requisitionId) {
+        var RejectReq = function(requisitionId) {
             document.getElementById("ApprovalTitle").textContent = "Reject";
             var url = "@Url.Content("~/")Requisitions/ApproveReq?id=" + requisitionId + "&status=rejected";
             $.ajax({
                 type: "GET",
                 url: url,
                 contentType: "application/json; charset=utf-8",
-                success: function (data) {
+                success: function(data) {
                     $("#myApproveModalBodyDiv").html(data);
                     $("#myApproveModal").modal("show");
                 }

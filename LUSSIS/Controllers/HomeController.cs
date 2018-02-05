@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Constants;
 using LUSSIS.Repositories;
@@ -9,7 +6,6 @@ using LUSSIS.Repositories;
 namespace LUSSIS.Controllers
 {
     //Authors: Ton That Minh Nhat, Ong Xin Ying
-    [RequireHttps]
     public class HomeController : Controller
     {
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
@@ -51,7 +47,6 @@ namespace LUSSIS.Controllers
 
             return View();
         }
-
 
         protected override void Dispose(bool disposing)
         {

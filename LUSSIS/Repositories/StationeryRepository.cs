@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using LUSSIS.Constants;
 
 namespace LUSSIS.Repositories
 {
@@ -18,14 +15,15 @@ namespace LUSSIS.Repositories
         /// <returns></returns>
         public int GetLastRunningPlusOne(string initial)
         {
-            List<Stationery> st = LUSSISContext.Stationeries.Where(x => x.ItemNum.StartsWith(initial)).ToList();
-            List<int> runningNum = new List<int>();
-            foreach (Stationery station in st)
+            var stationerys = LUSSISContext.Stationeries.Where(x => x.ItemNum.StartsWith(initial)).ToList();
+            var runningNum = new List<int>();
+            foreach (var stationery in stationerys)
             {
-                runningNum.Add(Int32.Parse(station.ItemNum.Substring(1)));
+                runningNum.Add(int.Parse(stationery.ItemNum.Substring(1)));
             }
+
             runningNum.Sort();
-            return (runningNum.Last() + 1);
+            return runningNum.Last() + 1;
         }
 
         public IEnumerable<Stationery> GetByCategory(string category)
@@ -33,9 +31,9 @@ namespace LUSSIS.Repositories
             return LUSSISContext.Stationeries.Where(s => s.Category.CategoryName == category);
         }
 
-        public IEnumerable<Stationery> GetByDescription(string Description)
+        public IEnumerable<Stationery> GetByDescription(string description)
         {
-            return LUSSISContext.Stationeries.Where(s => s.Description.Contains(Description));
+            return LUSSISContext.Stationeries.Where(s => s.Description.Contains(description));
         }
 
         public IEnumerable<String> GetAllItemNum()
@@ -46,44 +44,35 @@ namespace LUSSIS.Repositories
         public IEnumerable<Stationery> GetStationeryBySupplierId(int? id)
         {
             var q = from t1 in LUSSISContext.Stationeries
-                    join t2 in LUSSISContext.StationerySuppliers
+                join t2 in LUSSISContext.StationerySuppliers
                     on t1.ItemNum equals t2.ItemNum
-                    where t2.Supplier.SupplierId == id
-                    select t1;
+                where t2.Supplier.SupplierId == id
+                select t1;
             return q.AsEnumerable();
         }
 
         public Dictionary<Supplier, List<Stationery>> GetOutstandingStationeryByAllSupplier()
         {
-            Dictionary<Supplier, List<Stationery>> dic = new Dictionary<Supplier, List<Stationery>>();
-
+            var dictionary = new Dictionary<Supplier, List<Stationery>>();
 
             //get list of pending PO stationery and qty
-            List<Stationery> slist = GetAll().Where(x => x.AvailableQty < x.ReorderLevel).ToList();
+            var stationerys = GetAll().Where(x => x.AvailableQty < x.ReorderLevel).ToList();
 
             //fill dictionary
-            if (slist != null)
+            foreach (var stationery in stationerys)
             {
-                foreach (Stationery s in slist)
+                var primarySupplier = stationery.PrimarySupplier();
+                if (dictionary.ContainsKey(primarySupplier))
                 {
-                    Supplier primarySupplier = s.PrimarySupplier();
-                    if (dic.ContainsKey(primarySupplier))
-                    {
-                        dic[primarySupplier].Add(s);
-                    }
-                    else
-                    {
-                        dic.Add(primarySupplier, new List<Stationery>() { s });
-                    }
-
+                    dictionary[primarySupplier].Add(stationery);
+                }
+                else
+                {
+                    dictionary.Add(primarySupplier, new List<Stationery> {stationery});
                 }
             }
-            return dic;
-        }
 
-        public List<String> GetItembyCategory(int c)
-        {
-            return GetAll().Where(x => x.CategoryId == c).Select(x => x.ItemNum).ToList();
+            return dictionary;
         }
     }
 }

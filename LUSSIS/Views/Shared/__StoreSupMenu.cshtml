@@ -4,25 +4,40 @@
         <span>Adjustment</span>
     </button>
     <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
-        <li class="dropdown-item"><a href="@Url.Action("ViewPendingStockAdj", "StockAdjustment")"><span>Pending Adjustments</span></a></li>
-        <li class="dropdown-item"><a href="@Url.Action("History", "StockAdjustment")"><span>Adjustment History</span></a></li>
+        <li class="dropdown-item">
+            <a href="@Url.Action("ViewPendingStockAdj", "StockAdjustment")">
+                <span>Pending Adjustments</span>
+            </a>
+        </li>
+        <li class="dropdown-item">
+            <a href="@Url.Action("History", "StockAdjustment")">
+                <span>Adjustment History</span>
+            </a>
+        </li>
     </ul>
 </div>
 @if (!User.IsInRole(Role.Manager))
 {
-<div class="dropdown nav navbar-nav">
-    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        <span>P.O.</span>
-    </button>
-    <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
-        <li class="dropdown-item"><a href="@Url.Action("PendingPO", "PurchaseOrders")"><span>Pending P.O.</span></a></li>
-        <li class="dropdown-item"><a href="@Url.Action("Index", "PurchaseOrders")"><span>P.O. History</span></a></li>
-    </ul>
-</div>
+    <div class="dropdown nav navbar-nav">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span>P.O.</span>
+        </button>
+        <ul class="dropdown-menu navbar-nav" aria-labelledby="dropdownMenu1">
+            <li class="dropdown-item">
+                <a href="@Url.Action("PendingPO", "PurchaseOrders")">
+                    <span>Pending P.O.</span>
+                </a>
+            </li>
+            <li class="dropdown-item">
+                <a href="@Url.Action("Index", "PurchaseOrders")">
+                    <span>P.O. History</span>
+                </a>
+            </li>
+        </ul>
+    </div>
 }
 <div class="nav navbar-nav">
-    <a class="btn btn-primary" style="-webkit-appearance:none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("TrendAnalysis", "SupervisorDashboard")"><span>Trend Analysis</span></a>
+    <a class="btn btn-primary" style="-webkit-appearance: none" type="button" aria-haspopup="true" aria-expanded="true" href="@Url.Action("TrendAnalysis", "SupervisorDashboard")">
+        <span>Trend Analysis</span>
+    </a>
 </div>
-
-
-

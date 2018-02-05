@@ -5,13 +5,13 @@
 }
 
 <h2>Upcoming Collection</h2>
-<hr />
+<hr/>
 
 @if (@Model == null || @Model.DisbursementDetails.Count == 0)
 {
     <div class="alert alert-dismissible alert-info">
-        <br />
-        <strong>No disbursement to be collected at the moment.</strong> <br /><br />
+        <br/>
+        <strong>No disbursement to be collected at the moment.</strong> <br/><br/>
     </div>
 }
 else
@@ -71,11 +71,8 @@ else
                     @Html.DisplayFor(modelItem => item.ActualQty)
                 </td>
             </tr>
-
         }
     </table>
-
 }
 
 @*Authors: Ong Xin Ying*@
-

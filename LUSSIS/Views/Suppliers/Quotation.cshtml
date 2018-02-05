@@ -1,10 +1,9 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Quotation";
 }
 
 <h2>Upload Quotations</h2>
-<hr />
+<hr/>
 @if (ViewBag.Success != null)
 {
     <div class="alert alert-success">
@@ -19,24 +18,21 @@
     </div>
 }
 
-@using (Html.BeginForm("Quotation", "Suppliers", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Quotation", "Suppliers", FormMethod.Post, new {enctype = "multipart/form-data"}))
 {
-
-
     <div class="jumbotron">
 
         <p for="exampleInputFile">File input</p>
-        <input type="file" name="file1" id="file1" value="Browse Folder" />
+        <input type="file" name="file1" id="file1" value="Browse Folder"/>
         <p></p><small id="fileHelp" class="form-text text-muted">supported format: .xlsx</small>
-        <br /><br />
-        <p><strong>Click @Html.ActionLink("here", "QuotationTemplate") to download the latest template which will be used to upload the final suppliers for each stationery</strong></p>
+        <br/><br/>
+        <p>
+            <strong>Click @Html.ActionLink("here", "QuotationTemplate") to download the latest template which will be used to upload the final suppliers for each stationery</strong>
+        </p>
 
-        <br />
+        <br/>
     </div>
-    <input type="submit" value="Upload Quotation" class="btn btn-success btn-lg" style="width:40%" />
-
+    <input type="submit" value="Upload Quotation" class="btn btn-success btn-lg" style="width: 40%"/>
 }
 
-@*Authors: Ton That Minh Nhat*@
-
-
+@*Authors: Douglas Lee Kiat Hui*@

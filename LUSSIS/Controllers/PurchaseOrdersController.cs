@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using CrystalDecisions.CrystalReports.Engine;
 using LUSSIS.Constants;
@@ -21,10 +17,9 @@ using LUSSIS.Repositories;
 using PagedList;
 using static LUSSIS.Constants.POStatus;
 
-
 namespace LUSSIS.Controllers
 {
-    //Authors: Douglas Lee Kiat Hui Authors: May Zin Ko 
+    //Authors: Douglas Lee Kiat Hui, May Zin Ko 
     [Authorize(Roles = "clerk, supervisor")]
     public class PurchaseOrdersController : Controller
     {
@@ -130,14 +125,16 @@ namespace LUSSIS.Controllers
             {
                 if (kvp.Key.SupplierId == supplierId)
                 {
-                    foreach (Stationery stationery in kvp.Value)
+                    foreach (var stationery in kvp.Value)
                     {
-                        PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO();
-                        pdetails.OrderQty =
-                                            Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
-                                                Convert.ToInt32(stationery.ReorderQty));
-                        pdetails.UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId));
-                        pdetails.ItemNum = stationery.ItemNum;
+                        PurchaseOrderDetailDTO pdetails = new PurchaseOrderDetailDTO
+                        {
+                            OrderQty = Math.Max(Convert.ToInt32(stationery.ReorderLevel - stationery.AvailableQty),
+                                Convert.ToInt32(stationery.ReorderQty)),
+                            UnitPrice = stationery.UnitPrice(Convert.ToInt32(supplierId)),
+                            ItemNum = stationery.ItemNum,
+                            ReorderQty = stationery.ReorderQty
+                        };
                         po.PurchaseOrderDetailsDTO.Add(pdetails);
                     }
                     break;
@@ -195,8 +192,7 @@ namespace LUSSIS.Controllers
                 //validate PO
                 if (purchaseOrderDto.SupplierContact == null)
                     throw new Exception("Please input the supplier contact");
-                if (purchaseOrderDto.SupplierAddress.Trim() == "")
-                    throw new Exception("Please input the supplier address");
+               
                 else if (!ModelState.IsValid)
                     throw new Exception("IT Error: please contact your administrator");
 
@@ -398,6 +394,7 @@ namespace LUSSIS.Controllers
         }
 
         [Authorize(Roles = Role.Supervisor)]
+        // ReSharper disable once InconsistentNaming
         public ActionResult PendingPO()
         {
             return View(_poRepo.GetPendingApprovalPODTO());
@@ -425,34 +422,28 @@ namespace LUSSIS.Controllers
 
             foreach (int id in idList)
             {
-                HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
-                String empNum = cookie["EmpNum"];
-                _poRepo.UpDatePO(id, status.ToUpper() == "APPROVE" ? Approved : Rejected, empNum);
+                var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+                var po = _poRepo.GetById(id);
+                po.Status = status.ToUpper() == "APPROVE" ? Approved : Rejected;
+                po.ApprovalEmpNum = empNum;
+                po.ApprovalDate = DateTime.Today;
+                _poRepo.Update(po);
 
                 if (status.ToUpper() == "APPROVE")
                 {
-                    List<PurchaseOrderDetail> pDetail = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
+                    var purchaseOrderDetails = _poRepo.GetPurchaseOrderDetailsById(id).ToList();
 
-                    foreach (var p in pDetail)
+                    foreach (var p in purchaseOrderDetails)
                     {
-                        Stationery st = new Stationery();
-                        st = _stationeryRepo.GetById(p.ItemNum);
-                        st.AvailableQty = p.OrderQty + st.AvailableQty;
-                        _stationeryRepo.Update(st);
+                        var stationery = _stationeryRepo.GetById(p.ItemNum);
+                        stationery.AvailableQty = p.OrderQty + stationery.AvailableQty;
+                        _stationeryRepo.Update(stationery);
                     }
                 }
             }
 
             return PartialView("_ApproveRejectPO");
         }
-        //[Authorize(Roles = Role.Supervisor)]
-        //[HttpPost]
-
-        //public ActionResult DeleteItem(string id)
-        //{
-
-        //    return View();
-        //}
 
         protected override void Dispose(bool disposing)
         {

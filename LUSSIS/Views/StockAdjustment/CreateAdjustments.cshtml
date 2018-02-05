@@ -4,14 +4,13 @@
     ViewBag.Title = "CreateAdjustments";
 }
 <h2>Create Adjustments</h2>
-<hr />
+<hr/>
 
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
-
 <div class="text-right">
     <button id="add" type="button" class="btn btn-info">Add Row</button>
-</div><br />
+</div><br/>
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -31,39 +30,42 @@
             <td></td>
         </tr>
         <tbody id="AdjustmentsDiv">
-            @foreach (var adjustment in Model.MyList)
-            {
-                @Html.Partial("_CreateAdjustments", new LUSSIS.Models.WebDTO.AdjustmentVoucherDTO())
-            }
+        @foreach (var adjustment in Model.MyList)
+        {
+            @Html.Partial("_CreateAdjustments", new LUSSIS.Models.WebDTO.AdjustmentVoucherDTO())
+        }
 
         </tbody>
     </Table>
 
-    <br />
+    <br/>
     <div class="text-right">
-        <input type="submit" value="Submit" class="btn btn-success btn-lg" style="width:40%" />
+        <input type="submit" value="Submit" class="btn btn-success btn-lg" style="width: 40%"/>
     </div>
 }
 
 
 
-    @*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+@*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
-    <script type="text/javascript">
-        $(document).on("click", ".deleteEntry", function () {
+<script type="text/javascript">
+    $(document).on("click",
+        ".deleteEntry",
+        function() {
             $(this).closest("tr").remove();
         });
-        $(document).ready(function () {
-            loadAutoComplete();
-        });
+    $(document).ready(function() {
+        loadAutoComplete();
+    });
 
     var url = '@Url.Action("_CreateAdjustments")';
     var form = $("form");
     var itemSearch = $(".itemSearch");
     var Adjustments = $('#AdjustmentsDiv');
-        $('#add').click(function () {
-            $.get(url, function (response) {
+    $('#add').click(function() {
+        $.get(url,
+            function(response) {
                 Adjustments.append(response);
                 //form.removeData("validator");
                 //form.removeData("unobtrusiveValidation");
@@ -71,40 +73,39 @@
                 loadAutoComplete();
             });
 
-        })
+    });
 
-        function loadAutoComplete(){
-            $('.itemSearch').each(function () {
-                $(this).autocomplete({
-                    source: function (request, response) {
-                        $.ajax({
-                            url: '@Url.Content("~/")StockAdjustment/GetItemNum',
-                            data: { term: request.term },
-                            dataType: 'json',
-                            type: 'GET',
-                            success: function (data) {
-                                response($.map(data, function (item) {
+    function loadAutoComplete() {
+        $('.itemSearch').each(function() {
+            $(this).autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: '@Url.Content("~/")StockAdjustment/GetItemNum',
+                        data: { term: request.term },
+                        dataType: 'json',
+                        type: 'GET',
+                        success: function(data) {
+                            response($.map(data,
+                                function(item) {
                                     return {
                                         label: item
                                     };
                                 }));
-                            }
-                        })
-                    },
-                    select: function (event, ui) {
-                        // Get the associated hidden input
-                        var input = $(this).closest('.item').find('input');
-                        // Set the value of the id property
-                        input.val(ui.item.id);
-                    },
-                    minLength: 1
-                });
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    // Get the associated hidden input
+                    var input = $(this).closest('.item').find('input');
+                    // Set the value of the id property
+                    input.val(ui.item.id);
+                },
+                minLength: 1
             });
+        });
 
-        };
-    </script>
-
+    };
+</script>
 
 
 @*Authors: Koh Meng Guan*@
-

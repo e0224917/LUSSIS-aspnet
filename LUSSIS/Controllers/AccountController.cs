@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -10,9 +7,11 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LUSSIS.Models;
 using System.Collections.Generic;
+using LUSSIS.Constants;
 using LUSSIS.Repositories;
 using LUSSIS.Models.WebDTO;
 using LUSSIS.Emails;
+using LUSSIS.Models.Account;
 
 namespace LUSSIS.Controllers
 {
@@ -23,12 +22,13 @@ namespace LUSSIS.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
+        private readonly DelegateRepository _delegateRepo = new DelegateRepository();
 
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -69,24 +69,29 @@ namespace LUSSIS.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe,
+                shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
-                    var context = new LUSSISContext();
-                    var emp = context.Employees.FirstOrDefault(e => e.EmailAddress == model.Email);
+                    var employee = _employeeRepo.GetEmployeeByEmail(model.Email);
                     var cookie = new HttpCookie("Employee");
-                    cookie["Name"] = emp.FullName;
-                    cookie["DeptCode"] = emp.DeptCode;
-                    cookie["EmpNum"] = emp.EmpNum.ToString();
+                    if (employee != null)
+                    {
+                        cookie["Name"] = employee.FullName;
+                        cookie["DeptCode"] = employee.DeptCode;
+                        cookie["EmpNum"] = employee.EmpNum.ToString();
+                    }
+
                     Response.Cookies.Add(cookie);
-                    
+
                     //return RedirectToLocal(returnUrl);
-                    return RedirectToAction("Index","Home");
+                    return RedirectByRole(employee?.JobTitle);
+                //return RedirectToAction("Index","Home");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 default:
-                    ModelState.AddModelError("", "Wrong email or password. Please try again.");
+                    ModelState.AddModelError("", @"Wrong email or password. Please try again.");
                     return View(model);
             }
         }
@@ -110,24 +115,32 @@ namespace LUSSIS.Controllers
             {
                 if (!IsEmailExist(model.Email))
                 {
-                    ModelState.AddModelError("", "Email not exist in database");
+                    ModelState.AddModelError("", @"Email not exist in database");
                     return View(model);
                 }
 
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser {UserName = model.Email, Email = model.Email};
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    UserManager.AddToRole(user.Id, _employeeRepo.GetEmployeeByEmail(model.Email).JobTitle);
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
-                    return RedirectToAction("Index", "Home");
+                    var employee = _employeeRepo.GetEmployeeByEmail(model.Email);
+
+                    UserManager.AddToRole(user.Id, employee.JobTitle);
+
+                    var cookie = new HttpCookie("Employee")
+                    {
+                        ["Name"] = employee.FullName,
+                        ["DeptCode"] = employee.DeptCode,
+                        ["EmpNum"] = employee.EmpNum.ToString()
+                    };
+
+                    Response.Cookies.Add(cookie);
+
+                    return RedirectByRole(employee.JobTitle);
                 }
+
                 AddErrors(result);
             }
 
@@ -150,6 +163,7 @@ namespace LUSSIS.Controllers
             {
                 return View("Error");
             }
+
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
@@ -177,13 +191,15 @@ namespace LUSSIS.Controllers
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
+
                 // Send an email with reset link
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new {userId = user.Id, code }, protocol: Request.Url.Scheme);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new {userId = user.Id, code},
+                    protocol: Request.Url?.Scheme);
                 var fullName = _employeeRepo.GetEmployeeByEmail(model.Email).FullName;
                 var email = new LUSSISEmail.Builder().From("sa45team7@gmail.com").To(model.Email)
                     .ForResetPassword(fullName, callbackUrl).Build();
-                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                new System.Threading.Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
@@ -218,17 +234,20 @@ namespace LUSSIS.Controllers
             {
                 return View(model);
             }
+
             var user = await UserManager.FindByNameAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             AddErrors(result);
             return View();
         }
@@ -250,8 +269,7 @@ namespace LUSSIS.Controllers
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             Session["Name"] = "";
             Session["Roles"] = new List<string>();
-            ShoppingCartDTO sc = new ShoppingCartDTO();
-            Session["MyCart"] = sc;
+            Session["MyCart"] = new ShoppingCartDTO();
             return RedirectToAction("Index", "Home");
         }
 
@@ -276,12 +294,16 @@ namespace LUSSIS.Controllers
                     _signInManager.Dispose();
                     _signInManager = null;
                 }
+
+                _employeeRepo.Dispose();
+                _delegateRepo.Dispose();
             }
 
             base.Dispose(disposing);
         }
 
         #region Helpers
+
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -295,13 +317,28 @@ namespace LUSSIS.Controllers
             }
         }
 
-        private ActionResult RedirectToLocal(string returnUrl)
+        private ActionResult RedirectByRole(string role)
         {
-            if (Url.IsLocalUrl(returnUrl))
+            switch (role)
             {
-                return Redirect(returnUrl);
+                case Role.Staff:
+                    var empNum = Convert.ToInt32(Response.Cookies["Employee"]?["EmpNum"]);
+                    var isDelegate = _delegateRepo.FindCurrentByEmpNum(empNum) != null;
+                    return RedirectToAction("Index",
+                        isDelegate ? "RepAndDelegate" : "Requisitions");
+                case Role.Representative:
+                    return RedirectToAction("Index", "Collection");
+                case Role.DepartmentHead:
+                    return RedirectToAction("Index", "RepAndDelegate");
+                case Role.Clerk:
+                    return RedirectToAction("Consolidated", "Requisitions");
+                case Role.Supervisor:
+                    return RedirectToAction("Index", "SupervisorDashboard");
+                case Role.Manager:
+                    return RedirectToAction("Index", "SupervisorDashboard");
+                default:
+                    return RedirectToAction("Index", "Home");
             }
-            return RedirectToAction("Index", "Home");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult
@@ -324,14 +361,16 @@ namespace LUSSIS.Controllers
 
             public override void ExecuteResult(ControllerContext context)
             {
-                var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
+                var properties = new AuthenticationProperties {RedirectUri = RedirectUri};
                 if (UserId != null)
                 {
                     properties.Dictionary[XsrfKey] = UserId;
                 }
+
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
         }
+
         #endregion
     }
 }

@@ -1,9 +1,6 @@
 ﻿using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Constants;
 
@@ -49,8 +46,8 @@ namespace LUSSIS.Controllers
 
                 ViewData["message"] = "Collection Point updated successfully";
                 return PartialView("_SetCollection", department.CollectionPoint);
-                
             }
+
             return RedirectToAction("SetCollection");
         }
 

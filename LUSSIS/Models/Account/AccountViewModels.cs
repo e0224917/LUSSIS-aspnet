@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace LUSSIS.Models
+namespace LUSSIS.Models.Account
 {
     public class ExternalLoginConfirmationViewModel
     {

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -24,9 +22,10 @@ namespace LUSSIS
             var json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
             json.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
         }
-        void Session_Start(object sender, EventArgs e)
+
+        protected void Session_Start(object sender, EventArgs e)
         {
-            ShoppingCartDTO shoppingCart = new ShoppingCartDTO();
+            var shoppingCart = new ShoppingCartDTO();
             Session["MyCart"] = shoppingCart;
             Session["Name"] = "";
             Session["Roles"] = new List<string>();

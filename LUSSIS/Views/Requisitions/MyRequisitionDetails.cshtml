@@ -1,103 +1,115 @@
 ﻿@using LUSSIS.Constants
 @model IEnumerable<LUSSIS.Models.RequisitionDetail>
 
+@{
+    ViewBag.Title = "My Requisition Details";
+}
 
-    @{
-        ViewBag.Title = "My Requisition Details";
-
-    }
-
-    <h2>My Requisition Details</h2>
-    <hr />
-    @if (!Model.Any())
-    {
-        <div class="alert alert-dismissible alert-info">
-            <strong>Heads up!</strong> This <a href="#" class="alert-link">alert needs your attention</a>, but it's not super important.
-        </div>
-    }
-    else
-    {
-        <table class="table table-dark">
-            <tr>
-                <th>Requisition No.</th>
-                <th>Requested Date</th>
-                <th>Remarks</th>
-                <th class="text-warning">Status</th>
-            </tr>
-            <tr class="table-dark">
-                @if (Model.Count() != 0)
+<h2>My Requisition Details</h2>
+<hr/>
+@if (!Model.Any())
+{
+    <div class="alert alert-dismissible alert-info">
+        <strong>Heads up!</strong> This <a href="#" class="alert-link">alert needs your attention</a>, but it's not super important.
+    </div>
+}
+else
+{
+    <table class="table table-light">
+        <tr class="table-dark">
+            <th>Requisition No.</th>
+            <th>Requested Date</th>
+            <th>Remarks</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            @if (Model.Count() != 0)
+            {
+                <th>@Model.First().Requisition.RequisitionId</th>
+                <th>@Model.First().Requisition.RequisitionDate.ToShortDateString()</th>
+                <th>@Model.First().Requisition.RequestRemarks</th>
+                var status = Model.First().Requisition.Status;
+                if(status.Equals(RequisitionStatus.Approved))
                 {
-                    <th>@Model.First().Requisition.RequisitionId</th>
-                    <th>@Model.First().Requisition.RequisitionDate.ToShortDateString()</th>
-                    <th>@Model.First().Requisition.RequestRemarks</th>
+                    <th class="text-success">@Model.First().Requisition.Status</th>
+                }
+                else if(status.Equals(RequisitionStatus.Rejected))
+                {
+                    <th class="text-danger">@Model.First().Requisition.Status</th>
+                }
+                else if(status.Equals(RequisitionStatus.Pending))
+                {
                     <th class="text-warning">@Model.First().Requisition.Status</th>
                 }
-            </tr>
-
-        </table>
-        <hr />
-
-        if (Model.Count() != 0)
-        {
-            if (Model.First().Requisition.Status != RequisitionStatus.Pending)
-            {
-                <div class="panel panel-info">
-                    <div class="panel-heading"><h5>Comments from @Model.First().Requisition.ApprovalEmployee.FullName</h5></div>
-                    <div class="alert alert-warning"><strong>@Model.First().Requisition.ApprovalRemarks</strong> </div>
-                </div>
-            }
-        }
-        <br />
-        <h5>Requested Stationery Items</h5>
-        <table id="myTable" class="table table-striped table-hover tablesorter">
-            <thead>
-                <tr class="table-active">
-                    <th>
-                        Stationery Item
-                    </th>
-                    <th>
-                        UOM
-                    </th>
-                    <th>
-                        Quantity
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
+                else
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Stationery.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Quantity)
-                        </td>
-                    </tr>
+                    <th>@Model.First().Requisition.Status</th>
                 }
-            </tbody>
-        </table>
+            }
+        </tr>
 
+    </table>
+    <hr/>
 
+    if (Model.Count() != 0)
+    {
+        if (Model.First().Requisition.Status != RequisitionStatus.Pending)
+        {
+    <div class="card border-dark col-sm-12 col-lg-12" style="padding: 0">
+        <div class="card-header"> 
+            @(Model.First().Requisition.Status == "rejected" ? "Rejection" : "Approval") Comments from <strong>@(Model.First().Requisition.ApprovalEmployee == null ? "" : Model.First().Requisition.ApprovalEmployee.FullName)</strong>: 
+        </div>
+        <div class="card-body">
+            @Html.DisplayFor(model => model.First().Requisition.ApprovalRemarks, new { @class = "card-text", @readonly = "readonly" })
+            <strong>@Model.First().Requisition.ApprovalRemarks</strong>
+        </div>
+    </div>
+        }
     }
+    <br/>
+    <h5>Requested Stationery Items</h5>
+    <table id="myTable" class="table table-striped table-hover tablesorter">
+        <thead>
+        <tr class="table-active">
+            <th>
+                Stationery Item
+            </th>
+            <th>
+                UOM
+            </th>
+            <th>
+                Quantity
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stationery.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stationery.UnitOfMeasure)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 
-    @section scripts {
-
-        <script src="~/Scripts/jquery.tablesorter.min.js"></script>
-        <link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css" />
-
-        <script>
-            $(document).ready(function () {
+@section scripts {
+    <script src="~/Scripts/jquery.tablesorter.min.js"></script>
+    <link href="~/Content/sorter/style.css" rel="stylesheet" type="text/css"/>
+    <script>
+        $(document).ready(function() {
                 $("#myTable").tablesorter();
             }
-            );
-        </script>
+        );
+    </script>
+}
 
-    }
-
-    @*Authors: Cui Runze*@
-
-
+@*Authors: Cui Runze*@

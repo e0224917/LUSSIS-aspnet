@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 using LUSSIS.Models;
 
 namespace LUSSIS.Emails
@@ -45,13 +42,14 @@ namespace LUSSIS.Emails
         }
     }
 
+    //Author: Ton That Minh Nhat
     public class LUSSISEmail
     {
         public string Subject { get; }
         public string Body { get; }
         public string FromEmail { get; }
         public string ToEmail { get; }
-        
+
         /// <summary>
         /// Builder class to make an email. 
         /// Should include three methods: From(), To() and For...(), 
@@ -63,28 +61,10 @@ namespace LUSSIS.Emails
             public string Body { get; private set; }
             public string FromEmail { get; private set; }
             public string ToEmail { get; private set; }
-            private Employee FromEmployee { get; set; }
-
-            public Builder()
-            {
-            }
 
             public Builder From(string fromEmail)
             {
                 FromEmail = fromEmail;
-                return this;
-            }
-
-            public Builder From(Employee employee)
-            {
-                FromEmployee = employee;
-                FromEmail = employee.EmailAddress;
-                return this;
-            }
-
-            public Builder To(Employee employee)
-            {
-                ToEmail = employee.EmailAddress;
                 return this;
             }
 
@@ -120,10 +100,10 @@ namespace LUSSIS.Emails
             public Builder ForNonPrimaryNewPo(string supplierName, PurchaseOrder purchaseOrder,
                 List<Stationery> stationerys)
             {
-                Subject = "Purchasing from Non-Primary Supplier";
+                Subject = "Purchasing from Secondary Supplier";
                 //send email if using non=primary supplier
                 var body = new StringBuilder();
-                body.AppendLine("Non-Primary Suppliers in Purchase Order " + purchaseOrder.PoNum);
+                body.AppendLine("Secondary Suppliers in Purchase Order " + purchaseOrder.PoNum);
                 body.AppendLine("This email is automatically generated and requires no reply to the sender.");
                 body.AppendLine("Created for Supplier: " + supplierName);
                 var index = 0;
@@ -173,6 +153,7 @@ namespace LUSSIS.Emails
                 Body = body.ToString();
                 return this;
             }
+
             public Builder ForNewRepresentative()
             {
                 Subject = "You have been assigned as the department representative.";
@@ -224,7 +205,7 @@ namespace LUSSIS.Emails
                 Body = body.ToString();
                 return this;
             }
-            
+
             public Builder ForNewRequistion(string fullName, Requisition requisition)
             {
                 Subject = "New requisition from " + fullName;
@@ -236,8 +217,8 @@ namespace LUSSIS.Emails
                 {
                     var stationery = detail.Stationery;
 
-                    body.AppendLine(stationery?.Description.PadRight(30, ' ') + "\t\t" +
-                                    stationery?.UnitOfMeasure.PadRight(30, ' ') +
+                    body.AppendLine(stationery.Description.PadRight(30, ' ') + "\t\t" +
+                                    stationery.UnitOfMeasure.PadRight(30, ' ') +
                                     "\t\t" + detail.Quantity.ToString().PadRight(30, ' '));
                 }
 
@@ -248,12 +229,13 @@ namespace LUSSIS.Emails
             public Builder ForRequisitionApproval(Requisition requisition)
             {
                 Subject = "Requistion " + requisition.RequisitionId + " made on " +
-                                 requisition.RequisitionDate.ToString("dd-MM-yyyy") + " has been " + requisition.Status;
+                          requisition.RequisitionDate.ToString("dd-MM-yyyy") + " has been " + requisition.Status;
 
                 var body = new StringBuilder();
                 body.AppendLine("Your Requisition " + requisition.RequisitionId + " made on " +
-                    requisition.RequisitionDate.ToString("dd-MM-yyyy") + " has been " + requisition.Status + " by " +
-                    requisition.ApprovalEmployee.FullName);
+                                requisition.RequisitionDate.ToString("dd-MM-yyyy") + " has been " + requisition.Status +
+                                " by " +
+                                requisition.ApprovalEmployee.FullName);
                 body.AppendLine("Requested: ");
                 foreach (var detail in requisition.RequisitionDetails)
                 {
@@ -321,12 +303,5 @@ namespace LUSSIS.Emails
             if (string.IsNullOrEmpty(builder.Body)) throw new MissingFieldException();
             Body = builder.Body;
         }
-    }
-
-    public enum EmailIntention
-    {
-        NewRequisition,
-        ApproveRequisition,
-        NewPo
     }
 }

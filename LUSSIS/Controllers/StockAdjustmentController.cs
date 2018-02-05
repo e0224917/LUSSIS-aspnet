@@ -3,11 +3,8 @@ using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Constants;
 using PagedList;
@@ -24,13 +21,14 @@ namespace LUSSIS.Controllers
         private readonly StockAdjustmentRepository _stockAdjustmentRepo = new StockAdjustmentRepository();
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
 
-        // GET: StockAdjustment
+        // GET: /StockAdjustment
         public ActionResult Index()
         {
             return RedirectToAction("History");
         }
 
         //Author: Koh Meng Guan
+        // GET: /StockAdjustment/History
         public ActionResult History(string searchString, string currentFilter, int? page)
         {
             if (searchString != null)
@@ -60,6 +58,7 @@ namespace LUSSIS.Controllers
 
 
         //Author: Koh Meng Guan
+        // GET: /StockAdjustment/CreateAdjustments
         [Authorize(Roles = Role.Clerk)]
         [HttpGet]
         public ActionResult CreateAdjustments()
@@ -73,6 +72,7 @@ namespace LUSSIS.Controllers
         }
 
         //Author: Koh Meng Guan
+        // POST: /StockAdjustment/CreateAdjustments
         [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         public ActionResult CreateAdjustments(AdjVoucherColView adjVoucherColView)
@@ -91,10 +91,11 @@ namespace LUSSIS.Controllers
                         {
                             adjVoucherDto.Quantity = adjVoucherDto.Quantity * -1;
                         }
-                        var st = _stationeryRepo.GetById(adjVoucherDto.ItemNum);
-                        st.AvailableQty = st.AvailableQty + adjVoucherDto.Quantity;
-                        st.CurrentQty = st.CurrentQty + adjVoucherDto.Quantity;
-                        _stationeryRepo.Update(st);
+
+                        var stationery = _stationeryRepo.GetById(adjVoucherDto.ItemNum);
+                        stationery.AvailableQty = stationery.AvailableQty + adjVoucherDto.Quantity;
+                        stationery.CurrentQty = stationery.CurrentQty + adjVoucherDto.Quantity;
+                        _stationeryRepo.Update(stationery);
 
                         var adjustment = new AdjVoucher
                         {
@@ -109,12 +110,14 @@ namespace LUSSIS.Controllers
                         adjustment.Stationery = _stockAdjustmentRepo.AddStockAdjustment(adjustment);
                         vouchers.Add(adjustment);
                     }
+
                     //Although there is a threshold of $250, both supervisor and manager will be informed of all adjustments regardless of price
                     //If desired, the threshold can be applied by getting price * quantity and setting if (total price > 250) 
                     foreach (AdjVoucher av in vouchers)
                     {
                         av.Stationery = _stationeryRepo.GetById(av.ItemNum);
                     }
+
                     var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                     var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
                     var email1 = new LUSSISEmail.Builder().From(self.EmailAddress)
@@ -122,8 +125,8 @@ namespace LUSSIS.Controllers
                     var email2 = new LUSSISEmail.Builder().From(self.EmailAddress)
                         .To(supervisorEmail).ForNewStockAdjustments(self.FullName, vouchers).Build();
 
-                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email1); }).Start();
-                    new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email2); }).Start();
+                    new System.Threading.Thread(delegate() { EmailHelper.SendEmail(email1); }).Start();
+                    new System.Threading.Thread(delegate() { EmailHelper.SendEmail(email2); }).Start();
 
                     return RedirectToAction("History");
                 }
@@ -142,6 +145,7 @@ namespace LUSSIS.Controllers
         }
 
         //Author: Koh Meng Guan
+        // GET: /StockAdjustment/CreateAdjustment
         [Authorize(Roles = Role.Clerk)]
         [HttpGet]
         public ActionResult CreateAdjustment(string id)
@@ -161,6 +165,7 @@ namespace LUSSIS.Controllers
         }
 
         //Author: Koh Meng Guan
+        // POST: /StockAdjustment/CreateAdjustment
         [Authorize(Roles = Role.Clerk)]
         [HttpPost]
         public ActionResult CreateAdjustment([Bind(Include = "Quantity,Reason,ItemNum,Sign")]
@@ -175,10 +180,11 @@ namespace LUSSIS.Controllers
                 {
                     adjVoucherDto.Quantity = adjVoucherDto.Quantity * -1;
                 }
-                var st = _stationeryRepo.GetById(adjVoucherDto.ItemNum);
-                st.AvailableQty = st.AvailableQty + adjVoucherDto.Quantity;
-                st.CurrentQty = st.CurrentQty + adjVoucherDto.Quantity;
-                _stationeryRepo.Update(st);
+
+                var stationery = _stationeryRepo.GetById(adjVoucherDto.ItemNum);
+                stationery.AvailableQty = stationery.AvailableQty + adjVoucherDto.Quantity;
+                stationery.CurrentQty = stationery.CurrentQty + adjVoucherDto.Quantity;
+                _stationeryRepo.Update(stationery);
 
                 var adjustment = new AdjVoucher
                 {
@@ -188,12 +194,11 @@ namespace LUSSIS.Controllers
                     Status = Pending,
                     RequestEmpNum = empNum,
                     CreateDate = DateTime.Today
-                   
                 };
 
 
                 adjustment.Stationery = _stockAdjustmentRepo.AddStockAdjustment(adjustment);
-                
+
 
                 var managerEmail = _employeeRepo.GetStoreManager().EmailAddress;
                 var supervisorEmail = _employeeRepo.GetStoreSupervisor().EmailAddress;
@@ -202,8 +207,8 @@ namespace LUSSIS.Controllers
                 var email2 = new LUSSISEmail.Builder().From(self.EmailAddress)
                     .To(supervisorEmail).ForNewStockAdjustment(self.FullName, adjustment).Build();
 
-                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email1); }).Start();
-                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email2); }).Start();
+                new System.Threading.Thread(delegate() { EmailHelper.SendEmail(email1); }).Start();
+                new System.Threading.Thread(delegate() { EmailHelper.SendEmail(email2); }).Start();
 
                 return RedirectToAction("History");
             }
@@ -217,7 +222,7 @@ namespace LUSSIS.Controllers
         [HttpGet]
         public JsonResult GetItemNum(string term)
         {
-            List<String> itemList;
+            List<string> itemList;
             if (string.IsNullOrEmpty(term))
             {
                 itemList = _stationeryRepo.GetAllItemNum().ToList();
@@ -263,45 +268,42 @@ namespace LUSSIS.Controllers
             {
                 idList[i] = int.Parse(list[i]);
             }
-            HttpCookie cookie = HttpContext.Request.Cookies.Get("Employee");
-            String empNum = cookie["EmpNum"];
-            if(status=="rejected")
+
+            var empNum = Convert.ToInt32(Request.Cookies["Employee"]?["EmpNum"]);
+            if (status == Rejected)
             {
                 foreach (var id in idList)
                 {
                     var adjustment = _stockAdjustmentRepo.GetById(id);
                     adjustment.Status = status;
 
-                    String item = adjustment.ItemNum;
-                    Stationery st = new Stationery();
-                    st = _stationeryRepo.GetById(item);
-                    st.AvailableQty = st.AvailableQty - adjustment.Quantity;
-                    st.CurrentQty = st.CurrentQty - adjustment.Quantity;
-                    _stationeryRepo.Update(st);
+                    var itemNum = adjustment.ItemNum;
+                    var stationery = _stationeryRepo.GetById(itemNum);
+                    stationery.AvailableQty = stationery.AvailableQty - adjustment.Quantity;
+                    stationery.CurrentQty = stationery.CurrentQty - adjustment.Quantity;
+                    _stationeryRepo.Update(stationery);
 
                     adjustment.Remark = comment;
                     adjustment.ApprovalDate = DateTime.Today;
-                    adjustment.ApprovalEmpNum = Convert.ToInt32(empNum);
+                    adjustment.ApprovalEmpNum = empNum;
                     _stockAdjustmentRepo.Update(adjustment);
                 }
             }
             else
             {
-                foreach(var id in idList)
+                foreach (var id in idList)
                 {
                     var adjustment = _stockAdjustmentRepo.GetById(id);
                     adjustment.Status = status;
                     adjustment.Remark = comment;
                     adjustment.ApprovalDate = DateTime.Today;
-                    adjustment.ApprovalEmpNum = Convert.ToInt32(empNum);
+                    adjustment.ApprovalEmpNum = empNum;
                     _stockAdjustmentRepo.Update(adjustment);
                 }
-                
             }
-           
+
             return PartialView();
         }
-
 
         protected override void Dispose(bool disposing)
         {

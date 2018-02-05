@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Delegate = LUSSIS.Models.Delegate;
 
 namespace LUSSIS.Repositories
@@ -27,7 +25,7 @@ namespace LUSSIS.Repositories
         public Delegate FindCurrentByEmpNum(int empNum)
         {
             return LUSSISContext.Delegates
-                .FirstOrDefault(d => d.EmpNum == empNum 
+                .FirstOrDefault(d => d.EmpNum == empNum
                                      && d.StartDate <= DateTime.Today && d.EndDate >= DateTime.Today);
         }
 

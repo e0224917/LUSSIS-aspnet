@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using LUSSIS.Emails;
@@ -21,7 +20,7 @@ namespace LUSSIS.Controllers.WebAPI
         [HttpGet]
         [Route("api/Delegate/Get/{dept}")]
         [ResponseType(typeof(DelegateDTO))]
-        public IHttpActionResult GetDelegate([FromUri]string dept)
+        public IHttpActionResult GetDelegate([FromUri] string dept)
         {
             var @delegate = _delegateRepo.FindExistingByDeptCode(dept);
 
@@ -43,7 +42,7 @@ namespace LUSSIS.Controllers.WebAPI
         [HttpPost]
         [Route("api/Delegate/Create/{empnum}")]
         // POST api/Delegate/Create
-        public IHttpActionResult CreateDelegate(int empnum, [FromBody]DelegateDTO delegateDto)
+        public IHttpActionResult CreateDelegate(int empnum, [FromBody] DelegateDTO delegateDto)
         {
             var d = new Delegate()
             {
@@ -56,7 +55,7 @@ namespace LUSSIS.Controllers.WebAPI
 
             //Send email on new thread
             var employee = _employeeRepo.GetById(empnum);
-            var headEmail = _employeeRepo.GetDepartmentHead(employee.DeptCode);
+            var headEmail = _employeeRepo.GetDepartmentHead(employee.DeptCode).EmailAddress;
             var email = new LUSSISEmail.Builder().From(headEmail).To(employee.EmailAddress)
                 .ForNewDelegate().Build();
             new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
@@ -71,7 +70,7 @@ namespace LUSSIS.Controllers.WebAPI
         [HttpPost]
         [Route("api/Delegate/Delete")]
         // POST api/Delegate/Delete
-        public IHttpActionResult DeleteDelegate([FromBody]DelegateDTO delegateDto)
+        public IHttpActionResult DeleteDelegate([FromBody] DelegateDTO delegateDto)
         {
             var del = _delegateRepo.GetById(delegateDto.DelegateId);
             var toEmail = _employeeRepo.GetById(del.EmpNum).EmailAddress;
@@ -79,7 +78,7 @@ namespace LUSSIS.Controllers.WebAPI
             _delegateRepo.Delete(del);
 
             //Send email
-            var headEmail = _employeeRepo.GetDepartmentHead(deptCode);
+            var headEmail = _employeeRepo.GetDepartmentHead(deptCode).EmailAddress;
             var email = new LUSSISEmail.Builder().From(headEmail).To(toEmail)
                 .ForOldDelegate().Build();
             new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();

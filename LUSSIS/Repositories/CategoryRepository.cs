@@ -18,26 +18,27 @@ namespace LUSSIS.Repositories
             });
         }
 
-        public IEnumerable<String> GetAllCategoryName()
+        public IEnumerable<string> GetAllCategoryName()
         {
             return LUSSISContext.Categories.Select(x => x.CategoryName);
         }
 
-        public List<Category> GetCategoryBySupplier(String supplier)
+        public List<Category> GetCategoryBySupplier(string supplier)
         {
             var categories = new List<Category>();
             var id = Convert.ToInt32(supplier);
             var query = (from t1 in LUSSISContext.Stationeries
-                     join t2 in LUSSISContext.StationerySuppliers
-                     on t1.ItemNum equals t2.ItemNum
-                     where t2.Supplier.SupplierId == id
-                     select new { categoryId = t1.CategoryId }).Distinct();
+                join t2 in LUSSISContext.StationerySuppliers
+                    on t1.ItemNum equals t2.ItemNum
+                where t2.Supplier.SupplierId == id
+                select new {categoryId = t1.CategoryId}).Distinct();
 
             foreach (var category in query)
             {
                 var categoryId = category.categoryId;
                 categories.Add(LUSSISContext.Categories.FirstOrDefault(x => x.CategoryId == categoryId));
             }
+
             return categories;
         }
 
@@ -55,6 +56,7 @@ namespace LUSSIS.Repositories
                 var category = GetById(idCat);
                 list.Add(category.CategoryName);
             }
+
             return list;
         }
     }

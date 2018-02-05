@@ -19,7 +19,6 @@ namespace LUSSIS.Controllers.WebAPI
         private readonly DisbursementRepository _disbursementRepo = new DisbursementRepository();
         private readonly DelegateRepository _delegateRepo = new DelegateRepository();
         private readonly EmployeeRepository _employeeRepo = new EmployeeRepository();
-        private readonly StationeryRepository _stationeryRepo = new StationeryRepository();
 
         //GET: api/Requisitions/
         [Route("api/Requisitions/Pending/{dept}")]
@@ -56,7 +55,7 @@ namespace LUSSIS.Controllers.WebAPI
 
         [HttpPost]
         [Route("api/Requisitions/Process")]
-        public async Task<IHttpActionResult> Process([FromBody]RequisitionDTO requisition)
+        public async Task<IHttpActionResult> Process([FromBody] RequisitionDTO requisition)
         {
             if (requisition.RequisitionEmpNum == requisition.ApprovalEmpNum)
             {
@@ -64,7 +63,7 @@ namespace LUSSIS.Controllers.WebAPI
             }
 
             var employee = _employeeRepo.GetById(requisition.ApprovalEmpNum);
-            if(_delegateRepo.FindCurrentByDeptCode(employee.DeptCode) != null)
+            if (_delegateRepo.FindCurrentByDeptCode(employee.DeptCode) != null)
             {
                 return BadRequest("Must revoke current delegate to approve.");
             }
@@ -84,7 +83,7 @@ namespace LUSSIS.Controllers.WebAPI
                 var approvalEmail = _employeeRepo.GetById(requisition.ApprovalEmpNum).EmailAddress;
                 var email = new LUSSISEmail.Builder().From(approvalEmail).To(toEmail)
                     .ForRequisitionApproval(req).Build();
-                new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 
                 return Ok(new {Message = "Updated"});
             }
@@ -137,7 +136,7 @@ namespace LUSSIS.Controllers.WebAPI
 
         [HttpPost]
         [Route("api/Requisitions/Create")]
-        public IHttpActionResult CreateRequisition([FromBody]RequisitionDTO requisitionDto)
+        public IHttpActionResult CreateRequisition([FromBody] RequisitionDTO requisitionDto)
         {
             var empNum = requisitionDto.RequisitionEmpNum;
             var employee = _employeeRepo.GetById(empNum);
@@ -165,10 +164,10 @@ namespace LUSSIS.Controllers.WebAPI
             _requistionRepo.Add(requisition);
 
             //Send email on new thread
-            var headEmail = _employeeRepo.GetDepartmentHead(employee.DeptCode);
+            var headEmail = _employeeRepo.GetDepartmentHead(employee.DeptCode).EmailAddress;
             var email = new LUSSISEmail.Builder().From(headEmail).To(employee.EmailAddress)
                 .ForNewRequistion(employee.FullName, requisition).Build();
-            new Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+            new Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
 
             return Ok(new {Message = "Requisition created"});
         }

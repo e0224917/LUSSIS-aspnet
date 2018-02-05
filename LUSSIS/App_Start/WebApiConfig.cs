@@ -1,9 +1,6 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Web.Http;
 using Newtonsoft.Json.Converters;
-
 
 namespace LUSSIS
 {
@@ -11,7 +8,7 @@ namespace LUSSIS
     {
         public static void Register(HttpConfiguration config)
         {
-            IsoDateTimeConverter converter = new IsoDateTimeConverter
+            var converter = new IsoDateTimeConverter
             {
                 DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'",
                 Culture = CultureInfo.InvariantCulture

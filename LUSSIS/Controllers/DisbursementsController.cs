@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using LUSSIS.Constants;
 using LUSSIS.Emails;
@@ -32,7 +27,7 @@ namespace LUSSIS.Controllers
         {
             return View(_disbursementRepo.GetDisbursementByStatus(InProcess).ToList());
         }
-        
+
         // GET: Disbursement/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
@@ -65,10 +60,13 @@ namespace LUSSIS.Controllers
                 _disbursementRepo.Update(disbursement);
 
                 var repEmail = _employeeRepo.GetRepByDeptCode(disbursement.DeptCode).EmailAddress;
-                var collectionPoint = _collectionRepo.GetById((int)disbursement.CollectionPointId);
-                var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
-                    .ForUpdateDisbursement(disbursement, collectionPoint).Build();
-                new System.Threading.Thread(delegate () { EmailHelper.SendEmail(email); }).Start();
+                if (disbursement.CollectionPointId != null)
+                {
+                    var collectionPoint = _collectionRepo.GetById((int) disbursement.CollectionPointId);
+                    var email = new LUSSISEmail.Builder().From(User.Identity.Name).To(repEmail)
+                        .ForUpdateDisbursement(disbursement, collectionPoint).Build();
+                    new System.Threading.Thread(delegate() { EmailHelper.SendEmail(email); }).Start();
+                }
 
                 return RedirectToAction("Upcoming");
             }
@@ -77,7 +75,7 @@ namespace LUSSIS.Controllers
                 "CollectionName", disbursement.CollectionPointId);
             return View(disbursement);
         }
-        
+
         // GET: Disbursement/Details/5
         public ActionResult Details(int? id)
         {
@@ -86,7 +84,7 @@ namespace LUSSIS.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var disbursement = _disbursementRepo.GetById((int)id);
+            var disbursement = _disbursementRepo.GetById((int) id);
 
             if (disbursement == null)
             {
@@ -98,7 +96,7 @@ namespace LUSSIS.Controllers
                 CurrentDisbursement = disbursement,
                 DisDetailList = disbursement.DisbursementDetails.ToList()
             };
-            
+
             return View(disDetailDto);
         }
 
@@ -106,24 +104,25 @@ namespace LUSSIS.Controllers
         [Authorize(Roles = "clerk, rep")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Acknowledge(DisbursementDetailDTO disbursementDTO, string update)
+        public ActionResult Acknowledge(DisbursementDetailDTO disbursementDto, string update)
         {
-            if (disbursementDTO == null)
+            if (disbursementDto == null)
             {
                 return HttpNotFound();
             }
 
             if (ModelState.IsValid)
-            { 
-                var disbursement = _disbursementRepo.GetById(disbursementDTO.CurrentDisbursement.DisbursementId);
+            {
+                var disbursement = _disbursementRepo.GetById(disbursementDto.CurrentDisbursement.DisbursementId);
 
                 //set the actual qty of its detail list items to the updated qty, and update it in database
                 foreach (var disbursementDetail in disbursement.DisbursementDetails)
                 {
-                    disbursementDetail.ActualQty = disbursementDTO.DisDetailList
+                    disbursementDetail.ActualQty = disbursementDto.DisDetailList
                         .First(ddEdited => ddEdited.ItemNum == disbursementDetail.ItemNum)
                         .ActualQty;
                 }
+
                 _disbursementRepo.Update(disbursement);
 
                 switch (update)
@@ -137,16 +136,18 @@ namespace LUSSIS.Controllers
                             stationery.CurrentQty -= dd.ActualQty;
                             _stationeryRepo.Update(stationery);
                         }
+
                         return RedirectToAction("Upcoming");
-                    
+
                     //case 2: only updates actual qty and leave changing status and deduct stock qty to WebAPI
                     case "Generate QR Code":
                         break;
                 }
+
                 return Json("Ok");
             }
 
-            return View("Details", disbursementDTO);
+            return View("Details", disbursementDto);
         }
 
         public PartialViewResult _QR(string id)
@@ -170,9 +171,9 @@ namespace LUSSIS.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var disbursements = string.IsNullOrEmpty(searchString)? 
-                _disbursementRepo.GetAll().OrderByDescending(d => d.CollectionDate).ToList():
-                _disbursementRepo.GetDisbursementsByDeptName(searchString).ToList();
+            var disbursements = string.IsNullOrEmpty(searchString)
+                ? _disbursementRepo.GetAll().OrderByDescending(d => d.CollectionDate).ToList()
+                : _disbursementRepo.GetDisbursementsByDeptName(searchString).ToList();
 
             var disHistory = disbursements.ToPagedList(pageNumber: page ?? 1, pageSize: 15);
 

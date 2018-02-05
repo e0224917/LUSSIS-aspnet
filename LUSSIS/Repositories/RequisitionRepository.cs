@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.WebPages;
 using LUSSIS.Constants;
 using LUSSIS.Models;
-using LUSSIS.Models.WebDTO;
 using LUSSIS.Repositories.Interface;
 
 namespace LUSSIS.Repositories
@@ -76,10 +71,9 @@ namespace LUSSIS.Repositories
 
         public Stationery AddRequisitionDetail(RequisitionDetail requisitionDetail)
         {
-            LUSSISContext.Set<RequisitionDetail>().Include("Stationery");
-            var stationery = LUSSISContext.Set<RequisitionDetail>().Add(requisitionDetail).Stationery;
+            LUSSISContext.Set<RequisitionDetail>().Add(requisitionDetail);
             LUSSISContext.SaveChanges();
-            return stationery;
+            return LUSSISContext.Stationeries.Find(requisitionDetail.ItemNum);
         }
 
         /// <summary>
@@ -90,7 +84,7 @@ namespace LUSSIS.Repositories
         public IEnumerable<Requisition> GetPendingListForHead(string deptCode)
         {
             var list = LUSSISContext.Requisitions
-                .Where(r => r.DeptCode == deptCode && r.Status == POStatus.Pending);
+                .Where(r => r.DeptCode == deptCode && r.Status == POStatus.Pending).ToList();
             list.Reverse();
             return list;
         }

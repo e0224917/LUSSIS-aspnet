@@ -1,5 +1,6 @@
 ﻿@model PagedList.IPagedList<LUSSIS.Models.Requisition>
 @using PagedList.Mvc;
+@using LUSSIS.Constants;
 
 <div id="reqHistory">
     <table class="table table-striped table-hover tablesorter" id="myTable">
@@ -11,7 +12,7 @@
             <th>
                 Employee
             </th>
-            <th>
+            <th style="width: 40%">
                 Request Reason
             </th>
             <th>
@@ -20,35 +21,51 @@
             <th>
             </th>
         </tr>
-            </thead><tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequisitionDate, "Requisition Date")
-                @Html.HiddenFor(modelItem => item.RequisitionId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName, "Employee")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequestRemarks, "Reason for Request")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status, "Status")
-            </td>
-            <td>
-                @Html.ActionLink("View Details", "Details", "Requisitions", new { reqId = item.RequisitionId }, new { @class = "btn btn-info btn-sm" })
-            </td>
-        </tr>
-    }
-</tbody>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequisitionDate)
+                    @Html.HiddenFor(modelItem => item.RequisitionId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequisitionEmployee.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestRemarks)
+                </td>
+                <td>
+                    @if(item.Status.Equals(RequisitionStatus.Approved))
+                    {
+                        <strong class="text-success">@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                    else if(item.Status.Equals(RequisitionStatus.Rejected))
+                    {
+                        <strong class="text-danger">@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                    else if(item.Status.Equals(RequisitionStatus.Pending))
+                    {
+                        <strong class="text-warning">@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                    else
+                    {
+                        <strong>@Html.DisplayFor(modelItem => item.Status)</strong>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("View Details", "Details", "Requisitions", new {reqId = item.RequisitionId}, new {@class = "btn btn-info btn-sm"})
+                </td>
+            </tr>
+        }
+        </tbody>
     </table>
 
 
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("All", new { page, currentFilter = ViewBag.CurrentFilter }))
+    @Html.PagedListPager(Model, page => Url.Action("All", new {page, currentFilter = ViewBag.CurrentFilter}))
 
 </div>
 

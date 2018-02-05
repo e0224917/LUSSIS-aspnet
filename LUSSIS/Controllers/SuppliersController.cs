@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
@@ -15,7 +13,7 @@ using LUSSIS.Constants;
 
 namespace LUSSIS.Controllers
 {
-    //Authors: Ton That Minh Nhat
+    //Authors: Ton That Minh Nhat, Douglas Lee Kiat Hui
     [Authorize(Roles = Role.Clerk)]
     public class SuppliersController : Controller
     {
@@ -127,9 +125,9 @@ namespace LUSSIS.Controllers
                 await _supplierRepo.DeleteAsync(supplier);
                 return RedirectToAction("Index");
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                ModelState.AddModelError("", "This supplier has existing stationeries.");
+                ModelState.AddModelError("", @"This supplier has existing stationeries.");
                 return View(supplier);
             }
         }
@@ -147,7 +145,9 @@ namespace LUSSIS.Controllers
         }
 
         //Authors: Douglas Lee Kiat Hui
+
         #region Quotations
+
         //GET: Suppliers/Quotation
         [HttpGet]
         public ActionResult Quotation()
@@ -171,7 +171,6 @@ namespace LUSSIS.Controllers
                 StationerySupplierQuote.ValidateData(list);
 
                 //upload data
-                IEnumerable<StationerySupplier> ssList = _stationerySupplierRepo.GetAll();
                 _stationerySupplierRepo.UpdateAll(list);
 
 
@@ -219,12 +218,12 @@ namespace LUSSIS.Controllers
             //method to convert c# list into format for excel parsing
             public static byte[] ConvertListToByte(IEnumerable<StationerySupplierQuote> slist)
             {
-                byte[] filecontent = null;
+                byte[] filecontent;
                 using (ExcelPackage pk = new ExcelPackage())
                 {
                     ExcelWorksheet ws = pk.Workbook.Worksheets.Add("quotations");
                     //fill header
-                    string[] headerString = new string[]
+                    string[] headerString =
                         {"Item Code", "Item Name", "Unit Price", "Rank", "Supplier Code", "Supplier Name"};
                     for (int i = 1; i < 7; i++)
                     {
@@ -251,16 +250,18 @@ namespace LUSSIS.Controllers
                     int currentRow = 2;
                     while (ws.Cells[currentRow, 1].Value != null)
                     {
-                        StationerySupplier ss = new StationerySupplier();
-                        ss.ItemNum = (string) ws.Cells[currentRow, 1].Value;
-                        ss.Rank = Convert.ToInt32(ws.Cells[currentRow, 4].Value);
-                        ss.Price = Convert.ToDouble(ws.Cells[currentRow, 3].Value);
-                        ss.SupplierId = Convert.ToInt32(ws.Cells[currentRow, 5].Value);
-                        list.Add(ss);
+                        var stationerySupplier = new StationerySupplier
+                        {
+                            ItemNum = (string) ws.Cells[currentRow, 1].Value,
+                            Rank = Convert.ToInt32(ws.Cells[currentRow, 4].Value),
+                            Price = Convert.ToDouble(ws.Cells[currentRow, 3].Value),
+                            SupplierId = Convert.ToInt32(ws.Cells[currentRow, 5].Value)
+                        };
+                        list.Add(stationerySupplier);
                         currentRow++;
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw new Exception("Problems reading uploaded file, please follow template provided");
                 }
@@ -282,7 +283,7 @@ namespace LUSSIS.Controllers
                 if (list.Select(x => x.ItemNum).Distinct().Except(itemlist).Any() ||
                     itemlist.Except(list.Select(x => x.ItemNum).Distinct()).Any())
                     throw new Exception("Stationery in the file does not match database");
-                List<string> itemlist2 = list.Where(x => x.Rank == 1).Select(x => x.ItemNum).Distinct().ToList();
+                //List<string> itemlist2 = list.Where(x => x.Rank == 1).Select(x => x.ItemNum).Distinct().ToList();
                 if (list.Where(x => x.Rank == 1).Select(x => x.ItemNum).Distinct().Count() !=
                     (srepo.GetAll().Select(x => x.ItemNum).Count()))
                     throw new Exception("Each stationery should have at least one primary supplier");
@@ -291,6 +292,7 @@ namespace LUSSIS.Controllers
                     throw new Exception("Stationery with duplicated supplier/ranks detected");
             }
         }
+
         #endregion
     }
 }

@@ -6,66 +6,63 @@
         <thead>
         <tr class="table-active">
             <th class="header">
-                
-                @Html.ActionLink("#Bin", "Index", new { sortOrder = ViewBag.BinSortParm ,currentFilter=ViewBag.CurrentFilter}, new { style = "color:black" })
+
+                @Html.ActionLink("#Bin", "Index", new {sortOrder = ViewBag.BinSortParm, currentFilter = ViewBag.CurrentFilter}, new {style = "color:black"})
             </th>
             <th class="header">
 
-                @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CatSortParm ,currentFilter=ViewBag.CurrentFilter},new { style = "color:black" })
+                @Html.ActionLink("Category", "Index", new {sortOrder = ViewBag.CatSortParm, currentFilter = ViewBag.CurrentFilter}, new {style = "color:black"})
             </th>
             <th class="header">
 
-                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DesSortParm ,currentFilter=ViewBag.CurrentFilter},new { style = "color:black" })
+                @Html.ActionLink("Description", "Index", new {sortOrder = ViewBag.DesSortParm, currentFilter = ViewBag.CurrentFilter}, new {style = "color:black"})
             </th>
             <th>
-                UOM               
+                UOM
             </th>
             <th class="header">
-                @Html.ActionLink("Current Qty", "Index", new { sortOrder = ViewBag.QtySortParm ,currentFilter=ViewBag.CurrentFilter},new { style = "color:black" })
+                @Html.ActionLink("Current Qty", "Index", new {sortOrder = ViewBag.QtySortParm, currentFilter = ViewBag.CurrentFilter}, new {style = "color:black"})
             </th>
             <th>
-                </th>
+            </th>
 
         </tr>
-            </thead><tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BinNum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryName)
-            </td>
-            <td>
-                (@Html.DisplayFor(modelItem => item.ItemNum)) @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnitOfMeasure)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CurrentQty)
-            </td>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BinNum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                </td>
+                <td>
+                    (@Html.DisplayFor(modelItem => item.ItemNum)) @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitOfMeasure)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CurrentQty)
+                </td>
 
-            <td class="btn-group">
+                <td class="btn-group">
 
-                @Html.ActionLink("View Details", "Details", new { id = item.ItemNum }, new { @class = "btn btn-sm btn-info d-inline" })&nbsp;
-                @Html.ActionLink("Adjust Stock", "CreateAdjustment", "StockAdjustment", new { id = item.ItemNum }, new { @class = "btn btn-sm btn-primary d-inline" })
+                    @Html.ActionLink("View Details", "Details", new {id = item.ItemNum}, new {@class = "btn btn-sm btn-info d-inline"})&nbsp;
+                    @Html.ActionLink("Adjust Stock", "CreateAdjustment", "StockAdjustment", new {id = item.ItemNum}, new {@class = "btn btn-sm btn-primary d-inline"})
 
-            </td>
-        </tr>
-    }
-</tbody>
+                </td>
+            </tr>
+        }
+        </tbody>
     </table>
-
 
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter, sortOrder = ViewBag.CurrentSort }))
+    @Html.PagedListPager(Model, page => Url.Action("Index", new {page, currentFilter = ViewBag.CurrentFilter, sortOrder = ViewBag.CurrentSort}))
 
 </div>
 
 @*Authors: Koh Meng Guan*@
-
-
-

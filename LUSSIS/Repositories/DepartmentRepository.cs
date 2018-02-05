@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using LUSSIS.Models;
 
 namespace LUSSIS.Repositories
@@ -9,15 +7,15 @@ namespace LUSSIS.Repositories
     //Authors: Koh Meng Guan
     public class DepartmentRepository : Repository<Department, string>
     {
-        public List<String> GetAllDepartmentCode()
+        public List<string> GetAllDepartmentCode()
         {
             return LUSSISContext.Departments.Where(x=>x.DeptCode != "STNR").Select(x=>x.DeptCode).ToList();
         }
 
         public Department GetDepartmentByEmpNum(int empNum)
         {
-            Employee emp = LUSSISContext.Employees.Where(x => x.EmpNum == empNum).FirstOrDefault();
-            return emp.Department;
+            var employee = LUSSISContext.Employees.FirstOrDefault(x => x.EmpNum == empNum);
+            return employee?.Department;
         }
     }
 }

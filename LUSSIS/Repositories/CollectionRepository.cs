@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using LUSSIS.Models;
 
 namespace LUSSIS.Repositories
@@ -11,8 +8,8 @@ namespace LUSSIS.Repositories
     {
         public CollectionPoint GetCollectionPointByDeptCode(string deptCode)
         {
-            Department d = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
-            return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == d.CollectionPointId);
+            var department = LUSSISContext.Departments.First(z => z.DeptCode == deptCode);
+            return LUSSISContext.CollectionPoints.First(x => x.CollectionPointId == department.CollectionPointId);
         }
     }
 }

@@ -3,8 +3,8 @@ using LUSSIS.Repositories.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using LUSSIS.Constants;
+using static LUSSIS.Constants.AdjustmentVoucherStatus;
 
 namespace LUSSIS.Repositories
 {
@@ -13,12 +13,7 @@ namespace LUSSIS.Repositories
     {
         public List<AdjVoucher> GetPendingAdjustmentList()
         {
-            return GetAll().Where(x => x.Status == AdjustmentVoucherStatus.Pending).ToList();
-        }
-
-        public int GetPendingAdjustmentCount()
-        {
-            return GetAll().Where(x => x.Status == AdjustmentVoucherStatus.Pending).ToList().Count;
+            return LUSSISContext.AdjVouchers.Where(x => x.Status == Pending).ToList();
         }
 
         public List<AdjVoucher> GetPendingAdjustmentByRole(string role)
@@ -43,7 +38,7 @@ namespace LUSSIS.Repositories
                 {
                     var s = ad.Stationery.AverageCost;
                     var qty = ad.Quantity;
-                   
+
                     if (s * Math.Abs(qty) >= 250)
                     {
                         resultList.Add(ad);
@@ -54,7 +49,7 @@ namespace LUSSIS.Repositories
             return resultList;
         }
 
-        public List<AdjVoucher> GetPendingAdjustmentByType(string type,String role)
+        public List<AdjVoucher> GetPendingAdjustmentByType(string type, string role)
         {
             switch (type)
             {
@@ -66,7 +61,7 @@ namespace LUSSIS.Repositories
                     return GetPendingAdjustmentByRole(role);
             }
         }
-        
+
         public IEnumerable<AdjVoucher> FindAdjVoucherByText(string term)
         {
             term = term.ToLower();
@@ -80,10 +75,11 @@ namespace LUSSIS.Repositories
 
         public IEnumerable<AdjVoucher> GetApprovedAdjVoucherByItem(string itemNum)
         {
-            return LUSSISContext.AdjVouchers.Where(x => x.ItemNum == itemNum && x.Status == AdjustmentVoucherStatus.Approved);
+            return LUSSISContext.AdjVouchers.Where(x =>
+                x.ItemNum == itemNum && x.Status == Approved);
         }
 
-       public Stationery AddStockAdjustment(AdjVoucher adjVoucher)
+        public Stationery AddStockAdjustment(AdjVoucher adjVoucher)
         {
             LUSSISContext.Set<AdjVoucher>().Add(adjVoucher);
             LUSSISContext.SaveChanges();

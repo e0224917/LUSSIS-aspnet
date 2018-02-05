@@ -1,10 +1,7 @@
 ﻿using LUSSIS.Constants;
 using LUSSIS.Models;
-using Microsoft.AspNet.Identity;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace LUSSIS.Repositories
 {
@@ -24,7 +21,8 @@ namespace LUSSIS.Repositories
         /// <returns></returns>
         public List<Employee> GetStaffRepByDeptCode(string deptCode)
         {
-            return LUSSISContext.Employees.Where(x => x.DeptCode == deptCode && (x.JobTitle == Role.Staff || x.JobTitle == Role.Representative)).ToList();
+            return LUSSISContext.Employees.Where(x =>
+                x.DeptCode == deptCode && (x.JobTitle == Role.Staff || x.JobTitle == Role.Representative)).ToList();
         }
 
         /// <summary>
@@ -49,12 +47,14 @@ namespace LUSSIS.Repositories
 
         public Employee GetDepartmentHead(string deptCode)
         {
-            return LUSSISContext.Employees.SingleOrDefault(e => e.DeptCode == deptCode && e.JobTitle == Role.DepartmentHead);
+            return LUSSISContext.Employees.SingleOrDefault(e =>
+                e.DeptCode == deptCode && e.JobTitle == Role.DepartmentHead);
         }
 
         public Employee GetRepByDeptCode(string deptCode)
         {
-            return LUSSISContext.Employees.SingleOrDefault(e => e.DeptCode == deptCode && e.JobTitle == Role.Representative);
+            return LUSSISContext.Employees.SingleOrDefault(e =>
+                e.DeptCode == deptCode && e.JobTitle == Role.Representative);
         }
     }
 }

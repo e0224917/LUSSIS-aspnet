@@ -52,7 +52,7 @@
                             <p></p>
                             <label class="control-label col-md-12">Contact Name</label>
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.SupplierContact, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.EditorFor(model => model.SupplierContact, new { htmlAttributes = new { @class = "form-control" ,@required=true} })
                                 @Html.ValidationMessageFor(model => model.SupplierContact, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                         <div class="form-group col-md-6 col-sm-6 col-lg-6">
                             <label class="control-label col-md-12">Supplier Address</label>
                             <div class="col-md-12">
-                                @Html.TextAreaFor(model => model.SupplierAddress, 3, 40, new { @class = "form-control" })
+                                @Html.TextAreaFor(model => model.SupplierAddress, 3, 40, new { @class = "form-control", @readonly = true })
                                 @Html.ValidationMessageFor(model => model.SupplierAddress, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -84,8 +84,8 @@
                     <th>Item</th>
                     <th>Quantity</th>
                     <th>UOM</th>
-                    <th>Unit Price($)</th>
-                    <th>Line Price($)</th>
+                    <th>Unit Price</th>
+                    <th>Line Price</th>
                     <th>Delete</th>
                 </tr>
 
@@ -100,10 +100,23 @@
                         <td style="width:7%">@Html.EditorFor(model => model.PurchaseOrderDetailsDTO[i].OrderQty, Model.PurchaseOrderDetailsDTO[i].OrderQty.ToString(), new { htmlAttributes = new { @class = "line_qty form-control", @min = Model.PurchaseOrderDetailsDTO[i].ReorderQty } })</td>
                         <td style="width:15%">@Html.DropDownList("unit_of_measure", new SelectList(ViewBag.Stationery, "ItemNum", "Stationery.UnitOfMeasure", itemNum), new { @class = "unit_of_measure form-control", @disabled = true })</td>
                         <td style="width:20%">
-                            @Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new SelectList(ViewBag.Stationery, "Price", "Price"), new { @class = "unit_price form-control", @disabled = true })
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                @Html.DropDownListFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new SelectList(ViewBag.Stationery, "Price", "Price"), new { @class = "unit_price form-control", @disabled = true })
+                            </div>
                             @Html.HiddenFor(model => model.PurchaseOrderDetailsDTO[i].UnitPrice, new { @class = "hide_unit_price" })
                         </td>
-                        <td style="width:20%"><input type="text" class="line_price form-control" value="0.00" disabled></td>
+                        <td style="width:20%">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input type="text" class="line_price form-control" value="0.00" disabled>
+                            </div>
+                            
+                        </td>
                         <td style="width:5%"><input type="button" value="Delete" class="Delete btn btn-warning" onclick="deleteRow(this)"></td>
                     </tr>
                 }
@@ -116,24 +129,31 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-md-3">
-                            <label type="text" class="control-label col-md-12">Product Cost($)</label>
-                            <div class="col-md-12">
-                                <input type="text" id="product_cost" class="form-control" disabled />
+                            <label type="text" class="control-label col-md-12">Product Cost</label>
+                            <div class="input-group col-md-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input type="number" id="product_cost" class="form-control" disabled />
                             </div>
                         </div>
 
                         <div class="form-group col-md-3">
-                            <label type="text" class="control-label col-md-12">GST($)</label>
-                            <div class="col-md-12">
-                                <input type="text" class="line_price form-control" id="GstAmt" placeholder="0" disabled>
-                                @*@Html.Editor("GstAmt", "0")*@
+                            <label type="number" class="control-label col-md-12">GST</label>
+                            <div class="input-group col-md-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input type="number" class="line_price form-control" id="GstAmt" placeholder="0" disabled>
                             </div>
                         </div>
                         <div class="form-group col-md-3">
-                            <label type="text" class="control-label col-md-12">Total Cost($)</label>
-                            <div class="col-md-12">
-                                <input type="text" class="line_price form-control" id="TotalPoAmt" placeholder="0" disabled>
-                                @*@Html.Editor("TotalPoAmt", "0")*@
+                            <label type="text" class="control-label col-md-12">Total Cost</label>
+                            <div class="input-group col-md-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input type="number" class="line_price form-control" id="TotalPoAmt" placeholder="0" disabled>
                             </div>
                         </div>
                         <div class="form-group col-md-3">
@@ -163,7 +183,7 @@
 {
     <script>
         var cindex = @lineNo;
-        var sindex = @stationeryCount
+        var sindex = @stationeryCount;
         var GST = @GST;
         var supplierId = @supplierId;
 

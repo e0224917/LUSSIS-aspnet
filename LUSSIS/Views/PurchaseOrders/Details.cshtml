@@ -1,12 +1,12 @@
 ﻿@using LUSSIS.Constants
 @model LUSSIS.Models.WebDTO.PurchaseOrderDTO
+
 @{
     ViewBag.Title = "Details";
 }
-@Scripts.Render("~/bundles/jquery")
+
 <h2>Purchase Order Details</h2>
 <hr />
-
 <div class="card border-dark bg-transparent col-lg-12 col-sm-12 col-md-12">
 
     <div class="card-body">
@@ -59,7 +59,22 @@
                 <div class="form-group">
                     <label class="control-label col-md-12 text-primary"><strong>Status</strong></label>
                     <div class="col-md-12">
-                        <input type="text" class="form-control text-primary" value="@Model.Status" disabled />
+                        @if(Model.Status.Equals(POStatus.Approved))
+                        {
+                            <input type="text" class="form-control text-success" value="@Model.Status" disabled />
+                        }
+                        else if(Model.Status.Equals(POStatus.Rejected))
+                        {
+                            <input type="text" class="form-control text-danger" value="@Model.Status" disabled />
+                        }
+                        else if(Model.Status.Equals(POStatus.Pending))
+                        {
+                            <input type="text" class="form-control text-warning" value="@Model.Status" disabled />
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control" value="@Model.Status" disabled />
+                        }
                     </div>
                 </div>
                 @if (Model.ApprovalEmpNum != null)
@@ -107,9 +122,9 @@
                 <td>@Model.PurchaseOrderDetails[i].Stationery.Description</td>
                 <td>@Model.PurchaseOrderDetails[i].Stationery.ItemNum</td>
                 <td>@Model.PurchaseOrderDetails[i].Stationery.UnitOfMeasure</td>
-                <td>@Model.PurchaseOrderDetails[i].UnitPrice</td>
+                <td>$ @Model.PurchaseOrderDetails[i].UnitPrice</td>
                 <td>@Model.PurchaseOrderDetails[i].OrderQty</td>
-                <td>@(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
+                <td>$ @(Model.PurchaseOrderDetails[i].UnitPrice * Model.PurchaseOrderDetails[i].OrderQty)</td>
                 <td>@(Model.PurchaseOrderDetails[i].ReceiveQty > 0 ? "Delivered" : "Not Delivered")</td>
             </tr>
         }
@@ -118,7 +133,7 @@
 
 <div class="row">
     <div class="text-right col-12">
-        @if (Model.Status == POStatus.Approved)
+        @if (Model.Status == POStatus.Approved && User.IsInRole(Role.Clerk))
         {
             @Html.ActionLink("Order", "Order", new { p = Model.PoNum }, new { @class = "btn btn-success btn-lg" })
         }
@@ -131,8 +146,6 @@
 
     </div>
 </div>
-
-
 
 @section scripts
 {
@@ -158,6 +171,3 @@
 }
 
 @*Authors: Douglas Lee Kiat Hui*@
-
-
-
